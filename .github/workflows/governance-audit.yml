@@ -1,0 +1,31 @@
+name: governance-audit
+
+on:
+  pull_request:
+    paths:
+      - "benchmarks/**"
+      - "conicshield/governance/**"
+      - ".github/workflows/governance-audit.yml"
+  push:
+    branches: [ "main" ]
+    paths:
+      - "benchmarks/**"
+      - "conicshield/governance/**"
+      - ".github/workflows/governance-audit.yml"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[dev]"
+      - run: python -m conicshield.governance.audit_cli --strict --output output/governance_audit.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: governance-audit-report
+          path: output/governance_audit.json

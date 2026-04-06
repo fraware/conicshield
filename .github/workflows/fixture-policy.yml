@@ -1,0 +1,28 @@
+name: fixture-policy
+
+on:
+  pull_request:
+    paths:
+      - "tests/fixtures/parity_reference/**"
+      - "conicshield/parity/**"
+      - ".github/workflows/fixture-policy.yml"
+
+jobs:
+  fixture-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[dev]"
+      - run: |
+          python - <<'PY'
+          from conicshield.artifacts.validator import validate_run_bundle
+          from conicshield.parity.fixture_policy import validate_fixture_policy
+          ref = "tests/fixtures/parity_reference"
+          validate_run_bundle(ref)
+          validate_fixture_policy(ref)
+          PY

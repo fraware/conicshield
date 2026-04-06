@@ -1,0 +1,13 @@
+{
+  "benchmark_families": [
+    {
+      "family_id": "conicshield-transition-bank-v1",
+      "status": "active",
+      "task_contract_version": "v1",
+      "current_fixture_version": "fixture-v1",
+      "current_run_id": null,
+      "published_at_utc": null,
+      "history": []
+    }
+  ]
+}

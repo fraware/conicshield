@@ -1,0 +1,27 @@
+name: publish-benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_dir:
+        description: "Run directory to publish"
+        required: true
+        type: string
+      reason:
+        description: "Publication reason"
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[dev]"
+      - run: |
+          python -m conicshield.governance.release_cli             --run-dir "${{ github.event.inputs.run_dir }}"             --family-id conicshield-transition-bank-v1             --reason "${{ github.event.inputs.reason }}"

@@ -1,0 +1,32 @@
+name: governance-dashboard
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "benchmarks/**"
+      - "conicshield/governance/**"
+      - ".github/workflows/governance-dashboard.yml"
+  workflow_dispatch:
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[dev]"
+      - run: python -m conicshield.governance.audit_cli --strict --output output/governance_audit.json
+      - run: |
+          python -m conicshield.governance.dashboard_cli             --json-output output/governance_dashboard.json             --markdown-output output/governance_dashboard.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: governance-dashboard
+          path: |
+            output/governance_audit.json
+            output/governance_dashboard.json
+            output/governance_dashboard.md

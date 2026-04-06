@@ -1,0 +1,21 @@
+{
+  "fixture_version": "v1",
+  "reference_arm_label": "shielded-rules-plus-geometry",
+  "reference_backend": "cvxpy_moreau",
+  "purpose": "Native Moreau parity reference",
+  "environment_contract": {
+    "env_name": "inter-sim-rl",
+    "action_space": [
+      "turn_left",
+      "turn_right",
+      "go_straight",
+      "turn_back"
+    ]
+  },
+  "regeneration_policy": {
+    "requires_changelog_entry": true,
+    "requires_review_note": true,
+    "requires_schema_validation": true,
+    "requires_reference_backend_confirmation": true
+  }
+}

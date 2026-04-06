@@ -1,0 +1,35 @@
+name: release-orchestration
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_dir:
+        description: "Run directory to release"
+        required: true
+        type: string
+      family_id:
+        description: "Benchmark family id"
+        required: true
+        type: string
+      reason:
+        description: "Release reason"
+        required: true
+        type: string
+      allow_family_bump:
+        description: "Allow benchmark family fork if required"
+        required: true
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install ".[dev]"
+      - run: |
+          python -m conicshield.governance.release_cli             --run-dir "${{ github.event.inputs.run_dir }}"             --family-id "${{ github.event.inputs.family_id }}"             --reason "${{ github.event.inputs.reason }}"             --dry-run

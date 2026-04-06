@@ -1,0 +1,13 @@
+{
+  "family_id": "conicshield-transition-bank-v1",
+  "task_contract_version": "v1",
+  "fixture_version": "fixture-v1",
+  "current_run_id": null,
+  "state": "uninitialized",
+  "publishable_arms": [],
+  "artifact_gate": "unknown",
+  "parity_gate": "unknown",
+  "promotion_gate": "unknown",
+  "published_at_utc": null,
+  "notes": "No published run yet."
+}

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conicshield.dev/schemas/governance_status.schema.json",
+  "title": "ConicShield Governance Status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "family_id",
+    "task_contract_version",
+    "fixture_version",
+    "state",
+    "artifact_gate",
+    "fixture_gate",
+    "parity_gate",
+    "promotion_gate",
+    "review_locked",
+    "publishable_arms",
+    "gate_details"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "family_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_contract_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fixture_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "experimental",
+        "candidate",
+        "review-locked",
+        "published",
+        "deprecated"
+      ]
+    },
+    "artifact_gate": {
+      "type": "string",
+      "enum": [
+        "green",
+        "red",
+        "unknown"
+      ]
+    },
+    "fixture_gate": {
+      "type": "string",
+      "enum": [
+        "green",
+        "red",
+        "unknown"
+      ]
+    },
+    "parity_gate": {
+      "type": "string",
+      "enum": [
+        "green",
+        "red",
+        "unknown"
+      ]
+    },
+    "promotion_gate": {
+      "type": "string",
+      "enum": [
+        "green",
+        "red",
+        "unknown"
+      ]
+    },
+    "review_locked": {
+      "type": "boolean"
+    },
+    "publishable_arms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "baseline-unshielded",
+          "shielded-rules-only",
+          "shielded-rules-plus-geometry",
+          "shielded-native-moreau"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "gate_details": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_gate",
+        "fixture_gate",
+        "parity_gate",
+        "promotion_gate",
+        "review_lock_gate"
+      ],
+      "properties": {
+        "artifact_gate": {
+          "$ref": "#/$defs/gate"
+        },
+        "fixture_gate": {
+          "$ref": "#/$defs/gate"
+        },
+        "parity_gate": {
+          "$ref": "#/$defs/gate"
+        },
+        "promotion_gate": {
+          "$ref": "#/$defs/gate"
+        },
+        "review_lock_gate": {
+          "$ref": "#/$defs/gate"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "detail"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "green",
+            "red",
+            "unknown"
+          ]
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
