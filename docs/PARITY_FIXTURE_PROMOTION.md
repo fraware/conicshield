@@ -1,5 +1,7 @@
 # Parity fixture promotion (M4)
 
+**Related:** [FIXTURE_POLICY.md](FIXTURE_POLICY.md), [NATIVE_PARITY_POLICY.md](NATIVE_PARITY_POLICY.md), [BENCHMARK_GOVERNANCE.md](../BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](../MAINTAINER_RUNBOOK.md).
+
 This checklist ties the governed benchmark bundle to `tests/fixtures/parity_reference`. Follow it when replacing the bootstrap fixture with a **real** reference run (CVXPY + Moreau, not `--passthrough-projector`).
 
 ## Preconditions

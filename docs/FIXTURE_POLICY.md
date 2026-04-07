@@ -1,5 +1,7 @@
 # Frozen parity fixture policy
 
+**Related:** [PARITY_FIXTURE_PROMOTION.md](PARITY_FIXTURE_PROMOTION.md), [NATIVE_PARITY_POLICY.md](NATIVE_PARITY_POLICY.md), [BENCHMARK_GOVERNANCE.md](../BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](../MAINTAINER_RUNBOOK.md).
+
 The parity fixture is a versioned benchmark artifact.
 
 It must only be regenerated when:

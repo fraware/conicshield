@@ -23,4 +23,6 @@ When enabled, runs should emit `output/differentiation_summary.json` and `output
 ## Related
 
 - [MOREAU_API_NOTES.md](MOREAU_API_NOTES.md)
+- [VERIFICATION_MASTER_SPEC.md](VERIFICATION_MASTER_SPEC.md) §10 (Layer F narrative)
+- [METRICS_INVENTORY.md](METRICS_INVENTORY.md) §13.9–§13.10
 - [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) Layer F

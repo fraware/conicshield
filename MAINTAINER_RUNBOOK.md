@@ -59,6 +59,16 @@ Tests marked `@pytest.mark.slow` (stress-scale replay, heavy subprocess work) ar
 python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>
 ```
 
+### Layer G — artifact gate report (JSON + Markdown)
+
+After validation, optional consolidated report for audits:
+
+```bash
+python scripts/artifact_validation_report.py --run-dir benchmarks/runs/<run_id>
+```
+
+Writes `output/artifact_validation_report.json` and `output/artifact_validation_report.md` (override with `--out-dir`).
+
 ### Validate the parity fixture
 ```bash
 python -m conicshield.parity.regenerate_fixture --reference-dir tests/fixtures/parity_reference
@@ -113,6 +123,12 @@ Full checklist: `docs/PARITY_FIXTURE_PROMOTION.md`.
 ### Run native parity against the frozen fixture
 ```bash
 make parity-native-licensed
+```
+
+Optional Markdown summary against default gates (`conicshield.parity.gates`):
+
+```bash
+make parity-report
 ```
 
 Equivalent explicit invocation:

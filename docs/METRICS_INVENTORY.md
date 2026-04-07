@@ -1,6 +1,6 @@
 # Full metric inventory (verification plan §13)
 
-Canonical policy context: [VERIFICATION_MASTER_SPEC.md](VERIFICATION_MASTER_SPEC.md). This file lists metrics the team should **record or roadmap** when stress-testing Moreau through the repository. Not all are implemented in scripts today; see `output/` artifacts and `scripts/` for what is currently emitted.
+Canonical policy context: [VERIFICATION_MASTER_SPEC.md](VERIFICATION_MASTER_SPEC.md). Repository index: [README.md](../README.md) (*Documentation map*). This file lists metrics the team should **record or roadmap** when stress-testing Moreau through the repository. Not all are implemented in scripts today; see `output/` artifacts and `scripts/` for what is currently emitted.
 
 ## 13.1 Environment and install metrics
 

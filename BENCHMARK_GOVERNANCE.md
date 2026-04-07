@@ -4,6 +4,8 @@ This document defines how ConicShield benchmark results become trusted, publishe
 
 Moreau install/runtime policy is defined in `docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md`. This governance document assumes vendor-native claims are produced only in qualified vendor environments.
 
+**Related documentation:** [docs/RELEASE_POLICY.md](docs/RELEASE_POLICY.md) (publication modes), [docs/FIXTURE_POLICY.md](docs/FIXTURE_POLICY.md) (parity fixture), [docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md) (Layer H and governance gates), [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md) (procedures).
+
 ## 1. Governing principle
 
 A benchmark result is not just a score. It is a governed claim about a stable task.

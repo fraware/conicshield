@@ -16,6 +16,8 @@ That final vision is:
 
 This plan is intentionally detailed. It is written so a senior engineering team can take ownership without guessing what was intended.
 
+**Living status and doc index:** [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md), [`README.md`](README.md) (*Documentation map*), [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md).
+
 ---
 
 # 1. Current repository status: what already exists vs. what is still a scaffold

@@ -25,13 +25,18 @@ Do not duplicate threshold numbers in documentation without pointing to `parity.
 
 1. **Frozen reference:** `tests/fixtures/parity_reference/` (episodes, config, transition bank) governed by [FIXTURE_POLICY.md](FIXTURE_POLICY.md).
 2. **Replay:** `python -m conicshield.parity.cli --reference-dir ... --out-dir ...`
-3. **Artifacts:** `parity_summary.json`, `parity_steps.jsonl` under the output directory.
+3. **Artifacts:** `parity_summary.json`, `parity_steps.jsonl` under the output directory; optional human-readable `parity_report.md` from `scripts/generate_parity_report.py` (or `make parity-report` after a parity run).
 4. **Promotion:** When replacing the fixture with a real reference run, follow [PARITY_FIXTURE_PROMOTION.md](PARITY_FIXTURE_PROMOTION.md).
 
 ## Makefile
 
 - `make parity-native-licensed` — local parity check (requires license and native stack).
+- `make parity-report` — write `parity_report.md` from an existing `parity_summary.json` (see [README.md](../README.md) *Verification ladder*).
 
 ## Failure semantics
 
 If parity gates fail, the native arm is **not** publishable for native endorsement; benchmark promotion and release flows must treat parity as red until resolved.
+
+## See also
+
+- [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (Layer D), [VERIFICATION_MASTER_SPEC.md](VERIFICATION_MASTER_SPEC.md) §8, [PERFORMANCE_BENCHMARKING_POLICY.md](PERFORMANCE_BENCHMARKING_POLICY.md) (performance claims remain separate from parity).

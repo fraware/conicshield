@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define when ConicShield may claim **performance advantages** (compiled native vs CVXPY reference, warm start, CUDA vs CPU). This document complements the master plan in [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md).
+Define when ConicShield may claim **performance advantages** (compiled native vs CVXPY reference, warm start, CUDA vs CPU). This document complements the master plan in [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md). Full metric list for stress testing: [METRICS_INVENTORY.md](METRICS_INVENTORY.md) §13.5–§13.7.
 
 ## Principles
 

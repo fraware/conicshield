@@ -36,3 +36,23 @@ Governance decides whether results are:
 - review-locked
 - published
 - deprecated
+
+## Repository layout
+
+Source of truth for paths and tooling:
+
+| Area | Location |
+|------|----------|
+| Package code | `conicshield/` |
+| JSON Schemas for bundles | `schemas/` |
+| Benchmark registry and releases | `benchmarks/` |
+| Governed run bundles (typical) | `benchmarks/runs/<run_id>/` |
+| Frozen parity fixture | `tests/fixtures/parity_reference/` |
+| Maintainer scripts (verification, perf, dashboard) | `scripts/` |
+| Tests | `tests/` (see `tests/README.md`) |
+| Policies and verification ladder | `docs/` |
+
+## Related
+
+- [README.md](../README.md) (layout and documentation map)
+- [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (operational trust ladder)

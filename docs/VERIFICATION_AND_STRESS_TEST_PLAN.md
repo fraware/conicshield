@@ -193,3 +193,11 @@ Parity thresholds are defined in `conicshield.parity.gates` (single source). Pro
 | Differentiation | `output/differentiation_report.md` |
 | Governance | `output/governance_dashboard.md` |
 | Unified | `output/trust_dashboard.md` |
+
+---
+
+## See also
+
+- [README.md](../README.md) — full documentation map and quick verification commands
+- [METRICS_INVENTORY.md](METRICS_INVENTORY.md) — §13 metric inventory
+- [DEVENV.md](DEVENV.md) — CI and pytest markers

@@ -300,3 +300,5 @@ Under `docs/`:
 - `DIFFERENTIATION_VALIDATION_POLICY.md`  
 
 Add or extend narrower policies as the program matures.
+
+**Repository index:** [README.md](../README.md) (*Documentation map*) lists all policies and runbooks in one place.

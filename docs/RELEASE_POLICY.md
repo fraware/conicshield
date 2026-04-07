@@ -1,5 +1,7 @@
 # Release policy
 
+**Related:** [BENCHMARK_GOVERNANCE.md](../BENCHMARK_GOVERNANCE.md), [FIXTURE_POLICY.md](FIXTURE_POLICY.md), [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (Layer H), [MAINTAINER_RUNBOOK.md](../MAINTAINER_RUNBOOK.md).
+
 Releases have exactly two legal modes:
 - same-family publication
 - new-family fork and publication

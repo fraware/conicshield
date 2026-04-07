@@ -183,3 +183,10 @@ In this repository these are represented by:
 - Do not make vendor Moreau mandatory for all contributors.
 - Do not commit secrets.
 - Do not publish native benchmark claims without parity gates.
+
+## See also
+
+- [DEVENV.md](DEVENV.md) — CI matrix and pytest markers
+- [MOREAU_API_NOTES.md](MOREAU_API_NOTES.md) — code-level integration and upgrade checks
+- [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) — Layer A (environment)
+- [README.md](../README.md) — install and vendor bootstrap commands

@@ -12,3 +12,5 @@ It checks consistency across:
 - current run governance status
 
 Strict mode should be used in CI for release and publication workflows.
+
+Canonical policy copy and cross-links: [`docs/BENCHMARK_GOVERNANCE.md`](../../BENCHMARK_GOVERNANCE.md), [`MAINTAINER_RUNBOOK.md`](../../MAINTAINER_RUNBOOK.md), and the governance sections of [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](../../docs/VERIFICATION_AND_STRESS_TEST_PLAN.md).

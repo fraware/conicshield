@@ -85,3 +85,9 @@ In-repo contract tests validate payloads against `schemas/shield_context.schema.
 ## Contract validation
 
 Python adapters may validate context with `conicshield.adapters.inter_sim_rl.context_validate.validate_shield_context_dict` or `ShieldContextModel.from_mapping` (`context_model.py`).
+
+## Related ConicShield documentation
+
+- [DEVENV.md](DEVENV.md) — `inter_sim_rl` pytest marker and optional CI workflow
+- [README.md](../README.md) — `third_party/` pin and integration overview
+- [schemas/shield_context.schema.json](../schemas/shield_context.schema.json) — contract schema

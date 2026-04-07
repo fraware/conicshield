@@ -1,5 +1,7 @@
 # Governance decision record
 
+**Policy:** [BENCHMARK_GOVERNANCE.md](../../BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](../../MAINTAINER_RUNBOOK.md) (*A5 — Publish*).
+
 Replace placeholders before publish. This file must exist as `governance_decision.md` in the run directory; `publish_from_governance_status` requires it alongside `governance_status.json`.
 
 ## Run

@@ -1,51 +1,51 @@
 # ConicShield
 
-ConicShield is a proof-aware runtime safety layer for learned controllers and cyber-physical systems.
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A policy proposes an action. ConicShield solves a constrained optimization problem to find the nearest admissible action under explicit safety constraints. The environment executes the corrected action, not the raw proposal. Every intervention produces structured evidence that can be inspected, hashed, replayed, validated, and governed.
+**Runtime safety through convex projection — with evidence you can replay, validate, and govern.**
 
-This repository is intentionally comprehensive. It contains:
-- solver interfaces and reference/native backends
-- benchmark schemas and bundle validation
-- parity and promotion gates
-- benchmark-family governance
-- release orchestration
-- governance audit and dashboard generation
-- maintainer runbooks and policy documents
-- a frozen parity fixture contract
-- extensive tests for governance, payloads, schemas, family policy, dashboard logic, and shield logic
+A policy proposes an action. ConicShield solves a constrained optimization problem to find the **nearest admissible** action under explicit safety constraints. The world sees the **corrected** action, not the raw proposal. Every intervention yields structured records you can hash, audit, and benchmark under family policy.
 
-## Repository status
+```mermaid
+flowchart LR
+    Q[Scores / Q-values] --> S[ConicShield]
+    S --> A[Corrected action]
+    S --> E[Evidence & metadata]
+    A --> R[Environment]
+```
 
-This repo is a high-quality implementation scaffold and governance system. It is structured so that:
-- governance, artifacts, schemas, and release controls run in public/reference mode
-- vendor-native Moreau paths are opt-in and explicitly gated
-- external environment integration is explicit and documented rather than hidden
+---
 
-## Supported Python
+## Why this repository exists
 
-Canonical matrix, CI behavior, **Vendor CI track (`vendor-ci-moreau`)**, and pytest markers: **[docs/DEVENV.md](docs/DEVENV.md)**.
+ConicShield is not only a solver wrapper. It ships a **full governance spine**: validated benchmark bundles, native–reference **parity** gates, promotion rules, release orchestration, audit CLI, and dashboards — so benchmark claims stay meaningful as code and contracts evolve.
 
-- **Minimum:** Python 3.11 (`requires-python >=3.11` in `pyproject.toml`).
-- **CI:** GitHub Actions runs lint, typecheck, tests, and coverage on **3.11 and 3.12** (no solver extras by default).
-- **Solver / CUDA:** For local Moreau + GPU stacks, follow [Moreau installation](https://docs.moreau.so/installation.html). Integration with installed Moreau is verified in the **Vendor CI track (`vendor-ci-moreau`)** (manual dispatch) or a licensed local environment.
+| Mode | Who it’s for |
+|------|----------------|
+| **Public / reference** | Contributors without vendor secrets: governance, schemas, replay, CI-green core tests. |
+| **Vendor (Moreau)** | Opt-in, Linux/WSL2: native compiled path, CUDA where licensed, **Vendor CI** workflow `vendor-ci-moreau` (manual dispatch). |
+
+---
 
 ## Installation
 
-Public/reference install (default, matches public CI):
+### Public / reference (matches default CI)
 
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
 
-Regenerate locked tooling after changing dev dependencies in `pyproject.toml`:
+After editing dev dependencies in `pyproject.toml`, refresh the lockfile:
 
 ```bash
 make compile-deps
 ```
 
-Vendor Moreau mode (Linux/WSL2 + vendor index + license):
+### Vendor Moreau (extra index + license)
+
+Use **Linux or WSL2**. This project expects the **vendor-distributed** Moreau stack — not an arbitrary `pip install moreau` from the default index.
 
 ```bash
 export MOREAU_EXTRA_INDEX_URL="https://<TOKEN>:@pypi.fury.io/optimalintellect/"
@@ -53,7 +53,7 @@ export MOREAU_LICENSE_KEY="<YOUR_MOREAU_LICENSE_KEY>"
 bash scripts/bootstrap_moreau.sh
 ```
 
-Manual vendor install (if not using bootstrap):
+Or install manually:
 
 ```bash
 python -m pip install -e ".[dev]"
@@ -61,119 +61,135 @@ python -m pip install "moreau[cuda]" --extra-index-url "$MOREAU_EXTRA_INDEX_URL"
 python -m moreau check
 ```
 
-This repository treats Moreau as a vendor dependency. Do not assume that default-index `pip install moreau` provides the correct solver backend for this project. The supported runtime for Moreau-backed development is Linux or WSL2.
+**Secrets:** never commit tokens, license keys, or a filled-in `.env`. Copy [`.env.example`](.env.example) to `.env` for local variable names only.
 
-### Secrets and local config
+---
 
-- Never commit GemFury tokens, Moreau license keys, or a populated `.env`. `.env` is gitignored.
-- Copy [`.env.example`](.env.example) to `.env` for local variable names only; keep real values out of the repo and CI logs.
+## Supported Python & CI
+
+| | |
+|:---|:---|
+| **Python** | **3.11+** (`requires-python` in [`pyproject.toml`](pyproject.toml)) |
+| **CI matrix** | **3.11** and **3.12** — ruff, mypy, pytest + coverage (no solver extras by default) |
+| **Details** | [docs/DEVENV.md](docs/DEVENV.md) — pytest markers, optional workflows, Vendor CI |
+| **Moreau docs** | [Installation](https://docs.moreau.so/installation.html) · [CVXPY integration](https://docs.moreau.so/guide/cvxpy-integration.html) |
+
+---
 
 ## Quick commands
 
-Validate a run bundle:
+| Goal | Command |
+|------|---------|
+| Validate a run bundle | `python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>` |
+| Strict governance audit | `python -m conicshield.governance.audit_cli --strict` |
+| Governance dashboard JSON/MD | `python -m conicshield.governance.dashboard_cli --json-output output/governance_dashboard.json --markdown-output output/governance_dashboard.md` |
+| Release dry-run | `python -m conicshield.governance.release_cli --run-dir benchmarks/runs/<run_id> --family-id conicshield-transition-bank-v1 --reason "candidate release review" --dry-run` |
 
-```bash
-python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>
-```
-
-Run governance audit:
-
-```bash
-python -m conicshield.governance.audit_cli --strict
-```
-
-Generate governance dashboard:
-
-```bash
-python -m conicshield.governance.dashboard_cli   --json-output output/governance_dashboard.json   --markdown-output output/governance_dashboard.md
-```
-
-Dry-run a release decision:
-
-```bash
-python -m conicshield.governance.release_cli   --run-dir benchmarks/runs/<run_id>   --family-id conicshield-transition-bank-v1   --reason "candidate release review"   --dry-run
-```
-
-## Layout
-
-```text
-conicshield/          # Python package
-├── adapters/
-│   └── inter_sim_rl/
-├── artifacts/
-├── bench/
-├── core/
-├── governance/
-├── parity/
-├── specs/
-└── scripts/
-schemas/              # JSON Schema sources for run bundles (repo root, not under the package)
-benchmarks/           # registry, releases, run bundles
-tests/                # pytest suite (repository root)
-docs/
-scripts/
-```
+---
 
 ## Tests
 
-Default `pytest` (and `make test`) runs core/reference paths and excludes vendor-only suites.
+Default `make test` / `pytest` runs the core suite and **excludes** vendor-only and slow markers (see [docs/DEVENV.md](docs/DEVENV.md)).
 
 ```bash
 make test
-# Public/reference-only suite:
-make test-reference
-# Vendor Moreau suite (requires vendor install + license):
-make test-vendor-moreau
-# Solver-marked aggregate:
-make test-solver
-make smoke-solver
+make test-reference          # same as default filters, explicit
+make test-vendor-moreau      # requires Moreau + license
+make test-solver             # solver-marked aggregate
+make smoke-solver            # solver smoke CLI JSON
 ```
 
-## Design principles
-
-1. Formal intent, operational enforcement.
-2. Minimal intervention.
-3. Evidence by default.
-4. Reproducible benchmark bundles.
-5. Native compiled results are never trusted without parity.
-6. Semantic task changes fork benchmark families instead of silently overwriting scores.
+---
 
 ## Verification ladder
 
-End-to-end trust layers (environment, smoke, reference correctness, parity, performance, governance): **[docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)**. The full canonical narrative (sections 1–22) is **[docs/VERIFICATION_MASTER_SPEC.md](docs/VERIFICATION_MASTER_SPEC.md)**.
+Layered checks (environment → smoke → reference correctness → parity → performance → governance) are documented in:
+
+- **[docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)** — commands, artifacts, status
+- **[docs/VERIFICATION_MASTER_SPEC.md](docs/VERIFICATION_MASTER_SPEC.md)** — full narrative (sections 1–22)
+
+**Typical local sequence**
 
 ```bash
 make env-check
 make smoke-check
 make reference-correctness
 make trust-dashboard
-# Vendor-only: make perf-benchmark, make parity-native-licensed
-# Layer G / D helpers: make artifact-validation-report; make parity-report (after parity-native-licensed)
+# With vendor stack: make perf-benchmark, make parity-native-licensed
+# Layer G / D helpers: make artifact-validation-report
+# After parity: make parity-report
 ```
 
-Quick artifacts: `python scripts/environment_check.py`, `python scripts/smoke_check.py`, then `python scripts/generate_trust_dashboard.py` for a single HTML/MD summary under `output/`. Default CI uploads `output/` as **`verification-output-<python-version>`**. The **Vendor CI** workflow (`vendor-ci-moreau`, manual dispatch) produces **`vendor_verification_bundle`**: env + vendor smoke + reference correctness + performance (including `performance_latency.png` when solves succeed) + native parity + artifact validation report + parity report + trust dashboard.
+Artifacts land under `output/` (ignored by git). **CI** uploads `output/` as `verification-output-<python-version>`. The **Vendor CI** workflow (`vendor-ci-moreau`) produces a **`vendor_verification_bundle`** (env, smoke, reference correctness, performance plots when solves succeed, parity, artifact validation report, parity report, trust dashboard).
+
+---
+
+## Repository layout
+
+```text
+conicshield/     # installable package: adapters, bench, core, governance, parity, specs
+schemas/         # JSON Schema for bundles (repo root; not packaged)
+benchmarks/      # registry, releases, runs under benchmarks/runs/
+scripts/         # maintainer CLIs (env, smoke, perf, trust dashboard)
+tests/           # pytest; see tests/README.md (e.g. tests/reference/ for Layer C)
+docs/            # architecture, policies, verification ladder
+third_party/     # upstream pins and patches (not full checkouts)
+```
+
+---
+
+## Design principles
+
+1. **Formal intent, operational enforcement** — constraints are not decorative.
+2. **Minimal intervention** — project only as far as safety requires.
+3. **Evidence by default** — every shield step is recordable.
+4. **Reproducible bundles** — benchmarks are artifacts, not ad hoc logs.
+5. **Parity before trust** — native compiled paths must match the governed reference stream.
+6. **Families, not silent overwrites** — semantic task changes fork benchmark families.
+
+---
 
 ## Documentation map
 
-- `ENGINEERING_STATUS.md` — what is implemented vs scaffold, CI gaps, and external deps (keep updated)
-- `ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md` — phased plan for completing the system
-- `docs/PROPOSER_DOCUMENTATION.md` — consolidated design rationale and proposal-level notes
-- `BENCHMARK_GOVERNANCE.md` — benchmark governance policy
-- `MAINTAINER_RUNBOOK.md` — operational procedures
-- `docs/ARCHITECTURE.md` — architecture and repo structure
-- `docs/INTER_SIM_RL_INTEGRATION.md` — how to integrate with the external environment
-- `docs/FIXTURE_POLICY.md` — frozen parity fixture policy
-- `docs/RELEASE_POLICY.md` — release orchestration policy
-- `docs/MOREAU_API_NOTES.md` — how ConicShield calls Moreau/CVXPY (verify on upgrades)
-- `docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md` — normative install/runtime/test policy for Moreau
-- `docs/METRICS_INVENTORY.md` — verification plan §13 metric inventory (stress-test roadmap)
-- `tests/README.md` — how `tests/` maps to verification plan §15
+**Status & roadmap**
 
-## Notes on optional dependencies
+- [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md) — what is real vs scaffold, CI, solver pins
+- [`ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md`](ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md) — phased completion plan
 
-This repo intentionally keeps the governance, artifact, and audit stack usable without `cvxpy` or `moreau`.
+**Verification & trust**
 
-When the optional solver stack is not installed:
-- governance and artifact tests still run
-- parity replay logic can still be tested against fake shields
-- solver-backed shield execution raises a clear optional-dependency error
+- [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md) — operational ladder
+- [`docs/VERIFICATION_MASTER_SPEC.md`](docs/VERIFICATION_MASTER_SPEC.md) — canonical plan (§1–22)
+- [`docs/METRICS_INVENTORY.md`](docs/METRICS_INVENTORY.md) — §13 metric inventory
+- [`docs/DEVENV.md`](docs/DEVENV.md) — Python matrix, markers, workflows
+
+**Governance & benchmarks**
+
+- [`BENCHMARK_GOVERNANCE.md`](BENCHMARK_GOVERNANCE.md)
+- [`docs/RELEASE_POLICY.md`](docs/RELEASE_POLICY.md) · [`docs/FIXTURE_POLICY.md`](docs/FIXTURE_POLICY.md) · [`docs/PARITY_FIXTURE_PROMOTION.md`](docs/PARITY_FIXTURE_PROMOTION.md)
+- [`benchmarks/DASHBOARD_README.md`](benchmarks/DASHBOARD_README.md) · [`benchmarks/runs/README.md`](benchmarks/runs/README.md)
+- [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md)
+
+**Moreau & solvers**
+
+- [`docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md`](docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md)
+- [`docs/MOREAU_API_NOTES.md`](docs/MOREAU_API_NOTES.md)
+- [`docs/NATIVE_PARITY_POLICY.md`](docs/NATIVE_PARITY_POLICY.md)
+- [`docs/PERFORMANCE_BENCHMARKING_POLICY.md`](docs/PERFORMANCE_BENCHMARKING_POLICY.md)
+- [`docs/DIFFERENTIATION_VALIDATION_POLICY.md`](docs/DIFFERENTIATION_VALIDATION_POLICY.md)
+
+**Design & integration**
+
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/PROPOSER_DOCUMENTATION.md`](docs/PROPOSER_DOCUMENTATION.md) · [`docs/STATE_OF_THE_ART_NOTES.md`](docs/STATE_OF_THE_ART_NOTES.md)
+- [`docs/INTER_SIM_RL_INTEGRATION.md`](docs/INTER_SIM_RL_INTEGRATION.md)
+- [`docs/adr/001-progress-clearance-constraints.md`](docs/adr/001-progress-clearance-constraints.md)
+
+**Tests**
+
+- [`tests/README.md`](tests/README.md)
+
+---
+
+## Optional dependencies
+
+Governance, artifact validation, and audit paths run **without** `cvxpy` or `moreau`. If the solver stack is absent: governance tests still pass, parity replay can use fakes, and solver-backed execution fails with an explicit optional-dependency error.

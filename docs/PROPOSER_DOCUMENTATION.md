@@ -83,3 +83,10 @@ This repo includes not just code but all the written operational and policy arti
 - audit flows
 
 The goal is to make the repository itself strong enough to serve as a trustworthy benchmark and release system, not merely a code dump.
+
+## See also
+
+- [README.md](../README.md) — documentation map and verification ladder
+- [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) — operational trust layers
+- [ARCHITECTURE.md](ARCHITECTURE.md) — layered system view
+- [BENCHMARK_GOVERNANCE.md](../BENCHMARK_GOVERNANCE.md) — governed benchmark claims

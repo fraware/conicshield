@@ -9,6 +9,8 @@ Each run directory should pass `validate_run_bundle` and typically contains at l
 - `config.json`, `summary.json`, `episodes.jsonl`, `transition_bank.json`
 - Schema sidecars copied by `reference_run` (`*.schema.json`)
 
+After validation, you can emit a Layer G report: `python scripts/artifact_validation_report.py --run-dir benchmarks/runs/<run_id>` (see [docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](../../docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)).
+
 ## Promotion to parity fixture
 
 When a run is approved for native parity regression testing, promote it with:

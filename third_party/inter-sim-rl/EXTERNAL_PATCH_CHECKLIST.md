@@ -1,5 +1,7 @@
 # Upstream patch checklist ([inter-sim-rl](https://github.com/fraware/inter-sim-rl))
 
+**ConicShield:** [docs/INTER_SIM_RL_INTEGRATION.md](../../docs/INTER_SIM_RL_INTEGRATION.md).
+
 Use this when cutting a release of the upstream environment that ConicShield benchmarks against.
 
 - [ ] `get_shield_context()` includes at least: `allowed_actions`, `blocked_actions`, `action_upper_bounds`, `rule_choice`, `previous_instruction`, `hazard_score` (see `schemas/shield_context.schema.json`).

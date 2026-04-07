@@ -1,5 +1,7 @@
 # ADR 001: `progress` and `clearance` SafetySpec kinds (deferred)
 
+**Related:** [../ARCHITECTURE.md](../ARCHITECTURE.md), [../PROPOSER_DOCUMENTATION.md](../PROPOSER_DOCUMENTATION.md), [../../ENGINEERING_STATUS.md](../../ENGINEERING_STATUS.md).
+
 ## Status
 
 Accepted as **deferred** until a benchmark card or shield deployment requires these constraint kinds.

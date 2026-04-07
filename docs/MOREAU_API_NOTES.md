@@ -43,3 +43,9 @@ When bumping `moreau`, `cvxpy`, or `cvxpylayers` (or Python minor), walk this li
 | Tests | `make test-solver` or Vendor CI track (`vendor-ci-moreau`); [`conicshield/core/solver_smoke_cli.py`](../conicshield/core/solver_smoke_cli.py) reference + native arms. |
 
 If the vendor changes status strings or timing fields, update [`conicshield/core/telemetry.py`](../conicshield/core/telemetry.py) `normalize_moreau_info` and any strict parity comparisons in tests.
+
+## See also (in-repo)
+
+- [MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md](MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md)
+- [NATIVE_PARITY_POLICY.md](NATIVE_PARITY_POLICY.md), [PERFORMANCE_BENCHMARKING_POLICY.md](PERFORMANCE_BENCHMARKING_POLICY.md)
+- [DIFFERENTIATION_VALIDATION_POLICY.md](DIFFERENTIATION_VALIDATION_POLICY.md)

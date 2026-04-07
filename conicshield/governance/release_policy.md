@@ -1,5 +1,7 @@
 # Release Orchestration Policy
 
+Authoritative duplicate of release rules in [`docs/RELEASE_POLICY.md`](../../docs/RELEASE_POLICY.md) and [`BENCHMARK_GOVERNANCE.md`](../../BENCHMARK_GOVERNANCE.md). Prefer editing the `docs/` copies for cross-repo links; keep this file aligned.
+
 The release orchestrator has exactly two legal outputs:
 1. same-family publication
 2. new-family fork and publication

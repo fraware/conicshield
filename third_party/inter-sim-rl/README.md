@@ -1,5 +1,7 @@
 # inter-sim-rl (external upstream)
 
+**ConicShield docs:** [docs/INTER_SIM_RL_INTEGRATION.md](../../docs/INTER_SIM_RL_INTEGRATION.md), [README.md](../../README.md).
+
 ConicShield integrates through a thin adapter; navigation RL code lives in the canonical upstream repository:
 
 - **Repository:** [https://github.com/fraware/inter-sim-rl](https://github.com/fraware/inter-sim-rl)

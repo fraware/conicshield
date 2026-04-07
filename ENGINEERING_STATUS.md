@@ -2,6 +2,8 @@
 
 Living summary of what the repository actually contains versus what remains scaffold or external work. Update this file when milestones in `ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md` land.
 
+**Documentation index:** see [`README.md`](README.md) *Documentation map* for policies, verification ladder, and benchmarks.
+
 ## Complete in-repo (verified against tree and tests)
 
 - Python package `conicshield/` with core solver seams: **reference path** `CVXPYMoreauProjector` (`specs/compiler.py`) using `cp.MOREAU`, and **native path** `NativeMoreauCompiledProjector` (`core/moreau_compiled.py`) using `moreau.Solver` with the same QP family as the reference (see `specs/shield_qp.py`, `specs/native_moreau_builder.py`).

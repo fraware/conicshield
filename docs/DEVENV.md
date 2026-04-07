@@ -48,7 +48,7 @@ python -m pytest tests/ -q --override-ini addopts="-q --durations=15"
 
 Manual **`workflow_dispatch`** only in [`.github/workflows/solver-ci.yml`](../.github/workflows/solver-ci.yml). Requires repository secrets: `GEMFURY_TOKEN`, `MOREAU_LICENSE_KEY`.
 
-Runs solver-marked tests, solver smoke CLI, optional `reference_run` bundle (validated), a **full verification bundle** (env, vendor smoke, reference correctness, performance + latency PNG, parity, trust dashboard) uploaded as **`vendor_verification_bundle`**, plus artifacts `ref_bundle_ci` and `vendor_solver_versions` (`solver_versions.json`), and appends a filtered `pip freeze` (moreau/cvxpy/cvxpylayers) to the job Summary for copying into [`ENGINEERING_STATUS.md`](../ENGINEERING_STATUS.md).
+Runs solver-marked tests, solver smoke CLI, optional `reference_run` bundle (validated), a **full verification bundle** (env, vendor smoke, reference correctness, performance + latency PNG, differentiation stub, native parity, **`artifact_validation_report`** on the reference bundle, **`generate_parity_report`**, trust dashboard) uploaded as **`vendor_verification_bundle`**, plus artifacts `ref_bundle_ci` and `vendor_solver_versions` (`solver_versions.json`), and appends a filtered `pip freeze` (moreau/cvxpy/cvxpylayers) to the job Summary for copying into [`ENGINEERING_STATUS.md`](../ENGINEERING_STATUS.md).
 
 ## Other workflows (path-filtered or manual)
 
@@ -68,5 +68,6 @@ On each PR/push, **ci.yml** runs `environment_check`, `smoke_check`, `differenti
 
 - Vendor API re-verification: [`docs/MOREAU_API_NOTES.md`](MOREAU_API_NOTES.md)
 - Operational spine M2–M6: [`MAINTAINER_RUNBOOK.md`](../MAINTAINER_RUNBOOK.md) (*Post–wave 4 operational spine*)
+- Metric inventory (plan §13): [`docs/METRICS_INVENTORY.md`](METRICS_INVENTORY.md)
 - Slow tests only: `make test-slow` (see [`tests/test_replay_stress_slow.py`](../tests/test_replay_stress_slow.py))
 - One-shot extended gate (static + cov-gates + slow + inter_sim e2e + strict audit): `make verify-extended` (see runbook *Extended local verification*)
