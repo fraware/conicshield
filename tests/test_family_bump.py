@@ -12,9 +12,10 @@ def test_initialize_new_family(tmp_path) -> None:
     bench = tmp_path / "benchmarks"
     (bench / "releases" / "fam-v1").mkdir(parents=True)
     (bench / "releases" / "fam-v1" / "FAMILY_MANIFEST.schema.json").write_text("{}", encoding="utf-8")
-    (bench / "registry.json").write_text(json.dumps({"benchmark_families":[]}), encoding="utf-8")
+    (bench / "registry.json").write_text(json.dumps({"benchmark_families": []}), encoding="utf-8")
 
     import os
+
     cwd = Path.cwd()
     os.chdir(tmp_path)
     try:

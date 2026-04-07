@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 
 def _load_json(path: Path) -> Any:
@@ -15,7 +15,7 @@ def _write_json(path: Path, payload: Any) -> None:
 
 
 def load_registry(path: str | Path = "benchmarks/registry.json") -> dict[str, Any]:
-    return _load_json(Path(path))
+    return cast(dict[str, Any], _load_json(Path(path)))
 
 
 def save_registry(payload: dict[str, Any], path: str | Path = "benchmarks/registry.json") -> None:
@@ -23,7 +23,7 @@ def save_registry(payload: dict[str, Any], path: str | Path = "benchmarks/regist
 
 
 def load_current(family_id: str) -> dict[str, Any]:
-    return _load_json(Path("benchmarks") / "releases" / family_id / "CURRENT.json")
+    return cast(dict[str, Any], _load_json(Path("benchmarks") / "releases" / family_id / "CURRENT.json"))
 
 
 def save_current(family_id: str, payload: dict[str, Any]) -> None:
@@ -31,7 +31,7 @@ def save_current(family_id: str, payload: dict[str, Any]) -> None:
 
 
 def load_history(family_id: str) -> dict[str, Any]:
-    return _load_json(Path("benchmarks") / "releases" / family_id / "HISTORY.json")
+    return cast(dict[str, Any], _load_json(Path("benchmarks") / "releases" / family_id / "HISTORY.json"))
 
 
 def save_history(family_id: str, payload: dict[str, Any]) -> None:

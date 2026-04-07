@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
@@ -126,11 +127,13 @@ class EpisodeRecord:
             elif self.rule_choice == "left":
                 if "left" in prev_l and s.chosen_action != "turn_left":
                     violations += 1
-            elif self.rule_choice == "alternate":
-                if "left" in prev_l and s.chosen_action != "turn_right":
-                    violations += 1
-                elif "right" in prev_l and s.chosen_action != "turn_left":
-                    violations += 1
+            elif self.rule_choice == "alternate" and (
+                "left" in prev_l
+                and s.chosen_action != "turn_right"
+                or "right" in prev_l
+                and s.chosen_action != "turn_left"
+            ):
+                violations += 1
         return violations
 
     def as_dict(self) -> dict[str, Any]:
@@ -229,7 +232,7 @@ class InterSimEpisodeRunner:
             else:
                 if self.shield is None:
                     action_idx = int(np.argmax(q_values))
-                    chosen_action = getattr(env, "action_space")[action_idx]
+                    chosen_action = env.action_space[action_idx]
                     step_record = StepRecord(
                         step=step_idx,
                         current_address=str(current_address),
@@ -246,7 +249,7 @@ class InterSimEpisodeRunner:
 
                     decision = self.shield.choose_action(
                         q_values=q_values,
-                        action_space=getattr(env, "action_space"),
+                        action_space=env.action_space,
                         context=env_context,
                     )
                     chosen_action = decision.action_name
@@ -275,7 +278,7 @@ class InterSimEpisodeRunner:
                         metadata={
                             **decision.projection.metadata,
                             "shield_context_snapshot": shield_context_snapshot,
-                            "canonical_action_space": list(getattr(env, "action_space")),
+                            "canonical_action_space": list(env.action_space),
                             "spec_id": decision.spec_id,
                             "cache_key": decision.cache_key,
                         },
@@ -304,8 +307,10 @@ class InterSimEpisodeRunner:
 
             if done:
                 episode.terminated_reason = (
-                    "out_of_bank" if info.get("out_of_bank")
-                    else "no_candidates" if info.get("candidate_count", 1) == 0
+                    "out_of_bank"
+                    if info.get("out_of_bank")
+                    else "no_candidates"
+                    if info.get("candidate_count", 1) == 0
                     else "max_intersections"
                 )
                 break

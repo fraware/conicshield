@@ -1,0 +1,23 @@
+{
+  "schema_version": "offline_transition_graph_export/v1",
+  "root_address": "Root",
+  "coords_by_address": {
+    "Root": [0.0, 0.0],
+    "A": [1.0, 0.0]
+  },
+  "transition_graph": {
+    "Root": [
+      {
+        "destination_address": "A",
+        "destination_coords": [1.0, 0.0],
+        "first_instruction": "Turn right",
+        "action_class": "turn_right",
+        "duration_sec": 10.0,
+        "distance_m": 100.0
+      }
+    ],
+    "A": []
+  },
+  "max_depth": 2,
+  "max_nodes": 8
+}

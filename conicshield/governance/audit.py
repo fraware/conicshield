@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import json
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -90,28 +90,55 @@ def _validate_family_manifest_safe(family_id: str, issues: list[AuditIssue]) -> 
         return None
 
 
-def _check_registry_release_consistency(*, family_entry: dict[str, Any], current_payload: dict[str, Any], manifest: dict[str, Any] | None, issues: list[AuditIssue]) -> None:
+def _check_registry_release_consistency(
+    *,
+    family_entry: dict[str, Any],
+    current_payload: dict[str, Any],
+    manifest: dict[str, Any] | None,
+    issues: list[AuditIssue],
+) -> None:
     family_id = str(family_entry["family_id"])
     if family_entry.get("current_run_id") != current_payload.get("current_run_id"):
-        _append_issue(issues, "error", f"family:{family_id}", "registry current_run_id does not match CURRENT.json current_run_id")
+        _append_issue(
+            issues, "error", f"family:{family_id}", "registry current_run_id does not match CURRENT.json current_run_id"
+        )
     if family_entry.get("task_contract_version") != current_payload.get("task_contract_version"):
-        _append_issue(issues, "error", f"family:{family_id}", "registry task_contract_version does not match CURRENT.json")
+        _append_issue(
+            issues, "error", f"family:{family_id}", "registry task_contract_version does not match CURRENT.json"
+        )
     if family_entry.get("current_fixture_version") != current_payload.get("fixture_version"):
-        _append_issue(issues, "error", f"family:{family_id}", "registry current_fixture_version does not match CURRENT.json")
+        _append_issue(
+            issues, "error", f"family:{family_id}", "registry current_fixture_version does not match CURRENT.json"
+        )
     if manifest is not None:
         if manifest.get("task_contract_version") != current_payload.get("task_contract_version"):
-            _append_issue(issues, "error", f"family:{family_id}", "FAMILY_MANIFEST task_contract_version does not match CURRENT.json")
+            _append_issue(
+                issues,
+                "error",
+                f"family:{family_id}",
+                "FAMILY_MANIFEST task_contract_version does not match CURRENT.json",
+            )
         if manifest["fixture_lineage"]["current_fixture_version"] != current_payload.get("fixture_version"):
-            _append_issue(issues, "error", f"family:{family_id}", "FAMILY_MANIFEST fixture version does not match CURRENT.json")
+            _append_issue(
+                issues, "error", f"family:{family_id}", "FAMILY_MANIFEST fixture version does not match CURRENT.json"
+            )
 
 
-def _check_history_consistency(*, family_id: str, history_payload: dict[str, Any], current_payload: dict[str, Any], issues: list[AuditIssue]) -> None:
+def _check_history_consistency(
+    *, family_id: str, history_payload: dict[str, Any], current_payload: dict[str, Any], issues: list[AuditIssue]
+) -> None:
     entries = history_payload.get("entries", [])
     current_run_id = current_payload.get("current_run_id")
 
-    if current_run_id is not None:
-        if not any(e.get("run_id") == current_run_id and e.get("status") == "published" for e in entries):
-            _append_issue(issues, "warning", f"family:{family_id}", "CURRENT.json current_run_id not present as published entry in HISTORY.json")
+    if current_run_id is not None and not any(
+        e.get("run_id") == current_run_id and e.get("status") == "published" for e in entries
+    ):
+        _append_issue(
+            issues,
+            "warning",
+            f"family:{family_id}",
+            "CURRENT.json current_run_id not present as published entry in HISTORY.json",
+        )
 
     for entry in entries:
         run_id = entry.get("run_id")
@@ -119,25 +146,34 @@ def _check_history_consistency(*, family_id: str, history_payload: dict[str, Any
             _append_issue(issues, "error", f"family:{family_id}", "HISTORY.json contains entry without run_id")
             continue
         if not _run_dir(str(run_id)).exists():
-            _append_issue(issues, "error", f"family:{family_id}", f"HISTORY.json references missing run bundle: {run_id}")
+            _append_issue(
+                issues, "error", f"family:{family_id}", f"HISTORY.json references missing run bundle: {run_id}"
+            )
 
 
-def _check_current_run_governance_status(*, family_id: str, current_payload: dict[str, Any], issues: list[AuditIssue]) -> int:
+def _check_current_run_governance_status(
+    *, family_id: str, current_payload: dict[str, Any], issues: list[AuditIssue]
+) -> int:
     current_run_id = current_payload.get("current_run_id")
     if current_run_id is None:
         return 0
     path = _governance_status_path(str(current_run_id))
     if not path.exists():
-        _append_issue(issues, "error", f"family:{family_id}", f"Current run missing governance_status.json: {current_run_id}")
+        _append_issue(
+            issues, "error", f"family:{family_id}", f"Current run missing governance_status.json: {current_run_id}"
+        )
         return 1
     status = _load_json(path)
     if status.get("family_id") != family_id:
-        _append_issue(issues, "error", f"run:{current_run_id}", "governance_status family_id does not match release family_id")
+        _append_issue(
+            issues, "error", f"run:{current_run_id}", "governance_status family_id does not match release family_id"
+        )
     if status.get("artifact_gate") != "green":
         _append_issue(issues, "error", f"run:{current_run_id}", "Current published run artifact_gate is not green")
-    if "shielded-native-moreau" in status.get("publishable_arms", []):
-        if status.get("parity_gate") != "green":
-            _append_issue(issues, "error", f"run:{current_run_id}", "Native arm is publishable but parity_gate is not green")
+    if "shielded-native-moreau" in status.get("publishable_arms", []) and status.get("parity_gate") != "green":
+        _append_issue(
+            issues, "error", f"run:{current_run_id}", "Native arm is publishable but parity_gate is not green"
+        )
     return 1
 
 
@@ -154,7 +190,9 @@ def audit_benchmark_tree(*, family_id: str | None = None) -> AuditReport:
     if family_id is not None:
         families = [f for f in families if str(f.get("family_id")) == family_id]
         if not families:
-            return AuditReport(False, 0, 0, [AuditIssue("error", "registry", f"Family {family_id!r} not found in registry")])
+            return AuditReport(
+                False, 0, 0, [AuditIssue("error", "registry", f"Family {family_id!r} not found in registry")]
+            )
 
     seen_family_ids: set[str] = set()
     for fam in families:
@@ -174,20 +212,29 @@ def audit_benchmark_tree(*, family_id: str | None = None) -> AuditReport:
 
         current_path = release_dir / "CURRENT.json"
         history_path = release_dir / "HISTORY.json"
-        if not (_check_file_exists(current_path, issues, scope=f"family:{fid}") and _check_file_exists(history_path, issues, scope=f"family:{fid}")):
+        if not (
+            _check_file_exists(current_path, issues, scope=f"family:{fid}")
+            and _check_file_exists(history_path, issues, scope=f"family:{fid}")
+        ):
             continue
 
         current_payload = _load_json(current_path)
         history_payload = _load_json(history_path)
 
-        _check_registry_release_consistency(family_entry=fam, current_payload=current_payload, manifest=manifest, issues=issues)
-        _check_history_consistency(family_id=fid, history_payload=history_payload, current_payload=current_payload, issues=issues)
+        _check_registry_release_consistency(
+            family_entry=fam, current_payload=current_payload, manifest=manifest, issues=issues
+        )
+        _check_history_consistency(
+            family_id=fid, history_payload=history_payload, current_payload=current_payload, issues=issues
+        )
 
         current_run_id = current_payload.get("current_run_id")
         if current_run_id is not None:
             if _validate_run_bundle_safe(str(current_run_id), issues):
                 runs_checked += 1
-            runs_checked += _check_current_run_governance_status(family_id=fid, current_payload=current_payload, issues=issues)
+            runs_checked += _check_current_run_governance_status(
+                family_id=fid, current_payload=current_payload, issues=issues
+            )
 
     ok = not any(issue.level == "error" for issue in issues)
     return AuditReport(ok=ok, families_checked=families_checked, runs_checked=runs_checked, issues=issues)

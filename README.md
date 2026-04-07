@@ -18,30 +18,55 @@ This repository is intentionally comprehensive. It contains:
 ## Repository status
 
 This repo is a high-quality implementation scaffold and governance system. It is structured so that:
-- pure-Python governance and artifact layers run without optional solver dependencies
-- solver-backed paths become available when installing the optional `solver` extras
+- governance, artifacts, schemas, and release controls run in public/reference mode
+- vendor-native Moreau paths are opt-in and explicitly gated
 - external environment integration is explicit and documented rather than hidden
+
+## Supported Python
+
+Canonical matrix, CI behavior, **Vendor CI track (`vendor-ci-moreau`)**, and pytest markers: **[docs/DEVENV.md](docs/DEVENV.md)**.
+
+- **Minimum:** Python 3.11 (`requires-python >=3.11` in `pyproject.toml`).
+- **CI:** GitHub Actions runs lint, typecheck, tests, and coverage on **3.11 and 3.12** (no solver extras by default).
+- **Solver / CUDA:** For local Moreau + GPU stacks, follow [Moreau installation](https://docs.moreau.so/installation.html). Integration with installed Moreau is verified in the **Vendor CI track (`vendor-ci-moreau`)** (manual dispatch) or a licensed local environment.
 
 ## Installation
 
-Base install:
+Public/reference install (default, matches public CI):
 
 ```bash
-pip install -e ".[dev]"
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
 ```
 
-Optional solver stack:
+Regenerate locked tooling after changing dev dependencies in `pyproject.toml`:
 
 ```bash
-pip install -e ".[solver,dev]" --extra-index-url "<YOUR_PRIVATE_MOREAU_INDEX_URL>"
+make compile-deps
 ```
 
-Moreau also requires a license key, typically placed at:
+Vendor Moreau mode (Linux/WSL2 + vendor index + license):
 
 ```bash
-mkdir -p ~/.moreau
-printf "%s" "<YOUR_MOREAU_LICENSE_KEY>" > ~/.moreau/key
+export MOREAU_EXTRA_INDEX_URL="https://<TOKEN>:@pypi.fury.io/optimalintellect/"
+export MOREAU_LICENSE_KEY="<YOUR_MOREAU_LICENSE_KEY>"
+bash scripts/bootstrap_moreau.sh
 ```
+
+Manual vendor install (if not using bootstrap):
+
+```bash
+python -m pip install -e ".[dev]"
+python -m pip install "moreau[cuda]" --extra-index-url "$MOREAU_EXTRA_INDEX_URL"
+python -m moreau check
+```
+
+This repository treats Moreau as a vendor dependency. Do not assume that default-index `pip install moreau` provides the correct solver backend for this project. The supported runtime for Moreau-backed development is Linux or WSL2.
+
+### Secrets and local config
+
+- Never commit GemFury tokens, Moreau license keys, or a populated `.env`. `.env` is gitignored.
+- Copy [`.env.example`](.env.example) to `.env` for local variable names only; keep real values out of the repo and CI logs.
 
 ## Quick commands
 
@@ -89,6 +114,21 @@ docs/
 scripts/
 ```
 
+## Tests
+
+Default `pytest` (and `make test`) runs core/reference paths and excludes vendor-only suites.
+
+```bash
+make test
+# Public/reference-only suite:
+make test-reference
+# Vendor Moreau suite (requires vendor install + license):
+make test-vendor-moreau
+# Solver-marked aggregate:
+make test-solver
+make smoke-solver
+```
+
 ## Design principles
 
 1. Formal intent, operational enforcement.
@@ -97,6 +137,21 @@ scripts/
 4. Reproducible benchmark bundles.
 5. Native compiled results are never trusted without parity.
 6. Semantic task changes fork benchmark families instead of silently overwriting scores.
+
+## Verification ladder
+
+End-to-end trust layers (environment, smoke, reference correctness, parity, performance, governance): **[docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)**. The full canonical narrative (sections 1–22) is **[docs/VERIFICATION_MASTER_SPEC.md](docs/VERIFICATION_MASTER_SPEC.md)**.
+
+```bash
+make env-check
+make smoke-check
+make reference-correctness
+make trust-dashboard
+# Vendor-only: make perf-benchmark, make parity-native-licensed
+# Layer G / D helpers: make artifact-validation-report; make parity-report (after parity-native-licensed)
+```
+
+Quick artifacts: `python scripts/environment_check.py`, `python scripts/smoke_check.py`, then `python scripts/generate_trust_dashboard.py` for a single HTML/MD summary under `output/`. Default CI uploads `output/` as **`verification-output-<python-version>`**. The **Vendor CI** workflow (`vendor-ci-moreau`, manual dispatch) produces **`vendor_verification_bundle`**: env + vendor smoke + reference correctness + performance (including `performance_latency.png` when solves succeed) + native parity + artifact validation report + parity report + trust dashboard.
 
 ## Documentation map
 
@@ -109,6 +164,10 @@ scripts/
 - `docs/INTER_SIM_RL_INTEGRATION.md` — how to integrate with the external environment
 - `docs/FIXTURE_POLICY.md` — frozen parity fixture policy
 - `docs/RELEASE_POLICY.md` — release orchestration policy
+- `docs/MOREAU_API_NOTES.md` — how ConicShield calls Moreau/CVXPY (verify on upgrades)
+- `docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md` — normative install/runtime/test policy for Moreau
+- `docs/METRICS_INVENTORY.md` — verification plan §13 metric inventory (stress-test roadmap)
+- `tests/README.md` — how `tests/` maps to verification plan §15
 
 ## Notes on optional dependencies
 

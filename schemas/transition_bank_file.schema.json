@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conicshield.dev/schemas/transition_bank_file.schema.json",
+  "title": "Transition bank JSON (optional provenance or nested bank)",
+  "type": "object",
+  "additionalProperties": true,
+  "anyOf": [
+    { "required": ["root_address", "nodes"] },
+    { "required": ["bank"] }
+  ],
+  "properties": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["bank_id", "created_at_utc", "generator"],
+      "properties": {
+        "bank_id": { "type": "string", "minLength": 1 },
+        "created_at_utc": { "type": "string", "minLength": 1 },
+        "generator": { "type": "string", "minLength": 1 },
+        "generator_version": { "type": "string" },
+        "schema_version": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "root_address": { "type": "string", "minLength": 1 },
+    "nodes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["address", "coords", "depth", "candidates"],
+        "properties": {
+          "address": { "type": "string" },
+          "coords": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "depth": { "type": "integer", "minimum": 0 },
+          "candidates": { "type": "array" }
+        }
+      }
+    },
+    "bank": {
+      "type": "object",
+      "required": ["root_address", "nodes"],
+      "additionalProperties": true
+    }
+  }
+}

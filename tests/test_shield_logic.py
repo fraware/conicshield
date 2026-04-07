@@ -9,7 +9,16 @@ class FakeProjector:
     def __init__(self, allowed_index: int):
         self.allowed_index = allowed_index
 
-    def project(self, proposed_action, previous_action=None, *, reference_action=None, policy_weight=1.0, reference_weight=0.0, metadata=None):
+    def project(
+        self,
+        proposed_action,
+        previous_action=None,
+        *,
+        reference_action=None,
+        policy_weight=1.0,
+        reference_weight=0.0,
+        metadata=None,
+    ):
         corrected = np.zeros_like(proposed_action)
         corrected[self.allowed_index] = 1.0
         return ProjectionResult(

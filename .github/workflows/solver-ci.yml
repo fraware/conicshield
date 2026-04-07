@@ -1,0 +1,118 @@
+name: vendor-ci-moreau
+
+# Requires repository secrets (Settings → Secrets → Actions):
+#   GEMFURY_TOKEN        — GemFury read token (no https:// prefix)
+#   MOREAU_LICENSE_KEY   — Moreau license string
+#
+# Forks do not inherit secrets; this workflow is for the canonical repo only.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  solver:
+    name: Vendor CI track (Moreau)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Vendor CI track: configure Moreau license"
+        env:
+          MOREAU_LICENSE_KEY: ${{ secrets.MOREAU_LICENSE_KEY }}
+        run: |
+          mkdir -p "$HOME/.moreau"
+          echo -n "$MOREAU_LICENSE_KEY" > "$HOME/.moreau/key"
+      - name: "Vendor CI track: install vendor solver stack"
+        env:
+          GEMFURY_TOKEN: ${{ secrets.GEMFURY_TOKEN }}
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[solver]" \
+            --extra-index-url "https://${GEMFURY_TOKEN}:@pypi.fury.io/optimalintellect/"
+      - name: "Vendor CI track: write solver_versions.json"
+        run: |
+          python <<'PY'
+          import json
+          import re
+          import subprocess
+          import sys
+
+          out = subprocess.run(
+              [sys.executable, "-m", "pip", "freeze"],
+              check=True,
+              capture_output=True,
+              text=True,
+          ).stdout
+          pkgs: dict[str, str] = {}
+          for line in out.splitlines():
+              if re.match(r"(?i)^(moreau|cvxpy|cvxpylayers)==", line):
+                  name, _, ver = line.partition("==")
+                  pkgs[name.strip().lower()] = ver.strip()
+              elif re.match(r"(?i)^(moreau|cvxpy|cvxpylayers)\s+@", line):
+                  key = line.split("@", 1)[0].strip().lower()
+                  pkgs[key] = line.strip()
+          with open("/tmp/solver_versions.json", "w", encoding="utf-8") as f:
+              json.dump(pkgs, f, indent=2, sort_keys=True)
+          print(open("/tmp/solver_versions.json", encoding="utf-8").read())
+          PY
+      - name: "Vendor CI track: solver-marked tests"
+        run: python -m pytest tests/ -q -m "solver or requires_moreau"
+      - name: "Vendor CI track: solver smoke CLI"
+        run: python -m conicshield.core.solver_smoke_cli
+      - name: "Vendor CI track: optional reference bundle (real projector)"
+        run: |
+          python -m conicshield.bench.reference_run \
+            --out /tmp/ref_bundle_ci \
+            --bank tests/fixtures/parity_reference/transition_bank.json
+          python -m conicshield.artifacts.validator_cli --run-dir /tmp/ref_bundle_ci
+      - name: "Vendor CI track: full verification bundle (env, smoke, ref, perf, parity, trust)"
+        run: |
+          set -e
+          VDIR=/tmp/vendor_verification
+          mkdir -p "$VDIR"
+          python scripts/environment_check.py --out-dir "$VDIR"
+          python scripts/smoke_check.py --vendor --out-dir "$VDIR"
+          python scripts/reference_correctness_summary.py --out-dir "$VDIR"
+          python scripts/performance_benchmark.py --out-dir "$VDIR" --repeats 5
+          python scripts/differentiation_check.py --out-dir "$VDIR"
+          python -m conicshield.parity.cli \
+            --reference-dir tests/fixtures/parity_reference \
+            --reference-arm-label shielded-rules-plus-geometry \
+            --out-dir "$VDIR"
+          python scripts/artifact_validation_report.py --run-dir /tmp/ref_bundle_ci --out-dir "$VDIR"
+          python scripts/generate_parity_report.py --parity-summary "$VDIR/parity_summary.json" --out-dir "$VDIR"
+          python scripts/generate_trust_dashboard.py --artifact-dir "$VDIR" --out-dir "$VDIR"
+      - name: "Vendor CI track: upload reference bundle artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ref_bundle_ci
+          path: /tmp/ref_bundle_ci
+          retention-days: 14
+      - name: "Vendor CI track: upload full verification bundle"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendor_verification_bundle
+          path: /tmp/vendor_verification
+          retention-days: 14
+          if-no-files-found: warn
+      - name: "Vendor CI track: upload solver_versions.json"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendor_solver_versions
+          path: /tmp/solver_versions.json
+          retention-days: 14
+          if-no-files-found: ignore
+      - name: "Vendor CI track: record solver stack summary"
+        run: |
+          echo "## Vendor CI track (Moreau): solver stack" >> "$GITHUB_STEP_SUMMARY"
+          python -m pip freeze | grep -iE 'moreau|cvxpy|cvxpylayers' >> "$GITHUB_STEP_SUMMARY" || true
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artifacts:" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`vendor_solver_versions\` -> \`solver_versions.json\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`ref_bundle_ci\` -> validated reference bundle (real projector)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`vendor_verification_bundle\` -> env/smoke/ref-correctness/perf plots + parity + trust_dashboard" >> "$GITHUB_STEP_SUMMARY"

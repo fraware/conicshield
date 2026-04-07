@@ -30,3 +30,7 @@ def main() -> None:
         raise SystemExit(1)
     if args.strict and has_warning:
         raise SystemExit(2)
+
+
+if __name__ == "__main__":
+    main()

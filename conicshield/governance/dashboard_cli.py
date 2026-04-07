@@ -28,3 +28,7 @@ def main() -> None:
         args.markdown_output.write_text(markdown, encoding="utf-8")
     elif args.json_output is not None:
         print(markdown)
+
+
+if __name__ == "__main__":
+    main()

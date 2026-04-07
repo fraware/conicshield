@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -80,7 +80,9 @@ def decide_release_mode(*, run_dir: str | Path, family_id: str) -> ReleaseDecisi
     current = _load_json(current_path)
     current_run_id = current.get("current_run_id")
     if current_run_id is None:
-        return ReleaseDecision("same-family", family_id, family_id, False, "Family exists but has no published run yet.")
+        return ReleaseDecision(
+            "same-family", family_id, family_id, False, "Family exists but has no published run yet."
+        )
 
     current_config = _load_json(Path("benchmarks") / "runs" / str(current_run_id) / "config.json")
     candidate_config = _load_json(run_dir / "config.json")
@@ -96,7 +98,9 @@ def decide_release_mode(*, run_dir: str | Path, family_id: str) -> ReleaseDecisi
     return ReleaseDecision("new-family", family_id, new_family, True, compatibility.reason)
 
 
-def release_run(*, run_dir: str | Path, family_id: str, reason: str, allow_family_bump: bool = False) -> ReleaseDecision:
+def release_run(
+    *, run_dir: str | Path, family_id: str, reason: str, allow_family_bump: bool = False
+) -> ReleaseDecision:
     run_dir = Path(run_dir)
     status = _load_json(_run_status_path(run_dir))
     _validate_publishable_status(status)

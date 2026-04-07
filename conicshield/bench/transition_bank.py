@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from collections import deque
-from dataclasses import dataclass, field
 import json
+from collections import deque
+from collections.abc import Callable
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
 @dataclass(slots=True)
@@ -18,7 +19,7 @@ class CandidateEdge:
     place: dict[str, Any] | None = None
 
     @classmethod
-    def from_raw(cls, raw: dict[str, Any]) -> "CandidateEdge":
+    def from_raw(cls, raw: dict[str, Any]) -> CandidateEdge:
         return cls(
             destination_address=str(raw["destination_address"]),
             destination_coords=(
@@ -27,12 +28,8 @@ class CandidateEdge:
             ),
             first_instruction=str(raw.get("first_instruction", "")),
             action_class=str(raw["action_class"]),
-            duration_sec=(
-                float(raw["duration_sec"]) if raw.get("duration_sec") is not None else None
-            ),
-            distance_m=(
-                float(raw["distance_m"]) if raw.get("distance_m") is not None else None
-            ),
+            duration_sec=(float(raw["duration_sec"]) if raw.get("duration_sec") is not None else None),
+            distance_m=(float(raw["distance_m"]) if raw.get("distance_m") is not None else None),
             place=raw.get("place"),
         )
 
@@ -53,11 +50,11 @@ class TransitionBank:
     root_address: str
     nodes: dict[str, TransitionNode]
 
-    def to_json(self, path: str | Path) -> None:
+    def to_json(self, path: str | Path, *, provenance: dict[str, Any] | None = None) -> None:
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
 
-        payload = {
+        payload: dict[str, Any] = {
             "root_address": self.root_address,
             "nodes": {
                 addr: {
@@ -80,11 +77,15 @@ class TransitionBank:
                 for addr, node in self.nodes.items()
             },
         }
+        if provenance is not None:
+            payload["provenance"] = provenance
         path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
     @classmethod
-    def from_json(cls, path: str | Path) -> "TransitionBank":
+    def from_json(cls, path: str | Path) -> TransitionBank:
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
+        if "root_address" not in payload and "bank" in payload and isinstance(payload["bank"], dict):
+            payload = payload["bank"]
         nodes: dict[str, TransitionNode] = {}
         for addr, raw in payload["nodes"].items():
             nodes[addr] = TransitionNode(

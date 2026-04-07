@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
-from typing import Mapping
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from typing import Any, cast
 
 import numpy as np
 
@@ -57,16 +58,36 @@ def infer_geometry_prior(
     branch_bearings = context.get("branch_bearings_deg")
     hazard_score = context.get("hazard_score", 0.0)
 
-    if heading is None or not branch_bearings:
+    if heading is None or branch_bearings is None:
         if not cfg.fallback_uniform:
             return None, 0.0
         prior = np.ones(len(CANONICAL_ACTION_SPACE), dtype=float)
         prior /= np.sum(prior)
         return prior, 0.0
 
-    heading = float(heading)
-    bearings = [float(b) for b in branch_bearings]
-    targets = target_heading_by_action(heading)
+    if isinstance(branch_bearings, str | bytes) or not isinstance(branch_bearings, Sequence):
+        if not cfg.fallback_uniform:
+            return None, 0.0
+        prior = np.ones(len(CANONICAL_ACTION_SPACE), dtype=float)
+        prior /= np.sum(prior)
+        return prior, 0.0
+
+    if not isinstance(heading, int | float):
+        if not cfg.fallback_uniform:
+            return None, 0.0
+        prior = np.ones(len(CANONICAL_ACTION_SPACE), dtype=float)
+        prior /= np.sum(prior)
+        return prior, 0.0
+
+    heading_f = float(heading)
+    bearings = [float(cast(Any, b)) for b in branch_bearings]
+    if not bearings:
+        if not cfg.fallback_uniform:
+            return None, 0.0
+        prior = np.ones(len(CANONICAL_ACTION_SPACE), dtype=float)
+        prior /= np.sum(prior)
+        return prior, 0.0
+    targets = target_heading_by_action(heading_f)
 
     scores = np.zeros(len(CANONICAL_ACTION_SPACE), dtype=float)
     for i, action_name in enumerate(CANONICAL_ACTION_SPACE):
@@ -83,6 +104,6 @@ def infer_geometry_prior(
 
     prior = scores / np.sum(scores)
 
-    hz = max(0.0, min(1.0, float(hazard_score)))
+    hz = max(0.0, min(1.0, float(cast(Any, hazard_score))))
     weight = cfg.base_weight + cfg.hazard_weight_scale * hz
     return prior, weight

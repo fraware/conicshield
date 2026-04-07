@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import hashlib
 import json
-from typing import Any, Callable, Mapping
+from collections.abc import Callable, Mapping
+from dataclasses import dataclass, field
+from typing import Any, cast
 
 import numpy as np
 
@@ -42,7 +43,7 @@ def stable_softmax(logits: np.ndarray) -> np.ndarray:
     denom = float(np.sum(exps))
     if denom <= 0.0 or not np.isfinite(denom):
         raise ValueError("softmax denominator is invalid")
-    return exps / denom
+    return cast(np.ndarray, exps / denom)
 
 
 @dataclass(slots=True)
@@ -67,7 +68,9 @@ class ShieldDecision:
         }
 
 
-ProjectorFactory = Callable[[SafetySpec, Backend, SolverOptions | None, NativeMoreauCompiledOptions | None], ProjectorProtocol]
+ProjectorFactory = Callable[
+    [SafetySpec, Backend, SolverOptions | None, NativeMoreauCompiledOptions | None], ProjectorProtocol
+]
 
 
 @dataclass(slots=True)
@@ -98,14 +101,10 @@ class InterSimConicShield:
         action_space = tuple(str(a) for a in action_space)
 
         if set(action_space) != set(CANONICAL_ACTION_SPACE):
-            raise ValueError(
-                "action_space must contain exactly: "
-                f"{list(CANONICAL_ACTION_SPACE)}"
-            )
+            raise ValueError("action_space must contain exactly: " f"{list(CANONICAL_ACTION_SPACE)}")
         if q_values.shape != (len(action_space),):
             raise ValueError(
-                f"q_values shape {q_values.shape} does not match "
-                f"action_space length {len(action_space)}"
+                f"q_values shape {q_values.shape} does not match " f"action_space length {len(action_space)}"
             )
 
         q_values_canonical = self._reorder_to_canonical(
@@ -178,12 +177,8 @@ class InterSimConicShield:
         )
 
     def _build_spec_from_context(self, context: Mapping[str, Any]) -> SafetySpec:
-        allowed_actions = self._normalize_actions(
-            context.get("allowed_actions", CANONICAL_ACTION_SPACE)
-        )
-        blocked_actions = self._normalize_actions(
-            context.get("blocked_actions", [])
-        )
+        allowed_actions = self._normalize_actions(context.get("allowed_actions", CANONICAL_ACTION_SPACE))
+        blocked_actions = self._normalize_actions(context.get("blocked_actions", []))
 
         allowed_set = set(allowed_actions) - set(blocked_actions)
         if not allowed_set:
@@ -209,9 +204,7 @@ class InterSimConicShield:
         )
 
         allowed_indices = [
-            ACTION_TO_INDEX[action_name]
-            for action_name in CANONICAL_ACTION_SPACE
-            if upper_bounds[action_name] > 1e-12
+            ACTION_TO_INDEX[action_name] for action_name in CANONICAL_ACTION_SPACE if upper_bounds[action_name] > 1e-12
         ]
         if not allowed_indices:
             allowed_indices = list(range(len(CANONICAL_ACTION_SPACE)))

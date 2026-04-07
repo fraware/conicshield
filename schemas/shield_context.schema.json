@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conicshield.dev/schemas/shield_context.schema.json",
+  "title": "inter-sim-rl shield context (get_shield_context)",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "allowed_actions",
+    "blocked_actions",
+    "action_upper_bounds",
+    "rule_choice",
+    "previous_instruction",
+    "hazard_score"
+  ],
+  "properties": {
+    "allowed_actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["turn_left", "turn_right", "go_straight", "turn_back"]
+      }
+    },
+    "blocked_actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["turn_left", "turn_right", "go_straight", "turn_back"]
+      }
+    },
+    "action_upper_bounds": {
+      "type": "object",
+      "additionalProperties": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+    },
+    "rule_choice": {
+      "type": "string",
+      "minLength": 1
+    },
+    "previous_instruction": {
+      "type": ["string", "null"]
+    },
+    "hazard_score": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "current_heading_deg": { "type": "number" },
+    "branch_bearings_deg": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "current_location": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "current_direction": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "current_address": { "type": "string" },
+    "transition_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["destination_address", "destination_coords", "first_instruction", "action_class"],
+        "properties": {
+          "destination_address": { "type": "string" },
+          "destination_coords": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "first_instruction": { "type": "string" },
+          "action_class": {
+            "type": "string",
+            "enum": ["turn_left", "turn_right", "go_straight", "turn_back"]
+          },
+          "duration_sec": { "type": ["number", "null"] },
+          "distance_m": { "type": ["number", "null"] }
+        }
+      }
+    }
+  }
+}

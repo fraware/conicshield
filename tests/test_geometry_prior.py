@@ -1,6 +1,11 @@
+from typing import Any
+
 import numpy as np
 
-from conicshield.adapters.inter_sim_rl.geometry_prior import GeometryPriorConfig, infer_geometry_prior
+from conicshield.adapters.inter_sim_rl.geometry_prior import (
+    GeometryPriorConfig,
+    infer_geometry_prior,
+)
 
 
 def test_geometry_prior_prefers_right_when_heading_plus_90_branch_exists() -> None:
@@ -17,7 +22,11 @@ def test_geometry_prior_prefers_right_when_heading_plus_90_branch_exists() -> No
 
 
 def test_geometry_prior_falls_back_uniformly_when_geometry_missing() -> None:
-    context = {"current_heading_deg": None, "branch_bearings_deg": [], "hazard_score": 0.1}
+    context: dict[str, Any] = {
+        "current_heading_deg": None,
+        "branch_bearings_deg": [],
+        "hazard_score": 0.1,
+    }
     prior, weight = infer_geometry_prior(context=context, config=GeometryPriorConfig())
     assert prior is not None
     assert np.isclose(np.sum(prior), 1.0)

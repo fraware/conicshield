@@ -9,5 +9,13 @@ build/
 output/
 .env
 .venv/
+.venv-wsl/
+.hypothesis/
 .coverage
 htmlcov/
+*.log
+Thumbs.db
+.DS_Store
+
+# Local clone of upstream inter-sim-rl (use patches/ + CI apply, or submodule).
+third_party/inter-sim-rl/checkout/

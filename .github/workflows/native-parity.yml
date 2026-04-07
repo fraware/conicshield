@@ -1,6 +1,10 @@
 name: native-parity
 
+# Parity replay does not call Moreau; it compares distributions from the frozen fixture.
+# Full native solve coverage stays in solver-ci (workflow_dispatch) when secrets are available.
+
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - "conicshield/core/**"
@@ -17,8 +21,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          python -m pip install ".[dev]"
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e .
       - run: pytest tests/test_parity_replay.py -q

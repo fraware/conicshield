@@ -40,7 +40,7 @@ It already includes:
 - tests for governance and core logic
 - proposer and architecture docs
 
-**CI note:** The `ci` workflow runs the full `pytest tests/` suite on every pull request and on pushes to `main` using `.[dev]` only (no solver extras). Path-filtered workflows still cover governance audit, dashboard generation, fixture-policy checks, and an additional `tests/test_parity_replay.py` job where listed paths change. A separate **solver-enabled** CI job (Phase 1) remains to be added when Moreau integration tests are marked and wired.
+**CI note:** The [`ci`](.github/workflows/ci.yml) workflow runs lint, typecheck, and the full `pytest tests/` suite on every pull request and push to `main` using `.[dev]` only (no solver extras). Default pytest excludes `solver`, `requires_moreau`, `inter_sim_rl`, and `slow` markers (see [`pyproject.toml`](pyproject.toml) `[tool.pytest.ini_options]`). Path-filtered workflows cover governance audit, dashboard, fixture policy, native parity (replay), inter-sim-rl, release orchestration, and publish benchmarks under `.github/workflows/`. **Solver integration** runs in the **Vendor CI track** (`vendor-ci-moreau`) at [`.github/workflows/solver-ci.yml`](.github/workflows/solver-ci.yml) via **manual `workflow_dispatch`** with secrets (`GEMFURY_TOKEN`, `MOREAU_LICENSE_KEY`): solver-marked tests, smoke CLI, optional `reference_run` bundle artifact, and native Moreau parity against the frozen fixture. Supported Python and CI/solver matrix: [`docs/DEVENV.md`](docs/DEVENV.md). Normative Moreau install/runtime policy: [`docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md`](docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md).
 
 ## 1.2 What is still intentionally incomplete or synthetic
 
@@ -277,6 +277,8 @@ Action:
 - decide the canonical engineering baseline for CI and Linux development
 - document supported versions explicitly
 - test solver extras against the actual Moreau package on the chosen baseline
+
+**Canonical reference:** [`docs/DEVENV.md`](docs/DEVENV.md) (supported Python, CI vs **Vendor CI track (`vendor-ci-moreau`)**, optional inter-sim-rl workflow, running slow tests locally).
 
 ### 0.3 Replace placeholder author/package metadata
 - update package author fields

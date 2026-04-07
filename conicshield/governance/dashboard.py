@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import json
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from conicshield.governance.audit import audit_benchmark_tree
 
@@ -73,8 +73,17 @@ class GovernanceDashboard:
 def _current_payload_for_family(family_id: str) -> dict[str, Any]:
     current_path = Path("benchmarks") / "releases" / family_id / "CURRENT.json"
     if not current_path.exists():
-        return {"current_run_id": None, "state": None, "artifact_gate": None, "parity_gate": None, "promotion_gate": None, "publishable_arms": [], "published_at_utc": None, "notes": "Missing CURRENT.json"}
-    return _load_json(current_path)
+        return {
+            "current_run_id": None,
+            "state": None,
+            "artifact_gate": None,
+            "parity_gate": None,
+            "promotion_gate": None,
+            "publishable_arms": [],
+            "published_at_utc": None,
+            "notes": "Missing CURRENT.json",
+        }
+    return cast(dict[str, Any], _load_json(current_path))
 
 
 def build_governance_dashboard() -> GovernanceDashboard:
@@ -145,7 +154,10 @@ def render_markdown_dashboard(dashboard: GovernanceDashboard) -> str:
     lines.append("")
     lines.append("## Families")
     lines.append("")
-    lines.append("| Family | Status | Current Run | Task Contract | Fixture | State | Artifact | Parity | Promotion | Native Endorsed |")
+    lines.append(
+        "| Family | Status | Current Run | Task Contract | Fixture | State | "
+        "Artifact | Parity | Promotion | Native Endorsed |"
+    )
     lines.append("|---|---|---|---|---|---|---|---|---|---|")
     for fam in dashboard.families:
         lines.append(
@@ -160,8 +172,16 @@ def render_markdown_dashboard(dashboard: GovernanceDashboard) -> str:
     lines.append("## Maintainer Quick Actions")
     lines.append("")
     lines.append("- Validate governance tree: `python -m conicshield.governance.audit_cli --strict`")
-    lines.append("- Generate dashboard: `python -m conicshield.governance.dashboard_cli --json-output output/governance_dashboard.json --markdown-output output/governance_dashboard.md`")
-    lines.append("- Dry-run release: `python -m conicshield.governance.release_cli --run-dir benchmarks/runs/<run_id> --family-id <family_id> --reason '<reason>' --dry-run`")
+    lines.append(
+        "- Generate dashboard: `python -m conicshield.governance.dashboard_cli "
+        "--json-output output/governance_dashboard.json "
+        "--markdown-output output/governance_dashboard.md`"
+    )
+    lines.append(
+        "- Dry-run release: `python -m conicshield.governance.release_cli "
+        "--run-dir benchmarks/runs/<run_id> --family-id <family_id> "
+        "--reason '<reason>' --dry-run`"
+    )
     lines.append("- Read runbook: `python -m conicshield.governance.runbook_cli`")
     lines.append("")
     return "\n".join(lines)

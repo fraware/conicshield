@@ -1,0 +1,6 @@
+repository=https://github.com/fraware/LabTrust-Gym
+branch=main
+sha=4ec88fb3350ad9444eb76fe57faa68e5eab3c31b
+commit_url=https://github.com/fraware/LabTrust-Gym/commit/4ec88fb3350ad9444eb76fe57faa68e5eab3c31b
+recorded_utc=2026-04-06
+note=Separate benchmark environment; not the inter-sim-rl integration target.

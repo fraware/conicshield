@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conicshield.dev/schemas/performance_summary.schema.json",
+  "title": "performance_summary",
+  "type": "object",
+  "required": [
+    "generated_at_utc",
+    "repeats_config",
+    "rows",
+    "errors",
+    "cuda_claim_note"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "generated_at_utc": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T"
+    },
+    "repeats_config": { "type": "integer", "minimum": 1 },
+    "rows": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/perfRow" }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "cuda_claim_note": { "type": "string" }
+  },
+  "$defs": {
+    "perfRow": {
+      "type": "object",
+      "required": ["path", "device", "repeats", "mean_sec", "p50_sec", "p95_sec"],
+      "additionalProperties": true,
+      "properties": {
+        "path": {
+          "type": "string",
+          "enum": ["cvxpy_moreau", "native_cold", "native_warm_sequence"]
+        },
+        "device": { "type": "string" },
+        "repeats": { "type": "integer", "minimum": 1 },
+        "mean_sec": { "type": "number" },
+        "p50_sec": { "type": "number" },
+        "p95_sec": { "type": "number" },
+        "warm_start_speedup_vs_first": {
+          "type": ["number", "null"]
+        }
+      }
+    }
+  }
+}

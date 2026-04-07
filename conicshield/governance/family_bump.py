@@ -65,7 +65,9 @@ def initialize_new_family(
 
     current_schema_path = Path("benchmarks") / "releases" / current_family_id / "FAMILY_MANIFEST.schema.json"
     if current_schema_path.exists():
-        (release_dir / "FAMILY_MANIFEST.schema.json").write_text(current_schema_path.read_text(encoding="utf-8"), encoding="utf-8")
+        (release_dir / "FAMILY_MANIFEST.schema.json").write_text(
+            current_schema_path.read_text(encoding="utf-8"), encoding="utf-8"
+        )
 
     (release_dir / "FAMILY_MANIFEST.json").write_text(
         json.dumps(

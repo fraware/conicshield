@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 from typing import Any
 
 from conicshield.bench.transition_bank import CandidateEdge, TransitionBank
@@ -39,7 +39,8 @@ def _direction_vector(
     return (dx / norm, dy / norm)
 
 
-def _canonical_candidate_sort_key(c: CandidateEdge):
+def _canonical_candidate_sort_key(c: CandidateEdge) -> tuple[float, float, str]:
+    """Deterministic tie-break: duration, then distance, then destination address (lexical)."""
     dur = c.duration_sec if c.duration_sec is not None else float("inf")
     dist = c.distance_m if c.distance_m is not None else float("inf")
     return (dur, dist, c.destination_address)
@@ -65,9 +66,7 @@ class ReplayGraphEnvironment:
         self.current_state = ReplayState(
             current_location=self.current_node.coords,
             current_direction=(0.0, 0.0),
-            nearby_streets=[
-                c.place for c in self.current_node.candidates if c.place is not None
-            ],
+            nearby_streets=[c.place for c in self.current_node.candidates if c.place is not None],
             current_address=self.current_node.address,
             previous_instruction=None,
         )
@@ -76,12 +75,19 @@ class ReplayGraphEnvironment:
         return self.current_state
 
     def get_shield_context(self) -> dict[str, Any]:
+        allowed = self._allowed_actions_from_candidates()
+        allowed_set = set(allowed)
+        blocked = [a for a in ACTION_SPACE if a not in allowed_set]
+        upper_bounds = {a: (1.0 if a in allowed_set else 0.0) for a in ACTION_SPACE}
         return {
             "current_location": list(self.current_state.current_location),
             "current_direction": list(self.current_state.current_direction),
             "current_address": self.current_state.current_address,
             "previous_instruction": self.current_state.previous_instruction,
             "rule_choice": self.rule_choice,
+            "hazard_score": 0.0,
+            "blocked_actions": blocked,
+            "action_upper_bounds": upper_bounds,
             "transition_candidates": [
                 {
                     "destination_address": c.destination_address,
@@ -93,14 +99,14 @@ class ReplayGraphEnvironment:
                 }
                 for c in self.current_node.candidates
             ],
-            "allowed_actions": self._allowed_actions_from_candidates(),
+            "allowed_actions": allowed,
         }
 
     def _allowed_actions_from_candidates(self) -> list[str]:
         supported = sorted({c.action_class for c in self.current_node.candidates})
         return supported if supported else ACTION_SPACE.copy()
 
-    def step(self, chosen_action: str):
+    def step(self, chosen_action: str) -> tuple[ReplayState, float, bool, dict[str, Any]]:
         reward = self.calculate_reward(
             self.current_state.previous_instruction,
             chosen_action,
@@ -120,7 +126,7 @@ class ReplayGraphEnvironment:
 
         if selected is None:
             done = True
-            info = {
+            info: dict[str, Any] = {
                 "fallback_used": True,
                 "matched_action": False,
                 "candidate_count": 0,
@@ -132,13 +138,13 @@ class ReplayGraphEnvironment:
 
         if next_node is None:
             done = True
-            info = {
+            info_oob: dict[str, Any] = {
                 "fallback_used": fallback_used,
                 "matched_action": bool(matching),
                 "candidate_count": len(self.current_node.candidates),
                 "out_of_bank": True,
             }
-            return self.current_state, reward, done, info
+            return self.current_state, reward, done, info_oob
 
         self.intersection_count += 1
         done = self.intersection_count >= self.max_intersections
@@ -155,7 +161,7 @@ class ReplayGraphEnvironment:
             previous_instruction=chosen_action,
         )
 
-        info = {
+        info_final: dict[str, Any] = {
             "fallback_used": fallback_used,
             "matched_action": bool(matching),
             "candidate_count": len(self.current_node.candidates),
@@ -164,9 +170,9 @@ class ReplayGraphEnvironment:
             "selected_duration_sec": selected.duration_sec,
             "selected_distance_m": selected.distance_m,
         }
-        return self.current_state, reward, done, info
+        return self.current_state, reward, done, info_final
 
-    def calculate_reward(self, previous_instruction, chosen_action: str) -> float:
+    def calculate_reward(self, previous_instruction: str | None, chosen_action: str) -> float:
         if previous_instruction is None:
             return 0.0
 

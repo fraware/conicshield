@@ -4,7 +4,6 @@ from conicshield.artifacts.run_spec import (
     EnvironmentSpec,
     PolicySpec,
     RunSpec,
-    SolverSpec,
     TransitionBankSpec,
 )
 

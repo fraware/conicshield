@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -81,7 +81,9 @@ def _safe_percentile(values: list[float], q: float) -> float:
     return float(np.percentile(np.asarray(values, dtype=float), q))
 
 
-def compare_against_reference(*, episodes_jsonl: str | Path, candidate_shield: Any, reference_arm_label: str = "shielded-rules-plus-geometry") -> tuple[list[ParityStepResult], ParitySummary]:
+def compare_against_reference(
+    *, episodes_jsonl: str | Path, candidate_shield: Any, reference_arm_label: str = "shielded-rules-plus-geometry"
+) -> tuple[list[ParityStepResult], ParitySummary]:
     records = _iter_jsonl(episodes_jsonl)
     step_results: list[ParityStepResult] = []
 
@@ -132,9 +134,17 @@ def compare_against_reference(*, episodes_jsonl: str | Path, candidate_shield: A
                     proposed_linf=float(np.max(np.abs(ref_proposed - cand_proposed))),
                     corrected_linf=float(np.max(np.abs(ref_corrected - cand_corrected))),
                     corrected_l2=float(np.linalg.norm(ref_corrected - cand_corrected)),
-                    objective_abs_diff=(abs(float(obj_ref) - float(obj_cand)) if obj_ref is not None and obj_cand is not None else None),
-                    intervention_norm_abs_diff=(abs(float(intervention_ref) - float(intervention_cand)) if intervention_ref is not None and intervention_cand is not None else None),
-                    active_constraints_match=(sorted(step.get("active_constraints", [])) == sorted(decision.projection.active_constraints)),
+                    objective_abs_diff=(
+                        abs(float(obj_ref) - float(obj_cand)) if obj_ref is not None and obj_cand is not None else None
+                    ),
+                    intervention_norm_abs_diff=(
+                        abs(float(intervention_ref) - float(intervention_cand))
+                        if intervention_ref is not None and intervention_cand is not None
+                        else None
+                    ),
+                    active_constraints_match=(
+                        sorted(step.get("active_constraints", [])) == sorted(decision.projection.active_constraints)
+                    ),
                     solver_status_reference=step.get("solver_status"),
                     solver_status_candidate=decision.projection.solver_status,
                 )

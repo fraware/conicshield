@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from jsonschema import Draft202012Validator
 
@@ -31,14 +31,14 @@ def load_family_manifest(family_id: str) -> dict[str, Any]:
     path = family_manifest_path(family_id)
     if not path.exists():
         raise FamilyManifestError(f"Missing family manifest: {path}")
-    return _load_json(path)
+    return cast(dict[str, Any], _load_json(path))
 
 
 def load_family_manifest_schema(family_id: str) -> dict[str, Any]:
     path = family_manifest_schema_path(family_id)
     if not path.exists():
         raise FamilyManifestError(f"Missing family manifest schema: {path}")
-    return _load_json(path)
+    return cast(dict[str, Any], _load_json(path))
 
 
 def validate_family_manifest(family_id: str) -> dict[str, Any]:

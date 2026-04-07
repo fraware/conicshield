@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from conicshield.adapters.inter_sim_rl.shield import InterSimConicShield
 from conicshield.core.moreau_compiled import NativeMoreauCompiledOptions
@@ -13,13 +13,13 @@ from conicshield.parity.replay import compare_against_reference
 
 
 def _load_json(path: str | Path) -> dict[str, Any]:
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return cast(dict[str, Any], json.loads(Path(path).read_text(encoding="utf-8")))
 
 
 def _extract_native_arm(config: dict[str, Any]) -> dict[str, Any]:
     for arm in config.get("arms", []):
         if arm["label"] == "shielded-native-moreau":
-            return arm
+            return cast(dict[str, Any], arm)
     raise ValueError("No 'shielded-native-moreau' arm found in config.json")
 
 
@@ -58,11 +58,14 @@ def main() -> None:
         candidate_shield=candidate,
         reference_arm_label=args.reference_arm_label,
     )
-    enforce_default_parity_gates(summary)
-
     (args.out_dir / "parity_summary.json").write_text(json.dumps(summary.as_dict(), indent=2), encoding="utf-8")
     with (args.out_dir / "parity_steps.jsonl").open("w", encoding="utf-8") as fh:
         for row in step_results:
             fh.write(json.dumps(row.as_dict(), sort_keys=True))
             fh.write("\n")
+    enforce_default_parity_gates(summary)
     print(args.out_dir / "parity_summary.json")
+
+
+if __name__ == "__main__":
+    main()

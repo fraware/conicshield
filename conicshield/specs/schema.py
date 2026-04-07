@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 
 class ConstraintKind(str, Enum):
@@ -22,7 +22,7 @@ class BoxConstraint(BaseModel):
 
     @field_validator("upper")
     @classmethod
-    def validate_bounds(cls, upper: list[float], info) -> list[float]:
+    def validate_bounds(cls, upper: list[float], info: ValidationInfo) -> list[float]:
         lower = info.data.get("lower")
         if lower is None:
             return upper

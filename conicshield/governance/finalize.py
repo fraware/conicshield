@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -218,7 +218,9 @@ def finalize_run(inputs: FinalizationInputs) -> dict[str, Any]:
 
     artifact_gate = _artifact_gate(inputs.run_dir)
     fixture_gate = _fixture_gate(inputs.reference_fixture_dir)
-    parity_gate = _parity_gate(has_native_arm=_has_native_arm(summary_by_label), parity_summary_path=inputs.parity_summary_path)
+    parity_gate = _parity_gate(
+        has_native_arm=_has_native_arm(summary_by_label), parity_summary_path=inputs.parity_summary_path
+    )
     promotion_gate = _promotion_gate(summary_by_label)
     review_lock_gate = _review_lock_gate(
         current_release_path=inputs.current_release_path,

@@ -14,5 +14,6 @@ def require_module(name: str, purpose: str) -> ModuleType:
     except ImportError as exc:
         raise OptionalDependencyError(
             f"Optional dependency '{name}' is required for {purpose}. "
-            f"Install the solver extras, for example: pip install -e '.[solver]'."
+            "Install solver extras (see README / MAINTAINER_RUNBOOK), e.g. "
+            "pip install -e '.[solver,dev]' with the GemFury index and a Moreau license."
         ) from exc

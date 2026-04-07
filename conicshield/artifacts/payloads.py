@@ -52,9 +52,7 @@ def _rates_from_records(records: list[EpisodeRecord]) -> dict[str, float]:
 
     return {
         "intervention_rate": total_intervened_steps / total_steps if total_steps else 0.0,
-        "rule_violation_rate": (
-            total_rule_violations / total_rule_opportunities if total_rule_opportunities else 0.0
-        ),
+        "rule_violation_rate": (total_rule_violations / total_rule_opportunities if total_rule_opportunities else 0.0),
         "matched_action_rate": total_matched_steps / total_steps if total_steps else 0.0,
         "fallback_rate": total_fallback_steps / total_steps if total_steps else 0.0,
         "warm_start_rate": total_warm_started / total_solver_steps if total_solver_steps else 0.0,
@@ -109,9 +107,7 @@ def summary_payload(
         "solve_time_p99_ms": _safe_percentile(solve_times_ms, 99),
         "setup_time_p50_ms": _safe_percentile(setup_times_ms, 50),
         "iterations_p50": _safe_percentile(iterations, 50),
-        "avg_intervention_norm": (
-            float(mean(intervention_norms)) if intervention_norms else 0.0
-        ),
+        "avg_intervention_norm": (float(mean(intervention_norms)) if intervention_norms else 0.0),
         "solve_failure_rate": rates["solve_failure_rate"],
         "warm_start_rate": rates["warm_start_rate"],
         "reward_retention_vs_baseline": reward_retention_vs_baseline,

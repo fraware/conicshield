@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conicshield.dev/schemas/offline_transition_graph_export.schema.json",
+  "title": "Offline transition graph export (inter-sim-rl to ConicShield bank)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "root_address",
+    "coords_by_address",
+    "transition_graph"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "offline_transition_graph_export/v1"
+    },
+    "root_address": {
+      "type": "string",
+      "minLength": 1
+    },
+    "coords_by_address": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "transition_graph": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "destination_address",
+            "destination_coords",
+            "action_class"
+          ],
+          "properties": {
+            "destination_address": {
+              "type": "string",
+              "minLength": 1
+            },
+            "destination_coords": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "first_instruction": {
+              "type": "string"
+            },
+            "action_class": {
+              "type": "string",
+              "minLength": 1
+            },
+            "duration_sec": {
+              "type": ["number", "null"]
+            },
+            "distance_m": {
+              "type": ["number", "null"]
+            },
+            "place": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "max_depth": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 4
+    },
+    "max_nodes": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 400
+    }
+  }
+}

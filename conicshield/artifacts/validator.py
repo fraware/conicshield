@@ -2,9 +2,18 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from jsonschema import Draft202012Validator
+
+
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[2]
+
+
+def _transition_bank_file_schema() -> dict[str, Any]:
+    path = _repo_root() / "schemas" / "transition_bank_file.schema.json"
+    return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
 
 
 class ArtifactValidationError(RuntimeError):
@@ -25,13 +34,9 @@ def _iter_jsonl(path: str | Path) -> list[dict[str, Any]]:
             try:
                 payload = json.loads(line)
             except json.JSONDecodeError as exc:
-                raise ArtifactValidationError(
-                    f"Invalid JSONL in {path} at line {line_no}: {exc}"
-                ) from exc
+                raise ArtifactValidationError(f"Invalid JSONL in {path} at line {line_no}: {exc}") from exc
             if not isinstance(payload, dict):
-                raise ArtifactValidationError(
-                    f"Expected JSON object in {path} at line {line_no}"
-                )
+                raise ArtifactValidationError(f"Expected JSON object in {path} at line {line_no}")
             records.append(payload)
     return records
 
@@ -59,14 +64,10 @@ def validate_episode_record(ep: dict[str, Any]) -> None:
     steps = ep["steps"]
 
     if ep["num_steps"] != len(steps):
-        raise ArtifactValidationError(
-            f"{ep['episode_id']}: num_steps != len(steps)"
-        )
+        raise ArtifactValidationError(f"{ep['episode_id']}: num_steps != len(steps)")
 
     if ep["num_interventions"] != sum(int(s["intervened"]) for s in steps):
-        raise ArtifactValidationError(
-            f"{ep['episode_id']}: num_interventions inconsistent with steps"
-        )
+        raise ArtifactValidationError(f"{ep['episode_id']}: num_interventions inconsistent with steps")
 
     total_reward = sum(float(s["reward"]) for s in steps)
     _assert_close(
@@ -85,9 +86,7 @@ def validate_episode_record(ep: dict[str, Any]) -> None:
 
         if proposed is not None:
             if len(proposed) != 4:
-                raise ArtifactValidationError(
-                    f"{ep['episode_id']} step {idx}: proposed_distribution length != 4"
-                )
+                raise ArtifactValidationError(f"{ep['episode_id']} step {idx}: proposed_distribution length != 4")
             _assert_close(
                 float(sum(proposed)),
                 1.0,
@@ -97,9 +96,7 @@ def validate_episode_record(ep: dict[str, Any]) -> None:
 
         if corrected is not None:
             if len(corrected) != 4:
-                raise ArtifactValidationError(
-                    f"{ep['episode_id']} step {idx}: corrected_distribution length != 4"
-                )
+                raise ArtifactValidationError(f"{ep['episode_id']} step {idx}: corrected_distribution length != 4")
             if min(float(x) for x in corrected) < -1e-8:
                 raise ArtifactValidationError(
                     f"{ep['episode_id']} step {idx}: corrected_distribution has negative mass"
@@ -122,30 +119,44 @@ def validate_episode_record(ep: dict[str, Any]) -> None:
 
         if prev is not None:
             prev_l = str(prev).lower()
-            if rule == "right" and "right" in prev_l and act != "turn_right":
+            if (
+                (
+                    rule == "right"
+                    and "right" in prev_l
+                    and act != "turn_right"
+                    or rule == "left"
+                    and "left" in prev_l
+                    and act != "turn_left"
+                )
+                or rule == "alternate"
+                and ("left" in prev_l and act != "turn_right" or "right" in prev_l and act != "turn_left")
+            ):
                 rule_violations += 1
-            elif rule == "left" and "left" in prev_l and act != "turn_left":
-                rule_violations += 1
-            elif rule == "alternate":
-                if "left" in prev_l and act != "turn_right":
-                    rule_violations += 1
-                elif "right" in prev_l and act != "turn_left":
-                    rule_violations += 1
 
     if ep.get("rule_violations") is not None and ep["rule_violations"] != rule_violations:
-        raise ArtifactValidationError(
-            f"{ep['episode_id']}: rule_violations inconsistent with step data"
-        )
+        raise ArtifactValidationError(f"{ep['episode_id']}: rule_violations inconsistent with step data")
 
     if ep.get("matched_action_steps") is not None and ep["matched_action_steps"] != matched_action_steps:
-        raise ArtifactValidationError(
-            f"{ep['episode_id']}: matched_action_steps inconsistent with step data"
-        )
+        raise ArtifactValidationError(f"{ep['episode_id']}: matched_action_steps inconsistent with step data")
 
     if ep.get("fallback_steps") is not None and ep["fallback_steps"] != fallback_steps:
-        raise ArtifactValidationError(
-            f"{ep['episode_id']}: fallback_steps inconsistent with step data"
-        )
+        raise ArtifactValidationError(f"{ep['episode_id']}: fallback_steps inconsistent with step data")
+
+
+def _validate_episodes_against_config(episodes: list[dict[str, Any]], config: dict[str, Any]) -> None:
+    allowed_labels = {str(a["label"]) for a in config.get("arms", [])}
+    seen_keys: set[tuple[str, str]] = set()
+    for ep in episodes:
+        label = ep.get("arm_label")
+        if label not in allowed_labels:
+            raise ArtifactValidationError(
+                f"Episode {ep.get('episode_id')!r}: arm_label {label!r} not declared in config.json arms"
+            )
+        eid = str(ep.get("episode_id", ""))
+        key = (str(label), eid)
+        if key in seen_keys:
+            raise ArtifactValidationError(f"Duplicate episode_id {eid!r} for arm_label {label!r}")
+        seen_keys.add(key)
 
 
 def validate_summary_records(
@@ -164,9 +175,7 @@ def validate_summary_records(
 
         eps = episodes_by_label.get(label, [])
         if len(eps) != summary["episodes"]:
-            raise ArtifactValidationError(
-                f"Summary {label}: episodes count mismatch"
-            )
+            raise ArtifactValidationError(f"Summary {label}: episodes count mismatch")
 
         if not eps:
             continue
@@ -177,12 +186,22 @@ def validate_summary_records(
 
         _assert_close(float(summary["avg_reward"]), avg_reward, tol=1e-8, msg=f"Summary {label}: avg_reward mismatch")
         _assert_close(float(summary["avg_steps"]), avg_steps, tol=1e-8, msg=f"Summary {label}: avg_steps mismatch")
-        _assert_close(float(summary["avg_interventions_per_episode"]), avg_interventions, tol=1e-8, msg=f"Summary {label}: avg_interventions_per_episode mismatch")
+        _assert_close(
+            float(summary["avg_interventions_per_episode"]),
+            avg_interventions,
+            tol=1e-8,
+            msg=f"Summary {label}: avg_interventions_per_episode mismatch",
+        )
 
         total_steps = sum(int(ep["num_steps"]) for ep in eps)
         total_intervened = sum(sum(int(step["intervened"]) for step in ep["steps"]) for ep in eps)
         expected_intervention_rate = total_intervened / total_steps if total_steps else 0.0
-        _assert_close(float(summary["intervention_rate"]), expected_intervention_rate, tol=1e-8, msg=f"Summary {label}: intervention_rate mismatch")
+        _assert_close(
+            float(summary["intervention_rate"]),
+            expected_intervention_rate,
+            tol=1e-8,
+            msg=f"Summary {label}: intervention_rate mismatch",
+        )
 
         total_rule_violations = sum(int(ep.get("rule_violations", 0)) for ep in eps)
         total_rule_opportunities = 0
@@ -190,8 +209,15 @@ def validate_summary_records(
             for step in ep["steps"]:
                 if step.get("previous_instruction") is not None:
                     total_rule_opportunities += 1
-        expected_rule_violation_rate = total_rule_violations / total_rule_opportunities if total_rule_opportunities else 0.0
-        _assert_close(float(summary["rule_violation_rate"]), expected_rule_violation_rate, tol=1e-8, msg=f"Summary {label}: rule_violation_rate mismatch")
+        expected_rule_violation_rate = (
+            total_rule_violations / total_rule_opportunities if total_rule_opportunities else 0.0
+        )
+        _assert_close(
+            float(summary["rule_violation_rate"]),
+            expected_rule_violation_rate,
+            tol=1e-8,
+            msg=f"Summary {label}: rule_violation_rate mismatch",
+        )
 
         total_matched = sum(int(ep.get("matched_action_steps", 0)) for ep in eps)
         total_fallback = sum(int(ep.get("fallback_steps", 0)) for ep in eps)
@@ -199,14 +225,19 @@ def validate_summary_records(
         expected_matched = total_matched / total_steps if total_steps else 0.0
         expected_fallback = total_fallback / total_steps if total_steps else 0.0
 
-        _assert_close(float(summary["matched_action_rate"]), expected_matched, tol=1e-8, msg=f"Summary {label}: matched_action_rate mismatch")
-        _assert_close(float(summary["fallback_rate"]), expected_fallback, tol=1e-8, msg=f"Summary {label}: fallback_rate mismatch")
+        _assert_close(
+            float(summary["matched_action_rate"]),
+            expected_matched,
+            tol=1e-8,
+            msg=f"Summary {label}: matched_action_rate mismatch",
+        )
+        _assert_close(
+            float(summary["fallback_rate"]), expected_fallback, tol=1e-8, msg=f"Summary {label}: fallback_rate mismatch"
+        )
 
     missing = set(episodes_by_label) - seen_labels
     if missing:
-        raise ArtifactValidationError(
-            f"Missing summaries for labels: {sorted(missing)}"
-        )
+        raise ArtifactValidationError(f"Missing summaries for labels: {sorted(missing)}")
 
 
 def validate_run_bundle(run_dir: str | Path) -> None:
@@ -231,7 +262,10 @@ def validate_run_bundle(run_dir: str | Path) -> None:
     summary_schema = _load_json(run_dir / "summary.schema.json")
     episodes = _iter_jsonl(run_dir / "episodes.jsonl")
     episodes_schema = _load_json(run_dir / "episodes.schema.json")
-    _load_json(run_dir / "transition_bank.json")
+    transition_bank = _load_json(run_dir / "transition_bank.json")
+    _validate_schema(transition_bank, _transition_bank_file_schema(), name="transition_bank.json")
+
+    _validate_episodes_against_config(episodes, config)
 
     _validate_schema(config, config_schema, name="config.json")
     _validate_schema(summary, summary_schema, name="summary.json")

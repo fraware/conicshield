@@ -72,15 +72,19 @@ def rule_violation_rate(episodes: list[EpisodeRecord]) -> float:
                 continue
             prev_l = str(prev).lower()
             opportunities += 1
-            if rule == "right" and "right" in prev_l and act != "turn_right":
+            if (
+                (
+                    rule == "right"
+                    and "right" in prev_l
+                    and act != "turn_right"
+                    or rule == "left"
+                    and "left" in prev_l
+                    and act != "turn_left"
+                )
+                or rule == "alternate"
+                and ("left" in prev_l and act != "turn_right" or "right" in prev_l and act != "turn_left")
+            ):
                 violations += 1
-            elif rule == "left" and "left" in prev_l and act != "turn_left":
-                violations += 1
-            elif rule == "alternate":
-                if "left" in prev_l and act != "turn_right":
-                    violations += 1
-                elif "right" in prev_l and act != "turn_left":
-                    violations += 1
     return violations / opportunities if opportunities else 0.0
 
 
