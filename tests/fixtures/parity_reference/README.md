@@ -1,6 +1,6 @@
 # Native parity reference fixture
 
-**Policy:** [`docs/FIXTURE_POLICY.md`](../../docs/FIXTURE_POLICY.md), [`docs/NATIVE_PARITY_POLICY.md`](../../docs/NATIVE_PARITY_POLICY.md), promotion checklist [`docs/PARITY_FIXTURE_PROMOTION.md`](../../docs/PARITY_FIXTURE_PROMOTION.md).
+**Policy:** [`docs/PARITY_AND_FIXTURES.md`](../../docs/PARITY_AND_FIXTURES.md).
 
 This fixture is a frozen reference bundle for native-Moreau parity checks.
 

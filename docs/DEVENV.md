@@ -48,7 +48,7 @@ python -m pytest tests/ -q --override-ini addopts="-q --durations=15"
 
 Manual **`workflow_dispatch`** only in [`.github/workflows/solver-ci.yml`](../.github/workflows/solver-ci.yml). Requires repository secrets: `GEMFURY_TOKEN`, `MOREAU_LICENSE_KEY`.
 
-Runs solver-marked tests, solver smoke CLI, optional `reference_run` bundle (validated), a **full verification bundle** (env, vendor smoke, reference correctness, performance + latency PNG, differentiation stub, native parity, **`artifact_validation_report`** on the reference bundle, **`generate_parity_report`**, trust dashboard) uploaded as **`vendor_verification_bundle`**, plus artifacts `ref_bundle_ci` and `vendor_solver_versions` (`solver_versions.json`), and appends a filtered `pip freeze` (moreau/cvxpy/cvxpylayers) to the job Summary for copying into [`ENGINEERING_STATUS.md`](../ENGINEERING_STATUS.md).
+Runs solver-marked tests, solver smoke CLI, optional `reference_run` bundle (validated), a **full verification bundle** (env, vendor smoke, reference correctness, performance + latency PNG, differentiation stub, native parity, **`artifact_validation_report`** on the reference bundle, **`generate_parity_report`**, trust dashboard) uploaded as **`vendor_verification_bundle`**, plus artifacts `ref_bundle_ci` and `vendor_solver_versions` (`solver_versions.json`), and appends a filtered `pip freeze` (moreau/cvxpy/cvxpylayers) to the job Summary for copying into [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md).
 
 ## Other workflows (path-filtered or manual)
 
@@ -56,18 +56,17 @@ Under `.github/workflows/`: governance audit, governance dashboard, fixture poli
 
 ## Vendor Moreau install (local)
 
-Use Linux/WSL2 and follow [`README.md`](../README.md), [`MAINTAINER_RUNBOOK.md`](../MAINTAINER_RUNBOOK.md), and `scripts/bootstrap_moreau.sh`. Do not assume default-index `pip install moreau` is valid for this repository.
+Use Linux/WSL2 and follow [`README.md`](../README.md), [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md), and `scripts/bootstrap_moreau.sh`. Do not assume default-index `pip install moreau` is valid for this repository.
 
 ## Verification ladder
 
-Operational plan (layers A–H, commands, artifacts): [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](VERIFICATION_AND_STRESS_TEST_PLAN.md). Full canonical narrative (sections 1–22): [`docs/VERIFICATION_MASTER_SPEC.md`](VERIFICATION_MASTER_SPEC.md).
+Verification ladder (layers, commands, artifacts): [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](VERIFICATION_AND_STRESS_TEST_PLAN.md).
 
 On each PR/push, **ci.yml** runs `environment_check`, `smoke_check`, `differentiation_check`, and `generate_trust_dashboard`, then uploads the `output/` directory as the **`verification-output-<python-version>`** artifact (download from the workflow run).
 
 ## Related
 
 - Vendor API re-verification: [`docs/MOREAU_API_NOTES.md`](MOREAU_API_NOTES.md)
-- Operational spine M2–M6: [`MAINTAINER_RUNBOOK.md`](../MAINTAINER_RUNBOOK.md) (*Post–wave 4 operational spine*)
-- Metric inventory (plan §13): [`docs/METRICS_INVENTORY.md`](METRICS_INVENTORY.md)
+- First publish sequence: [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md)
 - Slow tests only: `make test-slow` (see [`tests/test_replay_stress_slow.py`](../tests/test_replay_stress_slow.py))
 - One-shot extended gate (static + cov-gates + slow + inter_sim e2e + strict audit): `make verify-extended` (see runbook *Extended local verification*)

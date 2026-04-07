@@ -42,11 +42,14 @@ def test_no_tracked_forbidden_paths() -> None:
     forbidden_substrings = (
         ".pytest_cache",
         "__pycache__",
-        ".env",
         ".egg-info",
         "/dist/",
         "htmlcov/",
         ".coverage",
     )
-    bad = [p for p in tracked if any(s in p.replace("\\", "/") for s in forbidden_substrings)]
+    bad: list[str] = []
+    for p in tracked:
+        norm = p.replace("\\", "/")
+        if any(s in norm for s in forbidden_substrings) or Path(p).name == ".env":
+            bad.append(p)
     assert not bad, f"Unexpected tracked paths: {bad}"

@@ -222,7 +222,8 @@ def main() -> int:
         "rows": rows,
         "errors": errors,
         "cuda_claim_note": (
-            "CUDA rows only when device_available(cuda) and solve succeeds; " "see PERFORMANCE_BENCHMARKING_POLICY.md"
+            "CUDA rows only when device_available(cuda) and solve succeeds; "
+            "see docs/VERIFICATION_AND_STRESS_TEST_PLAN.md (Performance policy)"
         ),
     }
     (out_dir / "performance_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")

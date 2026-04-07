@@ -103,10 +103,7 @@ make smoke-solver            # solver smoke CLI JSON
 
 ## Verification ladder
 
-Layered checks (environment → smoke → reference correctness → parity → performance → governance) are documented in:
-
-- **[docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)** — commands, artifacts, status
-- **[docs/VERIFICATION_MASTER_SPEC.md](docs/VERIFICATION_MASTER_SPEC.md)** — full narrative (sections 1–22)
+Layered checks (environment → smoke → reference correctness → parity → performance → governance) are documented in **[docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)** (commands, artifacts, and policies).
 
 **Typical local sequence**
 
@@ -151,36 +148,34 @@ third_party/     # upstream pins and patches (not full checkouts)
 
 ## Documentation map
 
+See also [`docs/README.md`](docs/README.md) for a compact index.
+
 **Status & roadmap**
 
-- [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md) — what is real vs scaffold, CI, solver pins
-- [`ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md`](ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md) — phased completion plan
+- [`docs/ENGINEERING_STATUS.md`](docs/ENGINEERING_STATUS.md) — what is implemented, CI, solver pins
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — external dependencies and deferred work
 
 **Verification & trust**
 
-- [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md) — operational ladder
-- [`docs/VERIFICATION_MASTER_SPEC.md`](docs/VERIFICATION_MASTER_SPEC.md) — canonical plan (§1–22)
-- [`docs/METRICS_INVENTORY.md`](docs/METRICS_INVENTORY.md) — §13 metric inventory
+- [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md) — trust ladder, layers, performance/differentiation policy
 - [`docs/DEVENV.md`](docs/DEVENV.md) — Python matrix, markers, workflows
 
 **Governance & benchmarks**
 
-- [`BENCHMARK_GOVERNANCE.md`](BENCHMARK_GOVERNANCE.md)
-- [`docs/RELEASE_POLICY.md`](docs/RELEASE_POLICY.md) · [`docs/FIXTURE_POLICY.md`](docs/FIXTURE_POLICY.md) · [`docs/PARITY_FIXTURE_PROMOTION.md`](docs/PARITY_FIXTURE_PROMOTION.md)
+- [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md)
+- [`docs/RELEASE_POLICY.md`](docs/RELEASE_POLICY.md) · [`docs/PARITY_AND_FIXTURES.md`](docs/PARITY_AND_FIXTURES.md)
 - [`benchmarks/DASHBOARD_README.md`](benchmarks/DASHBOARD_README.md) · [`benchmarks/runs/README.md`](benchmarks/runs/README.md)
-- [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md)
+- [`docs/MAINTAINER_RUNBOOK.md`](docs/MAINTAINER_RUNBOOK.md)
 
 **Moreau & solvers**
 
 - [`docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md`](docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md)
 - [`docs/MOREAU_API_NOTES.md`](docs/MOREAU_API_NOTES.md)
-- [`docs/NATIVE_PARITY_POLICY.md`](docs/NATIVE_PARITY_POLICY.md)
-- [`docs/PERFORMANCE_BENCHMARKING_POLICY.md`](docs/PERFORMANCE_BENCHMARKING_POLICY.md)
-- [`docs/DIFFERENTIATION_VALIDATION_POLICY.md`](docs/DIFFERENTIATION_VALIDATION_POLICY.md)
+- Parity, performance, and differentiation policies: [`docs/PARITY_AND_FIXTURES.md`](docs/PARITY_AND_FIXTURES.md), [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)
 
 **Design & integration**
 
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/PROPOSER_DOCUMENTATION.md`](docs/PROPOSER_DOCUMENTATION.md) · [`docs/STATE_OF_THE_ART_NOTES.md`](docs/STATE_OF_THE_ART_NOTES.md)
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - [`docs/INTER_SIM_RL_INTEGRATION.md`](docs/INTER_SIM_RL_INTEGRATION.md)
 - [`docs/adr/001-progress-clearance-constraints.md`](docs/adr/001-progress-clearance-constraints.md)
 

@@ -1,4 +1,4 @@
-# Test layout (verification plan §15)
+# Test layout
 
 This tree uses **pytest markers** (`solver`, `requires_moreau`, `reference_correctness`, `slow`, …) as the primary way to filter runs. The plan also recommends **physical subtrees**; the following mapping is in place:
 

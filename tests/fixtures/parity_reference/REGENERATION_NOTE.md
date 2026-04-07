@@ -8,7 +8,7 @@
 
 ## Governed regeneration path
 
-See [docs/PARITY_FIXTURE_PROMOTION.md](../../../docs/PARITY_FIXTURE_PROMOTION.md) for the full M4 checklist. Summary:
+See [docs/PARITY_AND_FIXTURES.md](../../../docs/PARITY_AND_FIXTURES.md) for the full checklist. Summary:
 
 1. Run a **validated** reference benchmark directory (e.g. `python -m conicshield.bench.reference_run` with the real solver, not `--passthrough-projector`, on a licensed host).
 2. Confirm `python -m conicshield.artifacts.validator_cli --run-dir <dir>` passes (or equivalent `validate_run_bundle`).

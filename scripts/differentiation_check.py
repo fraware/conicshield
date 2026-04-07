@@ -16,7 +16,8 @@ def _collect() -> dict[str, Any]:
         "status": "deferred",
         "message": (
             "Gradient validation is not yet a governed gate. "
-            "See docs/DIFFERENTIATION_VALIDATION_POLICY.md and NativeMoreauCompiledOptions.enable_grad."
+            "See docs/VERIFICATION_AND_STRESS_TEST_PLAN.md (Differentiation policy) "
+            "and NativeMoreauCompiledOptions.enable_grad."
         ),
         "recommended_next_steps": [
             "Vendor confirmation of differentiable API surface for this repo",

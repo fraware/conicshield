@@ -1,6 +1,6 @@
 # Release Decision Record
 
-Human-facing template; governed rules live in [`docs/RELEASE_POLICY.md`](../../docs/RELEASE_POLICY.md) and [`BENCHMARK_GOVERNANCE.md`](../../BENCHMARK_GOVERNANCE.md).
+Human-facing template; governed rules live in [`docs/RELEASE_POLICY.md`](../../docs/RELEASE_POLICY.md) and [`docs/BENCHMARK_GOVERNANCE.md`](../../docs/BENCHMARK_GOVERNANCE.md).
 
 ## Run
 - Run ID:

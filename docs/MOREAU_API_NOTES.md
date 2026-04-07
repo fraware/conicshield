@@ -33,7 +33,7 @@ This file records how ConicShield calls Moreau and CVXPY, with pointers to vendo
 
 ## Vendor upgrade checklist (re-audit bindings)
 
-When bumping `moreau`, `cvxpy`, or `cvxpylayers` (or Python minor), walk this list and update [`ENGINEERING_STATUS.md`](../ENGINEERING_STATUS.md) **Validated solver stack** after a green **Vendor CI track** run (`vendor-ci-moreau`) or licensed local run.
+When bumping `moreau`, `cvxpy`, or `cvxpylayers` (or Python minor), walk this list and update [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md) **Validated solver stack** after a green **Vendor CI track** run (`vendor-ci-moreau`) or licensed local run.
 
 | File | Re-verify |
 | ---- | -------- |
@@ -47,5 +47,4 @@ If the vendor changes status strings or timing fields, update [`conicshield/core
 ## See also (in-repo)
 
 - [MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md](MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md)
-- [NATIVE_PARITY_POLICY.md](NATIVE_PARITY_POLICY.md), [PERFORMANCE_BENCHMARKING_POLICY.md](PERFORMANCE_BENCHMARKING_POLICY.md)
-- [DIFFERENTIATION_VALIDATION_POLICY.md](DIFFERENTIATION_VALIDATION_POLICY.md)
+- [PARITY_AND_FIXTURES.md](PARITY_AND_FIXTURES.md), [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (performance and differentiation sections)

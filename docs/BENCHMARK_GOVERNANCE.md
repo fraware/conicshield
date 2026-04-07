@@ -2,9 +2,9 @@
 
 This document defines how ConicShield benchmark results become trusted, published, replaced, deprecated, or rejected.
 
-Moreau install/runtime policy is defined in `docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md`. This governance document assumes vendor-native claims are produced only in qualified vendor environments.
+Moreau install/runtime policy is defined in [MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md](MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md). This governance document assumes vendor-native claims are produced only in qualified vendor environments.
 
-**Related documentation:** [docs/RELEASE_POLICY.md](docs/RELEASE_POLICY.md) (publication modes), [docs/FIXTURE_POLICY.md](docs/FIXTURE_POLICY.md) (parity fixture), [docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md) (Layer H and governance gates), [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md) (procedures).
+**Related documentation:** [RELEASE_POLICY.md](RELEASE_POLICY.md) (publication modes), [PARITY_AND_FIXTURES.md](PARITY_AND_FIXTURES.md), [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (governance layer), [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md) (procedures).
 
 ## 1. Governing principle
 
@@ -54,7 +54,7 @@ The reference fixture is the frozen gold bundle used for native parity checks.
 
 The fixture is versioned separately from the benchmark family.
 
-A fixture may be regenerated only under the fixture regeneration policy. Regeneration does not by itself authorize score replacement.
+A fixture may be regenerated only under [PARITY_AND_FIXTURES.md](PARITY_AND_FIXTURES.md). Regeneration does not by itself authorize score replacement.
 
 ## 5. Result states
 

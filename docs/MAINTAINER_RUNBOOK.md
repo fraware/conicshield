@@ -5,8 +5,7 @@ This runbook describes the operational procedures for maintaining the ConicShiel
 It is the human companion to:
 - `BENCHMARK_GOVERNANCE.md`
 - the artifact validator
-- fixture policy
-- native parity gate
+- [`PARITY_AND_FIXTURES.md`](PARITY_AND_FIXTURES.md)
 - promotion policy
 - family manifests
 - release orchestration
@@ -52,7 +51,7 @@ Use release orchestration. Do not edit `CURRENT.json` manually.
 
 ## Standard commands
 
-Tests marked `@pytest.mark.slow` (stress-scale replay, heavy subprocess work) are **excluded** from the default suite by [`pyproject.toml`](pyproject.toml) (`not slow`), matching [`ci.yml`](.github/workflows/ci.yml). Run them locally with `python -m pytest tests/ -q -m "slow or not slow"` (see [`docs/DEVENV.md`](docs/DEVENV.md)). Add a scheduled or manual workflow if you want slow tests in CI.
+Tests marked `@pytest.mark.slow` (stress-scale replay, heavy subprocess work) are **excluded** from the default suite by [`pyproject.toml`](../pyproject.toml) (`not slow`), matching [`ci.yml`](../.github/workflows/ci.yml). Run them locally with `python -m pytest tests/ -q -m "slow or not slow"` (see [`DEVENV.md`](DEVENV.md)). Add a scheduled or manual workflow if you want slow tests in CI.
 
 ### Validate a run bundle
 ```bash
@@ -89,17 +88,17 @@ python -m conicshield.bench.build_transition_bank \
   --out /tmp/from_env_bank.json
 ```
 
-### Post–wave 4 operational spine (A1–A5)
+### First governed publish (sequence)
 
-Execute in order for milestones M2→M6 (see `ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md` §9, `ENGINEERING_STATUS.md` operational backlog).
+Execute in order when moving from scaffold to a real governed publish. Context: [`ROADMAP.md`](ROADMAP.md), [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md).
 
-After material edits to banks, replay, artifacts, governance, or adapters, run **`make verify-extended`** (and solver-marked tests or the **Vendor CI track** (`vendor-ci-moreau`) when touching the solver stack) so regressions surface before you promote fixtures or publish.
+After material edits to banks, replay, artifacts, governance, or adapters, run **`make verify-extended`** (and solver-marked tests or manual **Vendor CI** (`vendor-ci-moreau`) when touching the solver stack) before promoting fixtures or publishing.
 
-1. **A1 — Pin and upstream:** Ensure M2 semantics (action-conditioned transitions, `get_shield_context`) are on your canonical fork or upstream. Update `third_party/inter-sim-rl/REVISION` (`sha=`, `commit_url=`, `recorded_utc`) whenever the checkout changes. With a full git checkout, `tests/test_third_party_pins.py` must pass in CI.
-2. **A2 — Real bank:** Record `offline_transition_graph_export/v1` JSON from the patched environment, then run `build_transition_bank --from-offline-graph-export` and keep provenance (bank id, notes). Validate the output JSON against project expectations before benchmarking.
-3. **A3 — Reference run and fixture:** Run `reference_run` with the real solver path (not `--passthrough-projector`) for reference arms; `python -m conicshield.artifacts.validator_cli --run-dir …`; promote with `scripts/regenerate_parity_fixture.py` per `docs/PARITY_FIXTURE_PROMOTION.md`.
-4. **A4 — Native parity:** After the fixture is promoted, green **Vendor CI track** (`vendor-ci-moreau`) or local `make parity-native-licensed`; adjust `conicshield/parity/gates.py` thresholds only using parity artifacts from real runs. Record `moreau` / `cvxpy` / `cvxpylayers` versions in `ENGINEERING_STATUS.md`.
-5. **A5 — Publish:** Copy `benchmarks/templates/governance_decision.template.md` to the run dir as `governance_decision.md`; `finalize_cli` → `release_cli` (dry-run then real) → publish via `release_cli` / `publish-benchmark` workflow as appropriate; `audit_cli --strict` and dashboard. Never hand-edit `benchmarks/releases/.../CURRENT.json`.
+1. **Upstream and pin:** Align `inter-sim-rl` semantics (action-conditioned transitions, `get_shield_context`) on your fork or upstream. Update `third_party/inter-sim-rl/REVISION` (`sha=`, `commit_url=`, `recorded_utc`) when the checkout changes. With a full git checkout, `tests/test_third_party_pins.py` must pass in CI.
+2. **Transition bank:** Record `offline_transition_graph_export/v1` JSON from the patched environment, then run `build_transition_bank --from-offline-graph-export` and keep provenance. Validate the bank JSON before benchmarking.
+3. **Reference run and fixture:** Run `reference_run` with the real solver path (not `--passthrough-projector`) for reference arms; `python -m conicshield.artifacts.validator_cli --run-dir …`; promote with `scripts/regenerate_parity_fixture.py` per [`PARITY_AND_FIXTURES.md`](PARITY_AND_FIXTURES.md).
+4. **Native parity:** After the fixture is promoted, green **Vendor CI** (`vendor-ci-moreau`) or local `make parity-native-licensed`; adjust `conicshield/parity/gates.py` thresholds only using parity artifacts from real runs. Record `moreau` / `cvxpy` / `cvxpylayers` in [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md).
+5. **Publish:** Copy `benchmarks/templates/governance_decision.template.md` to the run dir as `governance_decision.md`; `finalize_cli` → `release_cli` (dry-run then real) → publish via `release_cli` / `publish-benchmark` workflow as appropriate; `audit_cli --strict` and dashboard. Never hand-edit `benchmarks/releases/.../CURRENT.json`.
 
 ### Produce a governed run bundle (reference path)
 On a machine with the solver stack (or use `--passthrough-projector` only for structural smoke tests):
@@ -118,7 +117,7 @@ python scripts/regenerate_parity_fixture.py --source benchmarks/runs/<run_id>
 
 Then update `tests/fixtures/parity_reference/REGENERATION_NOTE.md` per fixture policy.
 
-Full checklist: `docs/PARITY_FIXTURE_PROMOTION.md`.
+Full checklist: [`PARITY_AND_FIXTURES.md`](PARITY_AND_FIXTURES.md).
 
 ### Run native parity against the frozen fixture
 ```bash
@@ -163,9 +162,14 @@ python -m conicshield.governance.audit_cli --strict
 ```
 
 ### Generate the governance dashboard
+
+The registry-aware dashboard summarizes active benchmark families, current published runs, task and fixture versions, publication gates, native endorsement where applicable, and audit health.
+
 ```bash
 python -m conicshield.governance.dashboard_cli   --json-output output/governance_dashboard.json   --markdown-output output/governance_dashboard.md
 ```
+
+A **unified verification view** (environment, smoke, reference, parity, performance, governance) is produced by `python scripts/generate_trust_dashboard.py` after artifacts exist under `output/` — see [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md).
 
 ## Developer environment and dependency lockfile
 
@@ -189,7 +193,7 @@ make compile-deps
 
 When changing vendor Moreau setup or CVXPY integration pins in `pyproject.toml` (`cvxpy`, `cvxpylayers`, `moreau`) or upgrading documented lower bounds:
 
-1. Follow the checklist in [`docs/MOREAU_API_NOTES.md`](docs/MOREAU_API_NOTES.md) (*Vendor upgrade checklist*).
+1. Follow the checklist in [`MOREAU_API_NOTES.md`](MOREAU_API_NOTES.md) (*Vendor upgrade checklist*).
 2. Run **Vendor CI track** (`vendor-ci-moreau`) (or local Linux/WSL2 vendor mode via `bash scripts/bootstrap_moreau.sh`, then `make test-vendor-moreau` / `make parity-native-licensed`).
 3. Update [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md) **Validated solver stack** from the job Summary or `vendor_solver_versions` artifact (`solver_versions.json`).
 
@@ -236,7 +240,7 @@ If `hypothesis` is installed:
 python -m pytest tests/test_replay_hypothesis_optional.py tests/test_replay_banks_hypothesis_optional.py -q --override-ini "addopts=-q --durations=15" --hypothesis-show-statistics
 ```
 
-**GitHub:** run the **Vendor CI track** (`vendor-ci-moreau`) in [`.github/workflows/solver-ci.yml`](.github/workflows/solver-ci.yml) manually when solver pins change; use artifacts and Summary for [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md).
+**GitHub:** run the **Vendor CI track** (`vendor-ci-moreau`) in [`.github/workflows/solver-ci.yml`](../.github/workflows/solver-ci.yml) manually when solver pins change; use artifacts and Summary for [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md).
 
 ### Slow test visibility (pytest durations)
 
@@ -266,12 +270,12 @@ python -m pytest tests/ -q --durations=25
 
 ### `inter-sim-rl` checkout and offline tests
 
-- **Pinned upstream:** `third_party/inter-sim-rl/REVISION` and [PATCHES.md](third_party/inter-sim-rl/PATCHES.md) (apply `patches/conicshield-m2-shield-context-and-transitions.patch` until merged upstream).
+- **Pinned upstream:** `third_party/inter-sim-rl/REVISION` and [PATCHES.md](../third_party/inter-sim-rl/PATCHES.md) (apply `patches/conicshield-m2-shield-context-and-transitions.patch` until merged upstream).
 - **Local clone:** `git clone https://github.com/fraware/inter-sim-rl.git third_party/inter-sim-rl/checkout` then `git checkout <sha>` and `git apply` the M2 patch, **or** rely on CI to clone/apply.
 - **`pytest -m inter_sim_rl`:** requires `INTERSIM_RL_ROOT` pointing at that checkout (or a populated `third_party/inter-sim-rl/checkout`). Tests use `offline_transition_graph` only—no Google Maps calls.
-- **Published benchmarks:** do not rely on live Maps API during evaluation; build banks offline per `ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md` §3.5.
+- **Published benchmarks:** do not rely on live Maps API during evaluation; build transition banks offline (see [`INTER_SIM_RL_INTEGRATION.md`](INTER_SIM_RL_INTEGRATION.md)).
 
-### Optional solver stack verification (Phase 0 acceptance)
+### Optional solver stack verification
 
 Complete once per machine or release candidate:
 

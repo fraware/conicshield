@@ -19,7 +19,7 @@ When a run is approved for native parity regression testing, promote it with:
 python scripts/regenerate_parity_fixture.py --source benchmarks/runs/<run_id>
 ```
 
-See `docs/PARITY_FIXTURE_PROMOTION.md` for the full checklist.
+See [`docs/PARITY_AND_FIXTURES.md`](../docs/PARITY_AND_FIXTURES.md) for the fixture promotion checklist.
 
 ## Git policy
 

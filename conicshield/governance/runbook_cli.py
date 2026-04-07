@@ -1,12 +1,21 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
-RUNBOOK_TEXT = Path("MAINTAINER_RUNBOOK.md").read_text(encoding="utf-8")
+
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[2]
+
+
+RUNBOOK_TEXT = (_repo_root() / "docs" / "MAINTAINER_RUNBOOK.md").read_text(encoding="utf-8")
 
 
 def main() -> None:
-    print(RUNBOOK_TEXT)
+    out = sys.stdout
+    if hasattr(out, "reconfigure"):
+        out.reconfigure(encoding="utf-8", errors="replace")
+    print(RUNBOOK_TEXT, end="")
 
 
 if __name__ == "__main__":

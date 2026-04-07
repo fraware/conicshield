@@ -1,6 +1,6 @@
 # ADR 001: `progress` and `clearance` SafetySpec kinds (deferred)
 
-**Related:** [../ARCHITECTURE.md](../ARCHITECTURE.md), [../PROPOSER_DOCUMENTATION.md](../PROPOSER_DOCUMENTATION.md), [../../ENGINEERING_STATUS.md](../../ENGINEERING_STATUS.md).
+**Related:** [../ARCHITECTURE.md](../ARCHITECTURE.md), [../ENGINEERING_STATUS.md](../ENGINEERING_STATUS.md), [../ROADMAP.md](../ROADMAP.md).
 
 ## Status
 
@@ -8,7 +8,7 @@ Accepted as **deferred** until a benchmark card or shield deployment requires th
 
 ## Context
 
-[`SafetySpec`](../../conicshield/specs/schema.py) may include constraint kinds `progress` and `clearance`. Today [`parse_safety_spec_for_shield`](../../conicshield/specs/shield_qp.py) raises `NotImplementedError` for them (see [`ENGINEERING_STATUS.md`](../../ENGINEERING_STATUS.md)).
+[`SafetySpec`](../../conicshield/specs/schema.py) may include constraint kinds `progress` and `clearance`. Today [`parse_safety_spec_for_shield`](../../conicshield/specs/shield_qp.py) raises `NotImplementedError` for them (see [ENGINEERING_STATUS.md](../ENGINEERING_STATUS.md)).
 
 ## Decision
 
@@ -21,9 +21,9 @@ Do **not** implement projection for `progress` / `clearance` until:
 ## Consequences
 
 - Benchmarks and shields must use implemented kinds (simplex, turn feasibility, box, rate, etc.) until this ADR is superseded.
-- When implemented: add unit tests mirroring other constraint kinds, update schemas if evidence payloads change, and follow [`BENCHMARK_GOVERNANCE.md`](../../BENCHMARK_GOVERNANCE.md) for family impact.
+- When implemented: add unit tests mirroring other constraint kinds, update schemas if evidence payloads change, and follow [BENCHMARK_GOVERNANCE.md](../BENCHMARK_GOVERNANCE.md) for family impact.
 
 ## References
 
-- Handoff [`ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md`](../../ENGINEERING_HANDOFF_IMPLEMENTATION_PLAN.md) §6.2 high-touch files
-- Moreau/CVXPY integration: [`docs/MOREAU_API_NOTES.md`](../MOREAU_API_NOTES.md)
+- High-touch areas: `conicshield/specs/shield_qp.py`, `conicshield/specs/compiler.py`, schemas under `schemas/` if evidence payloads change.
+- Moreau/CVXPY integration: [MOREAU_API_NOTES.md](../MOREAU_API_NOTES.md)
