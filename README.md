@@ -21,6 +21,8 @@ flowchart LR
 
 ConicShield is not only a solver wrapper. It ships a **full governance spine**: validated benchmark bundles, native–reference **parity** gates, promotion rules, release orchestration, audit CLI, and dashboards — so benchmark claims stay meaningful as code and contracts evolve.
 
+**Shield projection (implemented constraint kinds):** `simplex`, `turn_feasibility`, `box`, `rate`. `progress` and `clearance` are deferred; see [`docs/adr/001-progress-clearance-constraints.md`](docs/adr/001-progress-clearance-constraints.md).
+
 | Mode | Who it’s for |
 |------|----------------|
 | **Public / reference** | Contributors without vendor secrets: governance, schemas, replay, CI-green core tests. |
@@ -82,6 +84,7 @@ python -m moreau check
 |------|---------|
 | Validate a run bundle | `python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>` |
 | Strict governance audit | `python -m conicshield.governance.audit_cli --strict` |
+| Finalize run + optional parity path + optional CURRENT sync | `python -m conicshield.governance.finalize_cli --run-dir ... --family-id ... --task-contract-version v1 --fixture-version fixture-v1 --reference-fixture-dir tests/fixtures/parity_reference --parity-summary-path output/.../parity_summary.json --current-release-path benchmarks/releases/<family>/CURRENT.json` (add `--sync-current-release` to push gates into `CURRENT.json` for the same published run) |
 | Governance dashboard JSON/MD | `python -m conicshield.governance.dashboard_cli --json-output output/governance_dashboard.json --markdown-output output/governance_dashboard.md` |
 | Release dry-run | `python -m conicshield.governance.release_cli --run-dir benchmarks/runs/<run_id> --family-id conicshield-transition-bank-v1 --reason "candidate release review" --dry-run` |
 

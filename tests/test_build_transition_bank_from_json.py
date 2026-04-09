@@ -11,10 +11,11 @@ import jsonschema
 import pytest
 
 from conicshield.bench.transition_bank import TransitionBank
+from tests._repo import repo_root
 
 
 def _repo_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    return repo_root()
 
 
 def _bank_file_schema() -> dict[str, Any]:

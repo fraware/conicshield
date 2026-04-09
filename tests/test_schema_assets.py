@@ -7,7 +7,9 @@ from typing import Any, cast
 import pytest
 from jsonschema import Draft202012Validator
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+from tests._repo import repo_root
+
+REPO_ROOT = repo_root()
 
 
 def _schema_files() -> list[Path]:

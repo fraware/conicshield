@@ -9,6 +9,7 @@ from pathlib import Path
 from conicshield.governance.audit import audit_benchmark_tree
 from conicshield.governance.finalize import FinalizationInputs, finalize_run
 from conicshield.governance.release import decide_release_mode
+from tests._repo import repo_root
 
 
 def _copy_parity_run(src: Path, dest: Path) -> None:
@@ -60,7 +61,7 @@ def test_finalize_release_dry_run_and_strict_audit(tmp_path: Path) -> None:
     decision = decide_release_mode(run_dir=run_dir, family_id="conicshield-transition-bank-v1")
     assert decision.mode == "same-family"
 
-    repo = Path(__file__).resolve().parents[1]
+    repo = repo_root()
     env = {**os.environ, "PYTHONPATH": str(repo)}
     dry = subprocess.run(
         [

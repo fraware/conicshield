@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Layer C (minimal): compare CVXPY+MOREAU vs native on the same shield QP spec; write JSON + MD."""
+"""Layer C: conic suite (Moreau vs CLARABEL/SCS) + minimal shield QP (CVXPY vs native); write JSON + MD."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ from conicshield.specs.schema import (
 )
 
 
-def _spec() -> SafetySpec:
+def _shield_spec() -> SafetySpec:
     return SafetySpec(
         spec_id="refcheck/minimal",
         version="0.1.0",
@@ -37,12 +37,11 @@ def _spec() -> SafetySpec:
     )
 
 
-def _compare() -> dict[str, Any]:
+def _compare_shield_qp() -> dict[str, Any]:
     proposed = np.array([0.65, 0.2, 0.1, 0.05], dtype=np.float64)
     prev = np.array([0.25, 0.25, 0.25, 0.25], dtype=np.float64)
-    spec = _spec()
+    spec = _shield_spec()
     out: dict[str, Any] = {
-        "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "scope": "shield_qp_minimal",
         "reference": None,
         "native": None,
@@ -98,42 +97,132 @@ def _compare() -> dict[str, Any]:
     return out
 
 
-def _write_md(path: Path, data: dict[str, Any]) -> None:
+def _run_conic_rows(*, profile: str) -> tuple[list[dict[str, Any]], list[str]]:
+    errors: list[str] = []
+    try:
+        import cvxpy as cp
+    except Exception as exc:
+        return [], [f"cvxpy import: {exc}"]
+    from conicshield.reference_correctness.conic_suite import moreau_installed, run_full_conic_suite
+
+    if not moreau_installed(cp):
+        return [], ["MOREAU backend not installed; skipping conic vs public solver suite"]
+    rows = run_full_conic_suite(cp, profile=profile)
+    for r in rows:
+        if r.get("status") != "ok":
+            errors.append(f"{r.get('case_id', '?')}: {r.get('error', r.get('status'))}")
+    return rows, errors
+
+
+def _write_md(path: Path, payload: dict[str, Any]) -> None:
     lines = [
-        "# Reference correctness (minimal shield QP)",
+        "# Reference correctness report",
         "",
-        f"Generated: {data.get('generated_at_utc', '')}",
-        f"**Status:** {data.get('status')}",
+        f"Generated: {payload.get('generated_at_utc', '')}",
         "",
-        "| Metric | Value |",
-        "|--------|-------|",
+        "## Conic suite (Moreau vs trusted public solver)",
+        "",
+        "Deltas are **Moreau vs CLARABEL** when CLARABEL is installed, otherwise **Moreau vs SCS**.",
+        "",
+        "| case_id | trusted | family | n | density | cond | status | primal_linf | obj_abs | obj_rel | iters T/M |",
+        "|---------|---------|--------|---|---------|------|--------|-------------|---------|---------|-----------|",
     ]
-    if data.get("deltas"):
-        for k, v in data["deltas"].items():
+    for r in payload.get("conic_rows", []):
+        it_t = r.get("trusted_num_iters", "")
+        it_m = r.get("moreau_num_iters", "")
+        iters = f"{it_t}/{it_m}" if it_t != "" or it_m != "" else ""
+        lines.append(
+            f"| {r.get('case_id', '')} | {r.get('trusted_solver', '')} | {r.get('family', '')} | {r.get('n', '')} | "
+            f"{r.get('density', '')} | {r.get('conditioning', '')} | {r.get('status', '')} | "
+            f"{r.get('primal_linf_delta', '')} | {r.get('objective_abs_delta', '')} | "
+            f"{r.get('objective_rel_delta', '')} | {iters} |"
+        )
+    if payload.get("conic_errors"):
+        lines.extend(["", "### Conic errors", "", "\n".join(f"- {e}" for e in payload["conic_errors"])])
+
+    sq = payload.get("shield_qp_minimal", {})
+    lines.extend(
+        [
+            "",
+            "## Shield QP minimal (CVXPY Moreau vs native)",
+            "",
+            f"**Status:** {sq.get('status', '')}",
+        ]
+    )
+    if sq.get("deltas"):
+        lines.extend(["", "| Metric | Value |", "|--------|-------|"])
+        for k, v in sq["deltas"].items():
             lines.append(f"| {k} | {v} |")
-    if data.get("errors"):
-        lines.extend(["", "## Errors", "", "```json", json.dumps(data["errors"], indent=2), "```"])
+    if sq.get("errors"):
+        lines.extend(["", "```json", json.dumps(sq["errors"], indent=2), "```"])
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Write reference_correctness_summary under output/.")
     p.add_argument("--out-dir", type=Path, default=None)
+    p.add_argument("--skip-conic", action="store_true", help="Only run shield QP minimal block.")
+    p.add_argument("--skip-shield", action="store_true", help="Only run conic vs public solver suite.")
+    p.add_argument(
+        "--suite-profile",
+        type=str,
+        default="standard",
+        choices=("smoke", "standard", "stress"),
+        help="Conic-suite profile size.",
+    )
+    p.add_argument(
+        "--strict",
+        action="store_true",
+        help="Fail when conic suite is skipped or shield status is partial/skipped.",
+    )
     args = p.parse_args()
     root = Path(__file__).resolve().parents[1]
     out_dir = args.out_dir or (root / "output")
     out_dir.mkdir(parents=True, exist_ok=True)
-    data = _compare()
-    (out_dir / "reference_correctness_summary.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
-    _write_md(out_dir / "reference_correctness_table.md", data)
-    # Plan §21 deliverable name alias (same content as the table).
-    _write_md(out_dir / "reference_correctness_report.md", data)
+
+    conic_rows: list[dict[str, Any]] = []
+    conic_errors: list[str] = []
+    if not args.skip_conic:
+        conic_rows, conic_errors = _run_conic_rows(profile=args.suite_profile)
+
+    shield: dict[str, Any] = {}
+    if not args.skip_shield:
+        shield = _compare_shield_qp()
+
+    payload: dict[str, Any] = {
+        "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "conic_rows": conic_rows,
+        "conic_errors": conic_errors,
+        "shield_qp_minimal": shield,
+        "suite_profile": args.suite_profile,
+        "strict_mode": bool(args.strict),
+    }
+    if args.skip_conic:
+        conic_ok = True
+    elif conic_errors and len(conic_errors) == 1 and "MOREAU backend not installed" in conic_errors[0]:
+        conic_ok = True
+        payload["conic_skipped_reason"] = conic_errors[0]
+    else:
+        conic_ok = not conic_errors and all(r.get("status") == "ok" for r in conic_rows)
+    shield_ok = True
+    if not args.skip_shield:
+        shield_ok = shield.get("status") in ("ok", "skipped", "partial") and not any(
+            e.get("arm") == "cvxpy_moreau" for e in shield.get("errors", [])
+        )
+        if shield.get("status") == "fail":
+            shield_ok = False
+    if args.strict:
+        if payload.get("conic_skipped_reason"):
+            conic_ok = False
+        if not args.skip_shield and shield.get("status") != "ok":
+            shield_ok = False
+    payload["summary_status"] = "ok" if (conic_ok and shield_ok) else "fail"
+
+    (out_dir / "reference_correctness_summary.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    _write_md(out_dir / "reference_correctness_table.md", payload)
+    _write_md(out_dir / "reference_correctness_report.md", payload)
     print(out_dir / "reference_correctness_summary.json")
-    if data.get("status") == "fail":
-        return 1
-    if any(e.get("arm") == "cvxpy_moreau" for e in data.get("errors", [])):
-        return 1
-    return 0
+    return 0 if payload["summary_status"] == "ok" else 1
 
 
 if __name__ == "__main__":

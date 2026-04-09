@@ -24,7 +24,7 @@ Required companion files include `FIXTURE_MANIFEST.json`, `REGENERATION_NOTE.md`
 
 The native compiled path (`Backend.NATIVE_MOREAU`) is not treated as equivalent to the reference shield path until it passes **parity gates** on the frozen reference stream.
 
-**Canonical thresholds** live in code (`conicshield.parity.gates` — `list_default_parity_gate_violations`, `enforce_default_parity_gates`). Do not copy threshold numbers into other documents without pointing to that module.
+**Replay / CLI thresholds** for comparing native steps to the reference stream live in `conicshield.parity.gates` (`list_default_parity_gate_violations`, `enforce_default_parity_gates`). **Governance** parity for `finalize_cli` uses the numeric checks in `conicshield.governance.finalize` (they should agree on pass/fail for the same `parity_summary.json`). Do not copy threshold numbers into other documents without pointing to those modules.
 
 **Protocol:**
 
@@ -34,7 +34,7 @@ The native compiled path (`Backend.NATIVE_MOREAU`) is not treated as equivalent 
 
 **Makefile:** `make parity-native-licensed` (requires license and native stack); `make parity-report` after a run.
 
-If parity fails, the native arm is not publishable for native endorsement until resolved.
+If parity fails, the native compiled arm is not listed under `publishable_arms` for native endorsement until resolved. Reference-only runs can still show `parity_gate: "green"` when `parity_summary.json` from `parity.cli` passes finalize thresholds.
 
 Performance claims are separate from parity; see [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md).
 
@@ -74,6 +74,8 @@ Use this when promoting a **real** reference run (CVXPY + Moreau, not `--passthr
    python scripts/regenerate_parity_fixture.py --source benchmarks/runs/<run_id>
    ```
 
+   Run bundles from `reference_run` / `produce_reference_bundle` do not include `FIXTURE_MANIFEST.json` or `REGENERATION_NOTE.md`; the script copies those from the existing `tests/fixtures/parity_reference/` tree when they are absent on the source (and skips self-copy when source and destination are the same path).
+
 5. If your workflow uses it:
 
    ```bash
@@ -86,14 +88,16 @@ Use this when promoting a **real** reference run (CVXPY + Moreau, not `--passthr
 
    ```bash
    make validate-fixture
-   pytest tests/test_parity_replay.py -q
+   pytest tests/test_fixture_policy.py tests/test_regenerate_parity_fixture_script.py tests/parity/test_parity_layout_smoke.py -q
    python -m conicshield.parity.cli \
      --reference-dir tests/fixtures/parity_reference \
      --reference-arm-label shielded-rules-plus-geometry \
      --out-dir /tmp/native_parity_local
    ```
 
+**Governance parity evidence:** `conicshield.governance.finalize_cli` can take `--parity-summary-path` pointing at `parity_summary.json` from step 7. Thresholds are evaluated in `conicshield.governance.finalize` (same numeric checks as historical native-arm flow). Green parity does not require a `shielded-native-moreau` row in the benchmark `summary.json` when this file is supplied; adding the native arm to `publishable_arms` still requires that arm in `summary.json` and passing gates. After an initial publish, refresh gate columns on `benchmarks/releases/.../CURRENT.json` with `finalize_cli ... --sync-current-release` (see [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md)); do not edit `CURRENT.json` by hand.
+
 **Do not**
 
 - Promote bundles built with `--passthrough-projector` as the canonical parity reference.
-- Edit `CURRENT.json` by hand; use release orchestration after gates are green.
+- Edit `CURRENT.json` by hand except via governed tooling (`release_cli` / `finalize_cli --sync-current-release`).

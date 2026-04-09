@@ -1,12 +1,18 @@
 # Test layout
 
-This tree uses **pytest markers** (`solver`, `requires_moreau`, `reference_correctness`, `slow`, …) as the primary way to filter runs. The plan also recommends **physical subtrees**; the following mapping is in place:
+This tree uses **pytest markers** (`solver`, `requires_moreau`, `reference_correctness`, `slow`, …) as the primary way to filter runs. Physical subtrees group ownership:
 
-| Planned path | Role |
-|--------------|------|
-| `tests/reference/` | Reference correctness vs trusted public solvers (Layer C). Example: `test_reference_conic_correctness.py`. |
-| `tests/` (flat) | Everything else: parity, governance, artifacts, bench, replay, smoke contracts, etc. |
+| Path | Role |
+|------|------|
+| `tests/environment/` | Repo hygiene, imports, pins, optional deps, metadata. |
+| `tests/smoke/` | CLI `--help`, verification scripts, solver smoke contracts. |
+| `tests/reference/` | Layer C: reference correctness vs trusted public solvers (`test_reference_conic_correctness.py`). |
+| `tests/native/` | Native Moreau projector integration. |
+| `tests/performance/` | Performance summary JSON schema contract. |
+| `tests/diff/` | Layer F differentiation script and optional torch/jax micrograd probes. |
+| `tests/artifacts/` | Bundle / validator contracts. |
+| `tests/governance/` | Finalize, release, audit, manifests, dashboard. |
+| `tests/parity/` | Parity replay and gate tests. |
+| `tests/` (remaining) | Core shield, bench, replay, adapters, integration flows. |
 
-Optional future subtrees (`tests/environment/`, `tests/smoke/`, `tests/native/`, `tests/performance/`, `tests/diff/`, `tests/artifacts/`, `tests/governance/`) can be introduced by moving files and keeping the same module names; pytest discovers tests under `tests/` recursively.
-
-**Vendor-only reference tests:** run with `pytest -m "solver or requires_moreau"` (see `Makefile` `test-solver`).
+**Vendor-only reference tests:** `pytest -m "solver or requires_moreau"` (see `Makefile` `test-solver`).

@@ -2,31 +2,48 @@ name: governance-audit
 
 on:
   pull_request:
-    paths:
-      - "benchmarks/**"
-      - "conicshield/governance/**"
-      - ".github/workflows/governance-audit.yml"
   push:
-    branches: [ "main" ]
-    paths:
-      - "benchmarks/**"
-      - "conicshield/governance/**"
-      - ".github/workflows/governance-audit.yml"
+    branches: [main]
+
+concurrency:
+  group: governance-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  audit:
+  audit-benchmark-tree:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - run: |
+          python-version: "3.12"
+      - name: Install project (dev)
+        run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.txt
-          python -m pip install -e .
-      - run: python -m conicshield.governance.audit_cli --strict --output output/governance_audit.json
-      - uses: actions/upload-artifact@v4
-        with:
-          name: governance-audit-report
-          path: output/governance_audit.json
+          python -m pip install -e ".[dev]"
+      - name: Audit registry, manifests, and release metadata
+        run: python -m conicshield.governance.audit_cli
+      - name: Passthrough bundle + finalize + release dry-run (rehearsal)
+        env:
+          RID: ci-rehearsal-${{ github.run_id }}
+        run: |
+          python scripts/produce_reference_bundle.py \
+            --export-json tests/fixtures/offline_graph_export_minimal.json \
+            --run-id "$RID" \
+            --passthrough
+          python -m conicshield.governance.finalize_cli \
+            --run-dir "benchmarks/runs/$RID" \
+            --family-id conicshield-transition-bank-v1 \
+            --task-contract-version v1 \
+            --fixture-version fixture-v1 \
+            --reference-fixture-dir tests/fixtures/parity_reference \
+            --current-release-path benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json
+          cp benchmarks/templates/governance_decision.template.md "benchmarks/runs/$RID/governance_decision.md"
+          python -m conicshield.governance.release_cli \
+            --run-dir "benchmarks/runs/$RID" \
+            --family-id conicshield-transition-bank-v1 \
+            --reason "CI governance rehearsal (governance-audit workflow)" \
+            --dry-run
+      - name: Strict governance audit
+        run: python -m conicshield.governance.audit_cli --strict

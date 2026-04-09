@@ -1,7 +1,7 @@
 {
-  "benchmark_name": "conicshield-transition-bank-v1-fixture",
+  "benchmark_name": "wsl-real-20260409-132450",
   "description": "Frozen parity fixture",
-  "created_at_utc": "2026-04-06T00:00:00Z",
+  "created_at_utc": "2026-04-09T13:25:00Z",
   "policy": {
     "policy_id": "policy_fixture",
     "checkpoint": null,
@@ -29,7 +29,7 @@
     }
   },
   "transition_bank": {
-    "bank_id": "bank_fixture",
+    "bank_id": "generated_bank",
     "root_addresses": [
       "Root"
     ],

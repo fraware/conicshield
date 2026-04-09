@@ -87,8 +87,9 @@ Green only if:
 - required artifacts are present
 
 ### Parity gate
-Required for native compiled publication.
-Green only if the native compiled implementation matches the frozen reference fixture within the approved tolerances.
+Required for treating native parity as **green** in governance (including `CURRENT.json` when updated via `finalize_cli`).
+
+Green when evidence shows the native compiled path matches the frozen reference stream within approved tolerances. Practically: `finalize_cli` evaluates `parity_summary.json` from `conicshield.parity.cli` (thresholds in `conicshield.governance.finalize`) when `--parity-summary-path` is passed; this does not require a `shielded-native-moreau` row in the benchmark `summary.json`. Endorsing **`shielded-native-moreau` as a publishable arm** still requires that arm in `summary.json` plus green parity and promotion gates (see section 7).
 
 ### Promotion gate
 Green only if the run meets the benchmark-family promotion thresholds.

@@ -5,9 +5,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+from tests._repo import repo_root
+
 
 def _repo() -> Path:
-    return Path(__file__).resolve().parents[1]
+    return repo_root()
 
 
 def _env() -> dict[str, str]:

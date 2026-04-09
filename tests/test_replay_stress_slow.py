@@ -10,8 +10,9 @@ from jsonschema import Draft202012Validator
 
 from conicshield.bench.replay_graph_env import ReplayGraphEnvironment
 from conicshield.bench.transition_bank import CandidateEdge, TransitionBank, TransitionNode
+from tests._repo import repo_root
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = repo_root()
 
 
 def _linear_bank(*, n_nodes: int) -> TransitionBank:

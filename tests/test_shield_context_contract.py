@@ -10,6 +10,7 @@ from conicshield.adapters.inter_sim_rl.context_model import ShieldContextModel
 from conicshield.adapters.inter_sim_rl.context_validate import validate_shield_context_dict
 from conicshield.bench.replay_graph_env import ReplayGraphEnvironment
 from conicshield.bench.transition_bank import CandidateEdge, TransitionBank, TransitionNode
+from tests._repo import repo_root
 
 
 def _minimal_valid_context() -> dict:
@@ -73,7 +74,7 @@ def test_replay_env_context_validates_against_schema() -> None:
 
 
 def test_shield_context_schema_file_is_valid_json() -> None:
-    path = Path(__file__).resolve().parents[1] / "schemas" / "shield_context.schema.json"
+    path = repo_root() / "schemas" / "shield_context.schema.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["title"]
 

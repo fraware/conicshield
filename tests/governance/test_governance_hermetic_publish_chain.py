@@ -11,8 +11,9 @@ from pathlib import Path
 
 from conicshield.governance.finalize import FinalizationInputs, finalize_run
 from conicshield.governance.publish import publish_from_governance_status
+from tests._repo import repo_root
 
-_REPO = Path(__file__).resolve().parents[1]
+_REPO = repo_root()
 
 
 def _copy_parity_run(src: Path, dest: Path) -> None:

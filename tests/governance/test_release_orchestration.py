@@ -1,9 +1,19 @@
 import json
+import os
+from pathlib import Path
 
 from conicshield.governance.release import decide_release_mode
 
 
-def test_release_dry_run_same_family_for_uninitialized_family(tmp_path) -> None:
+def test_release_dry_run_same_family_for_uninitialized_family(tmp_path: Path) -> None:
+    """Hermetic: real repo CURRENT.json may point at a run whose config does not match this stub."""
+    rel = tmp_path / "benchmarks" / "releases" / "conicshield-transition-bank-v1"
+    rel.mkdir(parents=True)
+    (rel / "CURRENT.json").write_text(
+        json.dumps({"family_id": "conicshield-transition-bank-v1", "current_run_id": None}),
+        encoding="utf-8",
+    )
+
     run_dir = tmp_path / "run_x"
     run_dir.mkdir()
     (run_dir / "config.json").write_text(
@@ -49,5 +59,10 @@ def test_release_dry_run_same_family_for_uninitialized_family(tmp_path) -> None:
         ),
         encoding="utf-8",
     )
-    decision = decide_release_mode(run_dir=run_dir, family_id="conicshield-transition-bank-v1")
+    cwd = Path.cwd()
+    os.chdir(tmp_path)
+    try:
+        decision = decide_release_mode(run_dir=run_dir, family_id="conicshield-transition-bank-v1")
+    finally:
+        os.chdir(cwd)
     assert decision.mode == "same-family"

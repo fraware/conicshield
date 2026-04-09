@@ -4,9 +4,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+from tests._repo import repo_root
+
 
 def _repo_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    return repo_root()
 
 
 def test_replay_import_chain_has_no_third_party_http_clients() -> None:

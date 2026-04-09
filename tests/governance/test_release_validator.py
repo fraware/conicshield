@@ -11,8 +11,9 @@ import pytest
 
 from conicshield.governance.family_manifest import FamilyManifestError
 from conicshield.governance.release_validator import ReleaseDirectoryError, validate_release_directory
+from tests._repo import repo_root
 
-_REPO = Path(__file__).resolve().parents[1]
+_REPO = repo_root()
 
 
 def _minimal_release_dir(tmp: Path, family_id: str, *, include_manifest: bool) -> Path:

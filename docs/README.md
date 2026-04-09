@@ -9,6 +9,7 @@ Policy and runbooks for ConicShield. The repository root [`README.md`](../README
 | [ROADMAP.md](ROADMAP.md) | External deps and deferred work |
 | [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md) | Commands, publish flow, CI notes |
 | [BENCHMARK_GOVERNANCE.md](BENCHMARK_GOVERNANCE.md) | How benchmark claims are published |
+| [RELEASE_POLICY.md](RELEASE_POLICY.md) | Same-family vs new-family release; no ad-hoc `CURRENT.json` edits |
 | [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) | Trust ladder, layers, policies |
 | [PARITY_AND_FIXTURES.md](PARITY_AND_FIXTURES.md) | Frozen fixture and native parity |
 | [DEVENV.md](DEVENV.md) | Python matrix, pytest markers, workflows |

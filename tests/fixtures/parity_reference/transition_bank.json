@@ -1,5 +1,4 @@
 {
-  "bank_id": "bank_fixture",
   "root_address": "Root",
   "nodes": {
     "Root": {
@@ -9,9 +8,6 @@
         0.0
       ],
       "depth": 0,
-      "allowed_actions": [
-        "turn_right"
-      ],
       "candidates": [
         {
           "destination_address": "A",
@@ -34,7 +30,6 @@
         0.0
       ],
       "depth": 1,
-      "allowed_actions": [],
       "candidates": []
     }
   }

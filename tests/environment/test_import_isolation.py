@@ -4,9 +4,11 @@ import importlib
 import sys
 from pathlib import Path
 
+from tests._repo import repo_root
+
 
 def _repo_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    return repo_root()
 
 
 def test_base_import_does_not_load_cvxpy_or_moreau() -> None:

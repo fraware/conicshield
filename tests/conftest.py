@@ -15,7 +15,9 @@ from _pytest.reports import TestReport
 
 
 def _repo_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    from tests._repo import repo_root
+
+    return repo_root()
 
 
 def _metrics_path() -> Path:

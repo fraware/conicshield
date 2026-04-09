@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import tomllib
-from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+from tests._repo import repo_root
+
+REPO_ROOT = repo_root()
 
 
 def test_pyproject_core_fields() -> None:

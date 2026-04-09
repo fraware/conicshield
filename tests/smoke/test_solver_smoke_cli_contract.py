@@ -6,11 +6,12 @@ import json
 import os
 import subprocess
 import sys
-from pathlib import Path
 
 import pytest
 
-REPO = Path(__file__).resolve().parents[1]
+from tests._repo import repo_root
+
+REPO = repo_root()
 
 
 @pytest.mark.solver

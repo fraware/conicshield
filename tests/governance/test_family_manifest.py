@@ -12,6 +12,7 @@ def test_family_manifest_validates() -> None:
 
 def test_registry_entry_matches_validated_family_manifest() -> None:
     reg = json.loads(Path("benchmarks/registry.json").read_text(encoding="utf-8"))
-    family_id = str(reg["benchmark_families"][0]["family_id"])
-    manifest = validate_family_manifest(family_id)
-    assert manifest["family_id"] == family_id
+    for entry in reg["benchmark_families"]:
+        family_id = str(entry["family_id"])
+        manifest = validate_family_manifest(family_id)
+        assert manifest["family_id"] == family_id

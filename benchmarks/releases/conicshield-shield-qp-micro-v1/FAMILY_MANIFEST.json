@@ -1,0 +1,29 @@
+{
+  "family_id": "conicshield-shield-qp-micro-v1",
+  "family_version": "v1",
+  "benchmark_name": "ConicShield Shield-QP Micro Harness",
+  "task_contract_version": "v1",
+  "fixture_lineage": {
+    "current_fixture_version": "fixture-v1",
+    "reference_arm_label": "shielded-rules-plus-geometry",
+    "reference_backend": "cvxpy_moreau"
+  },
+  "required_arms": [
+    "baseline-unshielded",
+    "shielded-rules-only",
+    "shielded-rules-plus-geometry"
+  ],
+  "reference_arm": "shielded-rules-plus-geometry",
+  "native_parity_required": true,
+  "same_family_replacement_rules": {
+    "action_space_must_match": true,
+    "state_contract_must_match": true,
+    "rule_choices_must_match": true,
+    "transition_bank_semantics_must_match": true,
+    "reference_arm_definition_must_match": true
+  },
+  "fork_info": {
+    "forked_from_family_id": "conicshield-transition-bank-v1",
+    "reason": "Second family: minimal shield-QP harness and parity fixture lineage without a full transition-bank task host."
+  }
+}

@@ -18,6 +18,7 @@ from conicshield.core.moreau_compiled import NativeMoreauCompiledOptions
 from conicshield.core.solver_factory import Backend
 from conicshield.specs.compiler import SolverOptions
 from conicshield.specs.schema import SafetySpec
+from tests._repo import repo_root
 
 
 def _passthrough_factory(
@@ -33,7 +34,7 @@ def _intersim_root() -> Path | None:
     root = os.environ.get("INTERSIM_RL_ROOT", "").strip()
     if root and Path(root).is_dir():
         return Path(root).resolve()
-    sub = Path(__file__).resolve().parents[1] / "third_party" / "inter-sim-rl" / "checkout"
+    sub = repo_root() / "third_party" / "inter-sim-rl" / "checkout"
     if sub.is_dir():
         return sub.resolve()
     return None
@@ -142,7 +143,7 @@ def test_upstream_get_shield_context_matches_conicshield_schema() -> None:
     )
     ctx = env.get_shield_context()
     validate_shield_context_dict(ctx)
-    repo = Path(__file__).resolve().parents[1]
+    repo = repo_root()
     schema_path = repo / "schemas" / "shield_context.schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     Draft202012Validator(schema).validate(ctx)

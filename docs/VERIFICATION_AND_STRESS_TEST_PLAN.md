@@ -49,10 +49,10 @@ The goal is not a single passing solve. The repository should show:
 |-------|-----|--------|------------------------------|
 | **A** | Environment | Partial | `scripts/environment_check.py` → `output/environment_check.json` |
 | **B** | Smoke | Partial | `scripts/smoke_check.py` → `output/smoke_check.json`; `make smoke-solver` |
-| **C** | Reference correctness | Partial | `scripts/reference_correctness_summary.py`; `tests/reference/test_reference_conic_correctness.py` (`pytest -m solver`) |
+| **C** | Reference correctness | Implemented | `scripts/reference_correctness_summary.py` (conic suite vs CLARABEL/SCS + shield minimal); `tests/reference/test_reference_conic_correctness.py` (`pytest -m solver`) |
 | **D** | Native parity | Implemented | `make parity-native-licensed`; `conicshield.parity.gates` |
 | **E** | Performance | Implemented | `scripts/performance_benchmark.py` → `output/performance_*` |
-| **F** | Differentiation | Optional / stub | `scripts/differentiation_check.py` |
+| **F** | Differentiation | Optional | `scripts/differentiation_check.py` (shield FD + optional torch/jax micrograd probes) |
 | **G** | Artifacts | Implemented | `validator_cli`, `scripts/artifact_validation_report.py` |
 | **H** | Governance | Implemented | `make audit`, `make dashboard` |
 
@@ -80,9 +80,11 @@ The goal is not a single passing solve. The repository should show:
 
 ## Layer C — Reference correctness
 
-**Goal:** Mathematical agreement with trusted references.
+**Goal:** Mathematical agreement with trusted references: **conic programs** (LP / QP / SOCP / mixed) with **Moreau vs CLARABEL** (or SCS fallback) on objectives and primals, plus a **minimal shield QP** check (CVXPY Moreau vs native) when both arms are available.
 
 **Artifacts:** `output/reference_correctness_summary.json`, `output/reference_correctness_table.md`, `output/reference_correctness_report.md`
+
+**Shared matrix:** `conicshield/reference_correctness/conic_suite.py` (used by the script and pytest so results do not drift).
 
 ---
 
@@ -92,6 +94,8 @@ The goal is not a single passing solve. The repository should show:
 
 **Artifacts:** `parity_summary.json`, `parity_steps.jsonl`, optional `parity_report.md` from `scripts/generate_parity_report.py`.
 
+**Governance hook:** `python -m conicshield.governance.finalize_cli` accepts `--parity-summary-path` so `parity_gate` in `governance_status.json` (and, with `--sync-current-release`, `CURRENT.json`) reflects the same thresholds without requiring a `shielded-native-moreau` row in the benchmark `summary.json`. See [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md).
+
 **Vendor CI:** Manual workflow `vendor-ci-moreau` can upload a full verification bundle including parity outputs.
 
 **Policy:** [PARITY_AND_FIXTURES.md](PARITY_AND_FIXTURES.md)
@@ -100,7 +104,9 @@ The goal is not a single passing solve. The repository should show:
 
 ## Layer E — Performance
 
-**Goal:** Measured cold vs warm, CVXPY vs native, optional CPU vs CUDA.
+**Goal:** Measured cold vs warm, CVXPY vs native, optional CPU vs CUDA, and **decision-grade sweeps** when requested.
+
+**Commands:** `python scripts/performance_benchmark.py` (single-scenario default). Use **`--sweep`** for `action_dim × conditioning × scenario` grids (default dims `4,8`; override with `--shield-action-dims`). Add **`--batch-sizes`** for native microbatch throughput rows, and **`--sweep-auto-tune`** to compare `NativeMoreauCompiledOptions.auto_tune`.
 
 **Artifacts:** `output/performance_summary.json`, `output/performance_matrix.csv`, `output/performance_report.md`, optional `output/performance_latency.png`
 
@@ -112,7 +118,7 @@ The goal is not a single passing solve. The repository should show:
 
 ## Layer F — Differentiation
 
-**Goal:** Gradients sane where differentiable paths are supported.
+**Goal:** Gradients sane where differentiable paths are supported. Today: **finite-difference** slope on the reference shield projector (when MOREAU is installed) and optional **torch/jax micrograd vs FD** self-checks (`--probe-torch-jax`) that do not yet differentiate through the shield itself.
 
 **Status:** Optional; not a governed gate in default CI.
 
@@ -134,7 +140,7 @@ The goal is not a single passing solve. The repository should show:
 
 **Goal:** Publishable runs only under policy.
 
-**Commands:** `make audit`, `make dashboard`, release CLIs per [RELEASE_POLICY.md](RELEASE_POLICY.md).
+**Commands:** `make audit`, `make dashboard`, `python -m conicshield.governance.finalize_cli`, `python -m conicshield.governance.release_cli`, optional `finalize_cli --sync-current-release` to refresh release gate metadata for an already-published run; details in [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md) and [RELEASE_POLICY.md](RELEASE_POLICY.md).
 
 **Artifacts:** `output/governance_dashboard.json`, `output/governance_dashboard.md`
 

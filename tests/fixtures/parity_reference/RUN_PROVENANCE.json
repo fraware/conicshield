@@ -1,0 +1,9 @@
+{
+  "schema_version": "conicshield_reference_run_provenance/v1",
+  "run_id": "wsl-real-20260409-132450",
+  "projector_mode": "real_projector",
+  "strict_real_projector": true,
+  "source_export_json": "tests/fixtures/offline_graph_export_minimal.json",
+  "generated_by": "scripts/produce_reference_bundle.py",
+  "seed": 7
+}

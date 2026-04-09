@@ -8,6 +8,9 @@ from typing import Any
 from conicshield.artifacts.validator import validate_run_bundle
 from conicshield.governance.family_policy import decide_family_compatibility
 from conicshield.governance.policy import GovernanceError, assert_same_family_replacement
+
+# Keys copied from governance_status into CURRENT.json when syncing metadata for an already-published run.
+_CURRENT_SYNC_KEYS = ("artifact_gate", "parity_gate", "promotion_gate", "publishable_arms")
 from conicshield.parity.fixture_policy import validate_fixture_policy
 
 
@@ -92,14 +95,8 @@ def _fixture_gate(reference_fixture_dir: Path | None) -> GateResult:
         return GateResult("red", f"Fixture policy validation failed: {exc}")
 
 
-def _parity_gate(*, has_native_arm: bool, parity_summary_path: Path | None) -> GateResult:
-    if not has_native_arm:
-        return GateResult("unknown", "No native arm present in summary.json.")
-    if parity_summary_path is None or not parity_summary_path.exists():
-        return GateResult("red", "Native arm present but parity_summary.json is missing.")
-
+def _parity_thresholds_from_summary_payload(payload: dict[str, Any]) -> GateResult:
     try:
-        payload = _load_json(parity_summary_path)
         action_match_rate = float(payload["action_match_rate"])
         active_constraints_match_rate = float(payload["active_constraints_match_rate"])
         max_corrected_linf = float(payload["max_corrected_linf"])
@@ -122,7 +119,52 @@ def _parity_gate(*, has_native_arm: bool, parity_summary_path: Path | None) -> G
 
     if failures:
         return GateResult("red", "Parity gate failed: " + "; ".join(failures))
-    return GateResult("green", "Parity thresholds satisfied.")
+    return GateResult("green", "Parity thresholds satisfied (parity_summary.json).")
+
+
+def _parity_gate(*, has_native_arm: bool, parity_summary_path: Path | None) -> GateResult:
+    """Evaluate native-vs-reference parity from ``parity_summary.json`` when provided.
+
+    Offline ``conicshield.parity.cli`` replay against the frozen fixture can prove parity even when
+    the benchmark ``summary.json`` does not include a ``shielded-native-moreau`` row (reference-only run).
+    """
+    if parity_summary_path is not None:
+        if not parity_summary_path.exists():
+            return GateResult("red", f"parity_summary_path not found: {parity_summary_path}")
+        try:
+            payload = _load_json(parity_summary_path)
+        except Exception as exc:
+            return GateResult("red", f"Could not read parity summary: {exc}")
+        return _parity_thresholds_from_summary_payload(payload)
+
+    if has_native_arm:
+        return GateResult(
+            "red",
+            "shielded-native-moreau is present in summary.json but parity_summary_path was not provided.",
+        )
+    return GateResult(
+        "unknown",
+        "No parity_summary_path; pass --parity-summary-path from conicshield.parity.cli output.",
+    )
+
+
+def sync_current_release_from_status(*, current_release_path: Path, status: dict[str, Any]) -> None:
+    """Refresh gate fields on CURRENT.json for the same ``current_run_id`` as ``status['run_id']``.
+
+    Does not append HISTORY or change ``benchmarks/registry.json`` (unlike full publish). Use after
+    ``finalize_run`` when the release is already published but gates were recomputed (e.g. parity evidence added).
+    """
+    if not current_release_path.exists():
+        raise GovernanceError(f"Missing current release file: {current_release_path}")
+    current = _load_json(current_release_path)
+    run_id = str(status["run_id"])
+    if str(current.get("current_run_id")) != run_id:
+        raise GovernanceError(
+            f"CURRENT.json current_run_id {current.get('current_run_id')!r} does not match finalized run {run_id!r}"
+        )
+    for key in _CURRENT_SYNC_KEYS:
+        current[key] = status[key]
+    _write_json(current_release_path, current)
 
 
 def _promotion_gate(summary_by_label: dict[str, dict[str, Any]]) -> GateResult:

@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 import jsonschema
 import pytest
 
-_SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "performance_summary.schema.json"
+from tests._repo import repo_root
+
+_SCHEMA = repo_root() / "schemas" / "performance_summary.schema.json"
 
 
 def _validator() -> jsonschema.Draft202012Validator:
@@ -27,6 +28,48 @@ def test_validate_minimal_empty_rows() -> None:
         "rows": [],
         "errors": ["cvxpy: MOREAU not installed"],
         "cuda_claim_note": "test",
+    }
+    _validator().validate(sample)
+
+
+def test_validate_sweep_mode_and_scenario_columns() -> None:
+    sample = {
+        "generated_at_utc": "2026-04-07T12:00:00Z",
+        "repeats_config": 3,
+        "sweep_mode": True,
+        "shield_action_dims": [4, 8],
+        "batch_sizes": [8],
+        "sweep_auto_tune": False,
+        "rows": [
+            {
+                "path": "cvxpy_moreau",
+                "device": "cpu",
+                "repeats": 3,
+                "mean_sec": 0.01,
+                "p50_sec": 0.009,
+                "p95_sec": 0.02,
+                "scenario_id": "n4_nominal_s0",
+                "conditioning": "nominal",
+                "action_dim": 4,
+                "auto_tune": False,
+            },
+            {
+                "path": "native_microbatch",
+                "device": "cpu",
+                "repeats": 2,
+                "mean_sec": 0.02,
+                "p50_sec": 0.019,
+                "p95_sec": 0.021,
+                "batch_size": 8,
+                "mean_sec_per_solve": 0.0025,
+                "scenario_id": "n4_nominal_batch8",
+                "conditioning": "nominal",
+                "action_dim": 4,
+                "auto_tune": False,
+            },
+        ],
+        "errors": [],
+        "cuda_claim_note": "note",
     }
     _validator().validate(sample)
 
@@ -83,7 +126,7 @@ def test_rejects_unknown_top_level_key() -> None:
 
 def test_fixture_performance_summary_json_if_present() -> None:
     """When output/performance_summary.json exists (local vendor run), it must validate."""
-    path = Path(__file__).resolve().parents[1] / "output" / "performance_summary.json"
+    path = repo_root() / "output" / "performance_summary.json"
     if not path.is_file():
         pytest.skip("no output/performance_summary.json")
     data = json.loads(path.read_text(encoding="utf-8"))

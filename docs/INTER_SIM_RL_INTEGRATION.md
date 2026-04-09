@@ -57,6 +57,18 @@ After the M2 patch, `RLEnvironment` can run with `offline_transition_graph: Dict
 
 Example minimal export: [`tests/fixtures/offline_graph_export_minimal.json`](../tests/fixtures/offline_graph_export_minimal.json).
 
+## End-to-end chain without a live environment
+
+You can exercise the full **export → bank → benchmark bundle** spine using only in-repo JSON and no running simulator:
+
+1. Use [`tests/fixtures/offline_graph_export_minimal.json`](../tests/fixtures/offline_graph_export_minimal.json) (or a copy of your own export that validates against [`schemas/offline_transition_graph_export.schema.json`](../schemas/offline_transition_graph_export.schema.json)).
+2. Run [`scripts/produce_reference_bundle.py`](../scripts/produce_reference_bundle.py) with `--export-json` and `--run-id` (add `--passthrough` on unlicensed hosts; use `--no-passthrough` for governed reference arms).
+3. Validate with `python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>`.
+
+This path matches the operational P0 sequence in [`benchmarks/runs/README.md`](../benchmarks/runs/README.md) without API calls into a patched host.
+
+**Production acceptance (P2):** a pinned [`third_party/inter-sim-rl/REVISION`](../third_party/inter-sim-rl/REVISION) checkout exports a real `offline_transition_graph_export/v1` JSON; `build_transition_bank` validates it; `reference_run` (or `scripts/produce_reference_bundle.py`) consumes the bank under `benchmarks/runs/<run_id>/` with **no live** environment API calls in the benchmark path. Until that runs on a patched host, treat the in-repo minimal export as contract-only evidence.
+
 Engineering control for clone URL and revision: [`third_party/inter-sim-rl/README.md`](../third_party/inter-sim-rl/README.md).
 
 ## Revision pin

@@ -39,7 +39,7 @@ jobs:
         run: |
           python scripts/environment_check.py
           python scripts/smoke_check.py
-          python scripts/differentiation_check.py
+          python scripts/differentiation_check.py --probe-torch-jax
           python scripts/generate_trust_dashboard.py
       - name: Upload verification artifacts
         uses: actions/upload-artifact@v4

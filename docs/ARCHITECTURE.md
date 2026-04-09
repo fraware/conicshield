@@ -30,6 +30,8 @@ Policy outputs action scores or Q-values.
 
 The shield turns scores into a simplex distribution, applies hard admissibility and optional geometry priors, and decodes back to a concrete action.
 
+**Constraint kinds compiled for projection today:** `simplex`, `turn_feasibility`, `box`, and `rate` (see `SafetySpec` in `conicshield/specs/schema.py`). Kinds `progress` and `clearance` exist on the schema but are **not** implemented for the shield QP yet; see [adr/001-progress-clearance-constraints.md](adr/001-progress-clearance-constraints.md) and [ENGINEERING_STATUS.md](ENGINEERING_STATUS.md).
+
 ### 3. Solver layer
 
 Two paths are supported:
@@ -49,7 +51,7 @@ Benchmarks run on frozen transition-bank artifacts and serialize into validated 
 
 ### 6. Governance layer
 
-Governance decides whether results are candidates, review-locked, published, or deprecated. Semantic task changes **fork families** instead of silently overwriting scores.
+Governance decides whether results are candidates, review-locked, published, or deprecated. Semantic task changes **fork families** instead of silently overwriting scores. Parity evidence from `conicshield.parity.cli` feeds `finalize_cli` (`--parity-summary-path`); `release_cli` publishes full release metadata, and `finalize_cli --sync-current-release` can refresh gate columns on `CURRENT.json` without a republish when the run id is unchanged.
 
 ## Repository layout
 

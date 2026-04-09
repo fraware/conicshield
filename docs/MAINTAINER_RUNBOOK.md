@@ -47,7 +47,7 @@ Do not publish into the current family. Start family-bump procedure.
 Use the fixture regeneration procedure. Do not overwrite the fixture casually.
 
 ### Case E: a run appears good and all gates are green
-Use release orchestration. Do not edit `CURRENT.json` manually.
+Use **`release_cli`** for a full publish (updates `CURRENT.json`, `HISTORY.json`, and `benchmarks/registry.json`). To refresh gate columns on `CURRENT.json` for an **already published** run after new parity evidence, use **`finalize_cli`** with **`--parity-summary-path`** and **`--sync-current-release`** — do not edit `CURRENT.json` by hand.
 
 ## Standard commands
 
@@ -98,7 +98,7 @@ After material edits to banks, replay, artifacts, governance, or adapters, run *
 2. **Transition bank:** Record `offline_transition_graph_export/v1` JSON from the patched environment, then run `build_transition_bank --from-offline-graph-export` and keep provenance. Validate the bank JSON before benchmarking.
 3. **Reference run and fixture:** Run `reference_run` with the real solver path (not `--passthrough-projector`) for reference arms; `python -m conicshield.artifacts.validator_cli --run-dir …`; promote with `scripts/regenerate_parity_fixture.py` per [`PARITY_AND_FIXTURES.md`](PARITY_AND_FIXTURES.md).
 4. **Native parity:** After the fixture is promoted, green **Vendor CI** (`vendor-ci-moreau`) or local `make parity-native-licensed`; adjust `conicshield/parity/gates.py` thresholds only using parity artifacts from real runs. Record `moreau` / `cvxpy` / `cvxpylayers` in [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md).
-5. **Publish:** Copy `benchmarks/templates/governance_decision.template.md` to the run dir as `governance_decision.md`; `finalize_cli` → `release_cli` (dry-run then real) → publish via `release_cli` / `publish-benchmark` workflow as appropriate; `audit_cli --strict` and dashboard. Never hand-edit `benchmarks/releases/.../CURRENT.json`.
+5. **Publish:** Copy `benchmarks/templates/governance_decision.template.md` to the run dir as `governance_decision.md`; `finalize_cli` (with `--parity-summary-path` when native parity artifacts exist) → `release_cli` (dry-run then real) → publish via `release_cli` / `publish-benchmark` workflow as appropriate; `audit_cli --strict` and dashboard. Do not hand-edit `benchmarks/releases/.../CURRENT.json` except via **`finalize_cli --sync-current-release`** (metadata refresh for the same `current_run_id`) or **`release_cli`** (full publish).
 
 ### Produce a governed run bundle (reference path)
 On a machine with the solver stack (or use `--passthrough-projector` only for structural smoke tests):
@@ -141,6 +141,8 @@ python -m conicshield.parity.cli   --reference-dir tests/fixtures/parity_referen
 python -m conicshield.governance.finalize_cli   --run-dir benchmarks/runs/<run_id>   --family-id conicshield-transition-bank-v1   --task-contract-version v1   --fixture-version fixture-v1   --reference-fixture-dir tests/fixtures/parity_reference   --parity-summary-path output/native_parity_ci/parity_summary.json   --current-release-path benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json
 ```
 
+`--parity-summary-path` can carry `conicshield.parity.cli` output; parity is evaluated from that file even when the benchmark `summary.json` has no `shielded-native-moreau` row. After a run is already published, refresh gate columns on `CURRENT.json` without a full release using `--sync-current-release` with the same `--current-release-path` (same `current_run_id` as the run dir). Full `release_cli` remains the path that updates `HISTORY.json` and `benchmarks/registry.json`.
+
 ### Dry-run release decision
 ```bash
 python -m conicshield.governance.release_cli   --run-dir benchmarks/runs/<run_id>   --family-id conicshield-transition-bank-v1   --reason "candidate release review"   --dry-run
@@ -149,6 +151,29 @@ python -m conicshield.governance.release_cli   --run-dir benchmarks/runs/<run_id
 ### Publish same-family release
 ```bash
 python -m conicshield.governance.release_cli   --run-dir benchmarks/runs/<run_id>   --family-id conicshield-transition-bank-v1   --reason "promoted after green artifact, parity, and promotion gates"
+```
+
+### One-command strict publish chain
+
+For licensed-host promotion, use the scripted chain (validator -> finalize ->
+release dry-run -> publish -> strict audit):
+
+```bash
+python scripts/execute_real_publish_chain.py \
+  --run-dir benchmarks/runs/<run_id> \
+  --family-id conicshield-transition-bank-v1 \
+  --reason "promoted after green artifact, parity, and promotion gates"
+```
+
+Optional solver metadata stamping (from vendor artifact):
+
+```bash
+python scripts/execute_real_publish_chain.py \
+  --run-dir benchmarks/runs/<run_id> \
+  --family-id conicshield-transition-bank-v1 \
+  --reason "promoted after green artifact, parity, and promotion gates" \
+  --solver-versions /path/to/solver_versions.json \
+  --solver-version-date-utc 2026-04-09
 ```
 
 ### Publish with family bump
@@ -303,7 +328,7 @@ Allowed only for deliberate reference-side reasons. Never regenerate to make par
 
 ## What maintainers must never do
 
-- Never edit `CURRENT.json` manually to publish a run
+- Never hand-edit `CURRENT.json` to publish or change gates; use **`release_cli`** for publication or **`finalize_cli --sync-current-release`** only for the supported metadata refresh case
 - Never regenerate the fixture casually
 - Never promote a run with red artifact, promotion, or required parity gates
 - Never overwrite a family when the task contract changed

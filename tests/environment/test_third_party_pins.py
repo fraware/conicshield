@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import subprocess
-from pathlib import Path
 
 import pytest
 
-REPO = Path(__file__).resolve().parents[1]
+from tests._repo import repo_root
+
+REPO = repo_root()
 REVISION_FILE = REPO / "third_party" / "inter-sim-rl" / "REVISION"
 CHECKOUT = REPO / "third_party" / "inter-sim-rl" / "checkout"
 

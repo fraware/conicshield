@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conicshield.dev/schemas/family_manifest.schema.json",
+  "title": "ConicShield Benchmark Family Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "family_id",
+    "family_version",
+    "benchmark_name",
+    "task_contract_version",
+    "fixture_lineage",
+    "required_arms",
+    "reference_arm",
+    "native_parity_required",
+    "same_family_replacement_rules",
+    "fork_info"
+  ],
+  "properties": {
+    "family_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "family_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "benchmark_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_contract_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fixture_lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_fixture_version",
+        "reference_arm_label",
+        "reference_backend"
+      ],
+      "properties": {
+        "current_fixture_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference_arm_label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference_backend": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "required_arms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "reference_arm": {
+      "type": "string",
+      "minLength": 1
+    },
+    "native_parity_required": {
+      "type": "boolean"
+    },
+    "same_family_replacement_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_space_must_match",
+        "state_contract_must_match",
+        "rule_choices_must_match",
+        "transition_bank_semantics_must_match",
+        "reference_arm_definition_must_match"
+      ],
+      "properties": {
+        "action_space_must_match": {
+          "type": "boolean"
+        },
+        "state_contract_must_match": {
+          "type": "boolean"
+        },
+        "rule_choices_must_match": {
+          "type": "boolean"
+        },
+        "transition_bank_semantics_must_match": {
+          "type": "boolean"
+        },
+        "reference_arm_definition_must_match": {
+          "type": "boolean"
+        }
+      }
+    },
+    "fork_info": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "forked_from_family_id",
+        "reason"
+      ],
+      "properties": {
+        "forked_from_family_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

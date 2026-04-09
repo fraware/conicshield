@@ -5,6 +5,15 @@
       "status": "active",
       "task_contract_version": "v1",
       "current_fixture_version": "fixture-v1",
+      "current_run_id": "wsl-real-20260409-132450",
+      "published_at_utc": "2026-04-09T13:28:32.787415+00:00",
+      "history": []
+    },
+    {
+      "family_id": "conicshield-shield-qp-micro-v1",
+      "status": "candidate",
+      "task_contract_version": "v1",
+      "current_fixture_version": "fixture-v1",
       "current_run_id": null,
       "published_at_utc": null,
       "history": []

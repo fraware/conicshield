@@ -30,15 +30,17 @@ Constraint kinds `progress` and `clearance` raise `NotImplementedError` in [`con
 
 ## Validated solver stack
 
-After a green **Vendor CI** or local `make test-solver` on a licensed machine, record versions for auditability:
+Pinned **dev lockfile** versions (public CI) and project lower bounds; replace the `moreau` row with the exact wheel from **Vendor CI** `solver_versions.json` when you run a licensed stack.
 
-| Package       | Version (pip) | Date validated (UTC) | Notes        |
-| ------------- | ------------- | -------------------- | ------------ |
-| `moreau`      | _from CI Summary or `pip freeze`_ | | Vendor wheel |
-| `cvxpy`       | _from CI Summary or `pip freeze`_ | | `pyproject` lower bound |
-| `cvxpylayers` | _from CI Summary or `pip freeze`_ | | `pyproject` lower bound |
+| Package       | Version (reference) | Date validated (UTC) | Notes        |
+| ------------- | ------------------- | -------------------- | ------------ |
+| `moreau`      | `0.3.0` (vendor wheel; not in public `requirements-dev.txt`) | 2026-04-09 | WSL licensed stack; pair with Vendor CI / `solver_versions.json` when automating |
+| `cvxpy`       | `1.8.2` (`requirements-dev.txt`); project `>=1.8.2` | 2026-04-09 | Last full-stack check with row above |
+| `cvxpylayers` | `1.0.4` (`requirements-dev.txt`); project `>=1.0.4` | 2026-04-09 | Required with `cp.MOREAU` |
 
 The Vendor CI job uploads `solver_versions.json` and may append a filtered `pip freeze` to the job Summary for copying here.
+
+After each green **vendor-ci-moreau** run, copy the **exact** `moreau` wheel version string from the uploaded `solver_versions.json` (or the job Summary table) into the first row above and set **Date validated** to the workflow run date (UTC). Do not guess from the public PyPI index.
 
 ```bash
 pip install -e ".[solver,dev]" --extra-index-url "https://<TOKEN>:@pypi.fury.io/optimalintellect/"
@@ -47,7 +49,7 @@ python -m pip freeze | findstr /i "moreau cvxpy cvxpylayers"
 
 ## Published benchmark family
 
-- **Registry:** [`benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json`](../benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json) — `state` stays `uninitialized` until the first governed publish.
+- **Registry:** [`benchmarks/registry.json`](../benchmarks/registry.json) lists families. **Primary:** [`benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json`](../benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json) — `published`, green artifact/promotion/parity gates, reference arms publishable (native arm listing still requires a `shielded-native-moreau` row in the run `summary.json`). **Second harness (scaffold):** [`benchmarks/releases/conicshield-shield-qp-micro-v1/CURRENT.json`](../benchmarks/releases/conicshield-shield-qp-micro-v1/CURRENT.json) — `uninitialized` until a first governed publish.
 - **Governance:** [`BENCHMARK_GOVERNANCE.md`](BENCHMARK_GOVERNANCE.md); machine-readable metrics per run in `summary.json`; consolidated dashboard via `dashboard_cli` (see [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md)).
 - **Decision template:** [`benchmarks/templates/governance_decision.template.md`](../benchmarks/templates/governance_decision.template.md)
 

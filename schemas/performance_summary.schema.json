@@ -17,6 +17,16 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T"
     },
     "repeats_config": { "type": "integer", "minimum": 1 },
+    "sweep_mode": { "type": "boolean" },
+    "shield_action_dims": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 2 }
+    },
+    "batch_sizes": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1 }
+    },
+    "sweep_auto_tune": { "type": "boolean" },
     "rows": {
       "type": "array",
       "items": { "$ref": "#/$defs/perfRow" }
@@ -35,7 +45,7 @@
       "properties": {
         "path": {
           "type": "string",
-          "enum": ["cvxpy_moreau", "native_cold", "native_warm_sequence"]
+          "minLength": 1
         },
         "device": { "type": "string" },
         "repeats": { "type": "integer", "minimum": 1 },
@@ -44,7 +54,13 @@
         "p95_sec": { "type": "number" },
         "warm_start_speedup_vs_first": {
           "type": ["number", "null"]
-        }
+        },
+        "scenario_id": { "type": "string" },
+        "conditioning": { "type": "string" },
+        "action_dim": { "type": "integer", "minimum": 2 },
+        "auto_tune": { "type": "boolean" },
+        "batch_size": { "type": "integer", "minimum": 1 },
+        "mean_sec_per_solve": { "type": "number" }
       }
     }
   }
