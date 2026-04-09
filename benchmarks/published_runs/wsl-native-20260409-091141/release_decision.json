@@ -1,0 +1,9 @@
+{
+  "run_id": "wsl-native-20260409-091141",
+  "source_family_id": "conicshield-transition-bank-v1",
+  "target_family_id": "conicshield-transition-bank-v1",
+  "mode": "same-family",
+  "requires_family_bump": false,
+  "reason": "Publish native-arm reference run wsl-native-20260409-091141",
+  "compatibility_reason": "Task contract compatible with current family"
+}

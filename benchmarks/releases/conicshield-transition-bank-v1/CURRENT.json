@@ -14,5 +14,9 @@
   "parity_gate": "green",
   "promotion_gate": "green",
   "published_at_utc": "2026-04-09T16:43:26.919632+00:00",
-  "notes": "Publish native-arm reference run wsl-native-20260409-091141"
+  "notes": "Publish native-arm reference run wsl-native-20260409-091141",
+  "benchmark_bundle_paths": [
+    "benchmarks/published_runs/wsl-native-20260409-091141",
+    "benchmarks/published_runs/wsl-real-20260409-132450"
+  ]
 }

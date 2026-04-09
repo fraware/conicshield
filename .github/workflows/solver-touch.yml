@@ -1,0 +1,44 @@
+# Extra checks when solver / parity / native bench code changes (no vendor Moreau required).
+name: solver-touch
+
+on:
+  pull_request:
+    paths:
+      - "conicshield/core/moreau*.py"
+      - "conicshield/core/moreau_batched.py"
+      - "conicshield/bench/**"
+      - "conicshield/parity/**"
+      - "scripts/performance_benchmark.py"
+      - "tests/native/**"
+      - "tests/parity/**"
+  push:
+    branches: [main]
+    paths:
+      - "conicshield/core/moreau*.py"
+      - "conicshield/core/moreau_batched.py"
+      - "conicshield/bench/**"
+      - "conicshield/parity/**"
+      - "scripts/performance_benchmark.py"
+      - "tests/native/**"
+      - "tests/parity/**"
+
+concurrency:
+  group: solver-touch-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity-and-paths:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Benchmark path resolution + parity tests
+        run: |
+          python -m pytest tests/governance/test_benchmark_paths_resolution.py tests/parity/ -q --tb=short

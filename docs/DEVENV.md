@@ -19,6 +19,7 @@ On every PR and push to `main`:
 
 - **`conic-trusted-shape`** — runs only [`tests/reference/test_reference_conic_trusted_shape.py`](../tests/reference/test_reference_conic_trusted_shape.py) (CLARABEL/SCS structural correctness; no vendor MOREAU). Safe to mark **required** in branch protection for a visible public conic gate.
 - **`quality`** — Ruff check and format check, Mypy on `conicshield` and `tests`, full default-marker pytest with coverage over `conicshield`, then verification scripts.
+- **`solver-touch`** ([`.github/workflows/solver-touch.yml`](../.github/workflows/solver-touch.yml)) — on PRs/pushes that touch `conicshield/core/moreau*.py`, `moreau_batched.py`, `conicshield/bench/`, `conicshield/parity/`, `scripts/performance_benchmark.py`, or related tests: runs benchmark path resolution + `tests/parity/` (no vendor Moreau required).
 
 Install path matches contributor setup: `pip install -e ".[dev]"` in public/reference mode.
 

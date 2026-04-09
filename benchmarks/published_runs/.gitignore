@@ -1,3 +1,8 @@
+# Ignore unpublished scratch under published_runs; allow canonical governed bundles.
 *
 !README.md
 !.gitignore
+!wsl-real-20260409-132450/
+!wsl-real-20260409-132450/**
+!wsl-native-20260409-091141/
+!wsl-native-20260409-091141/**

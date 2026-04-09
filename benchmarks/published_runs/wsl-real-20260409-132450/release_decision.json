@@ -1,0 +1,9 @@
+{
+  "run_id": "wsl-real-20260409-132450",
+  "source_family_id": "conicshield-transition-bank-v1",
+  "target_family_id": "conicshield-transition-bank-v1",
+  "mode": "same-family",
+  "requires_family_bump": false,
+  "reason": "First governed publish from WSL real-projector run wsl-real-20260409-132450",
+  "compatibility_reason": "Family exists but has no published run yet."
+}

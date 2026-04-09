@@ -73,6 +73,14 @@ Writes `output/artifact_validation_report.json` and `output/artifact_validation_
 python -m conicshield.parity.regenerate_fixture --reference-dir tests/fixtures/parity_reference
 ```
 
+### Conic suite report (trusted public solvers)
+
+```bash
+python scripts/conic_suite_report.py --profile standard --out output/conic_suite_report.json
+```
+
+Writes one JSON object with per-case rows (`status`, `case_id`, `n`, …). Exit code `1` if any case is not `ok` (useful in scripts).
+
 ### Build a demo transition bank (offline)
 ```bash
 python -m conicshield.bench.build_transition_bank --demo --out /tmp/demo_bank.json

@@ -13,3 +13,7 @@ See `CURRENT.json` (gates and `publishable_arms` are explained in [`docs/BENCHMA
 
 ## Historical releases
 See `HISTORY.json`.
+
+## Committed run bundles (audit)
+
+Canonical benchmark trees for this family live under [`../../published_runs/`](../../published_runs/README.md). `CURRENT.json` lists `benchmark_bundle_paths` (current and superseded runs referenced in `HISTORY.json`) so reviewers can open the same paths in Git without guessing `run_id` layout.

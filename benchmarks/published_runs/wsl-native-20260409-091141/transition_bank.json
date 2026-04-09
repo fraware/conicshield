@@ -1,0 +1,36 @@
+{
+  "root_address": "Root",
+  "nodes": {
+    "Root": {
+      "address": "Root",
+      "coords": [
+        0.0,
+        0.0
+      ],
+      "depth": 0,
+      "candidates": [
+        {
+          "destination_address": "A",
+          "destination_coords": [
+            1.0,
+            0.0
+          ],
+          "first_instruction": "Turn right",
+          "action_class": "turn_right",
+          "duration_sec": 10.0,
+          "distance_m": 100.0,
+          "place": null
+        }
+      ]
+    },
+    "A": {
+      "address": "A",
+      "coords": [
+        1.0,
+        0.0
+      ],
+      "depth": 1,
+      "candidates": []
+    }
+  }
+}

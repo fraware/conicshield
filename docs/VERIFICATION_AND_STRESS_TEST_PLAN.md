@@ -2,7 +2,7 @@
 
 Operational **trust ladder** for ConicShield: commands, artifacts, and policies in this repository.
 
-**Related:** [MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md](MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md), [PARITY_AND_FIXTURES.md](PARITY_AND_FIXTURES.md), [RELEASE_POLICY.md](RELEASE_POLICY.md), [DEVENV.md](DEVENV.md) (CI and pytest markers).
+**Related:** [MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md](MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md), [PARITY_AND_FIXTURES.md](PARITY_AND_FIXTURES.md), [RELEASE_POLICY.md](RELEASE_POLICY.md), [DEVENV.md](DEVENV.md) (CI and pytest markers). **Test/layer mapping:** [`tests/LAYERS.md`](../tests/LAYERS.md).
 
 ## Principles
 
@@ -49,7 +49,7 @@ The goal is not a single passing solve. The repository should show:
 |-------|-----|--------|------------------------------|
 | **A** | Environment | Partial | `scripts/environment_check.py` → `output/environment_check.json` |
 | **B** | Smoke | Partial | `scripts/smoke_check.py` → `output/smoke_check.json`; `make smoke-solver` |
-| **C** | Reference correctness | Implemented | `scripts/reference_correctness_summary.py` (conic suite vs CLARABEL/SCS + shield minimal); `tests/reference/test_reference_conic_correctness.py` (`pytest -m solver`) |
+| **C** | Reference correctness | Implemented | `scripts/reference_correctness_summary.py` (conic suite vs CLARABEL/SCS + shield minimal); `scripts/conic_suite_report.py` (JSON by case); `tests/reference/test_reference_conic_correctness.py` (`pytest -m solver`) |
 | **D** | Native parity | Implemented | `make parity-native-licensed`; `conicshield.parity.gates` |
 | **E** | Performance | Implemented | `scripts/performance_benchmark.py` → `output/performance_*` |
 | **F** | Differentiation | Optional | `scripts/differentiation_check.py` (shield FD + optional torch/jax micrograd probes) |

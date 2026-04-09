@@ -2,6 +2,8 @@
 
 This repository is intentionally standalone. It does not vendor the external `inter-sim-rl` codebase.
 
+**Benchmark closure (export → bank → governed publish):** Tracked in [docs/ROADMAP.md](ROADMAP.md) (*External integration* and *Remaining work*).
+
 **Canonical upstream:** [https://github.com/fraware/inter-sim-rl](https://github.com/fraware/inter-sim-rl)
 
 ## Integration seam

@@ -1,0 +1,91 @@
+{
+  "benchmark_name": "wsl-real-20260409-132450",
+  "description": "Frozen parity fixture",
+  "created_at_utc": "2026-04-09T16:20:30Z",
+  "policy": {
+    "policy_id": "policy_fixture",
+    "checkpoint": null,
+    "input_dim": 24,
+    "action_dim": 4,
+    "epsilon": 0.0,
+    "frozen_weights": true
+  },
+  "environment": {
+    "env_name": "inter-sim-rl",
+    "action_space": [
+      "turn_left",
+      "turn_right",
+      "go_straight",
+      "turn_back"
+    ],
+    "rule_choices": [
+      "right"
+    ],
+    "max_intersections": 1,
+    "state_contract": {
+      "location_dim": 2,
+      "direction_dim": 2,
+      "nearby_places_feature_size": 20
+    }
+  },
+  "transition_bank": {
+    "bank_id": "generated_bank",
+    "root_addresses": [
+      "Root"
+    ],
+    "max_depth": 1,
+    "max_nodes": 2,
+    "radius": 500,
+    "max_candidates_per_node": 4
+  },
+  "arms": [
+    {
+      "label": "baseline-unshielded",
+      "backend": "none",
+      "solver": {}
+    },
+    {
+      "label": "shielded-rules-only",
+      "backend": "cvxpy_moreau",
+      "use_geometry_prior": false,
+      "warm_start": true,
+      "solver": {
+        "device": "cpu",
+        "max_iter": 300,
+        "policy_weight": 1.0,
+        "reference_weight": 0.0
+      }
+    },
+    {
+      "label": "shielded-rules-plus-geometry",
+      "backend": "cvxpy_moreau",
+      "use_geometry_prior": true,
+      "warm_start": true,
+      "solver": {
+        "device": "cpu",
+        "max_iter": 300,
+        "policy_weight": 1.0,
+        "reference_weight": 0.5
+      }
+    },
+    {
+      "label": "shielded-native-moreau",
+      "backend": "native_moreau",
+      "use_geometry_prior": true,
+      "warm_start": true,
+      "solver": {
+        "device": "cpu",
+        "max_iter": 200,
+        "policy_weight": 1.0,
+        "reference_weight": 0.5
+      }
+    }
+  ],
+  "seeds": [
+    7
+  ],
+  "commits": {
+    "conicshield_commit": null,
+    "inter_sim_rl_commit": null
+  }
+}

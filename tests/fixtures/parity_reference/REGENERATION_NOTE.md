@@ -1,12 +1,14 @@
 # Regeneration Note
 
-**Fixture status:** Bootstrap synthetic reference stream. **Nothing in the reference solver path has been replaced** by a promoted real governed bundle yet; follow [docs/PARITY_AND_FIXTURES.md](../../../docs/PARITY_AND_FIXTURES.md) when you have a validated directory under `benchmarks/published_runs/<run_id>/`.
+**Fixture status:** Promoted from a **committed governed bundle** in-repo. The parity gold stream is synced from `benchmarks/published_runs/wsl-real-20260409-132450/` (see `RUN_PROVENANCE.json` there and in this fixture).
 
 ## Why the fixture changed
-- Initial synthetic frozen reference fixture for governance and parity tests.
+
+- Regenerated via `scripts/regenerate_parity_fixture.py --source benchmarks/published_runs/wsl-real-20260409-132450` so CI parity tests track the same reference stream as the auditable published bundle.
 
 ## What changed in the reference path
-- Nothing yet. This is the bootstrap fixture.
+
+- Files under `tests/fixtures/parity_reference/` were refreshed from that source directory per [docs/PARITY_AND_FIXTURES.md](../../../docs/PARITY_AND_FIXTURES.md).
 
 ## Governed regeneration path
 
@@ -19,8 +21,10 @@ See [docs/PARITY_AND_FIXTURES.md](../../../docs/PARITY_AND_FIXTURES.md) for the 
 5. Update this note with what changed and why.
 
 ## What did not change
+
 - Reference arm remains `shielded-rules-plus-geometry`
 - Reference backend remains `cvxpy_moreau`
 
 ## Expected effect on parity
+
 - Native parity tests should use this fixture as the gold reference stream.

@@ -1,5 +1,7 @@
 # Test layout
 
+Target mapping to verification layers: [LAYERS.md](LAYERS.md).
+
 This tree uses **pytest markers** (`solver`, `requires_moreau`, `reference_correctness`, `slow`, …) as the primary way to filter runs. Physical subtrees group ownership:
 
 | Path | Role |

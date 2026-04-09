@@ -530,6 +530,33 @@ def main() -> int:
                 rows.append(_bench_native_warm(spec, proposed, prev, repeats, dev, warmup=args.warmup))
             except Exception as exc:
                 errors.append(f"native_{dev}: {exc}")
+        batch_prop = _batch_proposals(spec=spec, prev=prev, batch_size=4, seed=7)
+        for dev in ("cpu",):
+            try:
+                rows.append(
+                    _bench_native_microbatch(
+                        spec,
+                        prev,
+                        batch_prop,
+                        max(2, repeats // 2),
+                        dev,
+                        auto_tune=False,
+                        warmup=args.warmup,
+                    )
+                )
+                rows.append(
+                    _bench_native_compiled_real_batch(
+                        spec,
+                        prev,
+                        batch_prop,
+                        max(2, repeats // 2),
+                        dev,
+                        auto_tune=False,
+                        warmup=args.warmup,
+                    )
+                )
+            except Exception as exc:
+                errors.append(f"native batch paths ({dev}): {exc}")
 
         if not args.skip_cuda and _cuda_available():
             try:

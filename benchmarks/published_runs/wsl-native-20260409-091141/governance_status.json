@@ -1,0 +1,40 @@
+{
+  "run_id": "wsl-native-20260409-091141",
+  "family_id": "conicshield-transition-bank-v1",
+  "task_contract_version": "v1",
+  "fixture_version": "fixture-v1",
+  "state": "published",
+  "artifact_gate": "green",
+  "fixture_gate": "green",
+  "parity_gate": "green",
+  "promotion_gate": "green",
+  "review_locked": true,
+  "publishable_arms": [
+    "baseline-unshielded",
+    "shielded-rules-only",
+    "shielded-rules-plus-geometry",
+    "shielded-native-moreau"
+  ],
+  "gate_details": {
+    "artifact_gate": {
+      "status": "green",
+      "detail": "Run bundle validated successfully."
+    },
+    "fixture_gate": {
+      "status": "green",
+      "detail": "Fixture policy validated successfully."
+    },
+    "parity_gate": {
+      "status": "green",
+      "detail": "Parity thresholds satisfied (parity_summary.json)."
+    },
+    "promotion_gate": {
+      "status": "green",
+      "detail": "Promotion thresholds satisfied."
+    },
+    "review_lock_gate": {
+      "status": "green",
+      "detail": "Task contract compatible with current family"
+    }
+  }
+}

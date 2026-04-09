@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Layer F: finite-difference sanity on the reference projector; optional native FD; extras probe."""
+"""Layer F: finite-difference sanity on the reference projector; optional native FD; extras probe.
+
+Roadmap follow-on: autograd vs finite differences on the actual Moreau-backed shield objective when
+``enable_grad`` matters — run behind vendor extras / ``pytest.mark.requires_moreau`` (see docs/ROADMAP.md P1).
+"""
 
 from __future__ import annotations
 
