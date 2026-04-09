@@ -88,6 +88,32 @@ def _solver_num_iters(prob: Any) -> int | None:
     return int(ni) if ni is not None else None
 
 
+def solve_trusted_only(
+    cp: Any,
+    prob: Any,
+    *,
+    family: str,
+) -> dict[str, Any]:
+    """Solve with CLARABEL/SCS only (no MOREAU). For default CI structural validation."""
+    ref_sol, ref_name = trusted_solver(cp)
+    row: dict[str, Any] = {
+        "family": family,
+        "trusted_solver": ref_name,
+        "status": "pending",
+    }
+    try:
+        prob.solve(solver=ref_sol, verbose=False)
+        if not status_ok(cp, prob):
+            row["status"] = "fail"
+            row["error"] = f"trusted status {prob.status}"
+            return row
+        row["status"] = "ok"
+    except Exception as exc:
+        row["status"] = "error"
+        row["error"] = str(exc)
+    return row
+
+
 def solve_pair(
     cp: Any,
     prob: Any,
@@ -270,6 +296,28 @@ def iter_conic_suite_cases() -> list[Callable[[Any], tuple[Any, tuple[Any, ...],
         _socp6,
         _mixed,
     ]
+
+
+def run_conic_suite_trusted_only(cp: Any, *, profile: str = "smoke") -> list[dict[str, Any]]:
+    """Smoke/standard suite solved with trusted public solver only (no vendor MOREAU)."""
+    if profile not in {"smoke", "standard", "stress"}:
+        raise ValueError(f"Unknown profile: {profile}")
+    rows: list[dict[str, Any]] = []
+    factories = iter_conic_suite_cases()
+    if profile == "smoke":
+        factories = factories[:4]
+    elif profile == "stress":
+        factories = factories + factories
+    for factory in factories:
+        prob, _variables, case = factory(cp)
+        row = solve_trusted_only(cp, prob, family=case.family)
+        row["case_id"] = case.case_id
+        row["n"] = case.n
+        row["density"] = case.density
+        row["conditioning"] = case.conditioning
+        row["suite_profile"] = profile
+        rows.append(row)
+    return rows
 
 
 def run_full_conic_suite(cp: Any, *, profile: str = "standard") -> list[dict[str, Any]]:

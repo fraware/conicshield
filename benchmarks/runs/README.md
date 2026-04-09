@@ -20,8 +20,11 @@ Operational sequence (full detail in [`docs/MAINTAINER_RUNBOOK.md`](../../docs/M
 1. Produce a **non-passthrough** bundle under `benchmarks/runs/<run_id>/` (real `CVXPY`/`MOREAU` arms).
 2. `python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>`.
 3. Promote parity: `python scripts/regenerate_parity_fixture.py --source benchmarks/runs/<run_id>` and update [`tests/fixtures/parity_reference/REGENERATION_NOTE.md`](../../tests/fixtures/parity_reference/REGENERATION_NOTE.md).
-4. Parity CLI / pytest gates per [`docs/PARITY_AND_FIXTURES.md`](../../docs/PARITY_AND_FIXTURES.md).
-5. Add `governance_decision.md` from [`benchmarks/templates/governance_decision.template.md`](../templates/governance_decision.template.md), then `finalize_cli` (pass `--parity-summary-path` to your `parity_summary.json` when available) → `release_cli` → publish → `audit_cli --strict`.
+4. Parity CLI / pytest gates per [`docs/PARITY_AND_FIXTURES.md`](../../docs/PARITY_AND_FIXTURES.md); keep `parity_summary.json` for the next step.
+5. `finalize_cli` (with `--parity-summary-path` when native parity applies, and `--current-release-path` as needed). Writes `governance_status.json`; does **not** require `governance_decision.md`.
+6. Copy the validated bundle to [`benchmarks/published_runs/<run_id>/`](../published_runs/README.md) before merge if your workflow keeps a canonical published copy (recommended once `CURRENT.json` will reference this `run_id`).
+7. Add `governance_decision.md` from [`benchmarks/templates/governance_decision.template.md`](../templates/governance_decision.template.md) to the **same directory you pass to `release_cli`** (after the copy, update both trees if you use two). Required for **`release_cli` without `--dry-run`** only; not read by `finalize_cli` or `release_cli --dry-run`.
+8. `release_cli ... --dry-run`, then `release_cli` (real) → `audit_cli --strict`.
 
 After a run is already published, you can refresh `CURRENT.json` gate fields (same `current_run_id`) with `python -m conicshield.governance.finalize_cli ... --parity-summary-path ... --current-release-path ... --sync-current-release` (see [`docs/MAINTAINER_RUNBOOK.md`](../../docs/MAINTAINER_RUNBOOK.md)).
 
@@ -48,4 +51,8 @@ See [`docs/PARITY_AND_FIXTURES.md`](../docs/PARITY_AND_FIXTURES.md) for the fixt
 
 ## Git policy
 
-Ephemeral run directories under `benchmarks/runs/` are ignored by default (see `.gitignore` here) so local and CI rehearsal bundles are not committed. The parity **fixture** under `tests/fixtures/parity_reference/` is the minimal frozen contract kept in-repo for CI.
+Ephemeral run directories under `benchmarks/runs/` are ignored by default (see `.gitignore` here) so local and CI rehearsal bundles are not committed.
+
+**Published runs:** once a `run_id` is listed in a family `CURRENT.json`, commit the validated bundle under [`benchmarks/published_runs/<run_id>/`](../published_runs/README.md) so release metadata and on-disk artifacts stay auditable together. Tools resolve `published_runs` first, then `runs/`.
+
+The parity **fixture** under `tests/fixtures/parity_reference/` is the minimal frozen contract kept in-repo for CI until promoted from a real governed bundle.

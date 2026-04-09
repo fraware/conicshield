@@ -6,6 +6,7 @@ from typing import Any
 import numpy as np
 
 from conicshield.bench.episode_runner import EpisodeRecord
+from conicshield.bench.metrics import step_solver_status_is_failure
 
 
 def episode_payloads_from_records(records: list[EpisodeRecord]) -> list[dict[str, Any]]:
@@ -46,8 +47,7 @@ def _rates_from_records(records: list[EpisodeRecord]) -> dict[str, float]:
             if s.solver_status is not None:
                 total_solver_steps += 1
                 total_warm_started += int(bool(s.warm_started))
-                status_l = str(s.solver_status).lower()
-                if "fail" in status_l or "infeas" in status_l or "error" in status_l:
+                if step_solver_status_is_failure(s.solver_status):
                     total_solve_failures += 1
 
     return {

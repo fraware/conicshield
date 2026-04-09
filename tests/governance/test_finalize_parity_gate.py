@@ -157,6 +157,12 @@ def test_sync_current_release_from_status_updates_gates(tmp_path: Path) -> None:
 def test_sync_current_release_rejects_run_id_mismatch(tmp_path: Path) -> None:
     current = tmp_path / "CURRENT.json"
     current.write_text(json.dumps({"current_run_id": "other"}), encoding="utf-8")
-    status = {"run_id": "run-a", "artifact_gate": "green", "parity_gate": "green", "promotion_gate": "green", "publishable_arms": []}
+    status = {
+        "run_id": "run-a",
+        "artifact_gate": "green",
+        "parity_gate": "green",
+        "promotion_gate": "green",
+        "publishable_arms": [],
+    }
     with pytest.raises(GovernanceError):
         sync_current_release_from_status(current_release_path=current, status=status)

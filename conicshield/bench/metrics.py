@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from statistics import mean
 
@@ -99,6 +100,37 @@ def fallback_rate(episodes: list[EpisodeRecord]) -> float:
     return fallbacks / total if total else 0.0
 
 
+def step_solver_status_is_failure(solver_status: str | None) -> bool:
+    """Return True when telemetry indicates a failed solve (not a successful projection).
+
+    Avoids matching ``error`` inside tokens like ``error_tolerance`` (substring false positives).
+    """
+    if solver_status is None:
+        return False
+    s = str(solver_status).lower()
+    if not s.strip() or s.strip() == "unknown":
+        return False
+    # Strong success (CVXPY + Moreau-style strings)
+    if ("optimal" in s or "solved" in s or "converged" in s) and "infeas" not in s:
+        return False
+    if "almost" in s and "infeas" not in s:
+        return False
+    if s.strip() in ("1", "true", "4"):
+        return False
+    # Failures
+    if "infeas" in s or "unbounded" in s:
+        return True
+    if "unsolved" in s:
+        return True
+    if "fail" in s:
+        return True
+    if re.search(r"\berror\b", s):
+        if any(p in s for p in ("no error", "without error", "zero error", "error-free")):
+            return False
+        return True
+    return False
+
+
 def matched_action_rate(episodes: list[EpisodeRecord]) -> float:
     total = 0
     matched = 0
@@ -144,8 +176,7 @@ def summarize(label: str, episodes: list[EpisodeRecord]) -> BenchmarkSummary:
             if step.solver_status is not None:
                 total_solver_steps += 1
                 total_warm_started += int(bool(step.warm_started))
-                status_l = str(step.solver_status).lower()
-                if "fail" in status_l or "infeas" in status_l or "error" in status_l:
+                if step_solver_status_is_failure(step.solver_status):
                     total_solve_failures += 1
 
     device = max(set(devices), key=devices.count) if devices else None

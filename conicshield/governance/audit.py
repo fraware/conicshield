@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from conicshield.artifacts.validator import validate_run_bundle
+from conicshield.benchmark_paths import resolve_run_directory
 from conicshield.governance.family_manifest import validate_family_manifest
 from conicshield.governance.release_validator import validate_release_directory
 
@@ -41,7 +42,7 @@ def _load_json(path: Path) -> Any:
 
 
 def _run_dir(run_id: str) -> Path:
-    return Path("benchmarks") / "runs" / run_id
+    return resolve_run_directory(run_id)
 
 
 def _release_dir(family_id: str) -> Path:

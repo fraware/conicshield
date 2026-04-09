@@ -6,6 +6,7 @@ import pytest
 pytest.importorskip("moreau")
 pytestmark = pytest.mark.vendor_moreau
 
+from conicshield.core.moreau_batched import NativeMoreauCompiledBatchProjector
 from conicshield.core.moreau_compiled import NativeMoreauCompiledOptions, NativeMoreauCompiledProjector
 from conicshield.specs.compiler import CVXPYMoreauProjector, SolverOptions
 from conicshield.specs.schema import (
@@ -101,6 +102,55 @@ def test_native_compiled_and_legacy_match_reference() -> None:
     assert r_ref.solver_status
     assert r_compiled.solver_status
     assert r_legacy.solver_status
+
+
+@pytest.mark.requires_moreau
+@pytest.mark.solver
+def test_batched_compiled_matches_sequential_native() -> None:
+    """True ``CompiledSolver`` batch API vs sequential ``project`` calls."""
+    moreau = pytest.importorskip("moreau")
+    if not hasattr(moreau, "CompiledSolver"):
+        pytest.skip("moreau.CompiledSolver not available")
+
+    spec = _spec()
+    prev = np.full(4, 0.25, dtype=np.float64)
+    proposals = np.array(
+        [
+            [0.85, 0.1, 0.03, 0.02],
+            [0.2, 0.3, 0.25, 0.25],
+            [0.4, 0.35, 0.15, 0.1],
+        ],
+        dtype=np.float64,
+    )
+    seq = NativeMoreauCompiledProjector(
+        spec=spec,
+        options=NativeMoreauCompiledOptions(
+            device="cpu",
+            max_iter=800,
+            verbose=False,
+            persist_warm_start=False,
+            use_compiled_solver=True,
+        ),
+    )
+    bat = NativeMoreauCompiledBatchProjector(
+        spec=spec,
+        options=NativeMoreauCompiledOptions(
+            device="cpu",
+            max_iter=800,
+            verbose=False,
+            persist_warm_start=False,
+        ),
+    )
+    try:
+        out_rows = [seq.project(proposals[i], prev).corrected_action for i in range(proposals.shape[0])]
+        stacked = np.stack(out_rows, axis=0)
+        batched = bat.project_batch(proposals, prev)
+    except RuntimeError as exc:
+        if "license" in str(exc).lower() or "key" in str(exc).lower():
+            pytest.skip(f"Moreau license not available: {exc}")
+        raise
+
+    np.testing.assert_allclose(batched, stacked, rtol=1e-4, atol=1e-5)
 
 
 _TELEMETRY_KEYS = frozenset(

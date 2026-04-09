@@ -2,7 +2,7 @@
 
 **Policy:** [BENCHMARK_GOVERNANCE.md](../../docs/BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](../../docs/MAINTAINER_RUNBOOK.md) (publish sequence).
 
-Replace placeholders before publish. This file must exist as `governance_decision.md` in the run directory; `publish_from_governance_status` requires it alongside `governance_status.json`.
+Replace placeholders before publish. Copy this file to the run directory as `governance_decision.md` **before** `python -m conicshield.governance.release_cli` **without** `--dry-run`. `finalize_cli` and `release_cli --dry-run` do not read it; `publish_from_governance_status` requires it alongside `governance_status.json`.
 
 ## Run
 

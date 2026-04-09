@@ -10,6 +10,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Explicit always-on check for CLARABEL/SCS-only conic suite shape (no vendor Moreau).
+  # Optional: require this job in branch protection alongside `quality`.
+  conic-trusted-shape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install locked dev tools and project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Conic suite (trusted public solver only)
+        run: python -m pytest tests/reference/test_reference_conic_trusted_shape.py -q --tb=short
+
   quality:
     runs-on: ubuntu-latest
     strategy:

@@ -129,7 +129,7 @@ Artifacts land under `output/` (ignored by git). **CI** uploads `output/` as `ve
 ```text
 conicshield/     # installable package: adapters, bench, core, governance, parity, specs
 schemas/         # JSON Schema for bundles (repo root; not packaged)
-benchmarks/      # registry, releases, runs under benchmarks/runs/
+benchmarks/      # registry, releases; published bundles under benchmarks/published_runs/
 scripts/         # maintainer CLIs (env, smoke, perf, trust dashboard)
 tests/           # pytest; see tests/README.md (e.g. tests/reference/ for Layer C)
 docs/            # architecture, policies, verification ladder
@@ -165,7 +165,7 @@ See also [`docs/README.md`](docs/README.md) for a compact index.
 
 **Governance & benchmarks**
 
-- [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md)
+- [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md) · [`docs/NATIVE_ARM_PUBLISH_CHECKLIST.md`](docs/NATIVE_ARM_PUBLISH_CHECKLIST.md)
 - [`docs/RELEASE_POLICY.md`](docs/RELEASE_POLICY.md) · [`docs/PARITY_AND_FIXTURES.md`](docs/PARITY_AND_FIXTURES.md)
 - [`benchmarks/DASHBOARD_README.md`](benchmarks/DASHBOARD_README.md) · [`benchmarks/runs/README.md`](benchmarks/runs/README.md)
 - [`docs/MAINTAINER_RUNBOOK.md`](docs/MAINTAINER_RUNBOOK.md)

@@ -17,11 +17,15 @@ For Moreau-backed development, use Linux/WSL2. Treat green **Vendor CI track** (
 
 On every PR and push to `main`:
 
-- Ruff check and format check
-- Mypy on `conicshield` and `tests`
-- Pytest with coverage over `conicshield`
+- **`conic-trusted-shape`** — runs only [`tests/reference/test_reference_conic_trusted_shape.py`](../tests/reference/test_reference_conic_trusted_shape.py) (CLARABEL/SCS structural correctness; no vendor MOREAU). Safe to mark **required** in branch protection for a visible public conic gate.
+- **`quality`** — Ruff check and format check, Mypy on `conicshield` and `tests`, full default-marker pytest with coverage over `conicshield`, then verification scripts.
 
 Install path matches contributor setup: `pip install -e ".[dev]"` in public/reference mode.
+
+### Recommended branch protection
+
+- Require **`quality`** and **`conic-trusted-shape`** on `main`.
+- For PRs that touch solver-native code (`conicshield/core/moreau_*.py`, `conicshield/specs/compiler.py`, vendor adapters), maintainers should run [**Vendor CI**](#vendor-ci-track-vendor-ci-moreau) on the canonical repo before merge even when GitHub cannot enforce it for forks.
 
 ## Default pytest marker filter
 

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from conicshield.benchmark_paths import resolve_run_directory
 from conicshield.governance.family_bump import initialize_new_family, next_family_version
 from conicshield.governance.family_policy import decide_family_compatibility
 from conicshield.governance.publish import publish_from_governance_status
@@ -84,7 +85,7 @@ def decide_release_mode(*, run_dir: str | Path, family_id: str) -> ReleaseDecisi
             "same-family", family_id, family_id, False, "Family exists but has no published run yet."
         )
 
-    current_config = _load_json(Path("benchmarks") / "runs" / str(current_run_id) / "config.json")
+    current_config = _load_json(resolve_run_directory(str(current_run_id)) / "config.json")
     candidate_config = _load_json(run_dir / "config.json")
     compatibility = decide_family_compatibility(
         family_id=family_id,

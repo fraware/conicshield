@@ -13,6 +13,7 @@ from typing import Any
 
 import numpy as np
 
+from conicshield.core.moreau_batched import NativeMoreauCompiledBatchProjector
 from conicshield.core.moreau_compiled import NativeMoreauCompiledOptions
 from conicshield.core.solver_factory import Backend, create_projector
 from conicshield.specs.compiler import SolverOptions
@@ -201,6 +202,54 @@ def _bench_native_microbatch(
     mean_wall = float(arr.mean())
     return {
         "path": "native_microbatch",
+        "device": device,
+        "repeats": repeats,
+        "warmup": warmup,
+        "measure_iters": int(arr.size),
+        "batch_size": k,
+        "mean_sec": mean_wall,
+        "mean_sec_per_solve": mean_wall / k,
+        "p50_sec": float(np.percentile(arr, 50)),
+        "p95_sec": float(np.percentile(arr, 95)),
+        "auto_tune": auto_tune,
+        "action_dim": spec.action_dim,
+    }
+
+
+def _bench_native_compiled_real_batch(
+    spec: SafetySpec,
+    prev: np.ndarray,
+    proposals: list[np.ndarray],
+    repeats: int,
+    device: str,
+    *,
+    auto_tune: bool = False,
+    warmup: int = 0,
+) -> dict[str, Any]:
+    """Single ``CompiledSolver.solve(qs, bs)`` per timing iteration (true batching)."""
+    k = len(proposals)
+    if k < 1:
+        raise ValueError("batch requires at least one proposal")
+    batch = np.stack(proposals, axis=0)
+    proj = NativeMoreauCompiledBatchProjector(
+        spec=spec,
+        options=NativeMoreauCompiledOptions(
+            device=device,
+            max_iter=500,
+            verbose=False,
+            persist_warm_start=False,
+            auto_tune=auto_tune,
+        ),
+    )
+    wall: list[float] = []
+    for _ in range(repeats):
+        t0 = time.perf_counter()
+        proj.project_batch(batch, prev, policy_weight=1.0, reference_weight=0.0)
+        wall.append(time.perf_counter() - t0)
+    arr = _stats_from_times(wall, warmup=warmup)
+    mean_wall = float(arr.mean())
+    return {
+        "path": "native_compiled_real_batch",
         "device": device,
         "repeats": repeats,
         "warmup": warmup,
@@ -439,6 +488,26 @@ def main() -> int:
                                 except Exception as exc:
                                     errors.append(
                                         f"native_microbatch n{n} {conditioning} bs={bs} at={auto_tune}: {exc}"
+                                    )
+                                try:
+                                    rows.append(
+                                        _tag_row(
+                                            _bench_native_compiled_real_batch(
+                                                spec_b,
+                                                prev0,
+                                                proposals,
+                                                max(2, repeats // 2),
+                                                dev,
+                                                auto_tune=auto_tune,
+                                                warmup=0,
+                                            ),
+                                            scenario_id=btag,
+                                            conditioning=conditioning,
+                                        )
+                                    )
+                                except Exception as exc:
+                                    errors.append(
+                                        f"native_compiled_real_batch n{n} {conditioning} bs={bs} at={auto_tune}: {exc}"
                                     )
     else:
         n = dims[0]

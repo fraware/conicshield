@@ -2,16 +2,17 @@
   "family_id": "conicshield-transition-bank-v1",
   "task_contract_version": "v1",
   "fixture_version": "fixture-v1",
-  "current_run_id": "wsl-real-20260409-132450",
+  "current_run_id": "wsl-native-20260409-091141",
   "state": "published",
   "publishable_arms": [
     "baseline-unshielded",
     "shielded-rules-only",
-    "shielded-rules-plus-geometry"
+    "shielded-rules-plus-geometry",
+    "shielded-native-moreau"
   ],
   "artifact_gate": "green",
   "parity_gate": "green",
   "promotion_gate": "green",
-  "published_at_utc": "2026-04-09T13:28:32.787415+00:00",
-  "notes": "First governed publish from WSL real-projector run wsl-real-20260409-132450"
+  "published_at_utc": "2026-04-09T16:43:26.919632+00:00",
+  "notes": "Publish native-arm reference run wsl-native-20260409-091141"
 }

@@ -115,7 +115,7 @@ def test_validate_run_bundle_summary_avg_reward_mismatch(tmp_path: Path) -> None
     summ = json.loads((d / "summary.json").read_text(encoding="utf-8"))
     for row in summ:
         if row["label"] == "baseline-unshielded":
-            row["avg_reward"] = 0.0
+            row["avg_reward"] = float(row.get("avg_reward", 0.0)) + 999.0
             break
     (d / "summary.json").write_text(json.dumps(summ, indent=2), encoding="utf-8")
     with pytest.raises(ArtifactValidationError, match="avg_reward mismatch"):

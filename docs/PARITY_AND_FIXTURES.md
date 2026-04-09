@@ -2,6 +2,8 @@
 
 How the frozen parity fixture is governed, how native code is checked against it, and how to replace the bootstrap fixture with a real reference run.
 
+**Current fixture status:** The checked-in stream under `tests/fixtures/parity_reference/` is still the **initial synthetic bootstrap** until intentionally replaced using the procedure below (see `REGENERATION_NOTE.md`). That does not block governance CI; it does cap how much “production realism” parity proves until promotion from a validated non-passthrough bundle.
+
 **See also:** [BENCHMARK_GOVERNANCE.md](BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md), [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (native parity layer).
 
 ---

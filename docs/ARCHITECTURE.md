@@ -51,7 +51,7 @@ Benchmarks run on frozen transition-bank artifacts and serialize into validated 
 
 ### 6. Governance layer
 
-Governance decides whether results are candidates, review-locked, published, or deprecated. Semantic task changes **fork families** instead of silently overwriting scores. Parity evidence from `conicshield.parity.cli` feeds `finalize_cli` (`--parity-summary-path`); `release_cli` publishes full release metadata, and `finalize_cli --sync-current-release` can refresh gate columns on `CURRENT.json` without a republish when the run id is unchanged.
+Governance decides whether results are candidates, review-locked, published, or deprecated. Semantic task changes **fork families** instead of silently overwriting scores. Parity evidence from `conicshield.parity.cli` feeds `finalize_cli` (`--parity-summary-path`); `release_cli` publishes full release metadata (real publish also requires `governance_decision.md` in the run directory), and `finalize_cli --sync-current-release` can refresh gate columns on `CURRENT.json` without a republish when the run id is unchanged.
 
 ## Repository layout
 
@@ -60,7 +60,8 @@ Governance decides whether results are candidates, review-locked, published, or 
 | Package code | `conicshield/` |
 | JSON Schemas for bundles | `schemas/` |
 | Benchmark registry and releases | `benchmarks/` |
-| Governed run bundles (typical) | `benchmarks/runs/<run_id>/` |
+| Published governed bundles (canonical) | `benchmarks/published_runs/<run_id>/` |
+| Ephemeral local bundles | `benchmarks/runs/<run_id>/` (gitignored) |
 | Frozen parity fixture | `tests/fixtures/parity_reference/` |
 | Maintainer scripts (verification, perf, dashboard) | `scripts/` |
 | Tests | `tests/` (see `tests/README.md`) |

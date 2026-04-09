@@ -4,7 +4,7 @@ What still depends on **external** work, licenses, or product decisions — as o
 
 ## External integration
 
-- **inter-sim-rl:** Production benchmarks assume a real offline graph export and transition bank from the patched host environment, not only the minimal JSON fixtures used in CI. Pin and checkout policy: `third_party/inter-sim-rl/` and [`INTER_SIM_RL_INTEGRATION.md`](INTER_SIM_RL_INTEGRATION.md).
+- **inter-sim-rl:** Production benchmarks assume a real offline graph export and transition bank from the patched host environment, not only the minimal JSON fixtures used in CI. Pin and checkout policy: `third_party/inter-sim-rl/` and [`INTER_SIM_RL_INTEGRATION.md`](INTER_SIM_RL_INTEGRATION.md). Closing the loop (export → bank → `reference_run` bundle → [`benchmarks/published_runs/<run_id>/`](../benchmarks/published_runs/README.md) → parity promotion) is still the acceptance bar for “host-realistic” evidence.
 
 ## Solver and parity
 

@@ -72,6 +72,7 @@ select = ["E", "F", "I", "UP", "B", "C4", "SIM"]
 "tests/test_replay_hypothesis_optional.py" = ["E402"]
 "tests/test_replay_banks_hypothesis_optional.py" = ["E402"]
 "tests/reference/test_reference_conic_correctness.py" = ["E402"]
+"tests/reference/test_reference_conic_trusted_shape.py" = ["E402"]
 "conicshield/bench/passthrough_projector.py" = ["ARG002"]
 
 [tool.pytest.ini_options]

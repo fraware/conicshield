@@ -98,15 +98,19 @@ After material edits to banks, replay, artifacts, governance, or adapters, run *
 2. **Transition bank:** Record `offline_transition_graph_export/v1` JSON from the patched environment, then run `build_transition_bank --from-offline-graph-export` and keep provenance. Validate the bank JSON before benchmarking.
 3. **Reference run and fixture:** Run `reference_run` with the real solver path (not `--passthrough-projector`) for reference arms; `python -m conicshield.artifacts.validator_cli --run-dir …`; promote with `scripts/regenerate_parity_fixture.py` per [`PARITY_AND_FIXTURES.md`](PARITY_AND_FIXTURES.md).
 4. **Native parity:** After the fixture is promoted, green **Vendor CI** (`vendor-ci-moreau`) or local `make parity-native-licensed`; adjust `conicshield/parity/gates.py` thresholds only using parity artifacts from real runs. Record `moreau` / `cvxpy` / `cvxpylayers` in [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md).
-5. **Publish:** Copy `benchmarks/templates/governance_decision.template.md` to the run dir as `governance_decision.md`; `finalize_cli` (with `--parity-summary-path` when native parity artifacts exist) → `release_cli` (dry-run then real) → publish via `release_cli` / `publish-benchmark` workflow as appropriate; `audit_cli --strict` and dashboard. Do not hand-edit `benchmarks/releases/.../CURRENT.json` except via **`finalize_cli --sync-current-release`** (metadata refresh for the same `current_run_id`) or **`release_cli`** (full publish).
+5. **Publish:** `finalize_cli` (with `--parity-summary-path` when native parity artifacts exist) writes `governance_status.json`. Copy the validated bundle to `benchmarks/published_runs/<run_id>/` when you commit a canonical published tree. Copy `benchmarks/templates/governance_decision.template.md` to **that run directory** as `governance_decision.md` and fill placeholders — **`publish_from_governance_status` requires this file only when you run `release_cli` without `--dry-run`** (dry-run and `finalize_cli` do not read it). Then `release_cli` (dry-run then real) → `audit_cli --strict` and dashboard. Do not hand-edit `benchmarks/releases/.../CURRENT.json` except via **`finalize_cli --sync-current-release`** (metadata refresh for the same `current_run_id`) or **`release_cli`** (full publish).
 
 ### Produce a governed run bundle (reference path)
 On a machine with the solver stack (or use `--passthrough-projector` only for structural smoke tests):
 
 ```bash
 python -m conicshield.bench.reference_run --out benchmarks/runs/<run_id> --bank /path/to/transition_bank.json
+# Include `shielded-native-moreau` in summary.json (requires licensed Moreau; not compatible with --passthrough-projector):
+python -m conicshield.bench.reference_run --out benchmarks/runs/<run_id> --bank /path/to/transition_bank.json --include-native-arm
 python -m conicshield.bench.reference_run --out /tmp/smoke --bank tests/fixtures/parity_reference/transition_bank.json --passthrough-projector
 ```
+
+After validation, copy the bundle to `benchmarks/published_runs/<run_id>/` before publishing so `CURRENT.json` stays auditable with committed artifacts (see [`benchmarks/published_runs/README.md`](../benchmarks/published_runs/README.md)).
 
 ### Promote a validated bundle into the parity fixture
 After `validate_run_bundle` passes on the source directory:
@@ -149,8 +153,11 @@ python -m conicshield.governance.release_cli   --run-dir benchmarks/runs/<run_id
 ```
 
 ### Publish same-family release
+
+For a **real** publish (`release_cli` **without** `--dry-run`), `--run-dir` must contain `governance_status.json` and **`governance_decision.md`** (from [`benchmarks/templates/governance_decision.template.md`](../benchmarks/templates/governance_decision.template.md)). If you keep a copy under `benchmarks/published_runs/<run_id>/`, point `--run-dir` there and ensure the decision file exists in that directory too.
+
 ```bash
-python -m conicshield.governance.release_cli   --run-dir benchmarks/runs/<run_id>   --family-id conicshield-transition-bank-v1   --reason "promoted after green artifact, parity, and promotion gates"
+python -m conicshield.governance.release_cli   --run-dir benchmarks/published_runs/<run_id>   --family-id conicshield-transition-bank-v1   --reason "promoted after green artifact, parity, and promotion gates"
 ```
 
 ### One-command strict publish chain

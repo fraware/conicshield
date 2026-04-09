@@ -5,6 +5,8 @@ from typing import Any
 
 import numpy as np
 
+from conicshield.bench.metrics import step_solver_status_is_failure
+
 
 def _safe_percentile_ms(values: list[float], q: float) -> float:
     if not values:
@@ -88,7 +90,7 @@ def build_summary_records(episodes: list[dict[str, Any]]) -> list[dict[str, Any]
                     solve_times.append(float(st))
                     solve_attempts += 1
                     status = s.get("solver_status")
-                    if status is not None and str(status).lower() != "optimal":
+                    if status is not None and step_solver_status_is_failure(str(status)):
                         solve_failures += 1
                 su = s.get("setup_time_sec")
                 if su is not None:

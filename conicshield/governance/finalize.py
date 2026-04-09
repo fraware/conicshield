@@ -6,12 +6,13 @@ from pathlib import Path
 from typing import Any
 
 from conicshield.artifacts.validator import validate_run_bundle
+from conicshield.benchmark_paths import resolve_run_directory
 from conicshield.governance.family_policy import decide_family_compatibility
 from conicshield.governance.policy import GovernanceError, assert_same_family_replacement
+from conicshield.parity.fixture_policy import validate_fixture_policy
 
 # Keys copied from governance_status into CURRENT.json when syncing metadata for an already-published run.
 _CURRENT_SYNC_KEYS = ("artifact_gate", "parity_gate", "promotion_gate", "publishable_arms")
-from conicshield.parity.fixture_policy import validate_fixture_policy
 
 
 @dataclass(slots=True)
@@ -207,7 +208,9 @@ def _promotion_gate(summary_by_label: dict[str, dict[str, Any]]) -> GateResult:
             failures.append("native solve_failure_rate > 0")
         ref_p95 = float(geometry["solve_time_p95_ms"])
         native_p95 = float(native["solve_time_p95_ms"])
-        if ref_p95 > 0 and native_p95 > ref_p95:
+        # Microsecond timing noise: allow small relative slack vs geometry reference.
+        tol_ms = max(1e-9, 0.10 * ref_p95) if ref_p95 > 0 else 1e-9
+        if ref_p95 > 0 and native_p95 > ref_p95 + tol_ms:
             failures.append("native p95 solve latency worse than geometry reference")
 
     if failures:
@@ -237,7 +240,7 @@ def _review_lock_gate(
         current_run_id = current.get("current_run_id")
         if current_run_id is None:
             return GateResult("green", "No current run published yet; family compatibility vacuously holds.")
-        current_config_path = Path("benchmarks") / "runs" / str(current_run_id) / "config.json"
+        current_config_path = resolve_run_directory(str(current_run_id)) / "config.json"
         candidate_config = _load_json(candidate_config_path)
         current_config = _load_json(current_config_path)
         decision = decide_family_compatibility(

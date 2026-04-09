@@ -72,7 +72,7 @@ A candidate that is comparable to the current published run because it matches:
 - declared run-spec coverage
 
 ### Published
-A review-locked run that has passed all required gates and has been explicitly promoted.
+A review-locked run that has passed all required gates and has been explicitly promoted. The publish path (`release_cli` without `--dry-run`) also requires a human **decision record** on disk: `governance_decision.md` in the run directory (see [`benchmarks/templates/governance_decision.template.md`](../benchmarks/templates/governance_decision.template.md)). `finalize_cli` does not create this file.
 
 ### Deprecated
 A formerly published run retained for historical inspection but no longer current.
@@ -174,7 +174,7 @@ Recommended footer:
 - `benchmarks/registry.json`
 - `benchmarks/releases/<family_id>/CURRENT.json`
 - `benchmarks/releases/<family_id>/HISTORY.json`
-- immutable run bundles under `benchmarks/runs/<run_id>/`
+- immutable run bundles for each published `run_id` under `benchmarks/published_runs/<run_id>/` (preferred; see [`benchmarks/published_runs/README.md`](../benchmarks/published_runs/README.md)), or the same layout under `benchmarks/runs/<run_id>/` when resolved by `conicshield.benchmark_paths.resolve_run_directory`
 
 ## 12. Human review requirement
 

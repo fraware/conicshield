@@ -106,7 +106,7 @@ The goal is not a single passing solve. The repository should show:
 
 **Goal:** Measured cold vs warm, CVXPY vs native, optional CPU vs CUDA, and **decision-grade sweeps** when requested.
 
-**Commands:** `python scripts/performance_benchmark.py` (single-scenario default). Use **`--sweep`** for `action_dim × conditioning × scenario` grids (default dims `4,8`; override with `--shield-action-dims`). Add **`--batch-sizes`** for native microbatch throughput rows, and **`--sweep-auto-tune`** to compare `NativeMoreauCompiledOptions.auto_tune`.
+**Commands:** `python scripts/performance_benchmark.py` (single-scenario default). Use **`--sweep`** for `action_dim × conditioning × scenario` grids (default dims `4,8`; override with `--shield-action-dims`). Add **`--batch-sizes`** for both **sequential** native microbatch rows (`native_microbatch`) and **true** `CompiledSolver` batching (`native_compiled_real_batch`: one `solve(qs, bs)` per timed iteration), and **`--sweep-auto-tune`** to compare `NativeMoreauCompiledOptions.auto_tune`.
 
 **Artifacts:** `output/performance_summary.json`, `output/performance_matrix.csv`, `output/performance_report.md`, optional `output/performance_latency.png`
 
@@ -125,6 +125,8 @@ The goal is not a single passing solve. The repository should show:
 **Artifacts:** `output/differentiation_summary.json`, `output/differentiation_report.md`
 
 **Policy:** see [Differentiation](#differentiation-policy) below.
+
+**Not yet in scope (defer explicit claims):** implicit differentiation / autograd **through** the shield stack (`NativeMoreauCompiledOptions.enable_grad`, `moreau` `backward()`, PyTorch/Jax binders on the real shield QP). The script’s torch/jax blocks remain toy quadrature checks. Adding vendor tests that compare `backward()` to finite differences on the same shield objective is the next step when differentiability is part of the public story.
 
 ---
 

@@ -9,6 +9,7 @@ from conicshield.bench.metrics import (
     fallback_rate,
     matched_action_rate,
     rule_violation_rate,
+    step_solver_status_is_failure,
     summarize,
 )
 
@@ -107,6 +108,14 @@ def test_matched_and_fallback_rates() -> None:
     )
     assert matched_action_rate([ep]) == 0.5
     assert fallback_rate([ep]) == 0.5
+
+
+def test_step_solver_status_is_failure_heuristics() -> None:
+    assert not step_solver_status_is_failure("optimal")
+    assert not step_solver_status_is_failure("error_tolerance_met")
+    assert step_solver_status_is_failure("failed")
+    assert step_solver_status_is_failure("numerical error")
+    assert not step_solver_status_is_failure(None)
 
 
 def test_summarize_intervention_and_solver_telemetry() -> None:

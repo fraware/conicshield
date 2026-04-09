@@ -1,4 +1,5 @@
 from conicshield.artifacts.payloads import reward_retention, summary_payload
+from conicshield.artifacts.summary_builder import build_summary_records
 from conicshield.bench.episode_runner import EpisodeRecord, StepRecord
 
 
@@ -37,3 +38,51 @@ def test_summary_payload_basic_fields() -> None:
     assert summary["episodes"] == 1
     assert summary["avg_reward"] == 1.0
     assert summary["rule_violation_rate"] == 0.0
+
+
+def test_build_summary_records_ecos_style_solver_status_one_not_failure() -> None:
+    """ECOS/MOSEK-style status ``1`` means optimal; must not count as solve failure."""
+    episodes = [
+        {
+            "episode_id": "baseline-unshielded-001",
+            "arm_label": "baseline-unshielded",
+            "total_reward": 0.0,
+            "num_steps": 1,
+            "num_interventions": 0,
+            "matched_action_steps": 1,
+            "fallback_steps": 0,
+            "rule_choice": "right",
+            "steps": [
+                {
+                    "intervened": False,
+                    "chosen_action": "turn_right",
+                    "previous_instruction": None,
+                    "solve_time_sec": None,
+                }
+            ],
+        },
+        {
+            "episode_id": "shielded-native-moreau-001",
+            "arm_label": "shielded-native-moreau",
+            "total_reward": 0.0,
+            "num_steps": 1,
+            "num_interventions": 1,
+            "matched_action_steps": 1,
+            "fallback_steps": 0,
+            "rule_choice": "right",
+            "steps": [
+                {
+                    "intervened": True,
+                    "chosen_action": "turn_right",
+                    "previous_instruction": None,
+                    "solve_time_sec": 1e-6,
+                    "solver_status": "1",
+                    "iterations": 1,
+                    "warm_started": False,
+                }
+            ],
+        },
+    ]
+    rows = build_summary_records(episodes)
+    native = next(r for r in rows if r["label"] == "shielded-native-moreau")
+    assert native["solve_failure_rate"] == 0.0
