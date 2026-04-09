@@ -17,9 +17,10 @@ This file records how ConicShield calls Moreau and CVXPY, with pointers to vendo
 
 ## Native path (NumPy / SciPy sparse)
 
-- Single-problem API: `moreau.Solver(P, q, A, b, cones=cones, settings=settings)` then `solution = solver.solve(warm_start=...)`.
-- `solver.info` exposes solve metadata (status, timings, iterations, etc.).
-- Warm start: optional `WarmStart` from `solution.to_warm_start()` on a previous solve.
+- **Production-style shared structure:** `moreau.CompiledSolver(n, m, P_row_offsets, P_col_indices, A_row_offsets, A_col_indices, cones, settings)` with `settings.batch_size=1` for per-step shield solves; each step calls `setup(P_values, A_values)` then `solve(qs, bs, warm_start=...)`. ConicShield’s `NativeMoreauCompiledProjector` uses this path by default (`NativeMoreauCompiledOptions.use_compiled_solver=True`).
+- **Legacy single-build API:** `moreau.Solver(P, q, A, b, cones=cones, settings=settings)` then `solution = solver.solve(warm_start=...)` (still available via `use_compiled_solver=False`).
+- `solver.info` exposes solve metadata (status, timings, iterations, etc.); batched metadata is reduced to the first batch row where needed for telemetry parity.
+- Warm start: `WarmStart` / `BatchedWarmStart` from `solution.to_warm_start()` on a previous solve.
 
 ## License
 
@@ -38,9 +39,9 @@ When bumping `moreau`, `cvxpy`, or `cvxpylayers` (or Python minor), walk this li
 | File | Re-verify |
 | ---- | -------- |
 | [`conicshield/specs/compiler.py`](../conicshield/specs/compiler.py) | `cp.MOREAU` availability; kwargs to `problem.solve()` (`device`, `max_iter`, `verbose`, `time_limit`, `ipm_settings`); telemetry via `extract_cvxpy_telemetry` / problem value types. |
-| [`conicshield/core/moreau_compiled.py`](../conicshield/core/moreau_compiled.py) | `moreau.Solver` construction; `Cones`, `Settings` fields; `solve()` return shape; `solver.info` attribute names and types; `WarmStart` / `to_warm_start()` lifecycle. |
+| [`conicshield/core/moreau_compiled.py`](../conicshield/core/moreau_compiled.py) | `moreau.CompiledSolver` construction (CSR structure + `setup`/`solve`); fallback `moreau.Solver`; `Cones`, `Settings` (`batch_size=1`); batched vs single `solve()` return shapes; `solver.info` / batched telemetry; `WarmStart` / `BatchedWarmStart` / `to_warm_start()`. |
 | [`conicshield/core/solver_factory.py`](../conicshield/core/solver_factory.py) | Backend dispatch; optional-extra error messages; projector construction for reference vs native. |
-| Tests | `make test-solver` or Vendor CI track (`vendor-ci-moreau`); [`conicshield/core/solver_smoke_cli.py`](../conicshield/core/solver_smoke_cli.py) reference + native arms. |
+| Tests | `make test-solver` or Vendor CI track (`vendor-ci-moreau`); [`conicshield/core/solver_smoke_cli.py`](../conicshield/core/solver_smoke_cli.py) reference + native arms; [`tests/native/test_native_moreau_projector.py`](../tests/native/test_native_moreau_projector.py) asserts CVXPY parity for both native paths (`test_native_compiled_and_legacy_match_reference`). |
 
 If the vendor changes status strings or timing fields, update [`conicshield/core/telemetry.py`](../conicshield/core/telemetry.py) `normalize_moreau_info` and any strict parity comparisons in tests.
 

@@ -61,6 +61,48 @@ def test_native_matches_reference_within_tolerance() -> None:
         assert r_nat.iterations >= 1
 
 
+@pytest.mark.requires_moreau
+@pytest.mark.solver
+def test_native_compiled_and_legacy_match_reference() -> None:
+    """Guard both ``CompiledSolver`` (default) and legacy ``Solver`` paths against CVXPY and each other."""
+    moreau = pytest.importorskip("moreau")
+    cvxpy = pytest.importorskip("cvxpy")
+    if not hasattr(cvxpy, "MOREAU"):
+        pytest.skip("cp.MOREAU not available")
+    if not hasattr(moreau, "CompiledSolver"):
+        pytest.skip("moreau.CompiledSolver not available in this moreau build")
+
+    spec = _spec()
+    proposed = np.array([0.85, 0.1, 0.03, 0.02], dtype=np.float64)
+    prev = np.full(4, 0.25, dtype=np.float64)
+
+    ref = CVXPYMoreauProjector(spec=spec, options=SolverOptions(device="cpu", max_iter=800, verbose=False))
+    nat_compiled = NativeMoreauCompiledProjector(
+        spec=spec,
+        options=NativeMoreauCompiledOptions(device="cpu", max_iter=800, verbose=False, use_compiled_solver=True),
+    )
+    nat_legacy = NativeMoreauCompiledProjector(
+        spec=spec,
+        options=NativeMoreauCompiledOptions(device="cpu", max_iter=800, verbose=False, use_compiled_solver=False),
+    )
+
+    try:
+        r_ref = ref.project(proposed, prev)
+        r_compiled = nat_compiled.project(proposed, prev)
+        r_legacy = nat_legacy.project(proposed, prev)
+    except RuntimeError as exc:
+        if "license" in str(exc).lower() or "key" in str(exc).lower():
+            pytest.skip(f"Moreau license not available: {exc}")
+        raise
+
+    np.testing.assert_allclose(r_compiled.corrected_action, r_ref.corrected_action, rtol=1e-3, atol=1e-4)
+    np.testing.assert_allclose(r_legacy.corrected_action, r_ref.corrected_action, rtol=1e-3, atol=1e-4)
+    np.testing.assert_allclose(r_compiled.corrected_action, r_legacy.corrected_action, rtol=1e-4, atol=1e-5)
+    assert r_ref.solver_status
+    assert r_compiled.solver_status
+    assert r_legacy.solver_status
+
+
 _TELEMETRY_KEYS = frozenset(
     {
         "solver_status",

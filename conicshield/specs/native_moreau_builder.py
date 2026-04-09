@@ -1,4 +1,8 @@
-"""Build ``P, q, A, b`` and ``Cones`` for ``moreau.Solver`` (shield simplex QP)."""
+"""Build ``P, q, A, b`` and ``Cones`` for Moreau native APIs (shield simplex QP).
+
+The same CSR triple ``(P_csr, A_csr, cones)`` is used by ``moreau.Solver`` and, after
+``setup(P_values, A_values)``, by ``moreau.CompiledSolver`` for the fixed-structure path.
+"""
 
 from __future__ import annotations
 
@@ -19,7 +23,7 @@ def build_moreau_standard_form(
     policy_weight: float,
     reference_weight: float,
 ) -> tuple[sparse.csr_matrix, np.ndarray, sparse.csr_matrix, np.ndarray, Any]:
-    """Return ``P_csr, q, A_csr, b, cones`` for ``moreau.Solver``."""
+    """Return ``P_csr, q, A_csr, b, cones`` for ``moreau.Solver`` / ``CompiledSolver``."""
     import moreau
 
     n = data.n

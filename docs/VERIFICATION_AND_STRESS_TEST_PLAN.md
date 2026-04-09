@@ -120,7 +120,7 @@ The goal is not a single passing solve. The repository should show:
 
 **Goal:** Gradients sane where differentiable paths are supported. Today: **finite-difference** slope on the reference shield projector (when MOREAU is installed) and optional **torch/jax micrograd vs FD** self-checks (`--probe-torch-jax`) that do not yet differentiate through the shield itself.
 
-**Status:** Optional; not a governed gate in default CI.
+**Status:** Optional; not a governed gate in default CI. The report’s `status` field is **`deferred`** only when the reference stack is missing (`cvxpy`, `cp.MOREAU`, or a registered MOREAU solver). With a licensed solver install, the script runs the reference FD block and reports **`ok`** / **`partial`** (native FD requested but failed) rather than leaving Layer F as a stub.
 
 **Artifacts:** `output/differentiation_summary.json`, `output/differentiation_report.md`
 

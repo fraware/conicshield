@@ -6,7 +6,7 @@ What is implemented in-tree versus what still needs vendor access, upstream alig
 
 ## In the repository today
 
-- Package `conicshield/`: reference path (`CVXPYMoreauProjector`, `cp.MOREAU`) and native path (`NativeMoreauCompiledProjector`, `moreau.Solver`) for the same QP family; telemetry and structured solver errors.
+- Package `conicshield/`: reference path (`CVXPYMoreauProjector`, `cp.MOREAU`) and native path (`NativeMoreauCompiledProjector`, `moreau.CompiledSolver` with batch size 1, shared CSR structure per spec; `NativeMoreauCompiledOptions.use_compiled_solver=False` forces legacy `moreau.Solver`) for the same QP family; telemetry and structured solver errors.
 - **Solver smoke CLI:** `python -m conicshield.core.solver_smoke_cli`
 - Schemas under `schemas/`, benchmark registry and releases, parity fixture under `tests/fixtures/parity_reference/`, governance and artifact validation CLIs.
 - **Default CI** (`.github/workflows/ci.yml`): Python 3.11/3.12, ruff, mypy, pytest with coverage — **no solver extras**; default pytest excludes `solver`, `requires_moreau`, `inter_sim_rl`, `slow` (see [`DEVENV.md`](DEVENV.md)).
@@ -27,6 +27,8 @@ make lint typecheck cov
 ## Not implemented yet (projection)
 
 Constraint kinds `progress` and `clearance` raise `NotImplementedError` in [`conicshield/specs/shield_qp.py`](../conicshield/specs/shield_qp.py). See [adr/001-progress-clearance-constraints.md](adr/001-progress-clearance-constraints.md).
+
+**v1 scope:** They are **not** part of solver-backed v1. Treat them as deferred until an explicit product decision promotes them; do not imply parity or native coverage for those kinds in release language until implemented.
 
 ## Validated solver stack
 
