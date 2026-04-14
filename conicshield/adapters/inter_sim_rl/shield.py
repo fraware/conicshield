@@ -101,11 +101,9 @@ class InterSimConicShield:
         action_space = tuple(str(a) for a in action_space)
 
         if set(action_space) != set(CANONICAL_ACTION_SPACE):
-            raise ValueError("action_space must contain exactly: " f"{list(CANONICAL_ACTION_SPACE)}")
+            raise ValueError(f"action_space must contain exactly: {list(CANONICAL_ACTION_SPACE)}")
         if q_values.shape != (len(action_space),):
-            raise ValueError(
-                f"q_values shape {q_values.shape} does not match " f"action_space length {len(action_space)}"
-            )
+            raise ValueError(f"q_values shape {q_values.shape} does not match action_space length {len(action_space)}")
 
         q_values_canonical = self._reorder_to_canonical(
             values=q_values,
@@ -184,7 +182,7 @@ class InterSimConicShield:
         if not allowed_set:
             allowed_set = set(CANONICAL_ACTION_SPACE)
 
-        upper_bounds = {a: 1.0 for a in CANONICAL_ACTION_SPACE}
+        upper_bounds = dict.fromkeys(CANONICAL_ACTION_SPACE, 1.0)
         raw_caps = context.get("action_upper_bounds", {})
         if isinstance(raw_caps, Mapping):
             for action_name, value in raw_caps.items():

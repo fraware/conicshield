@@ -34,6 +34,8 @@ ConicShield is not only a solver wrapper. It ships a **full governance spine**: 
 
 ### Public / reference (matches default CI)
 
+On **Linux / WSL**, use a **virtual environment** first (system Python is often PEP 668–protected and may only expose `python3`). See **Linux / WSL** under [docs/DEVENV.md](docs/DEVENV.md).
+
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
@@ -65,6 +67,15 @@ python -m moreau check
 
 **Secrets:** never commit tokens, license keys, or a filled-in `.env`. Copy [`.env.example`](.env.example) to `.env` for local variable names only.
 
+**Live vendor test lane (local):** after `moreau check` succeeds, run solver-marked tests with keys from `.env`:
+
+```bash
+python scripts/run_live_vendor_tests.py
+# Optional: python scripts/run_live_vendor_tests.py --parallel auto -- -k native
+```
+
+See [`tests/live/README.md`](tests/live/README.md) for details.
+
 ---
 
 ## Supported Python & CI
@@ -82,6 +93,8 @@ python -m moreau check
 
 | Goal | Command |
 |------|---------|
+| Live tests (Moreau + optional inter-sim-rl; reads `.env`) | `python scripts/run_live_vendor_tests.py --bootstrap` once per venv, then `python scripts/run_live_vendor_tests.py` |
+| Governed bundle steps (validate → parity fixture → index check) | `python scripts/governed_local_promotion.py --help` |
 | Validate a run bundle | `python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>` |
 | Strict governance audit | `python -m conicshield.governance.audit_cli --strict` |
 | Finalize run + optional parity path + optional CURRENT sync | `python -m conicshield.governance.finalize_cli --run-dir ... --family-id ... --task-contract-version v1 --fixture-version fixture-v1 --reference-fixture-dir tests/fixtures/parity_reference --parity-summary-path output/.../parity_summary.json --current-release-path benchmarks/releases/<family>/CURRENT.json` (add `--sync-current-release` to push gates into `CURRENT.json` for the same published run) |

@@ -76,8 +76,8 @@ def publish_from_governance_status(*, run_dir: str | Path, reason: str) -> None:
         "published_at_utc": published_at,
         "notes": reason,
     }
-    # Preserve optional audit metadata (paths to committed bundles, external pointers).
-    for key in ("benchmark_bundle_paths", "external_artifact"):
+    # Preserve optional audit metadata (paths to committed bundles, index pointers, external URLs).
+    for key in ("benchmark_bundle_paths", "artifact_catalog", "external_artifact"):
         if key in current:
             new_current[key] = current[key]
     _write_json(current_path, new_current)

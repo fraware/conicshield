@@ -52,6 +52,35 @@ def test_differentiation_script_produces_valid_json_public_ci() -> None:
 
 @pytest.mark.solver
 @pytest.mark.requires_moreau
+def test_native_fd_slope_when_moreau_available() -> None:
+    """Finite-difference slope on native shield path (same scalar objective as reference FD)."""
+    cvxpy = pytest.importorskip("cvxpy")
+    cp = cvxpy
+    if getattr(cp, "MOREAU", None) is None:
+        pytest.skip("cp.MOREAU not installed")
+    if "MOREAU" not in {str(s).upper() for s in cp.installed_solvers()}:
+        pytest.skip("MOREAU not in cvxpy.installed_solvers()")
+
+    mod = _load_differentiation_check_script()
+    data = mod.collect_differentiation_report(
+        h=1e-5,
+        h_values=[1e-5],
+        dims=[0],
+        include_native=True,
+        probe_torch_jax=False,
+        strict=False,
+    )
+    assert data["status"] in ("ok", "partial")
+    nat = data.get("native")
+    if nat is None:
+        pytest.skip("native FD block missing (license or solver error); see errors in report")
+    assert isinstance(nat, dict)
+    assert "fd_slope" in nat
+    assert abs(float(nat["fd_slope"])) < 1e4
+
+
+@pytest.mark.solver
+@pytest.mark.requires_moreau
 def test_reference_fd_slope_when_moreau_available() -> None:
     cvxpy = pytest.importorskip("cvxpy")
     cp = cvxpy

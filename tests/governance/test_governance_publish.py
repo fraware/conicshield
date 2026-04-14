@@ -111,6 +111,10 @@ def test_publish_preserves_benchmark_bundle_paths(tmp_path) -> None:
                 "published_at_utc": None,
                 "notes": "",
                 "benchmark_bundle_paths": paths,
+                "artifact_catalog": {
+                    "repository_relative_path": "benchmarks/PUBLISHED_RUN_INDEX.json",
+                    "purpose": "test",
+                },
                 "external_artifact": {"url": "https://example.invalid/bundle.tgz", "sha256": "0" * 64},
             }
         ),
@@ -176,6 +180,7 @@ def test_publish_preserves_benchmark_bundle_paths(tmp_path) -> None:
         publish_from_governance_status(run_dir=run_dir, reason="test publish")
         current = json.loads((family_dir / "CURRENT.json").read_text(encoding="utf-8"))
         assert current["benchmark_bundle_paths"] == paths
+        assert current["artifact_catalog"]["repository_relative_path"] == "benchmarks/PUBLISHED_RUN_INDEX.json"
         assert current["external_artifact"]["url"].startswith("https://")
     finally:
         os.chdir(cwd)

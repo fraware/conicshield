@@ -1,8 +1,8 @@
 # Parity and frozen fixtures
 
-How the frozen parity fixture is governed, how native code is checked against it, and how to replace the bootstrap fixture with a real reference run.
+How the frozen parity fixture is governed, how native code is checked against it, and how to refresh it from a validated governed reference bundle.
 
-**Current fixture status:** The checked-in stream under `tests/fixtures/parity_reference/` is still the **initial synthetic bootstrap** until intentionally replaced using the procedure below (see `REGENERATION_NOTE.md`). That does not block governance CI; it does cap how much “production realism” parity proves until promotion from a validated non-passthrough bundle.
+**Current fixture status:** The checked-in stream under `tests/fixtures/parity_reference/` is **promoted from a committed governed bundle** (`benchmarks/published_runs/wsl-real-20260409-132450/`), not a placeholder bootstrap stream. See [`tests/fixtures/parity_reference/REGENERATION_NOTE.md`](../tests/fixtures/parity_reference/REGENERATION_NOTE.md) for the exact promotion record. Integrity of governed bundles in-repo is listed in [`benchmarks/PUBLISHED_RUN_INDEX.json`](../benchmarks/PUBLISHED_RUN_INDEX.json) (regenerate with `python scripts/refresh_published_run_index.py` after changing files under `benchmarks/published_runs/`).
 
 **See also:** [BENCHMARK_GOVERNANCE.md](BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md), [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (native parity layer).
 

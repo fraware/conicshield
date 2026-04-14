@@ -13,6 +13,24 @@ Single reference for **supported Python**, **default CI**, **optional workflows*
 
 For Moreau-backed development, use Linux/WSL2. Treat green **Vendor CI track** (`vendor-ci-moreau`) (or a licensed local vendor-mode run) as the oracle for native stack health.
 
+### Linux / WSL: venv required (PEP 668)
+
+On Debian/Ubuntu (including WSL2), the system Python is **externally managed**: `pip install` without a virtual environment fails with `externally-managed-environment`. Always create and **activate** a venv first, then run installs and tools with that interpreter.
+
+Many images ship **`python3` only** (`python` may be missing until you use the venv’s `bin/python`).
+
+```bash
+cd /path/to/conicshield
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements-dev.txt
+python -m pip install -e ".[dev]"
+python -m ruff check conicshield tests
+```
+
+Re-activate the venv in each new shell: `source .venv/bin/activate` (from the repo root).
+
 ## Base CI (`ci.yml`)
 
 On every PR and push to `main`:

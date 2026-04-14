@@ -125,9 +125,7 @@ def step_solver_status_is_failure(solver_status: str | None) -> bool:
     if "fail" in s:
         return True
     if re.search(r"\berror\b", s):
-        if any(p in s for p in ("no error", "without error", "zero error", "error-free")):
-            return False
-        return True
+        return not any(p in s for p in ("no error", "without error", "zero error", "error-free"))
     return False
 
 

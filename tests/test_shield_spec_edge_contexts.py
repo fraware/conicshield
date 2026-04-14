@@ -65,7 +65,7 @@ def _ctx(
                 allowed=[],
                 blocked=["turn_left", "turn_right", "go_straight", "turn_back"],
                 hazard=0.2,
-                bounds={a: 0.0 for a in CANONICAL_ACTION_SPACE},
+                bounds=dict.fromkeys(CANONICAL_ACTION_SPACE, 0.0),
             ),
         ),
     ],

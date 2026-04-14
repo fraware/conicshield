@@ -167,7 +167,8 @@ _TELEMETRY_KEYS = frozenset(
 )
 _OPTIONAL_TIMING = frozenset({"solve_time_sec", "setup_time_sec", "construction_time_sec"})
 # CVXPY reference path may omit iterations (None) while native Moreau reports them; device may differ.
-_OPTIONAL_REFERENCE_NATIVE_DIFF = _OPTIONAL_TIMING | frozenset({"iterations", "device"})
+# Reference may expose objective_value while native exposes construction_time_sec / iterations (Moreau 0.3.x).
+_OPTIONAL_REFERENCE_NATIVE_DIFF = _OPTIONAL_TIMING | frozenset({"iterations", "device", "objective_value"})
 
 
 def _telemetry_present_keys(d: dict) -> frozenset[str]:

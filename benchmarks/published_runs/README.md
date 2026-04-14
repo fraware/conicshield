@@ -60,6 +60,6 @@ Ephemeral run directories under `benchmarks/runs/` are ignored by default (see `
 
 **Whitelist:** [`.gitignore`](.gitignore) ignores unknown paths under this directory. Add `!your-run-id/` and `!your-run-id/**` when committing a new canonical bundle, and add those paths to `benchmark_bundle_paths` in the family `CURRENT.json` (preserved across `release_cli` publishes).
 
-**Discoverability:** `benchmarks/releases/<family_id>/CURRENT.json` may list `benchmark_bundle_paths` pointing at committed trees for reviewers.
+**Discoverability:** `benchmarks/releases/<family_id>/CURRENT.json` may list `benchmark_bundle_paths` pointing at committed trees for reviewers. **`benchmarks/PUBLISHED_RUN_INDEX.json`** lists the same governed `run_id` values with `repository_relative_path` and SHA-256 for `summary.json` (and other key files); regenerate with `python scripts/refresh_published_run_index.py` after changing a canonical bundle.
 
-The parity **fixture** under `tests/fixtures/parity_reference/` is the minimal frozen contract kept in-repo for CI until promoted from a real governed bundle.
+The parity **fixture** under `tests/fixtures/parity_reference/` is the frozen CI contract; it is regenerated from a validated governed bundle (see `REGENERATION_NOTE.md` there and `benchmarks/PUBLISHED_RUN_INDEX.json` for bundle integrity).

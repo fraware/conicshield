@@ -23,7 +23,9 @@ jobs:
           python -m pip install -r requirements-dev.txt
           python -m pip install -e ".[dev]"
       - name: Audit registry, manifests, and release metadata
-        run: python -m conicshield.governance.audit_cli
+        run: |
+          python scripts/refresh_published_run_index.py --check
+          python -m conicshield.governance.audit_cli
       - name: Passthrough bundle + finalize + release dry-run (rehearsal)
         env:
           RID: ci-rehearsal-${{ github.run_id }}

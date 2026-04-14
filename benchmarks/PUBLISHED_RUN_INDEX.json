@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-04-14T15:44:19Z",
+  "published_root": "benchmarks/published_runs",
+  "governed_run_ids": [
+    "wsl-native-20260409-091141",
+    "wsl-real-20260409-132450"
+  ],
+  "runs": [
+    {
+      "run_id": "wsl-native-20260409-091141",
+      "repository_relative_path": "benchmarks/published_runs/wsl-native-20260409-091141",
+      "integrity": {
+        "summary.json": {
+          "sha256": "0dd0c9c80b7dca7d3912ddfa2198c1b688a2405d5d60f6facdd3e639ab1bb3aa"
+        },
+        "governance_status.json": {
+          "sha256": "9d4c8f4764c1ed8d1d629a762305a4accdc442959a41173dfe7a681396672146"
+        }
+      }
+    },
+    {
+      "run_id": "wsl-real-20260409-132450",
+      "repository_relative_path": "benchmarks/published_runs/wsl-real-20260409-132450",
+      "integrity": {
+        "summary.json": {
+          "sha256": "d0c0598fd0a43181eafc318392e4bf0ee41a4b334fe12f9eeae2f17cec267bf4"
+        },
+        "RUN_PROVENANCE.json": {
+          "sha256": "aea3eee52f0d0b2dae752c572a49ca3d02efdedce2c2598e61db65e1beb12f84"
+        },
+        "governance_status.json": {
+          "sha256": "e6aa0caf03d6abe94e7b19c9d2c0d2185a8f7f807967bee1a1f257d3ff127407"
+        }
+      }
+    }
+  ]
+}

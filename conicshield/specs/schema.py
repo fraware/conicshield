@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 
-class ConstraintKind(str, Enum):
+class ConstraintKind(StrEnum):
     BOX = "box"
     RATE = "rate"
     PROGRESS = "progress"

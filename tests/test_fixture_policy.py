@@ -67,7 +67,5 @@ def test_fixture_policy_rejects_passthrough_provenance(tmp_path: Path) -> None:
     prov = json.loads((d / "RUN_PROVENANCE.json").read_text(encoding="utf-8"))
     prov["projector_mode"] = "passthrough"
     (d / "RUN_PROVENANCE.json").write_text(json.dumps(prov, indent=2), encoding="utf-8")
-    with pytest.raises(
-        FixturePolicyError, match="projector_mode=real_projector"
-    ):
+    with pytest.raises(FixturePolicyError, match="projector_mode=real_projector"):
         validate_fixture_policy(d)

@@ -6,7 +6,7 @@ This mirrors the trust model in [docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](../d
 |-------|------|----------------|
 | Environment / smoke | Scripts and minimal health | (repo `scripts/`, not under `tests/`) |
 | Reference correctness | Public solvers, no vendor Moreau | `tests/reference/` |
-| Native / vendor | Moreau-backed paths | `tests/native/` |
+| Native / vendor | Moreau-backed paths | `tests/vendor/native/` |
 | Parity | Replay vs fixture | `tests/parity/` |
 | Performance | Timing harnesses | `tests/performance/` |
 | Artifacts | Bundles, schemas | `tests/artifacts/` |

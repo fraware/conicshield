@@ -30,24 +30,15 @@ def validate_fixture_policy(reference_dir: str | Path) -> None:
     provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
 
     if manifest.get("reference_arm_label") != "shielded-rules-plus-geometry":
-        raise FixturePolicyError(
-            "Fixture manifest must declare "
-            "shielded-rules-plus-geometry as reference arm"
-        )
+        raise FixturePolicyError("Fixture manifest must declare shielded-rules-plus-geometry as reference arm")
     if manifest.get("reference_backend") != "cvxpy_moreau":
-        raise FixturePolicyError(
-            "Fixture manifest must declare cvxpy_moreau as reference backend"
-        )
+        raise FixturePolicyError("Fixture manifest must declare cvxpy_moreau as reference backend")
 
     arms = {arm["label"]: arm for arm in config.get("arms", [])}
     ref = arms.get("shielded-rules-plus-geometry")
     if ref is None:
         raise FixturePolicyError("config.json missing shielded-rules-plus-geometry arm")
     if ref.get("backend") != "cvxpy_moreau":
-        raise FixturePolicyError(
-            "Reference arm in config.json must use cvxpy_moreau backend"
-        )
+        raise FixturePolicyError("Reference arm in config.json must use cvxpy_moreau backend")
     if provenance.get("projector_mode") != "real_projector":
-        raise FixturePolicyError(
-            "RUN_PROVENANCE.json must declare projector_mode=real_projector"
-        )
+        raise FixturePolicyError("RUN_PROVENANCE.json must declare projector_mode=real_projector")

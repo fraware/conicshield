@@ -8,8 +8,18 @@ on:
       - "conicshield/core/moreau_batched.py"
       - "conicshield/bench/**"
       - "conicshield/parity/**"
+      - "conicshield/published_run_index.py"
+      - "benchmarks/PUBLISHED_RUN_INDEX.json"
+      - "benchmarks/published_runs/**"
+      - "benchmarks/releases/**"
       - "scripts/performance_benchmark.py"
-      - "tests/native/**"
+      - "scripts/regenerate_parity_fixture.py"
+      - "scripts/governed_local_promotion.py"
+      - "scripts/run_live_vendor_tests.py"
+      - "scripts/refresh_published_run_index.py"
+      - "tests/fixtures/parity_reference/**"
+      - "tests/vendor/native/**"
+      - "tests/vendor/diff/**"
       - "tests/parity/**"
   push:
     branches: [main]
@@ -18,8 +28,18 @@ on:
       - "conicshield/core/moreau_batched.py"
       - "conicshield/bench/**"
       - "conicshield/parity/**"
+      - "conicshield/published_run_index.py"
+      - "benchmarks/PUBLISHED_RUN_INDEX.json"
+      - "benchmarks/published_runs/**"
+      - "benchmarks/releases/**"
       - "scripts/performance_benchmark.py"
-      - "tests/native/**"
+      - "scripts/regenerate_parity_fixture.py"
+      - "scripts/governed_local_promotion.py"
+      - "scripts/run_live_vendor_tests.py"
+      - "scripts/refresh_published_run_index.py"
+      - "tests/fixtures/parity_reference/**"
+      - "tests/vendor/native/**"
+      - "tests/vendor/diff/**"
       - "tests/parity/**"
 
 concurrency:
@@ -41,4 +61,5 @@ jobs:
           python -m pip install -e ".[dev]"
       - name: Benchmark path resolution + parity tests
         run: |
-          python -m pytest tests/governance/test_benchmark_paths_resolution.py tests/parity/ -q --tb=short
+          python scripts/refresh_published_run_index.py --check
+          python -m pytest tests/governance/test_benchmark_paths_resolution.py tests/governance/test_published_run_index.py tests/parity/ -q --tb=short

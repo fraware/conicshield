@@ -184,11 +184,7 @@ class NativeMoreauCompiledProjector:
         b2 = np.asarray(b_full, dtype=np.float64).reshape(1, -1)
         solution = solver.solve(qs=q2, bs=b2, warm_start=warm)
         xbat = np.asarray(solution.x, dtype=np.float64)
-        xv = (
-            xbat[0].reshape(-1)
-            if xbat.ndim == 2 and xbat.shape[0] >= 1
-            else xbat.reshape(-1)
-        )
+        xv = xbat[0].reshape(-1) if xbat.ndim == 2 and xbat.shape[0] >= 1 else xbat.reshape(-1)
         obj = _batched_first_objective(solution)
         warm_started = warm is not None
         return xv, solver, solution, obj, warm_started

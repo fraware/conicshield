@@ -41,7 +41,7 @@ class _FakeEnvThreeTuple:
         return {
             "allowed_actions": list(self.action_space),
             "blocked_actions": [],
-            "action_upper_bounds": {a: 1.0 for a in self.action_space},
+            "action_upper_bounds": dict.fromkeys(self.action_space, 1.0),
             "rule_choice": self.rule_choice,
             "previous_instruction": None,
             "hazard_score": 0.0,
@@ -105,7 +105,7 @@ def test_episode_runner_epsilon_one_records_raw_q_with_shield() -> None:
             return {
                 "allowed_actions": list(self.action_space),
                 "blocked_actions": [],
-                "action_upper_bounds": {a: 1.0 for a in self.action_space},
+                "action_upper_bounds": dict.fromkeys(self.action_space, 1.0),
                 "rule_choice": self.rule_choice,
                 "previous_instruction": None,
                 "hazard_score": 0.0,
@@ -155,7 +155,7 @@ def test_episode_runner_propagates_fallback_used_from_info() -> None:
             return {
                 "allowed_actions": list(self.action_space),
                 "blocked_actions": [],
-                "action_upper_bounds": {a: 1.0 for a in self.action_space},
+                "action_upper_bounds": dict.fromkeys(self.action_space, 1.0),
                 "rule_choice": self.rule_choice,
                 "previous_instruction": None,
                 "hazard_score": 0.0,
@@ -195,7 +195,7 @@ class _FakeEnvBadStep:
         return {
             "allowed_actions": list(self.action_space),
             "blocked_actions": [],
-            "action_upper_bounds": {a: 1.0 for a in self.action_space},
+            "action_upper_bounds": dict.fromkeys(self.action_space, 1.0),
             "rule_choice": self.rule_choice,
             "previous_instruction": None,
             "hazard_score": 0.0,

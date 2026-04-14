@@ -118,10 +118,13 @@ pytest-cov==7.1.0
     # via conicshield (pyproject.toml)
 python-dateutil==2.9.0.post0
     # via matplotlib
+python-dotenv==1.2.2
+    # via conicshield (pyproject.toml)
 referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
+    #   types-jsonschema
 rpds-py==0.30.0
     # via
     #   jsonschema
@@ -144,6 +147,8 @@ sortedcontainers==2.4.0
     # via hypothesis
 threadpoolctl==3.6.0
     # via diffcp
+types-jsonschema==4.26.0.20260408
+    # via conicshield (pyproject.toml)
 typing-extensions==4.15.0
     # via
     #   conicshield (pyproject.toml)

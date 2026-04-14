@@ -29,9 +29,7 @@ def test_artifact_validation_report_ok_on_fixture(tmp_path: Path) -> None:
         check=False,
     )
     assert r.returncode == 0
-    payload = json.loads(
-        (out / "artifact_validation_report.json").read_text(encoding="utf-8")
-    )
+    payload = json.loads((out / "artifact_validation_report.json").read_text(encoding="utf-8"))
     assert payload["status"] == "ok"
 
 

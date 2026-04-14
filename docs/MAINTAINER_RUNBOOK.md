@@ -293,7 +293,7 @@ python -m pytest tests/ -q --durations=25
 ### CI split: default tests vs solver vs native parity
 
 - **Default PR CI** runs `pytest` with `-m "not solver and not requires_moreau and not inter_sim_rl and not slow"` (see `pyproject.toml`). This keeps forks green without GemFury, Moreau, an `inter-sim-rl` checkout, or slow stress tests.
-- **Vendor CI track (`vendor-ci-moreau`)** in `.github/workflows/solver-ci.yml` (manual dispatch with secrets) installs the private solver stack and exercises native / CVXPY paths that need a license. `tests/native/test_native_moreau_projector.py` includes `test_native_compiled_and_legacy_match_reference`, which checks both `moreau.CompiledSolver` (default) and legacy `moreau.Solver` against the CVXPY reference on a licensed host.
+- **Vendor CI track (`vendor-ci-moreau`)** in `.github/workflows/solver-ci.yml` (manual dispatch with secrets) installs the private solver stack and exercises native / CVXPY paths that need a license. `tests/vendor/native/test_native_moreau_projector.py` includes `test_native_compiled_and_legacy_match_reference`, which checks both `moreau.CompiledSolver` (default) and legacy `moreau.Solver` against the CVXPY reference on a licensed host.
 - **Native parity workflow** (`.github/workflows/native-parity.yml`) replays the frozen fixture only; it does not install the full solver stack. Use solver CI (or a licensed workstation) when you need an end-to-end native solve via `conicshield.parity.cli`.
 - **Targeted coverage gate** for adapters, bench, and parity modules: `make cov-gates` (see `Makefile` for the current `--cov-fail-under` threshold).
 

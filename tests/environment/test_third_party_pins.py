@@ -31,6 +31,6 @@ def test_intersim_revision_matches_checkout_git_head() -> None:
         capture_output=True,
         text=True,
     ).stdout.strip()
-    assert (
-        _recorded_intersim_sha() == head
-    ), f"Update third_party/inter-sim-rl/REVISION sha= to {head} or sync checkout to recorded pin"
+    assert _recorded_intersim_sha() == head, (
+        f"Update third_party/inter-sim-rl/REVISION sha= to {head} or sync checkout to recorded pin"
+    )

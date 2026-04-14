@@ -33,7 +33,7 @@ class FakeInterSimEnv:
         return {
             "allowed_actions": list(CANONICAL_ACTIONS),
             "blocked_actions": [],
-            "action_upper_bounds": {a: 1.0 for a in CANONICAL_ACTIONS},
+            "action_upper_bounds": dict.fromkeys(CANONICAL_ACTIONS, 1.0),
             "rule_choice": self.rule_choice,
             "previous_instruction": prev,
             "hazard_score": min(1.0, 0.05 * self._step_idx),

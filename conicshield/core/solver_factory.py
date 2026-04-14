@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 from conicshield.core.interfaces import ProjectorProtocol
 from conicshield.core.moreau_compiled import (
@@ -11,7 +11,7 @@ from conicshield.specs.compiler import CVXPYMoreauProjector, SolverOptions
 from conicshield.specs.schema import SafetySpec
 
 
-class Backend(str, Enum):
+class Backend(StrEnum):
     CVXPY_MOREAU = "cvxpy_moreau"
     NATIVE_MOREAU = "native_moreau"
 

@@ -281,6 +281,15 @@ def iter_conic_suite_cases() -> list[Callable[[Any], tuple[Any, tuple[Any, ...],
     def _mixed(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
         return build_mixed_conic_problem(cp)
 
+    def _lp_xxl(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
+        return build_lp_problem(cp, seed=6, n=32, density="dense")
+
+    def _lp_xxxl(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
+        return build_lp_problem(cp, seed=7, n=48, density="dense")
+
+    def _qp_ill16(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
+        return build_qp_problem(cp, n=16, conditioning="ill")
+
     return [
         _lp01,
         _lp02,
@@ -288,10 +297,13 @@ def iter_conic_suite_cases() -> list[Callable[[Any], tuple[Any, tuple[Any, ...],
         _lp_large,
         _lp_xl,
         _lp_sparse_xl,
+        _lp_xxl,
+        _lp_xxxl,
         _qp_well,
         _qp_well8,
         _qp_ill,
         _qp_ill10,
+        _qp_ill16,
         _socp,
         _socp6,
         _mixed,
@@ -318,6 +330,15 @@ def run_conic_suite_trusted_only(cp: Any, *, profile: str = "smoke") -> list[dic
         row["suite_profile"] = profile
         rows.append(row)
     return rows
+
+
+def group_suite_rows_by_family(rows: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    """Cluster reporting helper: bucket rows by ``family`` (LP / QP / SOCP / mixed-conic)."""
+    out: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        fam = str(row.get("family", "unknown"))
+        out.setdefault(fam, []).append(row)
+    return out
 
 
 def run_full_conic_suite(cp: Any, *, profile: str = "standard") -> list[dict[str, Any]]:

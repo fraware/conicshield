@@ -24,9 +24,7 @@ def test_reference_run_module_help_exits_zero() -> None:
 def test_produce_reference_bundle_strict_real_projector_rejects_passthrough() -> None:
     repo = repo_root()
     env = {**os.environ, "PYTHONPATH": str(repo)}
-    export_json = (
-        repo / "tests" / "fixtures" / "offline_graph_export_minimal.json"
-    )
+    export_json = repo / "tests" / "fixtures" / "offline_graph_export_minimal.json"
     r = subprocess.run(
         [
             sys.executable,
@@ -45,9 +43,7 @@ def test_produce_reference_bundle_strict_real_projector_rejects_passthrough() ->
         check=False,
     )
     assert r.returncode != 0
-    assert (
-        "--strict-real-projector forbids --passthrough" in (r.stderr + r.stdout)
-    )
+    assert "--strict-real-projector forbids --passthrough" in (r.stderr + r.stdout)
 
 
 def test_produce_reference_bundle_real_projector_preflight_error_without_moreau() -> None:

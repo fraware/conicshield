@@ -18,5 +18,9 @@
   "benchmark_bundle_paths": [
     "benchmarks/published_runs/wsl-native-20260409-091141",
     "benchmarks/published_runs/wsl-real-20260409-132450"
-  ]
+  ],
+  "artifact_catalog": {
+    "repository_relative_path": "benchmarks/PUBLISHED_RUN_INDEX.json",
+    "purpose": "SHA-256 integrity entries for governed bundles under benchmarks/published_runs/<run_id>/; run scripts/refresh_published_run_index.py after bundle changes."
+  }
 }

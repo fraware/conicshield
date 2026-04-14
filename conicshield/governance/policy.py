@@ -27,12 +27,12 @@ def assert_same_family_replacement(
 ) -> None:
     if candidate_family_id != current_family_id:
         raise GovernanceError(
-            "Candidate run belongs to a different benchmark family. " "Publish as a new family, not as a replacement."
+            "Candidate run belongs to a different benchmark family. Publish as a new family, not as a replacement."
         )
 
     if candidate_task_contract_version != current_task_contract_version:
         raise GovernanceError(
-            "Candidate run changes the semantic task contract. " "Create a new benchmark family version."
+            "Candidate run changes the semantic task contract. Create a new benchmark family version."
         )
 
 

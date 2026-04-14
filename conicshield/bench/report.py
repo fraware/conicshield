@@ -34,7 +34,7 @@ def render_markdown_card(summaries: list[Any]) -> str:
                 f"- Episodes: {_field(s, 'episodes')}",
                 f"- Avg reward: {_field(s, 'avg_reward'):.4f}",
                 f"- Avg steps: {_field(s, 'avg_steps'):.2f}",
-                f"- Avg interventions / episode: " f"{_field(s, 'avg_interventions_per_episode'):.4f}",
+                f"- Avg interventions / episode: {_field(s, 'avg_interventions_per_episode'):.4f}",
                 f"- Intervention rate: {100.0 * _field(s, 'intervention_rate'):.2f}%",
                 f"- Rule-violation rate: {100.0 * _field(s, 'rule_violation_rate'):.2f}%",
                 f"- Matched-action rate: {100.0 * _field(s, 'matched_action_rate'):.2f}%",

@@ -2,12 +2,28 @@
 
 from __future__ import annotations
 
+import os
+from pathlib import Path
+
+
+def _maybe_load_dotenv() -> None:
+    """When ``CONICSHIELD_LOAD_DOTENV=1``, load repo ``.env`` without overriding existing variables."""
+    if os.environ.get("CONICSHIELD_LOAD_DOTENV", "").strip().lower() not in ("1", "true", "yes"):
+        return
+    try:
+        from dotenv import load_dotenv
+    except ImportError:
+        return
+    root = Path(__file__).resolve().parents[1]
+    env_file = root / ".env"
+    if env_file.is_file():
+        load_dotenv(env_file, override=False)
+
+
 import importlib.util
 import json
-import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
 import pytest
