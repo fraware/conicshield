@@ -106,7 +106,7 @@ The goal is not a single passing solve. The repository should show:
 
 **Goal:** Measured cold vs warm, CVXPY vs native, optional CPU vs CUDA, and **decision-grade sweeps** when requested.
 
-**Commands:** `python scripts/performance_benchmark.py` (single-scenario default). Use **`--sweep`** for `action_dim × conditioning × scenario` grids (default dims `4,8`; override with `--shield-action-dims`). Add **`--batch-sizes`** for both **sequential** native microbatch rows (`native_microbatch`) and **true** `CompiledSolver` batching (`native_compiled_real_batch`: one `solve(qs, bs)` per timed iteration), and **`--sweep-auto-tune`** to compare `NativeMoreauCompiledOptions.auto_tune`.
+**Commands:** `python scripts/performance_benchmark.py` (single-scenario default). Use **`--sweep`** for `action_dim × conditioning × scenario` grids (default dims `4,8`; override with `--shield-action-dims`). Add **`--batch-sizes`** for both **sequential** native microbatch rows (`native_microbatch`) and **true** `CompiledSolver` batching (`native_compiled_real_batch`: one `solve(qs, bs)` per timed iteration), and **`--sweep-auto-tune`** to compare `NativeMoreauCompiledOptions.auto_tune`. Programmatic batching without the script: `conicshield.core.solver_factory.create_batch_projector` → `NativeMoreauCompiledBatchProjector`.
 
 **Artifacts:** `output/performance_summary.json`, `output/performance_matrix.csv`, `output/performance_report.md`, optional `output/performance_latency.png`
 

@@ -45,7 +45,7 @@ On every PR and push to `main`:
 
 - **`conic-trusted-shape`** — runs only [`tests/reference/test_reference_conic_trusted_shape.py`](../tests/reference/test_reference_conic_trusted_shape.py) (CLARABEL/SCS structural correctness; no vendor MOREAU). Safe to mark **required** in branch protection for a visible public conic gate.
 - **`quality`** — Ruff check and format check, Mypy on `conicshield` and `tests`, full default-marker pytest with coverage over `conicshield`, then verification scripts.
-- **`solver-touch`** ([`.github/workflows/solver-touch.yml`](../.github/workflows/solver-touch.yml)) — on PRs/pushes that touch solver, parity, bench, governance bundles, or related tests (see workflow `paths:`). Runs `python scripts/refresh_published_run_index.py --check`, then pytest: benchmark path resolution, published-run index integrity + parity `REGENERATION_NOTE` run ids, **native-arm row in the current bundle’s `summary.json`** (`tests/governance/test_native_arm_publish_evidence.py`), and `tests/parity/`. No vendor Moreau required.
+- **`solver-touch`** ([`.github/workflows/solver-touch.yml`](../.github/workflows/solver-touch.yml)) — on PRs/pushes that touch solver, parity, bench, governance bundles, or related tests (see workflow `paths:`). Runs `python scripts/refresh_published_run_index.py --check`, then pytest: benchmark path resolution, **full published-run index SHA-256 surface** (validator-required files per `conicshield.published_run_index`), parity `REGENERATION_NOTE` run ids, **native-arm row in the current bundle’s `summary.json`** (`tests/governance/test_native_arm_publish_evidence.py`), and `tests/parity/`. No vendor Moreau required.
 
 Install path matches contributor setup: `pip install -e ".[dev]"` in public/reference mode.
 

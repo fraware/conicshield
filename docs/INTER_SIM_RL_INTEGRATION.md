@@ -2,7 +2,7 @@
 
 This repository is intentionally standalone. It does not vendor the external `inter-sim-rl` codebase.
 
-**Benchmark closure (export → bank → governed publish):** Tracked in [docs/ROADMAP.md](ROADMAP.md) (*External integration* and *Remaining work*).
+**Benchmark closure (export → bank → governed publish):** Tracked in [docs/ROADMAP.md](ROADMAP.md) (*External integration* and open backlog). **Operational checklist** for a real upstream export: [docs/HOST_REALISTIC_RUNBOOK.md](HOST_REALISTIC_RUNBOOK.md).
 
 **Canonical upstream:** [https://github.com/fraware/inter-sim-rl](https://github.com/fraware/inter-sim-rl)
 

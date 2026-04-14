@@ -2,6 +2,10 @@
 """Emit ``benchmarks/PUBLISHED_RUN_INDEX.json`` from committed ``benchmarks/published_runs/<run_id>/`` trees.
 
 Run after adding or updating a canonical published bundle so integrity SHA-256 fields stay in sync.
+
+**Integrity profile:** required filenames match ``validate_run_bundle`` (config/summary/episodes/transition_bank
+and their schema sidecars). Optional entries (governance, provenance, ``README.md``, etc.) are hashed when
+present. See ``conicshield.published_run_index.PUBLISHED_RUN_*_INTEGRITY_FILENAMES``.
 """
 
 from __future__ import annotations
@@ -9,9 +13,20 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
+
+# Import after path bootstrap so ``python scripts/refresh_published_run_index.py`` works from repo root.
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+from conicshield.published_run_index import (  # noqa: E402
+    PUBLISHED_RUN_OPTIONAL_INTEGRITY_FILENAMES,
+    PUBLISHED_RUN_REQUIRED_INTEGRITY_FILENAMES,
+)
 
 
 def _run_id_from_bundle_path(s: str) -> str | None:
@@ -77,7 +92,12 @@ def build_index(*, repo_root: Path, published_root: Path) -> dict[str, Any]:
         if not rel.startswith("benchmarks/"):
             rel = f"benchmarks/published_runs/{rid}"
         integrity: dict[str, Any] = {}
-        for name in ("summary.json", "RUN_PROVENANCE.json", "governance_status.json"):
+        for name in PUBLISHED_RUN_REQUIRED_INTEGRITY_FILENAMES:
+            p = run_dir / name
+            if not p.is_file():
+                raise SystemExit(f"{run_dir}: missing required file {name!r} for published-run index")
+            integrity[name] = {"sha256": _sha256_file(p)}
+        for name in PUBLISHED_RUN_OPTIONAL_INTEGRITY_FILENAMES:
             p = run_dir / name
             if p.is_file():
                 integrity[name] = {"sha256": _sha256_file(p)}
@@ -91,7 +111,7 @@ def build_index(*, repo_root: Path, published_root: Path) -> dict[str, Any]:
     if missing:
         raise SystemExit("governed run_id(s) missing from disk under benchmarks/published_runs: " + ", ".join(missing))
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "published_root": "benchmarks/published_runs",
         "governed_run_ids": sorted(allowed),

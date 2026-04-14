@@ -3,6 +3,7 @@ from __future__ import annotations
 from enum import StrEnum
 
 from conicshield.core.interfaces import ProjectorProtocol
+from conicshield.core.moreau_batched import NativeMoreauCompiledBatchProjector
 from conicshield.core.moreau_compiled import (
     NativeMoreauCompiledOptions,
     NativeMoreauCompiledProjector,
@@ -28,3 +29,20 @@ def create_projector(
     if backend == Backend.NATIVE_MOREAU:
         return NativeMoreauCompiledProjector(spec=spec, options=native_options)
     raise ValueError(f"Unsupported backend: {backend}")
+
+
+def create_batch_projector(
+    *,
+    spec: SafetySpec,
+    backend: Backend = Backend.NATIVE_MOREAU,
+    native_options: NativeMoreauCompiledOptions | None = None,
+) -> NativeMoreauCompiledBatchProjector:
+    """Return the batched native projector (one ``CompiledSolver.solve(qs, bs)`` per ``project_batch`` call).
+
+    CVXPY reference batching is not exposed here; use ``create_projector`` for the reference path.
+    """
+    if backend != Backend.NATIVE_MOREAU:
+        raise ValueError(
+            f"Batched compiled projection is only implemented for {Backend.NATIVE_MOREAU!s}, got {backend!s}"
+        )
+    return NativeMoreauCompiledBatchProjector(spec=spec, options=native_options)

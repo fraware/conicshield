@@ -120,6 +120,8 @@ python -m conicshield.bench.reference_run --out /tmp/smoke --bank tests/fixtures
 
 After validation, copy the bundle to `benchmarks/published_runs/<run_id>/` before publishing so `CURRENT.json` stays auditable with committed artifacts (see [`benchmarks/published_runs/README.md`](../benchmarks/published_runs/README.md)).
 
+**Published-run index:** whenever you add or change files under `benchmarks/published_runs/`, run `python scripts/refresh_published_run_index.py` and commit [`benchmarks/PUBLISHED_RUN_INDEX.json`](../benchmarks/PUBLISHED_RUN_INDEX.json) (schema ≥ 2 — per-file SHA-256 for the `validate_run_bundle` surface and optional sidecars). CI uses `python scripts/refresh_published_run_index.py --check`.
+
 ### Promote a validated bundle into the parity fixture
 After `validate_run_bundle` passes on the source directory:
 

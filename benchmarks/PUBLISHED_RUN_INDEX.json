@@ -1,6 +1,6 @@
 {
-  "schema_version": 1,
-  "generated_at_utc": "2026-04-14T15:44:19Z",
+  "schema_version": 2,
+  "generated_at_utc": "2026-04-14T19:15:27Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
     "wsl-native-20260409-091141",
@@ -11,11 +11,35 @@
       "run_id": "wsl-native-20260409-091141",
       "repository_relative_path": "benchmarks/published_runs/wsl-native-20260409-091141",
       "integrity": {
+        "config.json": {
+          "sha256": "02936fe8983e27e1fbe28e7829549d0794812eaaaf5b9097dbdac12c6b793651"
+        },
+        "config.schema.json": {
+          "sha256": "dc0d0af539739180848d298d3a8e112fda79dbec96091ed42dce7bcae58005bd"
+        },
         "summary.json": {
           "sha256": "0dd0c9c80b7dca7d3912ddfa2198c1b688a2405d5d60f6facdd3e639ab1bb3aa"
         },
+        "summary.schema.json": {
+          "sha256": "c54f6deb392afcefae57e7822bd00c1191c47263655e3f76cfeb432576310fa6"
+        },
+        "episodes.jsonl": {
+          "sha256": "fb02ccf40ec74a829e1c3cc4156df8c5bb8084371c309f19dcf154c05a9007ee"
+        },
+        "episodes.schema.json": {
+          "sha256": "94819ce8fddc8fd4ab880d219bc1c65654158a7a0a2884de644a70e4a3dfdff2"
+        },
+        "transition_bank.json": {
+          "sha256": "96cf71526245cbf2618f182ca68319519a5226576bec6bb5024945a12f8bcf5e"
+        },
         "governance_status.json": {
           "sha256": "9d4c8f4764c1ed8d1d629a762305a4accdc442959a41173dfe7a681396672146"
+        },
+        "governance_decision.md": {
+          "sha256": "955c3878f8959a34e63812f4d977dd82f401100ead441ee8c81107141b4dc4a9"
+        },
+        "release_decision.json": {
+          "sha256": "8ff93f876bc47fb202e445daafd9bbaec4f958ca739afad95b48057b22b03d4c"
         }
       }
     },
@@ -23,14 +47,44 @@
       "run_id": "wsl-real-20260409-132450",
       "repository_relative_path": "benchmarks/published_runs/wsl-real-20260409-132450",
       "integrity": {
+        "config.json": {
+          "sha256": "6b9770e31469eaf77ce7bd5f3919346ce8a1bf71d3eefeeb96e81bf3f98960e8"
+        },
+        "config.schema.json": {
+          "sha256": "dc0d0af539739180848d298d3a8e112fda79dbec96091ed42dce7bcae58005bd"
+        },
         "summary.json": {
           "sha256": "d0c0598fd0a43181eafc318392e4bf0ee41a4b334fe12f9eeae2f17cec267bf4"
+        },
+        "summary.schema.json": {
+          "sha256": "c54f6deb392afcefae57e7822bd00c1191c47263655e3f76cfeb432576310fa6"
+        },
+        "episodes.jsonl": {
+          "sha256": "270be0f0531bd984b43f0b8f061b09728b987a2d295989f6d0fae8a5e970d481"
+        },
+        "episodes.schema.json": {
+          "sha256": "94819ce8fddc8fd4ab880d219bc1c65654158a7a0a2884de644a70e4a3dfdff2"
+        },
+        "transition_bank.json": {
+          "sha256": "96cf71526245cbf2618f182ca68319519a5226576bec6bb5024945a12f8bcf5e"
+        },
+        "governance_status.json": {
+          "sha256": "e6aa0caf03d6abe94e7b19c9d2c0d2185a8f7f807967bee1a1f257d3ff127407"
         },
         "RUN_PROVENANCE.json": {
           "sha256": "aea3eee52f0d0b2dae752c572a49ca3d02efdedce2c2598e61db65e1beb12f84"
         },
-        "governance_status.json": {
-          "sha256": "e6aa0caf03d6abe94e7b19c9d2c0d2185a8f7f807967bee1a1f257d3ff127407"
+        "governance_decision.md": {
+          "sha256": "955c3878f8959a34e63812f4d977dd82f401100ead441ee8c81107141b4dc4a9"
+        },
+        "release_decision.json": {
+          "sha256": "097946b2883abdc31813efa68a4fdd42b8922bedc053de66f8e18ca6020b9efd"
+        },
+        "solver_versions.json": {
+          "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
+        },
+        "README.md": {
+          "sha256": "9efa7d15133acb414756910531e1504a039286e945e2505067f6a57dc4b660bc"
         }
       }
     }

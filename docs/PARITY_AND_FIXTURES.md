@@ -2,11 +2,11 @@
 
 How the frozen parity fixture is governed, how native code is checked against it, and how to refresh it from a validated governed reference bundle.
 
-**Current fixture status:** The checked-in stream under `tests/fixtures/parity_reference/` is **promoted from a committed governed bundle** (`benchmarks/published_runs/wsl-real-20260409-132450/`), not a placeholder bootstrap stream. See [`tests/fixtures/parity_reference/REGENERATION_NOTE.md`](../tests/fixtures/parity_reference/REGENERATION_NOTE.md) for the exact promotion record. Integrity of governed bundles in-repo is listed in [`benchmarks/PUBLISHED_RUN_INDEX.json`](../benchmarks/PUBLISHED_RUN_INDEX.json) (regenerate with `python scripts/refresh_published_run_index.py` after changing files under `benchmarks/published_runs/`).
+**Current fixture status:** The checked-in stream under `tests/fixtures/parity_reference/` is **promoted from a committed governed bundle** (`benchmarks/published_runs/wsl-real-20260409-132450/`), not a placeholder bootstrap stream. See [`tests/fixtures/parity_reference/REGENERATION_NOTE.md`](../tests/fixtures/parity_reference/REGENERATION_NOTE.md) for the exact promotion record. Integrity of governed bundles in-repo is listed in [`benchmarks/PUBLISHED_RUN_INDEX.json`](../benchmarks/PUBLISHED_RUN_INDEX.json) (schema ≥ 2: per-file SHA-256 for the validator-required bundle surface and optional sidecars; regenerate with `python scripts/refresh_published_run_index.py` after changing files under `benchmarks/published_runs/`).
 
 **See also:** [BENCHMARK_GOVERNANCE.md](BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md), [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (native parity layer).
 
-**CI regression:** `tests/governance/test_published_run_index.py` checks `benchmarks/PUBLISHED_RUN_INDEX.json` against on-disk files and ensures every `run_id` cited in `tests/fixtures/parity_reference/REGENERATION_NOTE.md` appears in the index’s governed list. Run `python scripts/refresh_published_run_index.py --check` (or `--write`) after changing bundles or the index.
+**CI regression:** `tests/governance/test_published_run_index.py` checks `benchmarks/PUBLISHED_RUN_INDEX.json` against on-disk files (every recorded SHA-256 matches), requires **integrity entries for the full validator-required bundle surface** (`assert_index_includes_required_hashes`), and ensures every `run_id` cited in `tests/fixtures/parity_reference/REGENERATION_NOTE.md` appears in the index’s governed list. After changing bundles or paths, run `python scripts/refresh_published_run_index.py` to rewrite the index; use `python scripts/refresh_published_run_index.py --check` to fail when the file would change (CI-style).
 
 ---
 

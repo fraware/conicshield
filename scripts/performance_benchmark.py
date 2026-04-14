@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Layer E: measure CVXPY vs native shield solves; optional CPU vs CUDA; write JSON/CSV/MD."""
+"""Layer E: measure CVXPY vs native shield solves; optional CPU vs CUDA; write JSON/CSV/MD.
+
+When Moreau is available and ``--batch-sizes`` is set, emits both ``native_microbatch`` (sequential
+``project``) and ``native_compiled_real_batch`` rows via ``NativeMoreauCompiledBatchProjector`` (see
+``_bench_native_microbatch`` / ``_bench_native_compiled_real_batch``). Programmatic access to batching:
+``conicshield.core.solver_factory.create_batch_projector``.
+"""
 
 from __future__ import annotations
 

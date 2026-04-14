@@ -33,7 +33,7 @@ ConicShield is not only a solver wrapper. It ships a **full governance spine**: 
 | Artifact | Location |
 |----------|----------|
 | Committed governed run bundles | `benchmarks/published_runs/<run_id>/` |
-| SHA-256 integrity index | `benchmarks/PUBLISHED_RUN_INDEX.json` (regenerate: `python scripts/refresh_published_run_index.py` after bundle edits) |
+| SHA-256 integrity index | `benchmarks/PUBLISHED_RUN_INDEX.json` (schema ≥ 2: hashes the full `validate_run_bundle` file set plus optional governance/provenance; regenerate: `python scripts/refresh_published_run_index.py`; CI: `--check`) |
 | Family release pointer (`current_run_id`, gates) | `benchmarks/releases/<family_id>/CURRENT.json` |
 | Frozen parity gold stream | `tests/fixtures/parity_reference/` (source run documented in `REGENERATION_NOTE.md`) |
 
@@ -195,6 +195,7 @@ See also [`docs/README.md`](docs/README.md) for a compact index.
 
 **Governance & benchmarks**
 
+- [`docs/HOST_REALISTIC_RUNBOOK.md`](docs/HOST_REALISTIC_RUNBOOK.md) — operational checklist for a real inter-sim export → publish loop
 - [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md) · [`docs/NATIVE_ARM_PUBLISH_CHECKLIST.md`](docs/NATIVE_ARM_PUBLISH_CHECKLIST.md)
 - [`docs/RELEASE_POLICY.md`](docs/RELEASE_POLICY.md) · [`docs/PARITY_AND_FIXTURES.md`](docs/PARITY_AND_FIXTURES.md)
 - [`benchmarks/DASHBOARD_README.md`](benchmarks/DASHBOARD_README.md) · [`benchmarks/runs/README.md`](benchmarks/runs/README.md)

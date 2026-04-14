@@ -16,4 +16,6 @@ See `HISTORY.json`.
 
 ## Committed run bundles (audit)
 
-Canonical benchmark trees for this family live under [`../../published_runs/`](../../published_runs/README.md). `CURRENT.json` lists `benchmark_bundle_paths` (current and superseded runs referenced in `HISTORY.json`) so reviewers can open the same paths in Git without guessing `run_id` layout.
+Canonical benchmark trees for this family live under [`../../published_runs/`](../../published_runs/README.md). `CURRENT.json` lists `benchmark_bundle_paths` (current and superseded runs referenced in `HISTORY.json`) so reviewers can open the same paths in Git without guessing `run_id` layout. Integrity hashes for committed bundles: [`../../PUBLISHED_RUN_INDEX.json`](../../PUBLISHED_RUN_INDEX.json) (see [`benchmarks/published_runs/README.md`](../../published_runs/README.md)).
+
+**Other families:** a second family directory exists as scaffold only — [`../conicshield-shield-qp-micro-v1/FAMILY_README.md`](../conicshield-shield-qp-micro-v1/FAMILY_README.md).
