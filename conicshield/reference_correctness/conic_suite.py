@@ -260,6 +260,9 @@ def iter_conic_suite_cases() -> list[Callable[[Any], tuple[Any, tuple[Any, ...],
     def _lp_sparse_xl(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
         return build_lp_problem(cp, seed=5, n=16, density="sparse")
 
+    def _lp_sparse40(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
+        return build_lp_problem(cp, seed=8, n=40, density="sparse")
+
     def _qp_well(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
         return build_qp_problem(cp, n=4, conditioning="well")
 
@@ -277,6 +280,9 @@ def iter_conic_suite_cases() -> list[Callable[[Any], tuple[Any, tuple[Any, ...],
 
     def _socp6(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
         return build_socp_problem(cp, n=6)
+
+    def _socp10(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
+        return build_socp_problem(cp, n=10)
 
     def _mixed(cp: Any) -> tuple[Any, tuple[Any, ...], ConicCase]:
         return build_mixed_conic_problem(cp)
@@ -297,6 +303,7 @@ def iter_conic_suite_cases() -> list[Callable[[Any], tuple[Any, tuple[Any, ...],
         _lp_large,
         _lp_xl,
         _lp_sparse_xl,
+        _lp_sparse40,
         _lp_xxl,
         _lp_xxxl,
         _qp_well,
@@ -306,6 +313,7 @@ def iter_conic_suite_cases() -> list[Callable[[Any], tuple[Any, tuple[Any, ...],
         _qp_ill16,
         _socp,
         _socp6,
+        _socp10,
         _mixed,
     ]
 

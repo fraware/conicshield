@@ -31,19 +31,28 @@ python -m ruff check conicshield tests
 
 Re-activate the venv in each new shell: `source .venv/bin/activate` (from the repo root).
 
+### WSL (bash): Windows paths
+
+In **WSL**, use Linux-style paths to the repo (for example `cd /mnt/c/Users/<you>/conicshield`). Do not use `cd c:\...` in bash (it will fail). **PowerShell** on Windows may use `cd C:\Users\<you>\conicshield`.
+
+### Pytest tips
+
+Use `--tb=short` (not `short*`) for short tracebacks. To see **skipped** tests: add `-rs` to pytest.
+
 ## Base CI (`ci.yml`)
 
 On every PR and push to `main`:
 
 - **`conic-trusted-shape`** — runs only [`tests/reference/test_reference_conic_trusted_shape.py`](../tests/reference/test_reference_conic_trusted_shape.py) (CLARABEL/SCS structural correctness; no vendor MOREAU). Safe to mark **required** in branch protection for a visible public conic gate.
 - **`quality`** — Ruff check and format check, Mypy on `conicshield` and `tests`, full default-marker pytest with coverage over `conicshield`, then verification scripts.
-- **`solver-touch`** ([`.github/workflows/solver-touch.yml`](../.github/workflows/solver-touch.yml)) — on PRs/pushes that touch `conicshield/core/moreau*.py`, `moreau_batched.py`, `conicshield/bench/`, `conicshield/parity/`, `scripts/performance_benchmark.py`, or related tests: runs benchmark path resolution + `tests/parity/` (no vendor Moreau required).
+- **`solver-touch`** ([`.github/workflows/solver-touch.yml`](../.github/workflows/solver-touch.yml)) — on PRs/pushes that touch solver, parity, bench, governance bundles, or related tests (see workflow `paths:`). Runs `python scripts/refresh_published_run_index.py --check`, then pytest: benchmark path resolution, published-run index integrity + parity `REGENERATION_NOTE` run ids, **native-arm row in the current bundle’s `summary.json`** (`tests/governance/test_native_arm_publish_evidence.py`), and `tests/parity/`. No vendor Moreau required.
 
 Install path matches contributor setup: `pip install -e ".[dev]"` in public/reference mode.
 
 ### Recommended branch protection
 
-- Require **`quality`** and **`conic-trusted-shape`** on `main`.
+- Require **`quality`**, **`conic-trusted-shape`**, and **`solver-touch`** on `main` where available (see [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md)).
+- PRs that touch solver, parity, or native bench paths should show a green **`solver-touch`** run (path-filtered; no vendor MOREAU required).
 - For PRs that touch solver-native code (`conicshield/core/moreau_*.py`, `conicshield/specs/compiler.py`, vendor adapters), maintainers should run [**Vendor CI**](#vendor-ci-track-vendor-ci-moreau) on the canonical repo before merge even when GitHub cannot enforce it for forks.
 
 ## Default pytest marker filter
@@ -92,4 +101,4 @@ On each PR/push, **ci.yml** runs `environment_check`, `smoke_check`, `differenti
 - Vendor API re-verification: [`docs/MOREAU_API_NOTES.md`](MOREAU_API_NOTES.md)
 - First publish sequence: [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md)
 - Slow tests only: `make test-slow` (see [`tests/test_replay_stress_slow.py`](../tests/test_replay_stress_slow.py))
-- One-shot extended gate (static + cov-gates + slow + inter_sim e2e + strict audit): `make verify-extended` (see runbook *Extended local verification*)
+- One-shot extended gate (ruff check + format check + mypy + `cov-gates` pytest + slow + inter-sim e2e + strict audit): `make verify-extended` (see [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md) *Extended local verification*)

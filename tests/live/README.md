@@ -6,7 +6,7 @@ Vendor-heavy tests live under `tests/vendor/` (native + diff). Inter-sim-rl e2e 
 
 **Optimal Intellect Moreau is not supported on native Windows.** Pip may install an unrelated tiny PyPI package also named `moreau`; the real solver registers in CVXPY only on **Linux / WSL2**.
 
-- **Full live vendor lane:** use **WSL2** (Ubuntu), same repo, copy `.env`, then `python scripts/run_live_vendor_tests.py --bootstrap` and run without `--skip-preflight`.
+- **Full live vendor lane:** use **WSL2** (Ubuntu), same repo (`cd` to the Linux path, e.g. `/mnt/c/Users/<you>/conicshield`), copy `.env`, then `python scripts/run_live_vendor_tests.py --bootstrap` and run without `--skip-preflight`.
 - **Windows only:** `python scripts/run_live_vendor_tests.py --skip-preflight` runs pytest but most Moreau-marked tests will still skip or fail at import time.
 
 Run everything that needs Moreau license and optional `INTERSIM_RL_ROOT` from a filled `.env`:

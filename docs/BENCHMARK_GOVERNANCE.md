@@ -6,6 +6,8 @@ Moreau install/runtime policy is defined in [MOREAU_INSTALL_AND_ENVIRONMENT_POLI
 
 **Related documentation:** [RELEASE_POLICY.md](RELEASE_POLICY.md) (publication modes), [PARITY_AND_FIXTURES.md](PARITY_AND_FIXTURES.md), [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (governance layer), [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md) (procedures).
 
+**Automated checks:** pytest under `tests/governance/` (together with `solver-touch` and default CI) enforces benchmark path resolution, `PUBLISHED_RUN_INDEX.json` integrity, consistency between the parity fixture note and indexed `run_id`s, and—where configured—summary evidence for native publish. These complement but do not replace release review and `governance_decision.md`.
+
 ## 1. Governing principle
 
 A benchmark result is not just a score. It is a governed claim about a stable task.

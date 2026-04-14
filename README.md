@@ -28,6 +28,17 @@ ConicShield is not only a solver wrapper. It ships a **full governance spine**: 
 | **Public / reference** | Contributors without vendor secrets: governance, schemas, replay, CI-green core tests. |
 | **Vendor (Moreau)** | Opt-in, Linux/WSL2: native compiled path, CUDA where licensed, **Vendor CI** workflow `vendor-ci-moreau` (manual dispatch). |
 
+### Where benchmark artifacts live
+
+| Artifact | Location |
+|----------|----------|
+| Committed governed run bundles | `benchmarks/published_runs/<run_id>/` |
+| SHA-256 integrity index | `benchmarks/PUBLISHED_RUN_INDEX.json` (regenerate: `python scripts/refresh_published_run_index.py` after bundle edits) |
+| Family release pointer (`current_run_id`, gates) | `benchmarks/releases/<family_id>/CURRENT.json` |
+| Frozen parity gold stream | `tests/fixtures/parity_reference/` (source run documented in `REGENERATION_NOTE.md`) |
+
+Details: [`benchmarks/published_runs/README.md`](benchmarks/published_runs/README.md), [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md).
+
 ---
 
 ## Installation
@@ -93,6 +104,8 @@ See [`tests/live/README.md`](tests/live/README.md) for details.
 
 | Goal | Command |
 |------|---------|
+| Extended static + tests + strict audit (maintainer gate) | `make verify-extended` |
+| Integrity index matches disk (after editing `benchmarks/published_runs/`) | `python scripts/refresh_published_run_index.py --check` |
 | Live tests (Moreau + optional inter-sim-rl; reads `.env`) | `python scripts/run_live_vendor_tests.py --bootstrap` once per venv, then `python scripts/run_live_vendor_tests.py` |
 | Governed bundle steps (validate → parity fixture → index check) | `python scripts/governed_local_promotion.py --help` |
 | Validate a run bundle | `python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>` |
@@ -113,7 +126,10 @@ make test-reference          # same as default filters, explicit
 make test-vendor-moreau      # requires Moreau + license
 make test-solver             # solver-marked aggregate
 make smoke-solver            # solver smoke CLI JSON
+make verify-extended         # ruff + format + mypy + cov-gates + slow + inter_sim e2e + audit_cli --strict
 ```
+
+Branch protection and required checks: [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md).
 
 ---
 
@@ -175,6 +191,7 @@ See also [`docs/README.md`](docs/README.md) for a compact index.
 
 - [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md) — trust ladder, layers, performance/differentiation policy
 - [`docs/DEVENV.md`](docs/DEVENV.md) — Python matrix, markers, workflows
+- [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md) — recommended GitHub required checks
 
 **Governance & benchmarks**
 

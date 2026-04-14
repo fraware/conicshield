@@ -10,4 +10,4 @@ Source of truth:
 - environment: precomputed transition-bank replay only
 - purpose: replay the exact recorded shield inputs through the native compiled path
 
-This fixture must only be regenerated intentionally.
+This fixture must only be regenerated intentionally. Promotion source and index alignment are recorded in [`REGENERATION_NOTE.md`](REGENERATION_NOTE.md) and checked against [`benchmarks/PUBLISHED_RUN_INDEX.json`](../../../benchmarks/PUBLISHED_RUN_INDEX.json) in CI.

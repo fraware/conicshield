@@ -37,7 +37,7 @@ The shield turns scores into a simplex distribution, applies hard admissibility 
 Two paths are supported:
 
 - reference path: CVXPY/Moreau
-- production path: native Moreau `CompiledSolver` (shared CSR structure, batch size 1 per step; see `NativeMoreauCompiledProjector`)
+- production path: native Moreau `CompiledSolver` (shared CSR structure, batch size 1 per step; see `NativeMoreauCompiledProjector`; **true multi-problem batching** via `NativeMoreauCompiledBatchProjector`; optional **batched softmax** path on `InterSimConicShield` where multiple proposals are projected together)
 
 The native path inherits trust through **parity** against the reference stream on a frozen fixture.
 

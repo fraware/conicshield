@@ -20,3 +20,5 @@
 5. **Governance sequence:** `finalize_cli` (with `--parity-summary-path` pointing at `parity_summary.json`) → add `governance_decision.md` from [`benchmarks/templates/governance_decision.template.md`](../benchmarks/templates/governance_decision.template.md) to the **same** directory you will pass to `release_cli` (required for real publish; not for `--dry-run`) → `release_cli` (dry-run then real) → `audit_cli --strict`. Details: [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md), [`benchmarks/published_runs/README.md`](../benchmarks/published_runs/README.md).
 
 Reference-only publishes (no native row in `summary.json`) may still show green parity for the reference stream; they do **not** prove native-arm promotion.
+
+6. **Regression lock (CI):** After merge, [`solver-touch`](../.github/workflows/solver-touch.yml) runs [`tests/governance/test_native_arm_publish_evidence.py`](../tests/governance/test_native_arm_publish_evidence.py) so the committed `benchmarks/published_runs/<current_run_id>/summary.json` cannot silently lose the `shielded-native-moreau` row while the arm remains in `publishable_arms`.

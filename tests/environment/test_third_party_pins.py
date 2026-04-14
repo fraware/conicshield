@@ -1,4 +1,4 @@
-"""§7.1 hygiene: vendor pin file matches git HEAD when checkout is present."""
+"""Section 7.1 hygiene: vendor pin file matches git HEAD when checkout is present."""
 
 from __future__ import annotations
 

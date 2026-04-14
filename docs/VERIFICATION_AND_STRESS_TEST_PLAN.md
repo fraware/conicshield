@@ -118,7 +118,7 @@ The goal is not a single passing solve. The repository should show:
 
 ## Layer F — Differentiation
 
-**Goal:** Gradients sane where differentiable paths are supported. Today: **finite-difference** slope on the reference shield projector (when MOREAU is installed) and optional **torch/jax micrograd vs FD** self-checks (`--probe-torch-jax`) that do not yet differentiate through the shield itself.
+**Goal:** Gradients sane where differentiable paths are supported. Today: **finite-difference** slope on the reference shield projector (when MOREAU is installed); optional **torch/jax micrograd vs FD** self-checks (`--probe-torch-jax`) on toy quadratics; optional **`--shield-inter-sim`** on a licensed host to record central FD on **`InterSimConicShield`** (native backend), aligned with [`tests/vendor/diff/test_inter_sim_shield_projection_fd.py`](../tests/vendor/diff/test_inter_sim_shield_projection_fd.py).
 
 **Status:** Optional; not a governed gate in default CI. The report’s `status` field is **`deferred`** only when the reference stack is missing (`cvxpy`, `cp.MOREAU`, or a registered MOREAU solver). With a licensed solver install, the script runs the reference FD block and reports **`ok`** / **`partial`** (native FD requested but failed) rather than leaving Layer F as a stub.
 
@@ -126,7 +126,7 @@ The goal is not a single passing solve. The repository should show:
 
 **Policy:** see [Differentiation](#differentiation-policy) below.
 
-**Not yet in scope (defer explicit claims):** implicit differentiation / autograd **through** the shield stack (`NativeMoreauCompiledOptions.enable_grad`, `moreau` `backward()`, PyTorch/Jax binders on the real shield QP). The script’s torch/jax blocks remain toy quadrature checks. Adding vendor tests that compare `backward()` to finite differences on the same shield objective is the next step when differentiability is part of the public story.
+**Not yet in scope (defer explicit claims):** implicit differentiation / autograd **through** the shield stack (`NativeMoreauCompiledOptions.enable_grad`, `moreau` `backward()`, PyTorch/Jax binders on the real shield QP). The script’s torch/jax blocks remain toy quadrature checks. Autograd vs FD on the **same** differentiable shield objective is the next step when differentiability is part of the public story.
 
 ---
 

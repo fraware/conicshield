@@ -10,6 +10,6 @@ This mirrors the trust model in [docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](../d
 | Parity | Replay vs fixture | `tests/parity/` |
 | Performance | Timing harnesses | `tests/performance/` |
 | Artifacts | Bundles, schemas | `tests/artifacts/` |
-| Governance | Registry, releases, publish | `tests/governance/` |
+| Governance | Registry, releases, publish, published-run index, native-arm summary evidence | `tests/governance/` |
 
 New tests should prefer the closest matching subtree. Moves of existing files can happen incrementally when touching those areas.

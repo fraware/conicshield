@@ -6,6 +6,9 @@ on:
     paths:
       - "conicshield/core/moreau*.py"
       - "conicshield/core/moreau_batched.py"
+      - "conicshield/specs/compiler.py"
+      - "conicshield/adapters/inter_sim_rl/shield.py"
+      - "conicshield/reference_correctness/conic_suite.py"
       - "conicshield/bench/**"
       - "conicshield/parity/**"
       - "conicshield/published_run_index.py"
@@ -18,14 +21,16 @@ on:
       - "scripts/run_live_vendor_tests.py"
       - "scripts/refresh_published_run_index.py"
       - "tests/fixtures/parity_reference/**"
-      - "tests/vendor/native/**"
-      - "tests/vendor/diff/**"
+      - "tests/vendor/**"
       - "tests/parity/**"
   push:
     branches: [main]
     paths:
       - "conicshield/core/moreau*.py"
       - "conicshield/core/moreau_batched.py"
+      - "conicshield/specs/compiler.py"
+      - "conicshield/adapters/inter_sim_rl/shield.py"
+      - "conicshield/reference_correctness/conic_suite.py"
       - "conicshield/bench/**"
       - "conicshield/parity/**"
       - "conicshield/published_run_index.py"
@@ -38,8 +43,7 @@ on:
       - "scripts/run_live_vendor_tests.py"
       - "scripts/refresh_published_run_index.py"
       - "tests/fixtures/parity_reference/**"
-      - "tests/vendor/native/**"
-      - "tests/vendor/diff/**"
+      - "tests/vendor/**"
       - "tests/parity/**"
 
 concurrency:
@@ -62,4 +66,9 @@ jobs:
       - name: Benchmark path resolution + parity tests
         run: |
           python scripts/refresh_published_run_index.py --check
-          python -m pytest tests/governance/test_benchmark_paths_resolution.py tests/governance/test_published_run_index.py tests/parity/ -q --tb=short
+          python -m pytest \
+            tests/governance/test_benchmark_paths_resolution.py \
+            tests/governance/test_published_run_index.py \
+            tests/governance/test_native_arm_publish_evidence.py \
+            tests/parity/ \
+            -q --tb=short

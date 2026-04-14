@@ -13,6 +13,7 @@ from conicshield.adapters.inter_sim_rl.geometry_prior import (
     infer_geometry_prior,
 )
 from conicshield.core.interfaces import ProjectorProtocol
+from conicshield.core.moreau_batched import NativeMoreauCompiledBatchProjector
 from conicshield.core.moreau_compiled import NativeMoreauCompiledOptions
 from conicshield.core.result import ProjectionResult
 from conicshield.core.solver_factory import Backend, create_projector
@@ -172,6 +173,50 @@ class InterSimConicShield:
             projection=result,
             spec_id=spec.spec_id,
             cache_key=cache_key,
+        )
+
+    def project_softmax_batch(
+        self,
+        *,
+        proposed_softmax_rows: np.ndarray,
+        context: Mapping[str, Any],
+        policy_weight: float = 1.0,
+    ) -> np.ndarray:
+        """Project ``K`` simplex proposals in one native ``CompiledSolver`` batch call.
+
+        Requires ``Backend.NATIVE_MOREAU``. Uses the same spec/geometry prior as
+        :meth:`choose_action` and the current episode ``previous_action`` state.
+        ``proposed_softmax_rows`` must have shape ``(K, len(CANONICAL_ACTION_SPACE))``.
+        Returns corrected rows with the same shape.
+        """
+        if self.backend != Backend.NATIVE_MOREAU:
+            raise ValueError("project_softmax_batch requires Backend.NATIVE_MOREAU")
+        pb = np.asarray(proposed_softmax_rows, dtype=np.float64)
+        if pb.ndim != 2:
+            raise ValueError(f"proposed_softmax_rows must be 2D, got shape {pb.shape}")
+        if pb.shape[1] != len(CANONICAL_ACTION_SPACE):
+            raise ValueError(
+                f"proposed_softmax_rows second dim must be {len(CANONICAL_ACTION_SPACE)}, got {pb.shape[1]}"
+            )
+        if pb.shape[0] < 1:
+            raise ValueError("batch size must be >= 1")
+
+        if self.use_geometry_prior:
+            geometry_prior, geometry_weight = infer_geometry_prior(
+                context=context,
+                config=self.geometry_prior_config,
+            )
+        else:
+            geometry_prior, geometry_weight = None, 0.0
+
+        spec = self._build_spec_from_context(context)
+        batch = NativeMoreauCompiledBatchProjector(spec=spec, options=self.native_options)
+        return batch.project_batch(
+            pb,
+            self._previous_distribution,
+            reference_action=geometry_prior,
+            policy_weight=float(policy_weight),
+            reference_weight=float(geometry_weight),
         )
 
     def _build_spec_from_context(self, context: Mapping[str, Any]) -> SafetySpec:

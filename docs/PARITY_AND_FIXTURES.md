@@ -6,6 +6,8 @@ How the frozen parity fixture is governed, how native code is checked against it
 
 **See also:** [BENCHMARK_GOVERNANCE.md](BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md), [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) (native parity layer).
 
+**CI regression:** `tests/governance/test_published_run_index.py` checks `benchmarks/PUBLISHED_RUN_INDEX.json` against on-disk files and ensures every `run_id` cited in `tests/fixtures/parity_reference/REGENERATION_NOTE.md` appears in the index’s governed list. Run `python scripts/refresh_published_run_index.py --check` (or `--write`) after changing bundles or the index.
+
 ---
 
 ## Frozen fixture policy

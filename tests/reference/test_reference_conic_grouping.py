@@ -28,3 +28,18 @@ def test_group_suite_rows_by_family_clusters_lp_qp_socp() -> None:
     assert "LP" in grouped and len(grouped["LP"]) >= 1
     assert "QP" in grouped and len(grouped["QP"]) >= 1
     assert "SOCP" in grouped and len(grouped["SOCP"]) >= 1
+
+
+def test_lp_family_includes_large_sparse_regime() -> None:
+    """Larger n / sparse LP rows stay bucketed for regime-style reporting."""
+    rows = run_conic_suite_trusted_only(cvxpy, profile="standard")
+    grouped = group_suite_rows_by_family(rows)
+    lp = grouped.get("LP", [])
+    assert any(r.get("n") == "40" and r.get("density") == "sparse" for r in lp)
+
+
+def test_socp_family_includes_wider_cone_dimension() -> None:
+    rows = run_conic_suite_trusted_only(cvxpy, profile="standard")
+    grouped = group_suite_rows_by_family(rows)
+    socp = grouped.get("SOCP", [])
+    assert any(r.get("n") == "10" for r in socp)

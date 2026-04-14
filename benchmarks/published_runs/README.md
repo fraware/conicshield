@@ -2,6 +2,16 @@
 
 **Canonical committed copies** of governed runs live here as `benchmarks/published_runs/<run_id>/` once a family publishes that `run_id` (see `benchmarks/releases/<family_id>/CURRENT.json`). Produce the bundle first under `benchmarks/runs/<run_id>/` with `python -m conicshield.bench.reference_run --out ...`, validate, finalize, then copy here before merge so artifacts stay auditable with release metadata. Tools resolve `published_runs/<run_id>` before `runs/<run_id>` when both exist.
 
+**Auditing after clone:** from the repository root, integrity checks for indexed files are enforced in CI via `tests/governance/test_published_run_index.py` (SHA-256 vs disk, bundle validation, and parity `REGENERATION_NOTE.md` run ids listed in the index). **`tests/governance/test_native_arm_publish_evidence.py`** asserts the family `CURRENT.json` `current_run_id` bundle’s `summary.json` still contains a `shielded-native-moreau` row with plausible timings (guards drift after publish). Locally:
+
+```bash
+python scripts/refresh_published_run_index.py --check
+```
+
+```bash
+python -c "from pathlib import Path; from conicshield.published_run_index import assert_parity_note_run_ids_indexed, verify_index_integrity; verify_index_integrity(repo_root=Path('.')); assert_parity_note_run_ids_indexed(repo_root=Path('.')); print('index ok')"
+```
+
 **Chained path (offline export → bank → bundle):** on a licensed host, build from a real or fixture export with:
 
 ```bash
@@ -50,7 +60,11 @@ When a run is approved for native parity regression testing, promote it with:
 python scripts/regenerate_parity_fixture.py --source benchmarks/runs/<run_id>
 ```
 
-See [`docs/PARITY_AND_FIXTURES.md`](../docs/PARITY_AND_FIXTURES.md) for the fixture promotion checklist.
+See [`docs/PARITY_AND_FIXTURES.md`](../../docs/PARITY_AND_FIXTURES.md) for the fixture promotion checklist.
+
+## Host-realistic rehearsal (full loop)
+
+Closing the loop from environment data to an auditable published bundle: **export → transition bank → `reference_run` → validate → copy to `benchmarks/published_runs/<run_id>/` → finalize / release / audit**, with optional parity fixture refresh from that bundle. Orchestrate steps with [`scripts/governed_local_promotion.py`](../../scripts/governed_local_promotion.py) (`validate`, `parity-sync`, `index`, `all`) and [`docs/MAINTAINER_RUNBOOK.md`](../../docs/MAINTAINER_RUNBOOK.md). Use a real upstream export when proving inter-sim integration; minimal offline exports remain valid for structural smoke only.
 
 ## Git policy
 

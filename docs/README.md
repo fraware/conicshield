@@ -14,6 +14,7 @@ Policy and runbooks for ConicShield. The repository root [`README.md`](../README
 | [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) | Trust ladder, layers, policies |
 | [PARITY_AND_FIXTURES.md](PARITY_AND_FIXTURES.md) | Frozen fixture and native parity |
 | [DEVENV.md](DEVENV.md) | Python matrix, pytest markers, workflows |
+| [CI_MERGE_GATES.md](CI_MERGE_GATES.md) | Recommended required GitHub checks for `main` |
 | [INTER_SIM_RL_INTEGRATION.md](INTER_SIM_RL_INTEGRATION.md) | Host integration |
 | [MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md](MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md) | Vendor install expectations |
 | [MOREAU_API_NOTES.md](MOREAU_API_NOTES.md) | API drift and upgrade checks |

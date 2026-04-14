@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Layer F: finite-difference sanity on the reference projector; optional native FD; extras probe.
 
-Roadmap follow-on: autograd vs finite differences on the actual Moreau-backed shield objective when
-``enable_grad`` matters — run behind vendor extras / ``pytest.mark.requires_moreau`` (see docs/ROADMAP.md P1).
+Use ``--shield-inter-sim`` on a licensed host to record central FD on ``InterSimConicShield`` (matches
+``tests/vendor/diff/test_inter_sim_shield_projection_fd.py``). Autograd vs FD when ``enable_grad`` matters
+remains a vendor follow-on (see docs/ROADMAP.md P1).
 """
 
 from __future__ import annotations
@@ -148,8 +149,8 @@ def _micrograd_fd_torch(*, h: float) -> dict[str, Any]:
 
 def _micrograd_fd_jax(*, h: float) -> dict[str, Any]:
     try:
-        import jax
-        import jax.numpy as jnp
+        import jax  # type: ignore[import-not-found]
+        import jax.numpy as jnp  # type: ignore[import-not-found]
     except ImportError:
         return {"import_ok": False}
 
@@ -198,6 +199,56 @@ def _cvxpy_moreau_available() -> tuple[bool, str]:
     if "MOREAU" not in installed:
         return False, "MOREAU is not a registered CVXPY solver in this environment (vendor moreau not installed)."
     return True, ""
+
+
+def _shield_inter_sim_central_fd_dim0(*, h: float) -> tuple[dict[str, Any] | None, str | None]:
+    """Central FD on softmax-corrected[0] w.r.t. q[0] on ``InterSimConicShield`` (native Moreau)."""
+    try:
+        import moreau
+    except ImportError:
+        return None, "moreau not installed"
+    if not hasattr(moreau, "CompiledSolver"):
+        return None, "moreau.CompiledSolver not available"
+
+    from conicshield.adapters.inter_sim_rl.shield import (
+        CANONICAL_ACTION_SPACE,
+        InterSimConicShield,
+    )
+    from conicshield.core.solver_factory import Backend
+
+    def _ctx() -> dict[str, object]:
+        return {
+            "allowed_actions": list(CANONICAL_ACTION_SPACE),
+            "blocked_actions": [],
+            "action_upper_bounds": dict.fromkeys(CANONICAL_ACTION_SPACE, 1.0),
+            "rule_choice": "right",
+            "previous_instruction": None,
+            "hazard_score": 0.0,
+            "transition_candidates": [],
+        }
+
+    def corrected0(q: np.ndarray) -> float:
+        shield = InterSimConicShield(backend=Backend.NATIVE_MOREAU, use_geometry_prior=False)
+        shield.reset_episode()
+        d = shield.choose_action(
+            q_values=q,
+            action_space=list(CANONICAL_ACTION_SPACE),
+            context=_ctx(),
+        )
+        return float(d.corrected_distribution[0])
+
+    q = np.array([0.5, 0.2, 0.15, 0.15], dtype=np.float64)
+    q_plus = q.copy()
+    q_plus[0] += h
+    q_minus = q.copy()
+    q_minus[0] -= h
+    slope = (corrected0(q_plus) - corrected0(q_minus)) / (2.0 * h)
+    return {
+        "probe": "InterSimConicShield corrected[0] vs q[0] (native backend)",
+        "h": float(h),
+        "central_fd_slope_dim0": float(slope),
+        "finite": bool(np.isfinite(slope)),
+    }, None
 
 
 def _native_fd_if_requested(
@@ -374,6 +425,11 @@ def main() -> int:
         action="store_true",
         help="Run optional torch/jax micrograd vs finite-difference probes (no shield autograd yet).",
     )
+    p.add_argument(
+        "--shield-inter-sim",
+        action="store_true",
+        help="Also run central FD on inter-sim shield corrected[0] vs q[0] (native Moreau; vendor env).",
+    )
     p.add_argument("--strict", action="store_true", help="Return fail status when checks are deferred/partial.")
     args = p.parse_args()
     root = Path(__file__).resolve().parents[1]
@@ -389,6 +445,12 @@ def main() -> int:
         probe_torch_jax=bool(args.probe_torch_jax),
         strict=bool(args.strict),
     )
+    if args.shield_inter_sim:
+        sim_block, sim_err = _shield_inter_sim_central_fd_dim0(h=float(args.h_step))
+        if sim_block is not None:
+            data["shield_inter_sim"] = sim_block
+        if sim_err is not None:
+            data.setdefault("errors", []).append(f"shield_inter_sim: {sim_err}")
     (out_dir / "differentiation_summary.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
     _write_md(out_dir / "differentiation_report.md", data)
     print(out_dir / "differentiation_summary.json")

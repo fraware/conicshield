@@ -4,7 +4,20 @@ from pathlib import Path
 
 from conicshield.artifacts.validator import validate_run_bundle
 from conicshield.benchmark_paths import resolve_run_directory
-from conicshield.published_run_index import load_published_run_index, verify_index_integrity
+from conicshield.published_run_index import (
+    assert_parity_note_run_ids_indexed,
+    load_published_run_index,
+    run_ids_from_parity_regeneration_note,
+    verify_index_integrity,
+)
+
+
+def test_parity_regeneration_note_run_ids_are_indexed() -> None:
+    """REGENERATION_NOTE must cite only governed run_ids present in PUBLISHED_RUN_INDEX."""
+    root = Path(__file__).resolve().parents[2]
+    ids = run_ids_from_parity_regeneration_note(repo_root=root)
+    assert ids, "expected at least one benchmarks/published_runs/<run_id> in REGENERATION_NOTE.md"
+    assert_parity_note_run_ids_indexed(repo_root=root)
 
 
 def test_published_run_index_matches_disk_and_bundles() -> None:
