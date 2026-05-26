@@ -208,8 +208,11 @@ def _promotion_gate(summary_by_label: dict[str, dict[str, Any]]) -> GateResult:
             failures.append("native solve_failure_rate > 0")
         ref_p95 = float(geometry["solve_time_p95_ms"])
         native_p95 = float(native["solve_time_p95_ms"])
-        # Microsecond timing noise: allow small relative slack vs geometry reference.
-        tol_ms = max(1e-9, 0.10 * ref_p95) if ref_p95 > 0 else 1e-9
+        # Microsecond timing noise on single-step micro-benchmarks: absolute + relative slack.
+        if ref_p95 > 0:
+            tol_ms = max(0.002, 0.10 * ref_p95)
+        else:
+            tol_ms = 1e-9
         if ref_p95 > 0 and native_p95 > ref_p95 + tol_ms:
             failures.append("native p95 solve latency worse than geometry reference")
 

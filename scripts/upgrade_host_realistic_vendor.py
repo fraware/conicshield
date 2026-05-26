@@ -35,6 +35,11 @@ def main() -> int:
     )
     p.add_argument("--run-id", type=str, default="host-realistic-20260525")
     p.add_argument("--force", action="store_true")
+    p.add_argument(
+        "--refresh-governance",
+        action="store_true",
+        help="Re-run parity + finalize on existing host-realistic bundle (no bundle rebuild).",
+    )
     args = p.parse_args()
 
     repo = _repo_root()
@@ -48,24 +53,19 @@ def main() -> int:
         str(export),
         "--run-id",
         args.run_id,
-        "--no-passthrough",
-        "--include-native-arm",
         "--governance-scaffold",
         "--copy-to-published",
         "--refresh-index",
     ]
+    if args.refresh_governance:
+        cmd.extend(["--governance-only"])
+    else:
+        cmd.extend(["--no-passthrough", "--include-native-arm"])
     if args.force:
         cmd.append("--force")
     print("Running:", " ".join(cmd), file=sys.stderr)
     rc = subprocess.call(cmd, cwd=str(repo))
-    if rc != 0:
-        return rc
-    print(
-        "\nNext: parity CLI, finalize_cli with --parity-summary-path, release_cli, audit_cli --strict.\n"
-        "See docs/NATIVE_ARM_PUBLISH_CHECKLIST.md",
-        file=sys.stderr,
-    )
-    return 0
+    return rc
 
 
 if __name__ == "__main__":

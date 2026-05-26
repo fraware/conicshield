@@ -16,6 +16,11 @@ def test_host_realistic_published_run_provenance_not_minimal_fixture() -> None:
     assert _MINIMAL_FIXTURE not in source
     assert payload.get("host_realistic_evidence") is True
     assert payload.get("minimal_fixture_export") is False
-    assert payload.get("evidence_tier") == "structural_export"
-    assert payload.get("projector_mode") == "passthrough"
-    assert (root / "benchmarks" / "published_runs" / _HOST_REALISTIC_RUN_ID / "governance_status.json").is_file()
+    assert payload.get("evidence_tier") in ("structural_export", "vendor_native")
+    assert payload.get("projector_mode") in ("passthrough", "real_projector")
+    gov_path = root / "benchmarks" / "published_runs" / _HOST_REALISTIC_RUN_ID / "governance_status.json"
+    assert gov_path.is_file()
+    gov = json.loads(gov_path.read_text(encoding="utf-8"))
+    if payload.get("projector_mode") == "real_projector":
+        assert gov.get("parity_gate") == "green"
+        assert "shielded-native-moreau" in (gov.get("publishable_arms") or [])

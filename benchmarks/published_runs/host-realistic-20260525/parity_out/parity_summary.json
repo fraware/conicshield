@@ -1,0 +1,9 @@
+{
+  "total_steps": 1,
+  "action_match_rate": 1.0,
+  "max_corrected_linf": 9.813077866773593e-18,
+  "p95_corrected_linf": 9.813077866773593e-18,
+  "max_corrected_l2": 1.4092960140259165e-17,
+  "p95_corrected_l2": 1.4092960140259165e-17,
+  "active_constraints_match_rate": 1.0
+}

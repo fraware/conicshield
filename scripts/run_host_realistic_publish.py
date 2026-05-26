@@ -120,7 +120,52 @@ def _copy_to_published(*, runs_dir: Path, published_dir: Path, force: bool) -> N
     print(f"Copied bundle to {published_dir}", file=sys.stderr)
 
 
-def _write_governance_scaffold(*, repo_root: Path, run_dir: Path, run_id: str, family_id: str) -> int:
+def _summary_has_native_arm(run_dir: Path) -> bool:
+    summary_path = run_dir / "summary.json"
+    if not summary_path.is_file():
+        return False
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if not isinstance(summary, list):
+        return False
+    return any(row.get("label") == "shielded-native-moreau" for row in summary)
+
+
+def _run_parity_fixture(*, repo_root: Path, run_dir: Path) -> Path | None:
+    out_dir = run_dir / "parity_out"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    cmd = [
+        sys.executable,
+        "-m",
+        "conicshield.parity.cli",
+        "--reference-dir",
+        str(repo_root / "tests" / "fixtures" / "parity_reference"),
+        "--reference-arm-label",
+        "shielded-rules-plus-geometry",
+        "--out-dir",
+        str(out_dir),
+    ]
+    print("Running:", " ".join(cmd), file=sys.stderr)
+    rc = subprocess.call(cmd, cwd=str(repo_root))
+    if rc != 0:
+        return None
+    summary = out_dir / "parity_summary.json"
+    return summary if summary.is_file() else None
+
+
+def _write_governance_scaffold(
+    *,
+    repo_root: Path,
+    run_dir: Path,
+    run_id: str,
+    family_id: str,
+    with_parity: bool = True,
+) -> int:
+    parity_summary: Path | None = None
+    if with_parity and _summary_has_native_arm(run_dir):
+        parity_summary = _run_parity_fixture(repo_root=repo_root, run_dir=run_dir)
+        if parity_summary is None:
+            print("Warning: parity CLI failed; finalize will omit --parity-summary-path", file=sys.stderr)
+
     finalize = [
         sys.executable,
         "-m",
@@ -138,6 +183,8 @@ def _write_governance_scaffold(*, repo_root: Path, run_dir: Path, run_id: str, f
         "--current-release-path",
         str(repo_root / "benchmarks" / "releases" / family_id / "CURRENT.json"),
     ]
+    if parity_summary is not None:
+        finalize.extend(["--parity-summary-path", str(parity_summary)])
     print("Running:", " ".join(finalize), file=sys.stderr)
     rc = subprocess.call(finalize, cwd=str(repo_root))
     if rc != 0:
@@ -159,6 +206,39 @@ def _write_governance_scaffold(*, repo_root: Path, run_dir: Path, run_id: str, f
     return 0
 
 
+def _sync_governance_to_published(*, runs_dir: Path, published_dir: Path) -> None:
+    for name in ("governance_status.json", "governance_decision.md"):
+        src = runs_dir / name
+        if src.is_file():
+            shutil.copy2(src, published_dir / name)
+    parity_dir = runs_dir / "parity_out"
+    if parity_dir.is_dir():
+        dest_parity = published_dir / "parity_out"
+        if dest_parity.exists():
+            shutil.rmtree(dest_parity)
+        shutil.copytree(parity_dir, dest_parity)
+
+
+def _print_governance_summary(run_dir: Path) -> None:
+    gov = run_dir / "governance_status.json"
+    if not gov.is_file():
+        return
+    status = json.loads(gov.read_text(encoding="utf-8"))
+    print(
+        f"\nGovernance: state={status.get('state')} "
+        f"parity_gate={status.get('parity_gate')} "
+        f"promotion_gate={status.get('promotion_gate')} "
+        f"publishable_arms={status.get('publishable_arms')}",
+        file=sys.stderr,
+    )
+    if "shielded-native-moreau" not in (status.get("publishable_arms") or []):
+        print(
+            "Native arm not in publishable_arms; see gate_details in governance_status.json. "
+            "Next: release_cli / audit_cli per docs/NATIVE_ARM_PUBLISH_CHECKLIST.md",
+            file=sys.stderr,
+        )
+
+
 def _write_published_readme(*, published_dir: Path, run_id: str, export_rel: str) -> None:
     text = (
         f"# Published run `{run_id}` (host-realistic export evidence)\n\n"
@@ -174,7 +254,12 @@ def _write_published_readme(*, published_dir: Path, run_id: str, export_rel: str
 def main() -> int:
     repo = _repo_root()
     p = argparse.ArgumentParser(description="Host-realistic export → bundle → optional publish copy.")
-    p.add_argument("--export-json", type=Path, required=True)
+    p.add_argument(
+        "--export-json",
+        type=Path,
+        default=None,
+        help="offline_transition_graph_export/v1 JSON (default: benchmarks/external_evidence/...).",
+    )
     p.add_argument("--run-id", type=str, required=True)
     p.add_argument("--passthrough", action="store_true")
     p.add_argument("--no-passthrough", action="store_true")
@@ -194,13 +279,51 @@ def main() -> int:
     p.add_argument(
         "--governance-scaffold",
         action="store_true",
-        help="Run finalize_cli and copy governance_decision template into the run directory.",
+        help="Run parity (when native arm present), finalize_cli, and governance_decision template.",
+    )
+    p.add_argument(
+        "--governance-only",
+        action="store_true",
+        help="Skip bundle production; refresh parity + finalize on existing benchmarks/runs/<run_id>.",
     )
     p.add_argument("--family-id", type=str, default="conicshield-transition-bank-v1")
     p.add_argument("--seed", type=int, default=7)
     args = p.parse_args()
 
-    export_json = args.export_json
+    export_json = args.export_json or (
+        repo / "benchmarks" / "external_evidence" / "offline_graph_export_upstream.json"
+    )
+    runs_dir = repo / "benchmarks" / "runs" / args.run_id
+
+    if args.governance_only:
+        if not args.governance_scaffold:
+            print("--governance-only requires --governance-scaffold", file=sys.stderr)
+            return 2
+        if not runs_dir.is_dir():
+            print(f"Run directory not found: {runs_dir}", file=sys.stderr)
+            return 2
+        rc = _write_governance_scaffold(
+            repo_root=repo,
+            run_dir=runs_dir,
+            run_id=args.run_id,
+            family_id=args.family_id,
+        )
+        if rc != 0:
+            return rc
+        if args.copy_to_published:
+            published_dir = repo / "benchmarks" / "published_runs" / args.run_id
+            if not published_dir.is_dir():
+                print(f"Published run not found: {published_dir}", file=sys.stderr)
+                return 2
+            _sync_governance_to_published(runs_dir=runs_dir, published_dir=published_dir)
+        if args.refresh_index:
+            script = repo / "scripts" / "refresh_published_run_index.py"
+            rc = subprocess.call([sys.executable, str(script)], cwd=str(repo))
+            if rc != 0:
+                return rc
+        _print_governance_summary(runs_dir)
+        return 0
+
     if not export_json.is_file():
         print(f"Export JSON not found: {export_json}", file=sys.stderr)
         return 2
@@ -222,7 +345,6 @@ def main() -> int:
     if not args.passthrough and not args.no_passthrough:
         use_passthrough = False
 
-    runs_dir = repo / "benchmarks" / "runs" / args.run_id
     if args.force and runs_dir.exists():
         shutil.rmtree(runs_dir)
 
@@ -264,23 +386,21 @@ def main() -> int:
         _write_published_readme(published_dir=published_dir, run_id=args.run_id, export_rel=rel_export)
         _enhance_provenance(run_dir=published_dir, export_json=export_json, repo_root=repo)
         if args.governance_scaffold:
-            gov = runs_dir / "governance_status.json"
-            if gov.is_file():
-                shutil.copy2(gov, published_dir / "governance_status.json")
-            gdec = runs_dir / "governance_decision.md"
-            if gdec.is_file():
-                shutil.copy2(gdec, published_dir / "governance_decision.md")
+            _sync_governance_to_published(runs_dir=runs_dir, published_dir=published_dir)
         if args.refresh_index:
             script = repo / "scripts" / "refresh_published_run_index.py"
             rc = subprocess.call([sys.executable, str(script)], cwd=str(repo))
             if rc != 0:
                 return rc
 
-    print(
-        "\nNext: governed_local_promotion.py validate/parity-sync/index; "
-        "finalize_cli / release_cli per docs/MAINTAINER_RUNBOOK.md",
-        file=sys.stderr,
-    )
+    if args.governance_scaffold:
+        _print_governance_summary(runs_dir)
+    else:
+        print(
+            "\nNext: governed_local_promotion.py validate/parity-sync/index; "
+            "finalize_cli / release_cli per docs/MAINTAINER_RUNBOOK.md",
+            file=sys.stderr,
+        )
     return 0
 
 

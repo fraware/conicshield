@@ -6,13 +6,14 @@
   "state": "review-locked",
   "artifact_gate": "green",
   "fixture_gate": "green",
-  "parity_gate": "unknown",
+  "parity_gate": "green",
   "promotion_gate": "green",
   "review_locked": true,
   "publishable_arms": [
     "baseline-unshielded",
     "shielded-rules-only",
-    "shielded-rules-plus-geometry"
+    "shielded-rules-plus-geometry",
+    "shielded-native-moreau"
   ],
   "gate_details": {
     "artifact_gate": {
@@ -24,8 +25,8 @@
       "detail": "Fixture policy validated successfully."
     },
     "parity_gate": {
-      "status": "unknown",
-      "detail": "No parity_summary_path; pass --parity-summary-path from conicshield.parity.cli output."
+      "status": "green",
+      "detail": "Parity thresholds satisfied (parity_summary.json)."
     },
     "promotion_gate": {
       "status": "green",
