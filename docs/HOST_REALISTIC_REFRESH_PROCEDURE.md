@@ -32,16 +32,22 @@ The script runs: vendor publish → parity → finalize → **release sync** whe
 
 ## Live upstream refresh cycle
 
-When a patched `inter-sim-rl` host produces a new `offline_transition_graph` dump:
+Capture the graph from pinned `inter-sim-rl` via `RLEnvironment` (M2 patch required), refresh the committed export, then re-publish:
 
 ```bash
+# 1. Capture raw offline_transition_graph (host-realistic fork via upstream API)
+make capture-inter-sim-graph
+
+# 2. Replace committed export + EXPORT_PROVENANCE (export_kind: live_upstream_dump)
+make refresh-live-upstream-export-live
+
+# 3. Full governed refresh (defaults to current_run_id)
 python scripts/host_realistic_refresh_cycle.py \
-  --live-graph-json /path/to/offline_transition_graph.json \
-  --run-id host-realistic-YYYYMMDD \
-  --promote-release
+  --live-graph-json benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json \
+  --force
 ```
 
-This calls [`scripts/refresh_live_upstream_export.py`](../scripts/refresh_live_upstream_export.py) first, then the same governed publish path.
+Or one shot after capture: pass `--live-graph-json` to the refresh cycle (it re-runs step 2 internally).
 
 ## When live re-export is required
 

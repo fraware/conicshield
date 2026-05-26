@@ -6,9 +6,8 @@ on:
   push:
     branches: [main]
   schedule:
-  workflow_dispatch:
-    # Monthly drift check on main (same as scheduled).
     - cron: "0 6 1 * *"
+  workflow_dispatch:
 
 concurrency:
   group: reference-authority-${{ github.workflow }}-${{ github.ref }}

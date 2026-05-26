@@ -14,7 +14,7 @@ Committed artifacts that demonstrate the **export → transition bank → publis
 | Kind | What it is | When to use |
 |------|------------|-------------|
 | **Committed structural graph** | Multi-branch graph checked into this directory (rehearsal fork or prior export) | Proves the governed loop in public CI without a live simulator session |
-| **Live upstream dump** | JSON produced on a patched `inter-sim-rl` host from a real `offline_transition_graph` | Replace `offline_graph_export_upstream.json` when you have a fresh dump; update `EXPORT_PROVENANCE.json` (revision, host, timestamp) |
+| **Live upstream dump** | Raw graph captured via `make capture-inter-sim-graph` (pinned `RLEnvironment` + M2 patch) then `refresh_live_upstream_export.py` | Replaces `offline_graph_export_upstream.json`; updates `EXPORT_PROVENANCE.json` (`export_kind: live_upstream_dump`) |
 
 After replacing the JSON, re-run:
 

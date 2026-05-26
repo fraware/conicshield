@@ -47,7 +47,7 @@ Scheduled or event-driven refresh: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_
 
 | When | Action |
 |------|--------|
-| Live inter-sim dump available | `python scripts/refresh_live_upstream_export.py --graph-json <dump.json>` then `make host-realistic-refresh-cycle` |
+| Live inter-sim capture | `make capture-inter-sim-graph` → `make refresh-live-upstream-export-live` → `make host-realistic-refresh-cycle` (or `--live-graph-json` on the cycle) |
 | Governance only | `python scripts/upgrade_host_realistic_vendor.py --refresh-governance` |
 
 ## Explicitly deferred

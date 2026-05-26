@@ -11,6 +11,7 @@ Mark these checks as **required** and disable bypass for administrators unless y
 | `quality` | [`ci.yml`](../.github/workflows/ci.yml) | Ruff, format, Mypy, default pytest, verification scripts |
 | `conic-trusted-shape` | [`ci.yml`](../.github/workflows/ci.yml) | Public CLARABEL/SCS structural gate (no vendor MOREAU) |
 | `governance-audit` | [`governance-audit.yml`](../.github/workflows/governance-audit.yml) | Published-run index `--check`, governance audit CLI |
+| `reference-authority` | [`reference-authority.yml`](../.github/workflows/reference-authority.yml) | `verify-reference-system`, committed batch viability report, monthly schedule |
 | `solver-touch` | [`solver-touch.yml`](../.github/workflows/solver-touch.yml) | Path-filtered: index SHA-256, parity, native-arm evidence |
 
 **Do not** require `vendor-ci-moreau` as a mandatory status check (forks lack secrets; see binding attestation below).

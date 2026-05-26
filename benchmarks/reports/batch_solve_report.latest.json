@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-05-26T05:47:25Z",
-  "source": "output/host_realistic_refresh_verify/performance_summary.json",
+  "generated_at_utc": "2026-05-26T06:05:37Z",
+  "source": "/mnt/c/Users/mateo/conicshield/output/host_realistic_refresh_verify/performance_summary.json",
   "comparisons": [
     {
       "scenario_id": "n4_loose_batch16",
@@ -8,9 +8,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 16,
-      "mean_sec_sequential": 0.009159733504930045,
-      "mean_sec_batched": 0.012028213503072038,
-      "speedup_ratio": 0.7615206948721541
+      "mean_sec_sequential": 0.01017537650113809,
+      "mean_sec_batched": 0.012358329000562662,
+      "speedup_ratio": 0.823361839669005
     },
     {
       "scenario_id": "n4_loose_batch4",
@@ -18,9 +18,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 4,
-      "mean_sec_sequential": 0.002471119998517679,
-      "mean_sec_batched": 0.002347592500882456,
-      "speedup_ratio": 1.0526187988710942
+      "mean_sec_sequential": 0.002473848500812892,
+      "mean_sec_batched": 0.002549717995862011,
+      "speedup_ratio": 0.9702439661279212
     },
     {
       "scenario_id": "n4_loose_batch8",
@@ -28,9 +28,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 8,
-      "mean_sec_sequential": 0.004779890503414208,
-      "mean_sec_batched": 0.0052898344983987045,
-      "speedup_ratio": 0.9035992534097499
+      "mean_sec_sequential": 0.004913562497677049,
+      "mean_sec_batched": 0.005923832501139259,
+      "speedup_ratio": 0.8294566898594926
     },
     {
       "scenario_id": "n4_nominal_batch16",
@@ -38,9 +38,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 16,
-      "mean_sec_sequential": 0.009053378496901132,
-      "mean_sec_batched": 0.00916706349744345,
-      "speedup_ratio": 0.9875985368079949
+      "mean_sec_sequential": 0.009584198000084143,
+      "mean_sec_batched": 0.010770536500785965,
+      "speedup_ratio": 0.8898533512592199
     },
     {
       "scenario_id": "n4_nominal_batch4",
@@ -48,9 +48,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 4,
-      "mean_sec_sequential": 0.002259628501633415,
-      "mean_sec_batched": 0.002485502998752054,
-      "speedup_ratio": 0.9091232248635193
+      "mean_sec_sequential": 0.0023979359975783154,
+      "mean_sec_batched": 0.0028651124994212296,
+      "speedup_ratio": 0.8369430512982347
     },
     {
       "scenario_id": "n4_nominal_batch8",
@@ -58,9 +58,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 8,
-      "mean_sec_sequential": 0.006224991502676858,
-      "mean_sec_batched": 0.004743554000015138,
-      "speedup_ratio": 1.3123053943640133
+      "mean_sec_sequential": 0.004925391003780533,
+      "mean_sec_batched": 0.005276514999422943,
+      "speedup_ratio": 0.9334553212336532
     },
     {
       "scenario_id": "n4_tight_batch16",
@@ -68,9 +68,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 16,
-      "mean_sec_sequential": 0.009210309999616584,
-      "mean_sec_batched": 0.008765993497945601,
-      "speedup_ratio": 1.0506863827557154
+      "mean_sec_sequential": 0.009523843502392992,
+      "mean_sec_batched": 0.010467827996762935,
+      "speedup_ratio": 0.9098204045135381
     },
     {
       "scenario_id": "n4_tight_batch4",
@@ -78,9 +78,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 4,
-      "mean_sec_sequential": 0.0024270085013995413,
-      "mean_sec_batched": 0.0023169050036813132,
-      "speedup_ratio": 1.0475218006535811
+      "mean_sec_sequential": 0.0023191344989754725,
+      "mean_sec_batched": 0.002595682999526616,
+      "speedup_ratio": 0.8934582918632288
     },
     {
       "scenario_id": "n4_tight_batch8",
@@ -88,9 +88,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 8,
-      "mean_sec_sequential": 0.004440180000528926,
-      "mean_sec_batched": 0.004805817003216362,
-      "speedup_ratio": 0.9239178265750178
+      "mean_sec_sequential": 0.004683114002546063,
+      "mean_sec_batched": 0.005130461500812089,
+      "speedup_ratio": 0.9128056027327723
     },
     {
       "scenario_id": "n8_loose_batch16",
@@ -98,9 +98,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 16,
-      "mean_sec_sequential": 0.009777367497008527,
-      "mean_sec_batched": 0.010064246998808812,
-      "speedup_ratio": 0.971495184703412
+      "mean_sec_sequential": 0.010076114002004033,
+      "mean_sec_batched": 0.01123278650266002,
+      "speedup_ratio": 0.8970271089562615
     },
     {
       "scenario_id": "n8_loose_batch4",
@@ -108,9 +108,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 4,
-      "mean_sec_sequential": 0.002554522499849554,
-      "mean_sec_batched": 0.0026201744985883124,
-      "speedup_ratio": 0.9749436540298633
+      "mean_sec_sequential": 0.002418467996903928,
+      "mean_sec_batched": 0.0024684825002623256,
+      "speedup_ratio": 0.9797387652725581
     },
     {
       "scenario_id": "n8_loose_batch8",
@@ -118,9 +118,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 8,
-      "mean_sec_sequential": 0.0050169130008725915,
-      "mean_sec_batched": 0.004807491000974551,
-      "speedup_ratio": 1.0435615999812766
+      "mean_sec_sequential": 0.005040848998760339,
+      "mean_sec_batched": 0.007821614999556914,
+      "speedup_ratio": 0.6444767479664875
     },
     {
       "scenario_id": "n8_nominal_batch16",
@@ -128,9 +128,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 16,
-      "mean_sec_sequential": 0.009633601999667007,
-      "mean_sec_batched": 0.010243240496492945,
-      "speedup_ratio": 0.9404838247198566
+      "mean_sec_sequential": 0.010036929499619873,
+      "mean_sec_batched": 0.012589717498485697,
+      "speedup_ratio": 0.7972323049208312
     },
     {
       "scenario_id": "n8_nominal_batch4",
@@ -138,9 +138,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 4,
-      "mean_sec_sequential": 0.002543374001106713,
-      "mean_sec_batched": 0.002459796996845398,
-      "speedup_ratio": 1.0339771958289645
+      "mean_sec_sequential": 0.0029217585033620708,
+      "mean_sec_batched": 0.0024461280008836184,
+      "speedup_ratio": 1.1944421969359902
     },
     {
       "scenario_id": "n8_nominal_batch8",
@@ -148,9 +148,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 8,
-      "mean_sec_sequential": 0.00526397649809951,
-      "mean_sec_batched": 0.005061296498752199,
-      "speedup_ratio": 1.040045075287978
+      "mean_sec_sequential": 0.004863128502620384,
+      "mean_sec_batched": 0.005424056998890592,
+      "speedup_ratio": 0.8965850660520461
     },
     {
       "scenario_id": "n8_tight_batch16",
@@ -158,9 +158,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 16,
-      "mean_sec_sequential": 0.010709460504585877,
-      "mean_sec_batched": 0.009853373496298445,
-      "speedup_ratio": 1.0868826304624535
+      "mean_sec_sequential": 0.010376676498708548,
+      "mean_sec_batched": 0.015268633000232512,
+      "speedup_ratio": 0.6796074343099694
     },
     {
       "scenario_id": "n8_tight_batch4",
@@ -168,9 +168,9 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 4,
-      "mean_sec_sequential": 0.0023693434995948337,
-      "mean_sec_batched": 0.0024943704993347637,
-      "speedup_ratio": 0.9498763316142192
+      "mean_sec_sequential": 0.0028114169981563464,
+      "mean_sec_batched": 0.002619938000862021,
+      "speedup_ratio": 1.0730853162293628
     },
     {
       "scenario_id": "n8_tight_batch8",
@@ -178,13 +178,13 @@
       "device": "cpu",
       "auto_tune": false,
       "batch_size": 8,
-      "mean_sec_sequential": 0.004892355500487611,
-      "mean_sec_batched": 0.005598676500085276,
-      "speedup_ratio": 0.8738414338483557
+      "mean_sec_sequential": 0.005983979997836286,
+      "mean_sec_batched": 0.008851904502080288,
+      "speedup_ratio": 0.6760104558776012
     }
   ],
   "summary": {
     "pairs": 18,
-    "max_speedup_ratio": 1.3123053943640133
+    "max_speedup_ratio": 1.1944421969359902
   }
 }

@@ -23,7 +23,7 @@ else
   PYTHON ?= python
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance verify-reference-system reference-authority-check reference-authority-snapshot refresh-live-upstream-export host-realistic-refresh-cycle host-realistic-refresh-milestone sync-published-readmes
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance verify-reference-system reference-authority-check reference-authority-snapshot capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-milestone sync-published-readmes
 
 test:
 	$(PYTHON) -m pytest -q
@@ -92,8 +92,18 @@ reference-authority-check:
 reference-authority-snapshot:
 	$(PYTHON) scripts/generate_reference_authority_snapshot.py
 
+capture-inter-sim-graph:
+	$(PYTHON) scripts/capture_inter_sim_offline_graph.py \
+		--host-realistic-fork \
+		--out benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json
+
 refresh-live-upstream-export:
-	@echo "Usage: $(PYTHON) scripts/refresh_live_upstream_export.py --graph-json <path/to/offline_transition_graph.json>"
+	@echo "Usage: make capture-inter-sim-graph && make refresh-live-upstream-export-live"
+	@echo "  or: $(PYTHON) scripts/refresh_live_upstream_export.py --graph-json <path>"
+
+refresh-live-upstream-export-live: capture-inter-sim-graph
+	$(PYTHON) scripts/refresh_live_upstream_export.py \
+		--graph-json benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json
 
 verify-reference-system: reference-authority-check
 	$(PYTHON) -m pytest \

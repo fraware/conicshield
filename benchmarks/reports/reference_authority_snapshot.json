@@ -1,6 +1,6 @@
 {
   "schema_version": "conicshield_reference_authority_snapshot/v1",
-  "generated_at_utc": "2026-05-26T05:47:34Z",
+  "generated_at_utc": "2026-05-26T06:05:57Z",
   "family_id": "conicshield-transition-bank-v1",
   "flagship_run_id": "host-realistic-20260525",
   "aligned": true,
@@ -33,7 +33,7 @@
     "promotion_gate": "green"
   },
   "export_provenance": {
-    "export_kind": "structural_committed",
+    "export_kind": "live_upstream_dump",
     "export_json": "benchmarks/external_evidence/offline_graph_export_upstream.json"
   }
 }
