@@ -37,6 +37,14 @@ def test_offline_graph_export_fixture_validates_against_schema() -> None:
     Draft202012Validator(schema).validate(payload)
 
 
+def test_upstream_host_realistic_export_validates_against_schema() -> None:
+    schema_path = REPO_ROOT / "schemas" / "offline_transition_graph_export.schema.json"
+    schema = cast(dict[str, Any], json.loads(schema_path.read_text(encoding="utf-8")))
+    export_path = REPO_ROOT / "benchmarks" / "external_evidence" / "offline_graph_export_upstream.json"
+    payload = cast(dict[str, Any], json.loads(export_path.read_text(encoding="utf-8")))
+    Draft202012Validator(schema).validate(payload)
+
+
 def test_mini_bundle_paths_exist_relative_to_repo() -> None:
     """Golden dirs referenced by other tests remain present."""
     mini = REPO_ROOT / "tests" / "fixtures" / "mini_reference_bundle"

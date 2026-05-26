@@ -6,6 +6,8 @@ on:
     paths:
       - "conicshield/core/moreau*.py"
       - "conicshield/core/moreau_batched.py"
+      - "conicshield/core/solver_factory.py"
+      - "benchmarks/external_evidence/**"
       - "conicshield/specs/compiler.py"
       - "conicshield/adapters/inter_sim_rl/shield.py"
       - "conicshield/reference_correctness/conic_suite.py"
@@ -16,6 +18,12 @@ on:
       - "benchmarks/published_runs/**"
       - "benchmarks/releases/**"
       - "scripts/performance_benchmark.py"
+      - "scripts/batch_solve_report.py"
+      - "scripts/run_host_realistic_publish.py"
+      - "scripts/export_inter_sim_offline_graph.py"
+      - "scripts/upgrade_host_realistic_vendor.py"
+      - "conicshield/bench/inter_sim_export.py"
+      - "scripts/publish_native_arm_bundle.py"
       - "scripts/regenerate_parity_fixture.py"
       - "scripts/governed_local_promotion.py"
       - "scripts/run_live_vendor_tests.py"
@@ -28,6 +36,8 @@ on:
     paths:
       - "conicshield/core/moreau*.py"
       - "conicshield/core/moreau_batched.py"
+      - "conicshield/core/solver_factory.py"
+      - "benchmarks/external_evidence/**"
       - "conicshield/specs/compiler.py"
       - "conicshield/adapters/inter_sim_rl/shield.py"
       - "conicshield/reference_correctness/conic_suite.py"
@@ -38,6 +48,12 @@ on:
       - "benchmarks/published_runs/**"
       - "benchmarks/releases/**"
       - "scripts/performance_benchmark.py"
+      - "scripts/batch_solve_report.py"
+      - "scripts/run_host_realistic_publish.py"
+      - "scripts/export_inter_sim_offline_graph.py"
+      - "scripts/upgrade_host_realistic_vendor.py"
+      - "conicshield/bench/inter_sim_export.py"
+      - "scripts/publish_native_arm_bundle.py"
       - "scripts/regenerate_parity_fixture.py"
       - "scripts/governed_local_promotion.py"
       - "scripts/run_live_vendor_tests.py"
@@ -70,5 +86,11 @@ jobs:
             tests/governance/test_benchmark_paths_resolution.py \
             tests/governance/test_published_run_index.py \
             tests/governance/test_native_arm_publish_evidence.py \
+            tests/governance/test_host_realistic_publish_evidence.py \
+            tests/governance/test_run_host_realistic_publish.py \
+            tests/governance/test_batch_solve_report.py \
+            tests/bench/test_inter_sim_export.py \
+            tests/governance/test_reference_evidence_tiers.py \
+            tests/scripts/test_export_inter_sim_cli.py \
             tests/parity/ \
             -q --tb=short

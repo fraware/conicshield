@@ -5,8 +5,11 @@ from pathlib import Path
 from conicshield.artifacts.validator import validate_run_bundle
 from conicshield.benchmark_paths import resolve_run_directory
 from conicshield.published_run_index import (
+    assert_canonical_evidence_tiers,
+    assert_index_covers_present_optional_files,
     assert_index_includes_required_hashes,
     assert_parity_note_run_ids_indexed,
+    classify_evidence_tier,
     load_published_run_index,
     run_ids_from_parity_regeneration_note,
     verify_index_integrity,
@@ -25,6 +28,8 @@ def test_published_run_index_matches_disk_and_bundles() -> None:
     """Governed runs in ``PUBLISHED_RUN_INDEX.json`` resolve, validate, and match SHA-256."""
     root = Path(__file__).resolve().parents[2]
     assert_index_includes_required_hashes(repo_root=root)
+    assert_index_covers_present_optional_files(repo_root=root)
+    assert_canonical_evidence_tiers(repo_root=root)
     verify_index_integrity(repo_root=root)
     payload = load_published_run_index(repo_root=root)
     for run in payload.get("runs", []):

@@ -62,9 +62,23 @@ python scripts/regenerate_parity_fixture.py --source benchmarks/runs/<run_id>
 
 See [`docs/PARITY_AND_FIXTURES.md`](../../docs/PARITY_AND_FIXTURES.md) for the fixture promotion checklist.
 
-## Host-realistic rehearsal (full loop)
+## Host-realistic evidence (canonical export loop)
 
-Closing the loop from environment data to an auditable published bundle: **export → transition bank → `reference_run` → validate → copy to `benchmarks/published_runs/<run_id>/` → finalize / release / audit**, with optional parity fixture refresh from that bundle. Orchestrate steps with [`scripts/governed_local_promotion.py`](../../scripts/governed_local_promotion.py) (`validate`, `parity-sync`, `index`, `all`) and [`docs/MAINTAINER_RUNBOOK.md`](../../docs/MAINTAINER_RUNBOOK.md). Use a real upstream export when proving inter-sim integration; minimal offline exports remain valid for structural smoke only.
+**Canonical published run:** `host-realistic-20260525` — built from [`benchmarks/external_evidence/offline_graph_export_upstream.json`](../external_evidence/offline_graph_export_upstream.json) (not `tests/fixtures/offline_graph_export_minimal.json`). See `RUN_PROVENANCE.json` in that directory.
+
+**Orchestration:**
+
+```bash
+python scripts/run_host_realistic_publish.py \
+  --export-json benchmarks/external_evidence/offline_graph_export_upstream.json \
+  --run-id host-realistic-20260525 \
+  --no-passthrough \
+  --include-native-arm \
+  --copy-to-published \
+  --force
+```
+
+Then [`scripts/governed_local_promotion.py`](../../scripts/governed_local_promotion.py) (`validate`, `parity-sync`, `index`, `all`) and finalize / release / audit per [`docs/MAINTAINER_RUNBOOK.md`](../../docs/MAINTAINER_RUNBOOK.md). Minimal offline exports remain valid for structural smoke only (`--allow-minimal-fixture` on the script for CI).
 
 ## Git policy
 

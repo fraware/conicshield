@@ -39,7 +39,19 @@ ConicShield is not only a solver wrapper. It ships a **full governance spine**: 
 
 Details: [`benchmarks/published_runs/README.md`](benchmarks/published_runs/README.md), [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md).
 
+### Canonical host-realistic export evidence
+
+| Item | Location |
+|------|----------|
+| Upstream-shaped offline export (not the minimal contract fixture) | [`benchmarks/external_evidence/offline_graph_export_upstream.json`](benchmarks/external_evidence/offline_graph_export_upstream.json) |
+| Published run from that export | [`benchmarks/published_runs/host-realistic-20260525/`](benchmarks/published_runs/host-realistic-20260525/) |
+| One-command orchestration | [`scripts/run_host_realistic_publish.py`](scripts/run_host_realistic_publish.py) |
+
+Re-run with `--no-passthrough` on a licensed host to upgrade from structural passthrough rehearsal to vendor-backed projector evidence. Native batching: `Backend.NATIVE_MOREAU_BATCH` via [`conicshield/core/solver_factory.py`](conicshield/core/solver_factory.py); compare sequential vs batched solves with [`scripts/performance_benchmark.py`](scripts/performance_benchmark.py) and [`scripts/batch_solve_report.py`](scripts/batch_solve_report.py).
+
 ---
+
+Contributing and merge policy: [`CONTRIBUTING.md`](CONTRIBUTING.md), [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md). Evidence tiers: [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md). Local gate: `make verify-reference-system`.
 
 ## Installation
 

@@ -25,7 +25,28 @@ jobs:
       - name: Audit registry, manifests, and release metadata
         run: |
           python scripts/refresh_published_run_index.py --check
+          python -m pytest tests/governance/test_host_realistic_publish_evidence.py tests/governance/test_run_host_realistic_publish.py -q
           python -m conicshield.governance.audit_cli
+      - name: Export rehearsal matches committed upstream JSON
+        run: |
+          python scripts/export_inter_sim_offline_graph.py \
+            --rehearsal-fork \
+            --out /tmp/upstream_export_rehearsal.json
+          python -c "
+          import json
+          from pathlib import Path
+          a = json.loads(Path('benchmarks/external_evidence/offline_graph_export_upstream.json').read_text())
+          b = json.loads(Path('/tmp/upstream_export_rehearsal.json').read_text())
+          assert a['transition_graph'] == b['transition_graph'], 'export drift; run make export-upstream-rehearsal'
+          "
+      - name: Host-realistic export loop rehearsal (passthrough)
+        env:
+          RID: ci-host-realistic-${{ github.run_id }}
+        run: |
+          python scripts/run_host_realistic_publish.py \
+            --export-json benchmarks/external_evidence/offline_graph_export_upstream.json \
+            --run-id "$RID" \
+            --passthrough
       - name: Passthrough bundle + finalize + release dry-run (rehearsal)
         env:
           RID: ci-rehearsal-${{ github.run_id }}

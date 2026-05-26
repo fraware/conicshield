@@ -1,0 +1,44 @@
+{
+  "schema_version": "offline_transition_graph_export/v1",
+  "root_address": "Root",
+  "coords_by_address": {
+    "Root": [0.0, 0.0],
+    "NodeA": [1.0, 0.0],
+    "NodeB": [0.0, 1.0],
+    "NodeC": [2.0, 0.0]
+  },
+  "transition_graph": {
+    "Root": [
+      {
+        "destination_address": "NodeA",
+        "destination_coords": [1.0, 0.0],
+        "first_instruction": "Turn right",
+        "action_class": "turn_right",
+        "duration_sec": 10.0,
+        "distance_m": 100.0
+      },
+      {
+        "destination_address": "NodeB",
+        "destination_coords": [0.0, 1.0],
+        "first_instruction": "Turn left",
+        "action_class": "turn_left",
+        "duration_sec": 12.0,
+        "distance_m": 120.0
+      }
+    ],
+    "NodeA": [
+      {
+        "destination_address": "NodeC",
+        "destination_coords": [2.0, 0.0],
+        "first_instruction": "Go straight",
+        "action_class": "go_straight",
+        "duration_sec": 5.0,
+        "distance_m": 50.0
+      }
+    ],
+    "NodeB": [],
+    "NodeC": []
+  },
+  "max_depth": 4,
+  "max_nodes": 16
+}

@@ -1,0 +1,39 @@
+{
+  "run_id": "host-realistic-20260525",
+  "family_id": "conicshield-transition-bank-v1",
+  "task_contract_version": "v1",
+  "fixture_version": "fixture-v1",
+  "state": "review-locked",
+  "artifact_gate": "green",
+  "fixture_gate": "green",
+  "parity_gate": "unknown",
+  "promotion_gate": "green",
+  "review_locked": true,
+  "publishable_arms": [
+    "baseline-unshielded",
+    "shielded-rules-only",
+    "shielded-rules-plus-geometry"
+  ],
+  "gate_details": {
+    "artifact_gate": {
+      "status": "green",
+      "detail": "Run bundle validated successfully."
+    },
+    "fixture_gate": {
+      "status": "green",
+      "detail": "Fixture policy validated successfully."
+    },
+    "parity_gate": {
+      "status": "unknown",
+      "detail": "No parity_summary_path; pass --parity-summary-path from conicshield.parity.cli output."
+    },
+    "promotion_gate": {
+      "status": "green",
+      "detail": "Promotion thresholds satisfied."
+    },
+    "review_lock_gate": {
+      "status": "green",
+      "detail": "Task contract compatible with current family"
+    }
+  }
+}

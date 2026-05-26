@@ -13,7 +13,7 @@ from conicshield.adapters.inter_sim_rl.geometry_prior import (
     infer_geometry_prior,
 )
 from conicshield.core.interfaces import ProjectorProtocol
-from conicshield.core.moreau_batched import NativeMoreauCompiledBatchProjector
+from conicshield.core.solver_factory import Backend, create_batch_projector
 from conicshield.core.moreau_compiled import NativeMoreauCompiledOptions
 from conicshield.core.result import ProjectionResult
 from conicshield.core.solver_factory import Backend, create_projector
@@ -210,7 +210,11 @@ class InterSimConicShield:
             geometry_prior, geometry_weight = None, 0.0
 
         spec = self._build_spec_from_context(context)
-        batch = NativeMoreauCompiledBatchProjector(spec=spec, options=self.native_options)
+        batch = create_batch_projector(
+            spec=spec,
+            backend=Backend.NATIVE_MOREAU_BATCH,
+            native_options=self.native_options,
+        )
         return batch.project_batch(
             pb,
             self._previous_distribution,

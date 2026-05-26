@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Layer E: measure CVXPY vs native shield solves; optional CPU vs CUDA; write JSON/CSV/MD.
 
-When Moreau is available and ``--batch-sizes`` is set, emits both ``native_microbatch`` (sequential
-``project``) and ``native_compiled_real_batch`` rows via ``NativeMoreauCompiledBatchProjector`` (see
-``_bench_native_microbatch`` / ``_bench_native_compiled_real_batch``). Programmatic access to batching:
-``conicshield.core.solver_factory.create_batch_projector``.
+Default run emits ``native_microbatch`` (sequential ``project``) and ``native_compiled_real_batch``
+(one ``CompiledSolver.solve(qs, bs)`` per iteration) when Moreau is available; use ``--batch-size`` or
+``--sweep --batch-sizes``. Writes ``batch_solve_report.json`` when batch rows exist. Factory:
+``Backend.NATIVE_MOREAU_BATCH`` / ``create_batch_projector``.
 """
 
 from __future__ import annotations
@@ -378,9 +378,15 @@ def main() -> int:
         help="Comma-separated simplex dimensions. Sweep default when empty: 4,8. Non-sweep default: 4.",
     )
     p.add_argument(
+        "--batch-size",
+        type=int,
+        default=4,
+        help="Microbatch size for native_microbatch vs native_compiled_real_batch when not sweeping.",
+    )
+    p.add_argument(
         "--batch-sizes",
         default="",
-        help="Comma-separated microbatch sizes for native throughput rows (sweep only; uses scenario s0).",
+        help="Comma-separated microbatch sizes for native throughput rows in sweep mode (uses scenario s0).",
     )
     p.add_argument(
         "--sweep-auto-tune",
@@ -403,7 +409,12 @@ def main() -> int:
         dims = _parse_int_csv(dims_csv) if dims_csv else [4, 8]
     else:
         dims = _parse_int_csv(dims_csv) if dims_csv else [4]
-    batch_sizes = _parse_int_csv(args.batch_sizes.strip()) if args.sweep and args.batch_sizes.strip() else []
+    if args.sweep:
+        batch_sizes = _parse_int_csv(args.batch_sizes.strip()) if args.batch_sizes.strip() else []
+    elif args.batch_sizes.strip():
+        batch_sizes = _parse_int_csv(args.batch_sizes.strip())
+    else:
+        batch_sizes = [int(args.batch_size)]
 
     def _push_sweep_cell(*, n: int, conditioning: str, scen_id: str, proposed: np.ndarray, prev: np.ndarray) -> None:
         tag = f"n{n}_{conditioning}_{scen_id}"
@@ -536,33 +547,34 @@ def main() -> int:
                 rows.append(_bench_native_warm(spec, proposed, prev, repeats, dev, warmup=args.warmup))
             except Exception as exc:
                 errors.append(f"native_{dev}: {exc}")
-        batch_prop = _batch_proposals(spec=spec, prev=prev, batch_size=4, seed=7)
-        for dev in ("cpu",):
-            try:
-                rows.append(
-                    _bench_native_microbatch(
-                        spec,
-                        prev,
-                        batch_prop,
-                        max(2, repeats // 2),
-                        dev,
-                        auto_tune=False,
-                        warmup=args.warmup,
+        for bs in batch_sizes:
+            batch_prop = _batch_proposals(spec=spec, prev=prev, batch_size=bs, seed=7 + bs)
+            for dev in ("cpu",):
+                try:
+                    rows.append(
+                        _bench_native_microbatch(
+                            spec,
+                            prev,
+                            batch_prop,
+                            max(2, repeats // 2),
+                            dev,
+                            auto_tune=False,
+                            warmup=args.warmup,
+                        )
                     )
-                )
-                rows.append(
-                    _bench_native_compiled_real_batch(
-                        spec,
-                        prev,
-                        batch_prop,
-                        max(2, repeats // 2),
-                        dev,
-                        auto_tune=False,
-                        warmup=args.warmup,
+                    rows.append(
+                        _bench_native_compiled_real_batch(
+                            spec,
+                            prev,
+                            batch_prop,
+                            max(2, repeats // 2),
+                            dev,
+                            auto_tune=False,
+                            warmup=args.warmup,
+                        )
                     )
-                )
-            except Exception as exc:
-                errors.append(f"native batch paths ({dev}): {exc}")
+                except Exception as exc:
+                    errors.append(f"native batch paths ({dev}) bs={bs}: {exc}")
 
         if not args.skip_cuda and _cuda_available():
             try:
@@ -582,6 +594,7 @@ def main() -> int:
         "sweep_mode": bool(args.sweep),
         "shield_action_dims": dims,
         "batch_sizes": batch_sizes,
+        "batch_size_default": int(args.batch_size),
         "sweep_auto_tune": bool(args.sweep_auto_tune),
         "rows": rows,
         "errors": errors,
@@ -590,7 +603,21 @@ def main() -> int:
             "see docs/VERIFICATION_AND_STRESS_TEST_PLAN.md (Performance policy)"
         ),
     }
-    (out_dir / "performance_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    summary_path = out_dir / "performance_summary.json"
+    summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+    if any(r.get("path") in ("native_microbatch", "native_compiled_real_batch") for r in rows):
+        import importlib.util
+
+        _bsr_path = root / "scripts" / "batch_solve_report.py"
+        _spec = importlib.util.spec_from_file_location("batch_solve_report", _bsr_path)
+        if _spec and _spec.loader:
+            _bsr = importlib.util.module_from_spec(_spec)
+            _spec.loader.exec_module(_bsr)
+            _bsr.write_batch_solve_report(
+                summary_path=summary_path,
+                out_path=out_dir / "batch_solve_report.json",
+            )
 
     csv_path = out_dir / "performance_matrix.csv"
     if rows:

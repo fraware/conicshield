@@ -1,0 +1,12 @@
+{
+  "schema_version": "conicshield_reference_run_provenance/v1",
+  "run_id": "wsl-native-20260409-091141",
+  "projector_mode": "real_projector",
+  "strict_real_projector": true,
+  "source_export_json": "benchmarks/external_evidence/offline_graph_export_upstream.json",
+  "generated_by": "conicshield.bench.reference_run",
+  "seed": 7,
+  "evidence_tier": "vendor_native",
+  "host_realistic_evidence": false,
+  "minimal_fixture_export": false
+}

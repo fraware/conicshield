@@ -8,6 +8,28 @@ name: vendor-ci-moreau
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "conicshield/core/moreau*.py"
+      - "conicshield/core/moreau_batched.py"
+      - "conicshield/core/solver_factory.py"
+      - "conicshield/specs/compiler.py"
+      - "conicshield/adapters/inter_sim_rl/shield.py"
+      - "conicshield/parity/**"
+      - "conicshield/published_run_index.py"
+      - "benchmarks/PUBLISHED_RUN_INDEX.json"
+      - "benchmarks/published_runs/**"
+      - "benchmarks/external_evidence/**"
+      - "benchmarks/releases/**"
+      - "scripts/performance_benchmark.py"
+      - "scripts/batch_solve_report.py"
+      - "scripts/run_host_realistic_publish.py"
+      - "scripts/regenerate_parity_fixture.py"
+      - "scripts/governed_local_promotion.py"
+      - "scripts/refresh_published_run_index.py"
+      - "tests/fixtures/parity_reference/**"
+      - "tests/vendor/**"
+      - "tests/parity/**"
 
 jobs:
   solver:
@@ -76,7 +98,8 @@ jobs:
           python scripts/environment_check.py --out-dir "$VDIR"
           python scripts/smoke_check.py --vendor --out-dir "$VDIR"
           python scripts/reference_correctness_summary.py --out-dir "$VDIR"
-          python scripts/performance_benchmark.py --out-dir "$VDIR" --repeats 5
+          python scripts/performance_benchmark.py --out-dir "$VDIR" --repeats 5 --batch-size 4
+          python scripts/batch_solve_report.py --input "$VDIR/performance_summary.json" --out "$VDIR/batch_solve_report.json"
           python scripts/differentiation_check.py --out-dir "$VDIR"
           python -m conicshield.parity.cli \
             --reference-dir tests/fixtures/parity_reference \

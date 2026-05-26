@@ -1,5 +1,28 @@
 # Checklist: endorse `shielded-native-moreau`
 
+## Canonical command block (licensed host)
+
+```bash
+# Export → bundle (real projector + native arm)
+python scripts/publish_native_arm_bundle.py \
+  --export-json benchmarks/external_evidence/offline_graph_export_upstream.json \
+  --run-id <run_id> \
+  --force
+
+# Or step-by-step:
+python scripts/run_host_realistic_publish.py \
+  --export-json <path/to/export.json> \
+  --run-id <run_id> \
+  --no-passthrough \
+  --include-native-arm
+
+python scripts/governed_local_promotion.py all --source benchmarks/runs/<run_id>
+```
+
+Then parity, `finalize_cli`, copy to `benchmarks/published_runs/<run_id>/`, `governance_decision.md`, `release_cli`, `audit_cli --strict` (below).
+
+---
+
 `finalize_cli` adds `shielded-native-moreau` to `publishable_arms` only when **all** of the following hold:
 
 1. **`summary.json`** includes a row with `"label": "shielded-native-moreau"` (produce it with a real projector, not `--passthrough-projector`):

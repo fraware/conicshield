@@ -161,13 +161,14 @@ Vendor tests run only in vendor-capable environments.
 
 ### 10) CI policy
 
-Two tracks are required:
-- **open/public CI**: lint, typecheck, core/reference tests, governance checks; no vendor secrets.
-- **vendor/protected CI**: vendor install + license + native parity/tests.
+Two complementary trust lanes (see [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md)):
 
-In this repository these are represented by:
-- `.github/workflows/ci.yml` (public),
-- `vendor-ci-moreau` (`.github/workflows/solver-ci.yml`) (vendor).
+| Lane | Workflows | Role |
+|------|-----------|------|
+| **Public** | `ci.yml` (`quality`, `conic-trusted-shape`), `governance-audit.yml` | Lint, typecheck, default pytest, CLARABEL/SCS trusted-shape, published-run index checks; **no vendor secrets** |
+| **Vendor** | `solver-ci.yml` (`vendor-ci-moreau`) | Vendor install + license + native parity/tests; **path-triggered** on upstream PRs + `workflow_dispatch` |
+
+`solver-touch.yml` bridges both: governance/parity/index on path-filtered PRs without requiring Moreau on every change.
 
 ### 11) Failure guide
 

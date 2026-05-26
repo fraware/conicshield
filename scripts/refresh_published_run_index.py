@@ -152,6 +152,15 @@ def main() -> int:
             _stable(payload), indent=2, sort_keys=True
         ):
             raise SystemExit(f"{out_path} is stale; run: python scripts/refresh_published_run_index.py")
+        from conicshield.published_run_index import (  # noqa: E402
+            assert_canonical_evidence_tiers,
+            assert_index_covers_present_optional_files,
+            assert_index_includes_required_hashes,
+        )
+
+        assert_index_includes_required_hashes(repo_root=root)
+        assert_index_covers_present_optional_files(repo_root=root)
+        assert_canonical_evidence_tiers(repo_root=root)
         return 0
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(text, encoding="utf-8")

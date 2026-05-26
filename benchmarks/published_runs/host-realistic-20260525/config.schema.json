@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conicshield.dev/schemas/config.schema.json",
+  "title": "ConicShield Benchmark Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_name",
+    "policy",
+    "environment",
+    "transition_bank",
+    "arms",
+    "seeds"
+  ],
+  "properties": {
+    "benchmark_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created_at_utc": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "input_dim",
+        "action_dim",
+        "checkpoint"
+      ],
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checkpoint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "input_dim": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "action_dim": {
+          "type": "integer",
+          "const": 4
+        },
+        "epsilon": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "frozen_weights": {
+          "type": "boolean"
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "env_name",
+        "action_space",
+        "rule_choices",
+        "max_intersections",
+        "state_contract"
+      ],
+      "properties": {
+        "env_name": {
+          "type": "string",
+          "const": "inter-sim-rl"
+        },
+        "action_space": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "turn_left",
+              "turn_right",
+              "go_straight",
+              "turn_back"
+            ]
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "rule_choices": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "right",
+              "left",
+              "alternate"
+            ]
+          }
+        },
+        "max_intersections": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "state_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "location_dim",
+            "direction_dim",
+            "nearby_places_feature_size"
+          ],
+          "properties": {
+            "location_dim": {
+              "type": "integer",
+              "const": 2
+            },
+            "direction_dim": {
+              "type": "integer",
+              "const": 2
+            },
+            "nearby_places_feature_size": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "transition_bank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bank_id",
+        "root_addresses",
+        "max_depth",
+        "max_nodes",
+        "radius"
+      ],
+      "properties": {
+        "bank_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "root_addresses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "max_depth": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_nodes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "radius": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_candidates_per_node": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "arms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/armConfig"
+      }
+    },
+    "seeds": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "minItems": 1
+    },
+    "commits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "conicshield_commit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inter_sim_rl_commit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "armConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "backend"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "enum": [
+            "baseline-unshielded",
+            "shielded-rules-only",
+            "shielded-rules-plus-geometry",
+            "shielded-native-moreau"
+          ]
+        },
+        "backend": {
+          "type": "string",
+          "enum": [
+            "none",
+            "cvxpy_moreau",
+            "native_moreau"
+          ]
+        },
+        "use_geometry_prior": {
+          "type": "boolean"
+        },
+        "warm_start": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "solver": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "device": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_iter": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            },
+            "time_limit_sec": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "policy_weight": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "reference_weight": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}

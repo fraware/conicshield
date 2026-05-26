@@ -5,5 +5,6 @@
   "strict_real_projector": true,
   "source_export_json": "tests/fixtures/offline_graph_export_minimal.json",
   "generated_by": "scripts/produce_reference_bundle.py",
-  "seed": 7
+  "seed": 7,
+  "evidence_tier": "vendor_reference"
 }

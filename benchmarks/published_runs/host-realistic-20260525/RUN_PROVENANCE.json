@@ -1,0 +1,13 @@
+{
+  "schema_version": "conicshield_reference_run_provenance/v1",
+  "run_id": "host-realistic-20260525",
+  "projector_mode": "passthrough",
+  "strict_real_projector": false,
+  "source_export_json": "benchmarks/external_evidence/offline_graph_export_upstream.json",
+  "generated_by": "scripts/produce_reference_bundle.py",
+  "seed": 7,
+  "host_realistic_evidence": true,
+  "minimal_fixture_export": false,
+  "external_export_provenance": "benchmarks/external_evidence/EXPORT_PROVENANCE.json",
+  "evidence_tier": "structural_export"
+}

@@ -22,6 +22,12 @@ This file records how ConicShield calls Moreau and CVXPY, with pointers to vendo
 - `solver.info` exposes solve metadata (status, timings, iterations, etc.); batched metadata is reduced to the first batch row where needed for telemetry parity.
 - Warm start: `WarmStart` / `BatchedWarmStart` from `solution.to_warm_start()` on a previous solve.
 
+## Batched native path (factory)
+
+- **`Backend.NATIVE_MOREAU_BATCH`** (default for batch) and **`create_batch_projector()`** in `conicshield.core.solver_factory` return `NativeMoreauCompiledBatchProjector` (one `CompiledSolver.solve(qs, bs)` per `project_batch` call).
+- Sequential reuse of a single projector: `create_projector(backend=Backend.NATIVE_MOREAU)`.
+- Benchmark comparison: `scripts/performance_benchmark.py` (`native_microbatch` vs `native_compiled_real_batch`); summarize with `scripts/batch_solve_report.py`.
+
 ## License
 
 - `solve()` requires a valid key via `MOREAU_LICENSE_KEY`, `.moreau_key`, `~/.moreau/key`, or `~/.moreau_key` (vendor order).

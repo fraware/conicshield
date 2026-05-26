@@ -2,7 +2,7 @@
 
 This repository is intentionally standalone. It does not vendor the external `inter-sim-rl` codebase.
 
-**Benchmark closure (export → bank → governed publish):** Tracked in [docs/ROADMAP.md](ROADMAP.md) (*External integration* and open backlog). **Operational checklist** for a real upstream export: [docs/HOST_REALISTIC_RUNBOOK.md](HOST_REALISTIC_RUNBOOK.md).
+**Benchmark closure (export → bank → governed publish):** Demonstrated in-repo via [`benchmarks/external_evidence/`](../benchmarks/external_evidence/) and published run `host-realistic-20260525` ([docs/ROADMAP.md](ROADMAP.md)). **Live upstream re-export:** [docs/HOST_REALISTIC_RUNBOOK.md](HOST_REALISTIC_RUNBOOK.md), [`scripts/export_inter_sim_offline_graph.py`](../scripts/export_inter_sim_offline_graph.py).
 
 **Canonical upstream:** [https://github.com/fraware/inter-sim-rl](https://github.com/fraware/inter-sim-rl)
 
@@ -69,7 +69,7 @@ You can exercise the full **export → bank → benchmark bundle** spine using o
 
 This path matches the operational P0 sequence in [`benchmarks/runs/README.md`](../benchmarks/runs/README.md) without API calls into a patched host.
 
-**Production acceptance (P2):** a pinned [`third_party/inter-sim-rl/REVISION`](../third_party/inter-sim-rl/REVISION) checkout exports a real `offline_transition_graph_export/v1` JSON; `build_transition_bank` validates it; `reference_run` (or `scripts/produce_reference_bundle.py`) consumes the bank under `benchmarks/runs/<run_id>/` with **no live** environment API calls in the benchmark path. Until that runs on a patched host, treat the in-repo minimal export as contract-only evidence.
+**Production acceptance (P2):** pinned [`third_party/inter-sim-rl/REVISION`](../third_party/inter-sim-rl/REVISION); committed upstream-shaped export under `benchmarks/external_evidence/`; full publish loop via [`scripts/run_host_realistic_publish.py`](../scripts/run_host_realistic_publish.py). **Vendor upgrade:** replace passthrough `projector_mode` on `host-realistic-20260525` with `--no-passthrough` after exporting live `offline_transition_graph` JSON (`export_inter_sim_offline_graph.py --graph-json ...`). Minimal fixture remains contract-only smoke.
 
 Engineering control for clone URL and revision: [`third_party/inter-sim-rl/README.md`](../third_party/inter-sim-rl/README.md).
 

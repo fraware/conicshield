@@ -30,7 +30,38 @@ reference-correctness:
 	$(PYTHON) scripts/reference_correctness_summary.py
 
 perf-benchmark:
-	$(PYTHON) scripts/performance_benchmark.py
+	$(PYTHON) scripts/performance_benchmark.py --batch-size 4
+	$(PYTHON) scripts/batch_solve_report.py
+
+batch-solve-report:
+	$(PYTHON) scripts/batch_solve_report.py
+
+host-realistic-rehearsal:
+	$(PYTHON) scripts/run_host_realistic_publish.py \
+		--export-json benchmarks/external_evidence/offline_graph_export_upstream.json \
+		--run-id host-realistic-rehearsal \
+		--passthrough
+
+export-upstream-rehearsal:
+	$(PYTHON) scripts/export_inter_sim_offline_graph.py \
+		--rehearsal-fork \
+		--out benchmarks/external_evidence/offline_graph_export_upstream.json
+
+upgrade-host-realistic-vendor:
+	$(PYTHON) scripts/upgrade_host_realistic_vendor.py --force
+
+verify-reference-system:
+	$(PYTHON) scripts/refresh_published_run_index.py --check
+	$(PYTHON) -m pytest \
+		tests/governance/test_published_run_index.py \
+		tests/governance/test_host_realistic_publish_evidence.py \
+		tests/governance/test_reference_evidence_tiers.py \
+		tests/governance/test_run_host_realistic_publish.py \
+		tests/governance/test_batch_solve_report.py \
+		tests/bench/test_inter_sim_export.py \
+		tests/scripts/test_export_inter_sim_cli.py \
+		tests/core/test_solver_factory.py \
+		-q --tb=short
 
 diff-check:
 	$(PYTHON) scripts/differentiation_check.py

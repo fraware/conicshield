@@ -45,15 +45,18 @@ On every PR and push to `main`:
 
 - **`conic-trusted-shape`** — runs only [`tests/reference/test_reference_conic_trusted_shape.py`](../tests/reference/test_reference_conic_trusted_shape.py) (CLARABEL/SCS structural correctness; no vendor MOREAU). Safe to mark **required** in branch protection for a visible public conic gate.
 - **`quality`** — Ruff check and format check, Mypy on `conicshield` and `tests`, full default-marker pytest with coverage over `conicshield`, then verification scripts.
-- **`solver-touch`** ([`.github/workflows/solver-touch.yml`](../.github/workflows/solver-touch.yml)) — on PRs/pushes that touch solver, parity, bench, governance bundles, or related tests (see workflow `paths:`). Runs `python scripts/refresh_published_run_index.py --check`, then pytest: benchmark path resolution, **full published-run index SHA-256 surface** (validator-required files per `conicshield.published_run_index`), parity `REGENERATION_NOTE` run ids, **native-arm row in the current bundle’s `summary.json`** (`tests/governance/test_native_arm_publish_evidence.py`), and `tests/parity/`. No vendor Moreau required.
+- **`governance-audit`** ([`.github/workflows/governance-audit.yml`](../.github/workflows/governance-audit.yml)) — on every PR/push to `main`: `refresh_published_run_index.py --check` (required + optional integrity surface), `audit_cli`, passthrough publish rehearsal, strict audit.
+- **`solver-touch`** ([`.github/workflows/solver-touch.yml`](../.github/workflows/solver-touch.yml)) — path-filtered (see workflow `paths:`). Index checks, host-realistic provenance tests, native-arm evidence, parity. No vendor Moreau required.
 
 Install path matches contributor setup: `pip install -e ".[dev]"` in public/reference mode.
 
 ### Recommended branch protection
 
-- Require **`quality`**, **`conic-trusted-shape`**, and **`solver-touch`** on `main` where available (see [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md)).
-- PRs that touch solver, parity, or native bench paths should show a green **`solver-touch`** run (path-filtered; no vendor MOREAU required).
-- For PRs that touch solver-native code (`conicshield/core/moreau_*.py`, `conicshield/specs/compiler.py`, vendor adapters), maintainers should run [**Vendor CI**](#vendor-ci-track-vendor-ci-moreau) on the canonical repo before merge even when GitHub cannot enforce it for forks.
+See [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md). Require on `main`:
+
+- **`quality`**, **`conic-trusted-shape`**, **`governance-audit`** (always)
+- **`solver-touch`** (path-filtered; skipped when paths do not match)
+- **`vendor-ci-moreau`** (path-filtered on canonical repo when secrets exist; see [`CONTRIBUTING.md`](../CONTRIBUTING.md))
 
 ## Default pytest marker filter
 
@@ -78,9 +81,9 @@ python -m pytest tests/ -q --override-ini addopts="-q --durations=15"
 
 ## Vendor CI track (`vendor-ci-moreau`)
 
-Manual **`workflow_dispatch`** only in [`.github/workflows/solver-ci.yml`](../.github/workflows/solver-ci.yml). Requires repository secrets: `GEMFURY_TOKEN`, `MOREAU_LICENSE_KEY`.
+[`.github/workflows/solver-ci.yml`](../.github/workflows/solver-ci.yml): **`workflow_dispatch`** plus **path-filtered `pull_request`** on the canonical repo (same paths as `solver-touch`). Requires secrets: `GEMFURY_TOKEN`, `MOREAU_LICENSE_KEY`.
 
-Runs solver-marked tests, solver smoke CLI, optional `reference_run` bundle (validated), a **full verification bundle** (env, vendor smoke, reference correctness, performance + latency PNG, differentiation stub, native parity, **`artifact_validation_report`** on the reference bundle, **`generate_parity_report`**, trust dashboard) uploaded as **`vendor_verification_bundle`**, plus artifacts `ref_bundle_ci` and `vendor_solver_versions` (`solver_versions.json`), and appends a filtered `pip freeze` (moreau/cvxpy/cvxpylayers) to the job Summary for copying into [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md).
+Runs solver-marked tests, solver smoke CLI, optional `reference_run` bundle (validated), a **full verification bundle** (env, vendor smoke, reference correctness, performance benchmark + **`batch_solve_report`**, differentiation stub, native parity, **`artifact_validation_report`**, **`generate_parity_report`**, trust dashboard) uploaded as **`vendor_verification_bundle`**, plus `ref_bundle_ci` and `vendor_solver_versions`. See [`CONTRIBUTING.md`](../CONTRIBUTING.md) for fork policy.
 
 ## Other workflows (path-filtered or manual)
 

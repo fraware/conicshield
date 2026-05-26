@@ -12,6 +12,22 @@ from conicshield.bench.offline_graph_export import (
 )
 
 
+def test_upstream_host_realistic_export_builds_bank() -> None:
+    path = (
+        Path(__file__).resolve().parents[1]
+        / "benchmarks"
+        / "external_evidence"
+        / "offline_graph_export_upstream.json"
+    )
+    payload = load_offline_graph_export(path)
+    validate_offline_graph_export(payload)
+    bank = transition_bank_from_offline_graph_export(payload)
+    assert bank.root_address == "Root"
+    assert set(bank.nodes) >= {"Root", "NodeA", "NodeB", "NodeC"}
+    root = bank.nodes["Root"]
+    assert len(root.candidates) == 2
+
+
 def test_minimal_export_builds_bank_matching_demo_topology() -> None:
     path = Path(__file__).resolve().parent / "fixtures" / "offline_graph_export_minimal.json"
     payload = load_offline_graph_export(path)

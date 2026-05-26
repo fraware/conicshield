@@ -24,6 +24,7 @@ See [docs/PARITY_AND_FIXTURES.md](../../../docs/PARITY_AND_FIXTURES.md) for the 
 
 - Reference arm remains `shielded-rules-plus-geometry`
 - Reference backend remains `cvxpy_moreau`
+- **Parity gold was not regenerated from** `host-realistic-20260525` (export-evidence bundle; parity fixture stays aligned with `wsl-real-20260409-132450` until a licensed native/reference promotion is approved)
 
 ## Expected effect on parity
 

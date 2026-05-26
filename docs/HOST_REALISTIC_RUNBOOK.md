@@ -1,6 +1,6 @@
 # Host-realistic benchmark loop (operational bar)
 
-The repository proves governance, parity, and **structural** inter-sim integration using minimal exports and fixtures. The **acceptance bar for host-realistic evidence** is still: a **real** upstream `inter-sim-rl` offline graph export (from your patched host), not only [`tests/fixtures/offline_graph_export_minimal.json`](../tests/fixtures/offline_graph_export_minimal.json).
+The repository proves governance, parity, and inter-sim integration using committed upstream-shaped export evidence under [`benchmarks/external_evidence/`](../benchmarks/external_evidence/) and published run `host-realistic-20260525`. The **maintainer upgrade bar** is still a **live** re-export from your patched `inter-sim-rl` host with `--no-passthrough` (and native arm when required), replacing passthrough rehearsal — not only [`tests/fixtures/offline_graph_export_minimal.json`](../tests/fixtures/offline_graph_export_minimal.json).
 
 This document is the checklist to close that bar once on a licensed maintainer machine. It does not automate your upstream simulator.
 
@@ -12,7 +12,7 @@ This document is the checklist to close that bar once on a licensed maintainer m
 
 ## Sequence (one end-to-end proof)
 
-1. **Export** — Produce a real offline graph export JSON from the upstream stack (same schema as ConicShield’s offline export contract). Save it outside ephemeral dirs if you need a long-lived artifact path.
+1. **Export** — Produce a real offline graph export JSON from the upstream stack (same schema as ConicShield’s offline export contract). Use [`scripts/export_inter_sim_offline_graph.py`](../scripts/export_inter_sim_offline_graph.py) with `--graph-json` from a patched-host `offline_transition_graph` dump, or `--rehearsal-fork` for the committed structural graph. Save outside ephemeral dirs if you need a long-lived artifact path.
 2. **Transition bank** — Build `transition_bank.json` from that export (see `conicshield.bench` builders / [`scripts/build_transition_bank`](../scripts/) helpers and [`benchmarks/runs/README.md`](../benchmarks/runs/README.md)).
 3. **Reference bundle** — Run `python -m conicshield.bench.reference_run` (or the governed wrapper you use for publishes) with a **non-passthrough** projector and **`--include-native-arm`** when native evidence is required. Output under `benchmarks/runs/<run_id>/` or your staging path.
 4. **Validate** — `python -m conicshield.artifacts.validator_cli --run-dir <bundle_dir>`.
@@ -21,8 +21,8 @@ This document is the checklist to close that bar once on a licensed maintainer m
 7. **Index** — `python scripts/refresh_published_run_index.py` and commit `benchmarks/PUBLISHED_RUN_INDEX.json` (schema ≥ 2 records hashes for the full validated bundle file set; see [`benchmarks/published_runs/README.md`](../benchmarks/published_runs/README.md)).
 8. **Record** — Update [`tests/fixtures/parity_reference/REGENERATION_NOTE.md`](../tests/fixtures/parity_reference/REGENERATION_NOTE.md) if the fixture was regenerated from this run.
 
-Orchestration helpers: [`scripts/governed_local_promotion.py`](../scripts/governed_local_promotion.py), [`benchmarks/published_runs/README.md`](../benchmarks/published_runs/README.md) (*Host-realistic rehearsal*).
+Orchestration helpers: [`scripts/run_host_realistic_publish.py`](../scripts/run_host_realistic_publish.py) (export → bundle → optional `published_runs` copy with `--refresh-index`; rejects minimal fixture by default), [`scripts/governed_local_promotion.py`](../scripts/governed_local_promotion.py), [`benchmarks/external_evidence/README.md`](../benchmarks/external_evidence/README.md), [`benchmarks/published_runs/README.md`](../benchmarks/published_runs/README.md).
 
 ## What “done” means
 
-You have a committed `run_id` under `benchmarks/published_runs/` whose `RUN_PROVENANCE.json` / notes identify the **real** upstream export, green validator + governance gates, and (if native is claimed) parity artifacts attached to the same promotion. Until then, the roadmap item **host-realistic substrate** remains open ([`ROADMAP.md`](ROADMAP.md)).
+You have a committed `run_id` under `benchmarks/published_runs/` whose `RUN_PROVENANCE.json` identifies a **non-minimal** upstream-shaped export (see `host-realistic-20260525` and [`benchmarks/external_evidence/`](../benchmarks/external_evidence/)), green `validate_run_bundle`, and (for vendor claims) `--no-passthrough` / native parity on a licensed host. **Maintainer upgrade:** replace passthrough rehearsal with licensed projector evidence via [`scripts/run_host_realistic_publish.py`](../scripts/run_host_realistic_publish.py).

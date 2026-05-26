@@ -6,7 +6,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
-from typing import Any, Final, cast
+from typing import Any, Final, Literal, cast
 
 # Must match ``validate_run_bundle`` required files in ``conicshield.artifacts.validator`` — hashed for every run.
 PUBLISHED_RUN_REQUIRED_INTEGRITY_FILENAMES: Final[tuple[str, ...]] = (
@@ -30,10 +30,19 @@ PUBLISHED_RUN_OPTIONAL_INTEGRITY_FILENAMES: Final[tuple[str, ...]] = (
     "README.md",
 )
 
+EvidenceTier = Literal[
+    "contract_fixture",
+    "structural_export",
+    "vendor_reference",
+    "vendor_native",
+]
+
 _PARITY_RUN_ID = re.compile(
     r"benchmarks/published_runs/(?P<rid>[a-zA-Z0-9][a-zA-Z0-9._-]*)",
     re.MULTILINE,
 )
+
+_MINIMAL_FIXTURE_SUFFIX = "tests/fixtures/offline_graph_export_minimal.json"
 
 
 def published_run_index_path(repo_root: Path | None = None) -> Path:
@@ -46,6 +55,55 @@ def load_published_run_index(*, repo_root: Path | None = None) -> dict[str, Any]
     if not path.is_file():
         raise FileNotFoundError(path)
     return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
+
+
+def _summary_rows(run_dir: Path) -> list[dict[str, Any]]:
+    summary_path = run_dir / "summary.json"
+    if not summary_path.is_file():
+        return []
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if isinstance(summary, list):
+        return [row for row in summary if isinstance(row, dict)]
+    return []
+
+
+def classify_evidence_tier(*, run_dir: Path) -> EvidenceTier:
+    """Infer evidence tier from ``RUN_PROVENANCE.json`` and ``summary.json``."""
+    prov_path = run_dir / "RUN_PROVENANCE.json"
+    rows = _summary_rows(run_dir)
+    has_native_row = any(row.get("label") == "shielded-native-moreau" for row in rows)
+    native_solve_ms = 0.0
+    for row in rows:
+        if row.get("label") == "shielded-native-moreau":
+            native_solve_ms = float(row.get("solve_time_p50_ms") or 0.0)
+            break
+
+    if prov_path.is_file():
+        prov = json.loads(prov_path.read_text(encoding="utf-8"))
+        tier = prov.get("evidence_tier")
+        if tier in (
+            "contract_fixture",
+            "structural_export",
+            "vendor_reference",
+            "vendor_native",
+        ):
+            return cast(EvidenceTier, tier)
+        mode = str(prov.get("projector_mode", ""))
+        source = str(prov.get("source_export_json", "")).replace("\\", "/")
+        if _MINIMAL_FIXTURE_SUFFIX in source and mode == "passthrough":
+            return "contract_fixture"
+        if prov.get("host_realistic_evidence") and mode == "passthrough":
+            return "structural_export"
+        if mode == "real_projector":
+            if has_native_row and native_solve_ms > 0.0:
+                return "vendor_native"
+            return "vendor_reference"
+
+    if has_native_row and native_solve_ms > 0.0:
+        return "vendor_native"
+    if rows and any(float(row.get("solve_time_p50_ms") or 0.0) > 0.0 for row in rows):
+        return "vendor_reference"
+    return "contract_fixture"
 
 
 def run_ids_from_parity_regeneration_note(*, repo_root: Path | None = None) -> list[str]:
@@ -81,6 +139,27 @@ def assert_parity_note_run_ids_indexed(*, repo_root: Path | None = None) -> None
             )
 
 
+def assert_index_covers_present_optional_files(*, repo_root: Path | None = None) -> None:
+    """Every optional integrity filename present on disk must appear in the index."""
+    root = repo_root if repo_root is not None else Path.cwd()
+    payload = load_published_run_index(repo_root=root)
+    for run in payload.get("runs", []):
+        rid = str(run.get("run_id", ""))
+        rel = str(run.get("repository_relative_path", "")).replace("\\", "/")
+        base = root / Path(rel)
+        integrity = run.get("integrity") or {}
+        if not isinstance(integrity, dict):
+            raise AssertionError(f"run {rid}: integrity must be a dict")
+        keys = set(integrity.keys())
+        for name in PUBLISHED_RUN_OPTIONAL_INTEGRITY_FILENAMES:
+            if (base / name).is_file() and name not in keys:
+                raise AssertionError(
+                    f"run {rid}: on-disk optional file {name!r} is not listed in "
+                    f"PUBLISHED_RUN_INDEX integrity (have {sorted(keys)}); "
+                    f"run: python scripts/refresh_published_run_index.py"
+                )
+
+
 def assert_index_includes_required_hashes(*, repo_root: Path | None = None) -> None:
     """Every indexed run must record SHA-256 for the validator-required bundle surface."""
     root = repo_root if repo_root is not None else Path.cwd()
@@ -97,6 +176,26 @@ def assert_index_includes_required_hashes(*, repo_root: Path | None = None) -> N
                     f"run {rid}: PUBLISHED_RUN_INDEX missing required integrity entry {name!r} "
                     f"(have {sorted(keys)}); run: python scripts/refresh_published_run_index.py"
                 )
+
+
+def assert_canonical_evidence_tiers(*, repo_root: Path | None = None) -> None:
+    """Lock expected evidence tiers for canonical published runs (see docs/REFERENCE_EVIDENCE_TIERS.md)."""
+    root = repo_root if repo_root is not None else Path.cwd()
+    expected: dict[str, EvidenceTier] = {
+        "host-realistic-20260525": "structural_export",
+        "wsl-real-20260409-132450": "vendor_reference",
+        "wsl-native-20260409-091141": "vendor_native",
+    }
+    for run_id, want in expected.items():
+        run_dir = root / "benchmarks" / "published_runs" / run_id
+        if not run_dir.is_dir():
+            raise AssertionError(f"missing canonical published run directory: {run_dir}")
+        got = classify_evidence_tier(run_dir=run_dir)
+        if got != want:
+            raise AssertionError(
+                f"run {run_id}: evidence_tier {got!r} != expected {want!r}; "
+                f"update RUN_PROVENANCE or docs/REFERENCE_EVIDENCE_TIERS.md"
+            )
 
 
 def verify_index_integrity(*, repo_root: Path | None = None) -> None:

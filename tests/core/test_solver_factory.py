@@ -34,6 +34,11 @@ def test_create_projector_native_is_single() -> None:
 
 
 def test_create_batch_projector_is_batched_native() -> None:
+    p = create_batch_projector(spec=_spec(), backend=Backend.NATIVE_MOREAU_BATCH)
+    assert isinstance(p, NativeMoreauCompiledBatchProjector)
+
+
+def test_create_batch_projector_accepts_native_moreau_alias() -> None:
     p = create_batch_projector(spec=_spec(), backend=Backend.NATIVE_MOREAU)
     assert isinstance(p, NativeMoreauCompiledBatchProjector)
 

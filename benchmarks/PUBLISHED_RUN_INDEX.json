@@ -1,12 +1,55 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-04-14T19:15:27Z",
+  "generated_at_utc": "2026-05-26T04:16:19Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
+    "host-realistic-20260525",
     "wsl-native-20260409-091141",
     "wsl-real-20260409-132450"
   ],
   "runs": [
+    {
+      "run_id": "host-realistic-20260525",
+      "repository_relative_path": "benchmarks/published_runs/host-realistic-20260525",
+      "integrity": {
+        "config.json": {
+          "sha256": "f0663d8c67b9ee80fa16c4fecc44b2ae503197e8e77846c1dfe7a2cd0f68b75c"
+        },
+        "config.schema.json": {
+          "sha256": "dc0d0af539739180848d298d3a8e112fda79dbec96091ed42dce7bcae58005bd"
+        },
+        "summary.json": {
+          "sha256": "0553f604182343a09684278a9a64adc6fdab80957e0fd6824ac699aea3e31474"
+        },
+        "summary.schema.json": {
+          "sha256": "c54f6deb392afcefae57e7822bd00c1191c47263655e3f76cfeb432576310fa6"
+        },
+        "episodes.jsonl": {
+          "sha256": "138a29719737871b33e8bd645a55ff3c6f514d04b2053a7327d0cafdef9bab04"
+        },
+        "episodes.schema.json": {
+          "sha256": "94819ce8fddc8fd4ab880d219bc1c65654158a7a0a2884de644a70e4a3dfdff2"
+        },
+        "transition_bank.json": {
+          "sha256": "b72a77676e2c1a62dcb343e5e0f26437cba43d7d4e69d2ffa9cb19bd7ada1157"
+        },
+        "governance_status.json": {
+          "sha256": "09c2c99a998b096bcf84d3fbdee185eeff8d4223d14fef1652d5799a8d97f5f6"
+        },
+        "RUN_PROVENANCE.json": {
+          "sha256": "6caa078123d2367386640e0b0e978b53d619f6f04dbc772acc957bab7d909f7d"
+        },
+        "governance_decision.md": {
+          "sha256": "dc4922d583e6c4557072537ade328157c8164be68f196b54ba8d6be39cb535aa"
+        },
+        "solver_versions.json": {
+          "sha256": "8525dd0c5901896f0534cd15bdd416bc32fb12f522612886bba39fbe52d9f38d"
+        },
+        "README.md": {
+          "sha256": "bf9d98288a250fbba22526a245171d5732220446721817771cae4be081c9ea5d"
+        }
+      }
+    },
     {
       "run_id": "wsl-native-20260409-091141",
       "repository_relative_path": "benchmarks/published_runs/wsl-native-20260409-091141",
@@ -34,6 +77,9 @@
         },
         "governance_status.json": {
           "sha256": "9d4c8f4764c1ed8d1d629a762305a4accdc442959a41173dfe7a681396672146"
+        },
+        "RUN_PROVENANCE.json": {
+          "sha256": "825219ae13ebfedb32b3a93ec6ae9b924aafd2f9f79e9c783bb6bd834c5d95f6"
         },
         "governance_decision.md": {
           "sha256": "955c3878f8959a34e63812f4d977dd82f401100ead441ee8c81107141b4dc4a9"
@@ -72,7 +118,7 @@
           "sha256": "e6aa0caf03d6abe94e7b19c9d2c0d2185a8f7f807967bee1a1f257d3ff127407"
         },
         "RUN_PROVENANCE.json": {
-          "sha256": "aea3eee52f0d0b2dae752c572a49ca3d02efdedce2c2598e61db65e1beb12f84"
+          "sha256": "9c1c0d584c7f022beb502c52d557fc58752446f0bf94119958cffd5e17367081"
         },
         "governance_decision.md": {
           "sha256": "955c3878f8959a34e63812f4d977dd82f401100ead441ee8c81107141b4dc4a9"
