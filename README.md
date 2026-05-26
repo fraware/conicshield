@@ -53,7 +53,7 @@ Optional: replace the committed export with a **live** inter-sim dump ([`docs/HO
 
 ---
 
-Contributing and merge policy: [`CONTRIBUTING.md`](CONTRIBUTING.md), [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md). Evidence tiers: [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md). Local gate: `make verify-reference-system`.
+Contributing and merge policy: [`CONTRIBUTING.md`](CONTRIBUTING.md), [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md). Reference authority map: [`docs/REFERENCE_AUTHORITY.md`](docs/REFERENCE_AUTHORITY.md). Evidence tiers: [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md). Local gates: `make reference-authority-check`, `make verify-reference-system`.
 
 ## Installation
 
@@ -198,6 +198,7 @@ See also [`docs/README.md`](docs/README.md) for a compact index.
 
 **Status & roadmap**
 
+- [`docs/REFERENCE_AUTHORITY.md`](docs/REFERENCE_AUTHORITY.md) — flagship release, gates, and maintainer checklist
 - [`docs/ENGINEERING_STATUS.md`](docs/ENGINEERING_STATUS.md) — what is implemented, CI, solver pins
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) — external dependencies and deferred work
 

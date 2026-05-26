@@ -4,6 +4,7 @@ Policy and runbooks for ConicShield. The repository root [`README.md`](../README
 
 | Document | Purpose |
 |----------|---------|
+| [REFERENCE_AUTHORITY.md](REFERENCE_AUTHORITY.md) | Flagship release, closed loop, maintainer gates |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System layers and design intent |
 | [ENGINEERING_STATUS.md](ENGINEERING_STATUS.md) | What ships in-tree vs vendor-only |
 | [ROADMAP.md](ROADMAP.md) | External deps, closed milestones, open backlog |

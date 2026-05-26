@@ -40,4 +40,4 @@ You have a committed `run_id` under `benchmarks/published_runs/` whose `RUN_PROV
 |------|---------|
 | Full vendor rebuild | `make upgrade-host-realistic-vendor` or `python scripts/upgrade_host_realistic_vendor.py --force` |
 | Governance + parity only | `python scripts/upgrade_host_realistic_vendor.py --refresh-governance` |
-| Live upstream dump | Re-export to `benchmarks/external_evidence/offline_graph_export_upstream.json`, update `EXPORT_PROVENANCE.json`, then upgrade as above |
+| Live upstream dump | `python scripts/refresh_live_upstream_export.py --graph-json <dump.json>` then `make upgrade-host-realistic-vendor` |

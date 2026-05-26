@@ -3,6 +3,8 @@
   "export_json": "benchmarks/external_evidence/offline_graph_export_upstream.json",
   "upstream_repository": "https://github.com/fraware/inter-sim-rl",
   "upstream_revision_pin": "third_party/inter-sim-rl/REVISION",
+  "export_kind": "structural_committed",
   "graph_shape": "host_realistic_fork",
-  "notes": "Multi-branch offline graph export (Root to NodeA/NodeB/NodeC). Structural host-shaped evidence committed for the export to bank to publish loop. Re-export from a patched inter-sim-rl host and replace this file when a live upstream dump is available; keep RUN_PROVENANCE.source_export_json aligned."
+  "flagship_run_id": "host-realistic-20260525",
+  "notes": "Multi-branch offline graph export (Root to NodeA/NodeB/NodeC). Structural host-shaped evidence committed for the export to bank to publish loop. For a live upstream dump use scripts/refresh_live_upstream_export.py then make upgrade-host-realistic-vendor."
 }

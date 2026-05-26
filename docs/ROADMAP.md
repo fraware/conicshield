@@ -41,7 +41,7 @@ The following were delivered and are kept auditable in Git:
 
 What is **not** closed or only partially addressed:
 
-1. **Live inter-sim re-export** — Replace committed structural export with a fresh dump from a patched `inter-sim-rl` host; update [`EXPORT_PROVENANCE.json`](../benchmarks/external_evidence/EXPORT_PROVENANCE.json); re-run `make upgrade-host-realistic-vendor` when the dump is available.
+1. **Live inter-sim re-export** — `python scripts/refresh_live_upstream_export.py --graph-json <dump.json>` then `make upgrade-host-realistic-vendor` when a patched-host dump is available.
 2. **Shield autograd vs finite differences** — **Decision: defer autograd product claim.** Inter-sim shield **FD** (`tests/vendor/diff/`) and `python scripts/differentiation_check.py --shield-inter-sim` support internal validation only; **autograd / `enable_grad` vs FD** on the production shield QP remains out of scope for external narrative until explicitly promoted.
 3. **Conic suite: failure clustering** — Optional richer **CI artifacts** or dashboards aggregating `conic_suite_report.py` by regime (suite rows already carry case metadata).
 4. **Physical test tree** — Continue incremental moves per [`tests/STRUCTURE.md`](../tests/STRUCTURE.md); no mass rename required for correctness.

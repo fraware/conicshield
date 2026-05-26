@@ -49,6 +49,17 @@ Use the fixture regeneration procedure. Do not overwrite the fixture casually.
 ### Case E: a run appears good and all gates are green
 Use **`release_cli`** for a full publish (updates `CURRENT.json`, `HISTORY.json`, and `benchmarks/registry.json`). To refresh gate columns on `CURRENT.json` for an **already published** run after new parity evidence, use **`finalize_cli`** with **`--parity-summary-path`** and **`--sync-current-release`** — do not edit `CURRENT.json` by hand.
 
+## Reference authority (flagship release)
+
+Family **`conicshield-transition-bank-v1`** points at **`host-realistic-20260525`** (`vendor_native`, external export evidence). See [`REFERENCE_AUTHORITY.md`](REFERENCE_AUTHORITY.md).
+
+```bash
+make reference-authority-check    # index + audit --strict + flagship alignment
+make verify-reference-system      # above + governance/bench pytest bundle
+```
+
+Live upstream re-export: `python scripts/refresh_live_upstream_export.py --graph-json <dump.json>` then `make upgrade-host-realistic-vendor`.
+
 ## Standard commands
 
 Tests marked `@pytest.mark.slow` (stress-scale replay, heavy subprocess work) are **excluded** from the default suite by [`pyproject.toml`](../pyproject.toml) (`not slow`), matching [`ci.yml`](../.github/workflows/ci.yml). Run them locally with `python -m pytest tests/ -q -m "slow or not slow"` (see [`DEVENV.md`](DEVENV.md)). Add a scheduled or manual workflow if you want slow tests in CI.

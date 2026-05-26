@@ -23,7 +23,7 @@ else
   PYTHON ?= python
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report verify-reference-system
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report verify-reference-system reference-authority-check refresh-live-upstream-export
 
 test:
 	$(PYTHON) -m pytest -q
@@ -73,12 +73,19 @@ export-upstream-rehearsal:
 upgrade-host-realistic-vendor:
 	$(PYTHON) scripts/upgrade_host_realistic_vendor.py --force
 
-verify-reference-system:
-	$(PYTHON) scripts/refresh_published_run_index.py --check
+reference-authority-check:
+	$(PYTHON) scripts/reference_authority_check.py
+
+refresh-live-upstream-export:
+	@echo "Usage: $(PYTHON) scripts/refresh_live_upstream_export.py --graph-json <path/to/offline_transition_graph.json>"
+
+verify-reference-system: reference-authority-check
 	$(PYTHON) -m pytest \
 		tests/governance/test_published_run_index.py \
 		tests/governance/test_host_realistic_publish_evidence.py \
 		tests/governance/test_reference_evidence_tiers.py \
+		tests/governance/test_reference_authority_invariants.py \
+		tests/governance/test_native_arm_publish_evidence.py \
 		tests/governance/test_run_host_realistic_publish.py \
 		tests/governance/test_batch_solve_report.py \
 		tests/bench/test_inter_sim_export.py \

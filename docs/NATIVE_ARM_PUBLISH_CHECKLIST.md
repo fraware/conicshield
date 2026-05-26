@@ -2,19 +2,27 @@
 
 ## Canonical command block (licensed host)
 
+**Flagship (in-repo):** `host-realistic-20260525` is the family `current_run_id` with `vendor_native` evidence. Refresh with `make upgrade-host-realistic-vendor` or `--refresh-governance`.
+
 ```bash
 # Export → bundle (real projector + native arm)
+make upgrade-host-realistic-vendor
+
+# Or explicit run_id:
 python scripts/publish_native_arm_bundle.py \
   --export-json benchmarks/external_evidence/offline_graph_export_upstream.json \
-  --run-id <run_id> \
+  --run-id host-realistic-20260525 \
   --force
 
-# Or step-by-step:
+# Step-by-step:
 python scripts/run_host_realistic_publish.py \
-  --export-json <path/to/export.json> \
-  --run-id <run_id> \
+  --export-json benchmarks/external_evidence/offline_graph_export_upstream.json \
+  --run-id host-realistic-20260525 \
   --no-passthrough \
-  --include-native-arm
+  --include-native-arm \
+  --governance-scaffold \
+  --copy-to-published \
+  --refresh-index
 
 python scripts/governed_local_promotion.py all --source benchmarks/runs/<run_id>
 ```
