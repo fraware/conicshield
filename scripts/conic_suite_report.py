@@ -18,6 +18,7 @@ except ImportError as exc:  # pragma: no cover
     raise SystemExit("cvxpy is required: pip install cvxpy") from exc
 
 from conicshield.reference_correctness.conic_suite import run_conic_suite_trusted_only
+from conicshield.reference_correctness.report_clusters import cluster_cases_by_family
 
 
 def _main() -> int:
@@ -37,6 +38,8 @@ def _main() -> int:
     args = p.parse_args()
 
     rows = run_conic_suite_trusted_only(cp, profile=args.profile)
+
+    by_family = cluster_cases_by_family(rows)
     payload: dict[str, Any] = {
         "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "profile": args.profile,
@@ -46,6 +49,12 @@ def _main() -> int:
             "total": len(rows),
             "ok": sum(1 for r in rows if r.get("status") == "ok"),
             "failed": [r.get("case_id") for r in rows if r.get("status") != "ok"],
+        },
+        "clusters": {
+            "by_family": by_family,
+            "families_with_failures": sorted(
+                fam for fam, data in by_family.items() if data.get("failed_case_ids")
+            ),
         },
     }
     text = json.dumps(payload, indent=2)

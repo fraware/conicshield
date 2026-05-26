@@ -64,3 +64,31 @@ def test_reference_authority_check_script_imports() -> None:
     root = _root()
     script = root / "scripts" / "reference_authority_check.py"
     assert script.is_file()
+
+
+def test_reference_authority_snapshot_aligned() -> None:
+    from conicshield.governance.reference_authority import build_reference_authority_snapshot
+
+    snapshot = build_reference_authority_snapshot(repo_root=_root())
+    assert snapshot["aligned"] is True
+    assert snapshot["flagship_run_id"] == _FLAGSHIP
+    assert snapshot["current_release"]["current_run_id"] == _FLAGSHIP
+
+
+def test_committed_reference_authority_snapshot_matches_live() -> None:
+    import json
+    import subprocess
+    import sys
+
+    root = _root()
+    path = root / "benchmarks" / "reports" / "reference_authority_snapshot.json"
+    assert path.is_file(), f"missing {path}; run scripts/generate_reference_authority_snapshot.py"
+    proc = subprocess.run(
+        [sys.executable, str(root / "scripts" / "generate_reference_authority_snapshot.py"), "--check"],
+        cwd=str(root),
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload.get("aligned") is True

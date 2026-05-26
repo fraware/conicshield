@@ -61,6 +61,14 @@ def main() -> int:
     perf = _load(artifact_dir / "performance_summary.json")
     gov = _load(artifact_dir / "governance_dashboard.json")
     diff = _load(artifact_dir / "differentiation_summary.json")
+    ref_auth = _load(_repo_root() / "benchmarks" / "reports" / "reference_authority_snapshot.json")
+    if ref_auth is None:
+        try:
+            from conicshield.governance.reference_authority import build_reference_authority_snapshot
+
+            ref_auth = build_reference_authority_snapshot(repo_root=_repo_root())
+        except Exception:
+            ref_auth = None
 
     now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     dir_label = str(artifact_dir)
@@ -84,6 +92,11 @@ def main() -> int:
         ("Performance", "performance_summary.json", perf),
         ("Governance dashboard", "governance_dashboard.json", gov),
         ("Differentiation", "differentiation_summary.json", diff),
+        (
+            "Reference authority (flagship release)",
+            "benchmarks/reports/reference_authority_snapshot.json",
+            ref_auth,
+        ),
     ]:
         md_parts.append(f"## {title}")
         md_parts.append("")
@@ -119,6 +132,7 @@ def main() -> int:
   {_section("Performance", perf)}
   {_section("Governance", gov)}
   {_section("Differentiation", diff)}
+  {_section("Reference authority", ref_auth)}
 </body>
 </html>
 """

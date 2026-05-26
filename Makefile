@@ -23,7 +23,7 @@ else
   PYTHON ?= python
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report verify-reference-system reference-authority-check refresh-live-upstream-export
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report verify-reference-system reference-authority-check reference-authority-snapshot refresh-live-upstream-export
 
 test:
 	$(PYTHON) -m pytest -q
@@ -76,6 +76,9 @@ upgrade-host-realistic-vendor:
 reference-authority-check:
 	$(PYTHON) scripts/reference_authority_check.py
 
+reference-authority-snapshot:
+	$(PYTHON) scripts/generate_reference_authority_snapshot.py
+
 refresh-live-upstream-export:
 	@echo "Usage: $(PYTHON) scripts/refresh_live_upstream_export.py --graph-json <path/to/offline_transition_graph.json>"
 
@@ -85,6 +88,7 @@ verify-reference-system: reference-authority-check
 		tests/governance/test_host_realistic_publish_evidence.py \
 		tests/governance/test_reference_evidence_tiers.py \
 		tests/governance/test_reference_authority_invariants.py \
+		tests/governance/test_conic_suite_report_clusters.py \
 		tests/governance/test_native_arm_publish_evidence.py \
 		tests/governance/test_run_host_realistic_publish.py \
 		tests/governance/test_batch_solve_report.py \

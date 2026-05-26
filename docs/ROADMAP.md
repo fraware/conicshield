@@ -43,7 +43,7 @@ What is **not** closed or only partially addressed:
 
 1. **Live inter-sim re-export** — `python scripts/refresh_live_upstream_export.py --graph-json <dump.json>` then `make upgrade-host-realistic-vendor` when a patched-host dump is available.
 2. **Shield autograd vs finite differences** — **Decision: defer autograd product claim.** Inter-sim shield **FD** (`tests/vendor/diff/`) and `python scripts/differentiation_check.py --shield-inter-sim` support internal validation only; **autograd / `enable_grad` vs FD** on the production shield QP remains out of scope for external narrative until explicitly promoted.
-3. **Conic suite: failure clustering** — Optional richer **CI artifacts** or dashboards aggregating `conic_suite_report.py` by regime (suite rows already carry case metadata).
+3. **Conic suite: failure clustering** — `conic_suite_report.py` emits `clusters.by_family` and `families_with_failures`; optional committed CI artifacts under `benchmarks/reports/`.
 4. **Physical test tree** — Continue incremental moves per [`tests/STRUCTURE.md`](../tests/STRUCTURE.md); no mass rename required for correctness.
 5. **Second benchmark family** — [`conicshield-shield-qp-micro-v1`](../benchmarks/releases/conicshield-shield-qp-micro-v1/FAMILY_README.md) is scaffold-only (`current_run_id: null`) until you publish a real run and bundles.
 6. **Follow-on product** — Retraining comparisons, richer proof metadata, second benchmark host — each needs a family manifest and governance review.

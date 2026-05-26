@@ -1,0 +1,39 @@
+{
+  "schema_version": "conicshield_reference_authority_snapshot/v1",
+  "generated_at_utc": "2026-05-26T04:42:53Z",
+  "family_id": "conicshield-transition-bank-v1",
+  "flagship_run_id": "host-realistic-20260525",
+  "aligned": true,
+  "current_release": {
+    "current_run_id": "host-realistic-20260525",
+    "state": "published",
+    "publishable_arms": [
+      "baseline-unshielded",
+      "shielded-rules-only",
+      "shielded-rules-plus-geometry",
+      "shielded-native-moreau"
+    ],
+    "artifact_gate": "green",
+    "parity_gate": "green",
+    "promotion_gate": "green",
+    "benchmark_bundle_paths": [
+      "benchmarks/published_runs/wsl-native-20260409-091141",
+      "benchmarks/published_runs/wsl-real-20260409-132450",
+      "benchmarks/published_runs/host-realistic-20260525"
+    ]
+  },
+  "flagship_provenance": {
+    "evidence_tier": "vendor_native",
+    "projector_mode": "real_projector",
+    "source_export_json": "benchmarks/external_evidence/offline_graph_export_upstream.json"
+  },
+  "flagship_governance": {
+    "state": "published",
+    "parity_gate": "green",
+    "promotion_gate": "green"
+  },
+  "export_provenance": {
+    "export_kind": "structural_committed",
+    "export_json": "benchmarks/external_evidence/offline_graph_export_upstream.json"
+  }
+}

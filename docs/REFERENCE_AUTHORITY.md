@@ -27,6 +27,7 @@ Orchestration: [`scripts/run_host_realistic_publish.py`](../scripts/run_host_rea
 | Gate | Command |
 |------|---------|
 | Reference authority (index + audit + flagship) | `make reference-authority-check` or `python scripts/reference_authority_check.py` |
+| Refresh committed snapshot | `make reference-authority-snapshot` → `benchmarks/reports/reference_authority_snapshot.json` |
 | Public verification bundle | `make verify-reference-system` |
 | Strict governance audit | `python -m conicshield.governance.audit_cli --strict` |
 
