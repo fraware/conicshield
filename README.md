@@ -41,13 +41,15 @@ Details: [`benchmarks/published_runs/README.md`](benchmarks/published_runs/READM
 
 ### Canonical host-realistic export evidence
 
+The **export → bank → publish → parity** loop is closed in-repo at **`vendor_native`** tier:
+
 | Item | Location |
 |------|----------|
 | Upstream-shaped offline export (not the minimal contract fixture) | [`benchmarks/external_evidence/offline_graph_export_upstream.json`](benchmarks/external_evidence/offline_graph_export_upstream.json) |
-| Published run from that export | [`benchmarks/published_runs/host-realistic-20260525/`](benchmarks/published_runs/host-realistic-20260525/) |
-| One-command orchestration | [`scripts/run_host_realistic_publish.py`](scripts/run_host_realistic_publish.py) |
+| Flagship published run (`real_projector`, native arm, green gates) | [`benchmarks/published_runs/host-realistic-20260525/`](benchmarks/published_runs/host-realistic-20260525/) |
+| One-command orchestration / refresh | [`scripts/run_host_realistic_publish.py`](scripts/run_host_realistic_publish.py), [`scripts/upgrade_host_realistic_vendor.py`](scripts/upgrade_host_realistic_vendor.py) |
 
-Re-run with `--no-passthrough` on a licensed host to upgrade from structural passthrough rehearsal to vendor-backed projector evidence. Native batching: `Backend.NATIVE_MOREAU_BATCH` via [`conicshield/core/solver_factory.py`](conicshield/core/solver_factory.py); compare sequential vs batched solves with [`scripts/performance_benchmark.py`](scripts/performance_benchmark.py) and [`scripts/batch_solve_report.py`](scripts/batch_solve_report.py).
+Optional: replace the committed export with a **live** inter-sim dump ([`docs/HOST_REALISTIC_RUNBOOK.md`](docs/HOST_REALISTIC_RUNBOOK.md)). Solver paths (reference vs sequential native vs true batch): [`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md). Native batching: `Backend.NATIVE_MOREAU_BATCH` via [`conicshield/core/solver_factory.py`](conicshield/core/solver_factory.py); compare with [`scripts/performance_benchmark.py`](scripts/performance_benchmark.py) and [`scripts/batch_solve_report.py`](scripts/batch_solve_report.py).
 
 ---
 
@@ -207,8 +209,10 @@ See also [`docs/README.md`](docs/README.md) for a compact index.
 
 **Governance & benchmarks**
 
-- [`docs/HOST_REALISTIC_RUNBOOK.md`](docs/HOST_REALISTIC_RUNBOOK.md) — operational checklist for a real inter-sim export → publish loop
+- [`docs/HOST_REALISTIC_RUNBOOK.md`](docs/HOST_REALISTIC_RUNBOOK.md) — flagship host-realistic loop (closed in-repo; refresh checklist)
+- [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md) — S0–S3 evidence tiers for published runs
 - [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md) · [`docs/NATIVE_ARM_PUBLISH_CHECKLIST.md`](docs/NATIVE_ARM_PUBLISH_CHECKLIST.md)
+- [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md) — required checks and binding vendor attestation
 - [`docs/RELEASE_POLICY.md`](docs/RELEASE_POLICY.md) · [`docs/PARITY_AND_FIXTURES.md`](docs/PARITY_AND_FIXTURES.md)
 - [`benchmarks/DASHBOARD_README.md`](benchmarks/DASHBOARD_README.md) · [`benchmarks/runs/README.md`](benchmarks/runs/README.md)
 - [`docs/MAINTAINER_RUNBOOK.md`](docs/MAINTAINER_RUNBOOK.md)
@@ -217,6 +221,7 @@ See also [`docs/README.md`](docs/README.md) for a compact index.
 
 - [`docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md`](docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md)
 - [`docs/MOREAU_API_NOTES.md`](docs/MOREAU_API_NOTES.md)
+- [`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md) — reference vs sequential native vs compiled batch
 - Parity, performance, and differentiation policies: [`docs/PARITY_AND_FIXTURES.md`](docs/PARITY_AND_FIXTURES.md), [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)
 
 **Design & integration**

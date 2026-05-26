@@ -18,6 +18,6 @@ See `HISTORY.json`.
 
 Canonical benchmark trees for this family live under [`../../published_runs/`](../../published_runs/README.md). `CURRENT.json` lists `benchmark_bundle_paths` (current and superseded runs referenced in `HISTORY.json`) so reviewers can open the same paths in Git without guessing `run_id` layout. Integrity hashes for committed bundles: [`../../PUBLISHED_RUN_INDEX.json`](../../PUBLISHED_RUN_INDEX.json) (see [`benchmarks/published_runs/README.md`](../../published_runs/README.md)).
 
-**Evidence tiers:** [`../../../docs/REFERENCE_EVIDENCE_TIERS.md`](../../../docs/REFERENCE_EVIDENCE_TIERS.md). Committed bundles include `host-realistic-20260525` (structural export loop, S1) and vendor reference/native runs (`wsl-real-*`, `wsl-native-*`).
+**Evidence tiers:** [`../../../docs/REFERENCE_EVIDENCE_TIERS.md`](../../../docs/REFERENCE_EVIDENCE_TIERS.md). **`current_run_id`:** `host-realistic-20260525` (flagship **S3** `vendor_native`). Historical bundles: `wsl-real-*`, `wsl-native-*`.
 
 **Other families:** a second family directory exists as scaffold only — [`../conicshield-shield-qp-micro-v1/FAMILY_README.md`](../conicshield-shield-qp-micro-v1/FAMILY_README.md).

@@ -13,9 +13,9 @@ What is implemented in-tree versus what still needs vendor access, upstream alig
 - **Published benchmark bundles:** each `current_run_id` in a family `CURRENT.json` should have committed artifacts under [`benchmarks/published_runs/<run_id>/`](../benchmarks/published_runs/README.md) (see [`benchmarks/runs/README.md`](../benchmarks/runs/README.md)). **[`PUBLISHED_RUN_INDEX.json`](../benchmarks/PUBLISHED_RUN_INDEX.json)** (schema v2) records SHA-256 for required bundle files and optional sidecars; see [`conicshield/published_run_index.py`](../conicshield/published_run_index.py) constants.
 - **Tests** cover bundle validation, replay, parity gates, governance publish chain, audit, and related adapters. `make cov-gates` enforces coverage thresholds on selected packages.
 - **inter-sim-rl pin:** [`tests/environment/test_third_party_pins.py`](../tests/environment/test_third_party_pins.py) checks `third_party/inter-sim-rl/REVISION` against the checkout when `.git` exists.
-- **Host-realistic evidence:** [`benchmarks/external_evidence/`](../benchmarks/external_evidence/), published run `host-realistic-20260525`, orchestration [`scripts/run_host_realistic_publish.py`](../scripts/run_host_realistic_publish.py). Passthrough rehearsal until licensed `--no-passthrough` upgrade.
-- **Native batching (first-class):** `Backend.NATIVE_MOREAU_BATCH`, [`scripts/batch_solve_report.py`](../scripts/batch_solve_report.py).
-- **Layer F (differentiation):** partial — finite-difference sanity via `differentiation_check.py`; shield autograd vs production QP is **deferred** (not a public capability claim).
+- **Host-realistic evidence:** [`benchmarks/external_evidence/`](../benchmarks/external_evidence/), flagship published run `host-realistic-20260525` at **`vendor_native`** (closed loop in-repo). Optional live re-export per [`HOST_REALISTIC_RUNBOOK.md`](HOST_REALISTIC_RUNBOOK.md).
+- **Native batching (first-class):** `Backend.NATIVE_MOREAU_BATCH`, [`scripts/batch_solve_report.py`](../scripts/batch_solve_report.py). See [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md).
+- **Layer F (differentiation):** **validation layer only** — finite-difference sanity via `differentiation_check.py` and vendor FD tests. Production shield autograd is **not** a public capability; do not market differentiable-stack claims until roadmap promotes autograd work.
 
 ## Local verification
 

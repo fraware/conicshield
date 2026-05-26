@@ -18,6 +18,18 @@
       "status": "published",
       "published_at_utc": "2026-04-09T16:43:26.919632+00:00",
       "reason": "Publish native-arm reference run wsl-native-20260409-091141"
+    },
+    {
+      "run_id": "wsl-native-20260409-091141",
+      "status": "deprecated",
+      "deprecated_at_utc": "2026-05-26T04:36:09.048681+00:00",
+      "reason": "Superseded by host-realistic-20260525"
+    },
+    {
+      "run_id": "host-realistic-20260525",
+      "status": "published",
+      "published_at_utc": "2026-05-26T04:36:09.048681+00:00",
+      "reason": "Promote flagship host-realistic vendor_native run as family current_run_id"
     }
   ]
 }

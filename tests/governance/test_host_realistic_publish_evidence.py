@@ -21,6 +21,18 @@ def test_host_realistic_published_run_provenance_not_minimal_fixture() -> None:
     gov_path = root / "benchmarks" / "published_runs" / _HOST_REALISTIC_RUN_ID / "governance_status.json"
     assert gov_path.is_file()
     gov = json.loads(gov_path.read_text(encoding="utf-8"))
-    if payload.get("projector_mode") == "real_projector":
+    if payload.get("evidence_tier") == "vendor_native":
+        assert payload.get("projector_mode") == "real_projector"
+        assert gov.get("state") in ("review-locked", "published")
         assert gov.get("parity_gate") == "green"
+        assert gov.get("promotion_gate") == "green"
         assert "shielded-native-moreau" in (gov.get("publishable_arms") or [])
+        parity_summary = (
+            root
+            / "benchmarks"
+            / "published_runs"
+            / _HOST_REALISTIC_RUN_ID
+            / "parity_out"
+            / "parity_summary.json"
+        )
+        assert parity_summary.is_file(), f"missing {parity_summary}"

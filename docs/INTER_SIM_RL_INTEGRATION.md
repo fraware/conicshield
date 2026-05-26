@@ -69,7 +69,7 @@ You can exercise the full **export → bank → benchmark bundle** spine using o
 
 This path matches the operational P0 sequence in [`benchmarks/runs/README.md`](../benchmarks/runs/README.md) without API calls into a patched host.
 
-**Production acceptance (P2):** pinned [`third_party/inter-sim-rl/REVISION`](../third_party/inter-sim-rl/REVISION); committed upstream-shaped export under `benchmarks/external_evidence/`; full publish loop via [`scripts/run_host_realistic_publish.py`](../scripts/run_host_realistic_publish.py). **Vendor upgrade:** replace passthrough `projector_mode` on `host-realistic-20260525` with `--no-passthrough` after exporting live `offline_transition_graph` JSON (`export_inter_sim_offline_graph.py --graph-json ...`). Minimal fixture remains contract-only smoke.
+**Production acceptance (P2):** pinned [`third_party/inter-sim-rl/REVISION`](../third_party/inter-sim-rl/REVISION); committed upstream-shaped export under `benchmarks/external_evidence/`; flagship published run `host-realistic-20260525` at **`vendor_native`** (family `current_run_id`). **Optional refresh:** live `offline_transition_graph` re-export via `export_inter_sim_offline_graph.py --graph-json ...` then `make upgrade-host-realistic-vendor`. Minimal fixture remains contract-only smoke.
 
 Engineering control for clone URL and revision: [`third_party/inter-sim-rl/README.md`](../third_party/inter-sim-rl/README.md).
 

@@ -11,5 +11,5 @@
 If this PR touches `conicshield/core/moreau*`, `conicshield/parity/`, `benchmarks/published_runs/`, `tests/fixtures/parity_reference/`, or related governance scripts:
 
 - [ ] `solver-touch` ran and passed (or explain why paths did not trigger)
-- [ ] On the **canonical** repo: `vendor-ci-moreau` is green **or** I linked a maintainer manual vendor run / local `make test-vendor-moreau` result
+- [ ] **Required:** vendor proof attached — green `vendor-ci-moreau` **or** maintainer attestation (workflow run URL or `make test-vendor-moreau` summary). **Merge is blocked without this.**
 - [ ] If published bundles changed: `python scripts/refresh_published_run_index.py` was run and committed

@@ -64,7 +64,7 @@ See [`docs/PARITY_AND_FIXTURES.md`](../../docs/PARITY_AND_FIXTURES.md) for the f
 
 ## Host-realistic evidence (canonical export loop)
 
-**Canonical published run:** `host-realistic-20260525` — built from [`benchmarks/external_evidence/offline_graph_export_upstream.json`](../external_evidence/offline_graph_export_upstream.json) (not `tests/fixtures/offline_graph_export_minimal.json`). See `RUN_PROVENANCE.json` in that directory.
+**Flagship / `current_run_id`:** `host-realistic-20260525` — `vendor_native`, built from [`benchmarks/external_evidence/offline_graph_export_upstream.json`](../external_evidence/offline_graph_export_upstream.json) (not `tests/fixtures/offline_graph_export_minimal.json`). See `RUN_PROVENANCE.json` and `governance_status.json` in that directory.
 
 **Orchestration:**
 

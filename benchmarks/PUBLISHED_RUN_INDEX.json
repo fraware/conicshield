@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-05-26T04:23:47Z",
+  "generated_at_utc": "2026-05-26T04:37:08Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
     "host-realistic-20260525",
@@ -34,19 +34,22 @@
           "sha256": "049f78fb322c67c1418f133d1268e7a71015d01a6667db0310301babd4ecb6f6"
         },
         "governance_status.json": {
-          "sha256": "6671a74fb306302331b434cf992f9376f5835d2f08a38184be2a7e298e23a933"
+          "sha256": "bfb070921d3e394264aa88ff9e6afb6dfb20002d8710ae8c39e3d2b85755185a"
         },
         "RUN_PROVENANCE.json": {
           "sha256": "692f5803a79c0a4eb7185533e111c1a755d98d4d2cc01afbbccd1f390b3d2e17"
         },
         "governance_decision.md": {
-          "sha256": "642140130f3c3ef156cec47c24537ac55fa1399e72ec924bcb7e6736d2c13f3f"
+          "sha256": "037726d21ee3691d4cf8ef6e8868492e734b6a6679fa3ccd6b387c323cc2b5e2"
+        },
+        "release_decision.json": {
+          "sha256": "57eef50cf75c163368d4ed38a2dfb875739b8b63c98d054cf6397740a44bd5a7"
         },
         "solver_versions.json": {
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "49e79b0c3ba912f558bef09540d6b24c2d6aae2a286ab507e2c31d2860346f78"
+          "sha256": "6207f8a52bbf1af612d84d84c779b85d34f97e9be826b4009cfb097eae36334e"
         }
       }
     },

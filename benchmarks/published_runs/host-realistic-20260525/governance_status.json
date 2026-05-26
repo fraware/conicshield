@@ -3,7 +3,7 @@
   "family_id": "conicshield-transition-bank-v1",
   "task_contract_version": "v1",
   "fixture_version": "fixture-v1",
-  "state": "review-locked",
+  "state": "published",
   "artifact_gate": "green",
   "fixture_gate": "green",
   "parity_gate": "green",

@@ -28,14 +28,17 @@ These checks run on every PR to `main` and should be green:
 
 If `solver-touch` does not appear on your PR, you did not change tracked paths — that is expected.
 
-## Vendor Moreau policy (hybrid)
+## Vendor Moreau policy (binding attestation)
 
-**Canonical repository (secrets available):** PRs that touch native/Moreau/parity/published-run code should show a green `vendor-ci-moreau` run (automatic on path match) or link a maintainer `workflow_dispatch` run in the PR description.
+Solver-touching PRs **must not merge** without vendor proof in the PR body. `vendor-ci-moreau` is **not** a required GitHub status check (fork-friendly); the attestation rule is binding for reviewers.
 
-**Forks (no secrets):** run public CI locally, then either:
+**Canonical repository (secrets available):** include one of:
 
-- Ask a maintainer to run `vendor-ci-moreau` on your branch, or
-- On a licensed machine: `make test-vendor-moreau` and paste the result summary in the PR.
+- Green `vendor-ci-moreau` (automatic on path match), or
+- Link to a maintainer `workflow_dispatch` run on your branch, or
+- Licensed local `make test-vendor-moreau` summary (paste key pass/fail lines).
+
+**Forks (no secrets):** run public CI locally, then ask a maintainer to merge only after vendor attestation above.
 
 Do not commit license keys, Gemfury tokens, or filled `.env` files.
 

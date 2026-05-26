@@ -8,7 +8,8 @@ Policy and runbooks for ConicShield. The repository root [`README.md`](../README
 | [ENGINEERING_STATUS.md](ENGINEERING_STATUS.md) | What ships in-tree vs vendor-only |
 | [ROADMAP.md](ROADMAP.md) | External deps, closed milestones, open backlog |
 | [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md) | Commands, publish flow, CI notes |
-| [HOST_REALISTIC_RUNBOOK.md](HOST_REALISTIC_RUNBOOK.md) | Checklist to close the real inter-sim export → publish loop (operational) |
+| [HOST_REALISTIC_RUNBOOK.md](HOST_REALISTIC_RUNBOOK.md) | Flagship host-realistic loop (closed in-repo; optional live re-export refresh) |
+| [SOLVER_PATHS_AND_BATCHING.md](SOLVER_PATHS_AND_BATCHING.md) | Reference vs sequential native vs compiled batch |
 | [BENCHMARK_GOVERNANCE.md](BENCHMARK_GOVERNANCE.md) | How benchmark claims are published |
 | [NATIVE_ARM_PUBLISH_CHECKLIST.md](NATIVE_ARM_PUBLISH_CHECKLIST.md) | Steps to get `shielded-native-moreau` into `publishable_arms` |
 | [RELEASE_POLICY.md](RELEASE_POLICY.md) | Same-family vs new-family release; no ad-hoc `CURRENT.json` edits |
@@ -17,8 +18,8 @@ Policy and runbooks for ConicShield. The repository root [`README.md`](../README
 | [DEVENV.md](DEVENV.md) | Python matrix, pytest markers, workflows |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | Contributor workflow, hybrid vendor policy, published-bundle rules |
 | [REFERENCE_EVIDENCE_TIERS.md](REFERENCE_EVIDENCE_TIERS.md) | S0–S3 evidence tiers for published runs |
-| [CI_MERGE_GATES.md](CI_MERGE_GATES.md) | Recommended required GitHub checks for `main` (public + vendor lanes) |
-| [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md) | GitHub branch protection checklist |
+| [CI_MERGE_GATES.md](CI_MERGE_GATES.md) | Required checks and binding vendor attestation for solver-touch merges |
+| [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md) | GitHub branch protection checklist (vendor-ci not required; attestation binding) |
 | [INTER_SIM_RL_INTEGRATION.md](INTER_SIM_RL_INTEGRATION.md) | Host integration |
 | [MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md](MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md) | Vendor install expectations |
 | [MOREAU_API_NOTES.md](MOREAU_API_NOTES.md) | API drift and upgrade checks |

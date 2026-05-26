@@ -182,7 +182,7 @@ def assert_canonical_evidence_tiers(*, repo_root: Path | None = None) -> None:
     """Lock expected evidence tiers for canonical published runs (see docs/REFERENCE_EVIDENCE_TIERS.md)."""
     root = repo_root if repo_root is not None else Path.cwd()
     expected: dict[str, EvidenceTier] = {
-        "host-realistic-20260525": "structural_export",
+        "host-realistic-20260525": "vendor_native",
         "wsl-real-20260409-132450": "vendor_reference",
         "wsl-native-20260409-091141": "vendor_native",
     }
