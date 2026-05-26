@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-05-26T06:05:57Z",
+  "generated_at_utc": "2026-05-26T06:19:45Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
     "host-realistic-20260525",
@@ -40,7 +40,7 @@
           "sha256": "692f5803a79c0a4eb7185533e111c1a755d98d4d2cc01afbbccd1f390b3d2e17"
         },
         "governance_decision.md": {
-          "sha256": "645a8ee1cc94c445bfdafb6552d05af95f33a0122e92bac2e9a36d6ace8ffaf3"
+          "sha256": "503347b0097a4833beed9b89e39bfa5c1236c289fce12729bc28631f78e8c17b"
         },
         "release_decision.json": {
           "sha256": "3acae9b15626813f0af3bfd47484c65dc9b34012eb98b98518caf9e176739ccd"
@@ -49,7 +49,7 @@
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "533c021bbe091372d7a0e426de21d55a41cbc581bd7e84419666a33db695a47f"
+          "sha256": "e38072afa91b9afb0a5ab883f25ea26f8f4585752b0067969d0d79694849abf1"
         }
       },
       "catalog": {
@@ -102,7 +102,7 @@
           "sha256": "8ff93f876bc47fb202e445daafd9bbaec4f958ca739afad95b48057b22b03d4c"
         },
         "README.md": {
-          "sha256": "4ebecb32cf3174328e6dbf19695c7f5158e65892dbac4acbe6756b6c584fa489"
+          "sha256": "9ccfbb53c44adfa21e79f4d52e741c8dfa121dd43cbfa348181e8db73849aabc"
         }
       },
       "catalog": {
@@ -158,7 +158,7 @@
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "456f6cc5d458c97307b4fb3d7f9a26e722e6251e18dfc0ce663b0c273384b180"
+          "sha256": "5ab3c47576701bcc6799f47d9d9f6ca0c4f35b3feaacd587b80a2badfb90d604"
         }
       },
       "catalog": {

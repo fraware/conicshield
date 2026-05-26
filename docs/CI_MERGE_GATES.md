@@ -6,8 +6,11 @@ GitHub branch protection is configured in the repository settings, not in this t
 |-------|----------|------|
 | `quality` | [`ci.yml`](../.github/workflows/ci.yml) | Ruff, Ruff format, Mypy, default-marker pytest + coverage, verification scripts |
 | `conic-trusted-shape` | [`ci.yml`](../.github/workflows/ci.yml) | Public CLARABEL/SCS conic structural gate (no vendor MOREAU) |
-| `governance-audit` | [`governance-audit.yml`](../.github/workflows/governance-audit.yml) | `refresh_published_run_index.py --check` (required + optional integrity surface); governance `audit_cli` rehearsal |
+| `governance-audit` | [`governance-audit.yml`](../.github/workflows/governance-audit.yml) | Published-run index `--check`, export rehearsal, governance `audit_cli` rehearsal |
+| `reference-authority` | [`reference-authority.yml`](../.github/workflows/reference-authority.yml) | `verify-reference-system`, committed batch **viability** report, published bundle profile |
 | `solver-touch` | [`solver-touch.yml`](../.github/workflows/solver-touch.yml) | **Path-filtered:** index SHA-256 vs disk, parity-note `run_id`s, native-arm publish evidence, parity tests |
+
+Enable these in GitHub **Settings → Branches** for `main` (audit trail: [`BRANCH_PROTECTION_RECORD.md`](BRANCH_PROTECTION_RECORD.md)). Must match [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md).
 
 **Path-filtered `solver-touch`:** the job is listed as required in branch protection but **skips** on PRs that do not touch solver/parity/benchmark paths (see workflow `paths:`). That is intentional: unrelated docs-only PRs should not wait on parity replay.
 
@@ -39,6 +42,7 @@ flowchart TB
     Q[quality]
     CTS[conic-trusted-shape]
     GA[governance-audit]
+    RA[reference-authority]
   end
   subgraph conditionalLane [Path-filtered]
     ST[solver-touch]
@@ -50,7 +54,7 @@ flowchart TB
 
 | Lane | Checks | Secrets |
 |------|--------|---------|
-| **Public** | `quality`, `conic-trusted-shape`, `governance-audit` | None |
+| **Public** | `quality`, `conic-trusted-shape`, `governance-audit`, `reference-authority` | None |
 | **Vendor** | `vendor-ci-moreau` (path-triggered on canonical repo PRs + manual dispatch) | `GEMFURY_TOKEN`, `MOREAU_LICENSE_KEY` |
 
 `conic-trusted-shape` is the permanent public structural compromise: broad CI coverage without vendor credentials.

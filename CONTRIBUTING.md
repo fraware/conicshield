@@ -18,6 +18,7 @@ These checks run on every PR to `main` and should be green:
 | `quality` | Lint, types, default pytest, verification scripts |
 | `conic-trusted-shape` | CLARABEL/SCS structural conic correctness (no vendor secrets) |
 | `governance-audit` | Published-run index integrity, governance audit CLI, publish rehearsal |
+| `reference-authority` | `verify-reference-system`, batch viability, published bundle profile |
 
 ## Path-filtered checks
 

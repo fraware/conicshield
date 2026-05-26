@@ -14,7 +14,8 @@ Policy and runbooks for ConicShield. The repository root [`README.md`](../README
 | [ENGINEERING_STATUS.md](ENGINEERING_STATUS.md) | What ships in-tree vs vendor-only |
 | [ROADMAP.md](ROADMAP.md) | External deps, closed milestones, open backlog |
 | [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md) | Commands, publish flow, CI notes |
-| [HOST_REALISTIC_RUNBOOK.md](HOST_REALISTIC_RUNBOOK.md) | Flagship host-realistic loop (closed in-repo; optional live re-export refresh) |
+| [HOST_REALISTIC_RUNBOOK.md](HOST_REALISTIC_RUNBOOK.md) | Flagship host-realistic loop (closed in-repo; live export path documented) |
+| [REFERENCE_REFRESH_LOG.md](REFERENCE_REFRESH_LOG.md) | Flagship refresh cadence record |
 | [SOLVER_PATHS_AND_BATCHING.md](SOLVER_PATHS_AND_BATCHING.md) | Reference vs sequential native vs compiled batch |
 | [BENCHMARK_GOVERNANCE.md](BENCHMARK_GOVERNANCE.md) | How benchmark claims are published |
 | [NATIVE_ARM_PUBLISH_CHECKLIST.md](NATIVE_ARM_PUBLISH_CHECKLIST.md) | Steps to get `shielded-native-moreau` into `publishable_arms` |

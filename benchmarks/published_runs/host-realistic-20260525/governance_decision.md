@@ -23,9 +23,10 @@
 
 ## Rationale
 
-Same-family flagship **host-realistic** external-evidence run (`vendor_native`, `real_projector`). Scheduled refresh cycle re-validated export → bundle → parity → finalize; gates remain green. `current_run_id` unchanged.
+Same-family flagship **host-realistic** external-evidence run (`vendor_native`, `real_projector`). Refresh cycles re-validated export → bundle → parity → finalize; gates remain green. `current_run_id` unchanged. Live export path executed 2026-05-26 (`export_kind: live_upstream_dump`); graph remains host-realistic fork topology via inter-sim `RLEnvironment`, not a full navigation-session graph.
 
 ## Follow-ups
 
-- Optional live inter-sim re-export when upstream dump available (`scripts/refresh_live_upstream_export.py`).
+- Re-capture live graph when `third_party/inter-sim-rl/REVISION` sha changes or a richer Maps/session dump exists (`make capture-inter-sim-graph`).
+- Record each refresh in `docs/REFERENCE_REFRESH_LOG.md`.
 - Parity fixture promotion remains governed by S2 reference policy (`REGENERATION_NOTE.md`).

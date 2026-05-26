@@ -1,6 +1,6 @@
 {
   "schema_version": "conicshield_reference_authority_snapshot/v1",
-  "generated_at_utc": "2026-05-26T06:05:57Z",
+  "generated_at_utc": "2026-05-26T06:19:45Z",
   "family_id": "conicshield-transition-bank-v1",
   "flagship_run_id": "host-realistic-20260525",
   "aligned": true,

@@ -1,9 +1,19 @@
 {
-  "schema_version": "conicshield_batch_acceptance_policy/v1",
-  "description": "Vendor-host acceptance thresholds for native compiled batch vs sequential microbatch.",
-  "min_batch_size": 4,
-  "min_speedup_ratio": 0.98,
-  "acceptance_mode": "any_row_meets",
+  "schema_version": "conicshield_batch_acceptance_policy/v2",
+  "description": "Vendor-host batch acceptance: viability is enforced in CI; throughput is advisory only.",
   "device": "cpu",
-  "notes": "Vendor CI: performance_benchmark --sweep --batch-sizes 4,8,16. At least one row must show compiled batch within 2% of sequential microbatch (viability). Throughput wins (speedup > 1.05) are reported in batch_solve_report but not required on tiny CPU sweep scenarios."
+  "viability": {
+    "enforcement": "required",
+    "min_batch_size": 4,
+    "min_speedup_ratio": 0.98,
+    "acceptance_mode": "any_row_meets",
+    "notes": "At least one sweep row must show compiled batch within 2% of sequential microbatch on CPU. Enforced by reference-authority and vendor-ci-moreau."
+  },
+  "throughput_advisory": {
+    "enforcement": "advisory",
+    "min_batch_size": 4,
+    "min_speedup_ratio": 1.05,
+    "acceptance_mode": "any_row_meets",
+    "notes": "Tracked in batch_solve_report; does not fail CI. Do not market universal batch speedup until this tier is met on representative scenarios."
+  }
 }

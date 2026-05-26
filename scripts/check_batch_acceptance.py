@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assert batch_solve_report meets benchmarks/reports/batch_acceptance_policy.json."""
+"""Assert batch_solve_report meets benchmarks/reports/batch_acceptance_policy.json tiers."""
 
 from __future__ import annotations
 
@@ -17,6 +17,16 @@ def _repo_root() -> Path:
 def _load_policy(root: Path) -> dict[str, Any]:
     path = root / "benchmarks" / "reports" / "batch_acceptance_policy.json"
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _tier_policy(policy: dict[str, Any], tier: str) -> dict[str, Any]:
+    if tier in policy and isinstance(policy[tier], dict):
+        block = dict(policy[tier])
+        block.setdefault("device", policy.get("device"))
+        return block
+    if tier == "viability":
+        return policy
+    raise KeyError(f"unknown tier {tier!r}")
 
 
 def check_batch_report(*, report: dict[str, Any], policy: dict[str, Any]) -> list[str]:
@@ -74,21 +84,36 @@ def main() -> int:
         default=None,
         help="batch_solve_report.json (default: output/batch_solve_report.json).",
     )
+    p.add_argument(
+        "--tier",
+        choices=("viability", "throughput_advisory"),
+        default="viability",
+        help="Policy tier (default: viability, enforced).",
+    )
     args = p.parse_args()
     root = _repo_root()
     report_path = args.report or (root / "output" / "batch_solve_report.json")
     if not report_path.is_file():
         print(f"Missing report: {report_path}", file=sys.stderr)
         return 2
-    policy = _load_policy(root)
+    root_policy = _load_policy(root)
+    tier_policy = _tier_policy(root_policy, args.tier)
+    enforcement = str(tier_policy.get("enforcement", "required"))
     report = json.loads(report_path.read_text(encoding="utf-8"))
-    failures = check_batch_report(report=report, policy=policy)
+    failures = check_batch_report(report=report, policy=tier_policy)
+    label = f"batch {args.tier}"
     if failures:
-        print("batch acceptance FAILED:", file=sys.stderr)
+        if enforcement == "advisory":
+            print(f"{label} ADVISORY (not met):", file=sys.stderr)
+            for f in failures:
+                print(f"  - {f}", file=sys.stderr)
+            print(f"{label}: advisory only — exit 0")
+            return 0
+        print(f"{label} FAILED:", file=sys.stderr)
         for f in failures:
             print(f"  - {f}", file=sys.stderr)
         return 1
-    print(f"batch acceptance OK ({report_path})")
+    print(f"{label} OK ({report_path})")
     return 0
 
 

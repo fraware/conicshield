@@ -13,7 +13,7 @@ What is implemented in-tree versus what still needs vendor access, upstream alig
 - **Published benchmark bundles:** each `current_run_id` in a family `CURRENT.json` should have committed artifacts under [`benchmarks/published_runs/<run_id>/`](../benchmarks/published_runs/README.md) (see [`benchmarks/runs/README.md`](../benchmarks/runs/README.md)). **[`PUBLISHED_RUN_INDEX.json`](../benchmarks/PUBLISHED_RUN_INDEX.json)** (schema v2) records SHA-256 for required bundle files and optional sidecars; see [`conicshield/published_run_index.py`](../conicshield/published_run_index.py) constants.
 - **Tests** cover bundle validation, replay, parity gates, governance publish chain, audit, and related adapters. `make cov-gates` enforces coverage thresholds on selected packages.
 - **inter-sim-rl pin:** [`tests/environment/test_third_party_pins.py`](../tests/environment/test_third_party_pins.py) checks `third_party/inter-sim-rl/REVISION` against the checkout when `.git` exists.
-- **Host-realistic evidence:** [`benchmarks/external_evidence/`](../benchmarks/external_evidence/), flagship published run `host-realistic-20260525` at **`vendor_native`** (closed loop in-repo). Optional live re-export per [`HOST_REALISTIC_RUNBOOK.md`](HOST_REALISTIC_RUNBOOK.md).
+- **Host-realistic evidence:** [`benchmarks/external_evidence/`](../benchmarks/external_evidence/), flagship `host-realistic-20260525` at **`vendor_native`** (`export_kind: live_upstream_dump`; fork graph via inter-sim API — see bundle README evidence qualification). Refresh cadence: [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md).
 - **Native batching (first-class):** `Backend.NATIVE_MOREAU_BATCH`, [`scripts/batch_solve_report.py`](../scripts/batch_solve_report.py). See [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md).
 - **Layer F (differentiation):** **validation layer only** — finite-difference sanity via `differentiation_check.py` and vendor FD tests. Production shield autograd is **not** a public capability; do not market differentiable-stack claims until roadmap promotes autograd work.
 
@@ -39,9 +39,9 @@ Pinned **dev lockfile** versions (public CI) and project lower bounds; replace t
 
 | Package       | Version (reference) | Date validated (UTC) | Notes        |
 | ------------- | ------------------- | -------------------- | ------------ |
-| `moreau`      | `0.3.0` (vendor wheel; not in public `requirements-dev.txt`) | 2026-04-09 | WSL licensed stack; pair with Vendor CI / `solver_versions.json` when automating |
-| `cvxpy`       | `1.8.2` (`requirements-dev.txt`); project `>=1.8.2` | 2026-04-09 | Last full-stack check with row above |
-| `cvxpylayers` | `1.0.4` (`requirements-dev.txt`); project `>=1.0.4` | 2026-04-09 | Required with `cp.MOREAU` |
+| `moreau`      | `0.3.0` (vendor wheel; not in public `requirements-dev.txt`) | 2026-05-26 | Flagship `solver_versions.json` after live refresh cycle (`381004e`) |
+| `cvxpy`       | `1.8.2` (`requirements-dev.txt`); project `>=1.8.2` | 2026-05-26 | Matches flagship bundle |
+| `cvxpylayers` | `1.0.4` (`requirements-dev.txt`); project `>=1.0.4` | 2026-05-26 | Matches flagship bundle |
 
 The Vendor CI job uploads `solver_versions.json` and may append a filtered `pip freeze` to the job Summary for copying here.
 

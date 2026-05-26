@@ -49,7 +49,9 @@ The **export → bank → publish → parity** loop is closed in-repo at **`vend
 | Flagship published run (`real_projector`, native arm, green gates) | [`benchmarks/published_runs/host-realistic-20260525/`](benchmarks/published_runs/host-realistic-20260525/) |
 | One-command orchestration / refresh | [`scripts/run_host_realistic_publish.py`](scripts/run_host_realistic_publish.py), [`scripts/upgrade_host_realistic_vendor.py`](scripts/upgrade_host_realistic_vendor.py) |
 
-Optional: replace the committed export with a **live** inter-sim dump ([`docs/HOST_REALISTIC_RUNBOOK.md`](docs/HOST_REALISTIC_RUNBOOK.md)). Solver paths (reference vs sequential native vs true batch): [`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md). Native batching: `Backend.NATIVE_MOREAU_BATCH` via [`conicshield/core/solver_factory.py`](conicshield/core/solver_factory.py); compare with [`scripts/performance_benchmark.py`](scripts/performance_benchmark.py) and [`scripts/batch_solve_report.py`](scripts/batch_solve_report.py).
+Live export path: `make capture-inter-sim-graph` → `make refresh-live-upstream-export-live` (see [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)). Current committed export is `live_upstream_dump` with **host-realistic fork** topology validated through inter-sim `RLEnvironment` — not a full Maps/session navigation graph.
+
+Solver paths (reference vs sequential native vs true batch): [`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md). Batch API is governed and viability-tested; **do not claim universal batch speedup** in external materials until throughput advisory tiers are met. Differentiation: validation-only ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)).
 
 ---
 

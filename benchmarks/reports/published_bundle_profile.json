@@ -1,0 +1,31 @@
+{
+  "schema_version": "conicshield_published_bundle_profile/v1",
+  "description": "Expected on-disk files per evidence_tier for governed published bundles.",
+  "common_required": [
+    "config.json",
+    "config.schema.json",
+    "summary.json",
+    "summary.schema.json",
+    "episodes.jsonl",
+    "episodes.schema.json",
+    "transition_bank.json",
+    "governance_status.json",
+    "RUN_PROVENANCE.json",
+    "governance_decision.md",
+    "release_decision.json",
+    "README.md"
+  ],
+  "tier_required": {
+    "contract_fixture": [],
+    "structural_export": [],
+    "vendor_reference": [],
+    "vendor_native": []
+  },
+  "when_host_realistic_and_native_arm": [
+    "solver_versions.json",
+    "parity_out/parity_summary.json"
+  ],
+  "when_family_current_run": [
+    "solver_versions.json"
+  ]
+}

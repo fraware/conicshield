@@ -18,7 +18,7 @@ Applies when the PR touches any of:
 
 | Step | Requirement |
 |------|-------------|
-| 1 | Public lane green: `quality`, `conic-trusted-shape`, `governance-audit` |
+| 1 | Public lane green: `quality`, `conic-trusted-shape`, `governance-audit`, `reference-authority` |
 | 2 | If paths match: `solver-touch` green (or explain skip) |
 | 3 | **Vendor attestation** in PR body: green `vendor-ci-moreau` run URL **or** maintainer `workflow_dispatch` link **or** pasted `make test-vendor-moreau` summary |
 | 4 | If published bundles changed: `refresh_published_run_index.py` committed; `reference_authority_check` passes locally |
@@ -28,9 +28,9 @@ Applies when the PR touches any of:
 
 ```text
 Merge checklist:
-- [ ] Public CI green
+- [ ] Public CI green (including reference-authority)
 - [ ] solver-touch green or N/A (paths)
-- [ ] Vendor attestation linked: <URL or summary>
+- [ ] Vendor attestation linked: <URL or summary> (required for solver-touch PRs)
 - [ ] Published-run index refreshed if bundles changed
 ```
 

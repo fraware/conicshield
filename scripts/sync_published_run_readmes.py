@@ -14,7 +14,19 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
 
-def _render_readme(*, run_id: str, catalog: dict[str, object]) -> str:
+def _export_provenance(repo: Path) -> dict:
+    path = repo / "benchmarks" / "external_evidence" / "EXPORT_PROVENANCE.json"
+    if not path.is_file():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _render_readme(
+    *,
+    run_id: str,
+    catalog: dict[str, object],
+    export_prov: dict,
+) -> str:
     tier = catalog.get("evidence_tier", "unknown")
     host = "yes" if catalog.get("host_realistic") else "no"
     native = "yes" if catalog.get("includes_native_arm") else "no"
@@ -22,6 +34,7 @@ def _render_readme(*, run_id: str, catalog: dict[str, object]) -> str:
     current = "yes" if catalog.get("is_family_current_run") else "no"
     mode = catalog.get("projector_mode") or "n/a"
     gov = catalog.get("governance_state") or "n/a"
+    export_kind = export_prov.get("export_kind", "n/a")
     lines = [
         f"# Published run `{run_id}`",
         "",
@@ -36,29 +49,53 @@ def _render_readme(*, run_id: str, catalog: dict[str, object]) -> str:
         f"| Parity fixture gold source | {fixture} |",
         f"| Family `current_run_id` | {current} |",
         f"| Governance `state` | `{gov}` |",
+        f"| Committed export `export_kind` | `{export_kind}` |",
         "",
         "## What this run proves",
         "",
         "- Validated artifact surface (`validate_run_bundle`)",
         "- Benchmark arms in `summary.json` with governance gates in `governance_status.json`",
+        "- Host-realistic export → bank → publish → parity loop is closed in-repo when `host_realistic` is yes",
         "",
-        "## What this run does not claim",
-        "",
-        "- Differentiable runtime shield product guarantees (see `docs/DIFFERENTIATION_PUBLIC_STANCE.md`)",
-        "- Live upstream simulator export unless `RUN_PROVENANCE.json` says so",
-        "",
-        "## Ops",
-        "",
-        "- Refresh procedure: [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](../../docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)",
-        "- Catalog spec: [`docs/PUBLISHED_BUNDLE_CATALOG.md`](../../docs/PUBLISHED_BUNDLE_CATALOG.md)",
+        "## Evidence qualification",
         "",
     ]
+    if catalog.get("host_realistic"):
+        lines.extend(
+            [
+                "- **Export loop:** closed in-repo; source export is "
+                f"`benchmarks/external_evidence/offline_graph_export_upstream.json` (`export_kind: {export_kind}`).",
+                "- **Live capture:** when `export_kind` is `live_upstream_dump`, the graph was validated through "
+                "pinned **inter-sim-rl `RLEnvironment`** (see `benchmarks/external_evidence/live_dumps/*.provenance.json`).",
+                "- **Graph content:** host-realistic **fork topology** (Root → NodeA/NodeB/NodeC), not a full "
+                "Maps/session-built navigation graph unless provenance explicitly says otherwise.",
+                "- **Cadence:** recorded in [`docs/REFERENCE_REFRESH_LOG.md`](../../docs/REFERENCE_REFRESH_LOG.md).",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "## What this run does not claim",
+            "",
+            "- Differentiable runtime shield product guarantees (see `docs/DIFFERENTIATION_PUBLIC_STANCE.md`)",
+            "- Universal batch speedup on all micro-scenarios (viability only; see `docs/SOLVER_PATHS_AND_BATCHING.md`)",
+            "- Full upstream navigation-session graph unless capture provenance documents a richer dump",
+            "",
+            "## Ops",
+            "",
+            "- Refresh procedure: [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](../../docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)",
+            "- Catalog spec: [`docs/PUBLISHED_BUNDLE_CATALOG.md`](../../docs/PUBLISHED_BUNDLE_CATALOG.md)",
+            "- Bundle file profile: `python scripts/validate_published_bundle_profile.py`",
+            "",
+        ]
+    )
     return "\n".join(lines) + "\n"
 
 
 def main() -> int:
     root = _repo_root()
     payload = load_published_run_index(repo_root=root)
+    export_prov = _export_provenance(root)
     current_path = root / "benchmarks" / "releases" / "conicshield-transition-bank-v1" / "CURRENT.json"
     current_run_id = None
     if current_path.is_file():
@@ -71,7 +108,7 @@ def main() -> int:
         catalog = run.get("catalog") or build_run_catalog_metadata(run_dir=run_dir, repo_root=root)
         catalog = dict(catalog)
         catalog["is_family_current_run"] = rid == current_run_id
-        text = _render_readme(run_id=rid, catalog=catalog)
+        text = _render_readme(run_id=rid, catalog=catalog, export_prov=export_prov)
         dest = run_dir / "README.md"
         dest.write_text(text, encoding="utf-8")
         print(dest, file=sys.stderr)

@@ -6,4 +6,6 @@ This family exists as a **placeholder** for a second task contract (micro shield
 
 Do **not** imply multi-host or multi-family coverage in external messaging until this family has a real `current_run_id`, committed `benchmarks/published_runs/<run_id>/`, and release metadata aligned with [`docs/BENCHMARK_GOVERNANCE.md`](../../docs/BENCHMARK_GOVERNANCE.md).
 
+**Engineering policy (v2):** Do not publish this family until Option A is operationally boring: flagship refresh cadence proven, `reference-authority` required on `main`, and live export story documented. See [`docs/V2_STRATEGY.md`](../../docs/V2_STRATEGY.md) Option B.
+
 See also: [`docs/ROADMAP.md`](../../docs/ROADMAP.md) (second family / backlog).

@@ -4,7 +4,7 @@
 
 ## Testing
 
-- [ ] Default CI (`quality`, `conic-trusted-shape`, `governance-audit`) is green or pending
+- [ ] Default CI (`quality`, `conic-trusted-shape`, `governance-audit`, `reference-authority`) is green or pending
 
 ## Solver / parity / published runs
 

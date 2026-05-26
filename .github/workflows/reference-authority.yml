@@ -28,7 +28,15 @@ jobs:
           python -m pip install -e ".[dev]"
       - name: verify-reference-system
         run: make verify-reference-system
-      - name: Committed batch acceptance report (viability policy)
+      - name: Published bundle file profile (all tiers)
+        run: python scripts/validate_published_bundle_profile.py
+      - name: Committed batch acceptance report (viability — required)
         run: |
           python scripts/check_batch_acceptance.py \
+            --tier viability \
+            --report benchmarks/reports/batch_solve_report.latest.json
+      - name: Batch throughput advisory (non-blocking)
+        run: |
+          python scripts/check_batch_acceptance.py \
+            --tier throughput_advisory \
             --report benchmarks/reports/batch_solve_report.latest.json

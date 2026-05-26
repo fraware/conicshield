@@ -63,9 +63,21 @@ python scripts/check_batch_acceptance.py
 
 `batch_solve_report.json` is part of the **vendor verification bundle** (Vendor CI and `run_live_vendor_tests.py`). Policy: [`benchmarks/reports/batch_acceptance_policy.json`](../benchmarks/reports/batch_acceptance_policy.json).
 
-### Acceptance threshold (vendor)
+### Acceptance tiers (vendor)
 
-Sweep mode (`--sweep --batch-sizes 4,8,16`): **at least one row** must have `speedup_ratio >= 0.98` (compiled batch viable vs microbatch on CPU). Policy: [`batch_acceptance_policy.json`](../benchmarks/reports/batch_acceptance_policy.json). Throughput wins (`> 1.05`) are tracked in `batch_solve_report.json` but are scenario-dependent.
+Policy v2: [`batch_acceptance_policy.json`](../benchmarks/reports/batch_acceptance_policy.json).
+
+| Tier | Threshold | CI enforcement | External narrative |
+|------|-----------|----------------|-------------------|
+| **viability** | `speedup_ratio >= 0.98`, `any_row_meets`, sweep 4/8/16 on CPU | **Required** (`reference-authority`, `vendor-ci-moreau`) | “Batch API works and is governed” |
+| **throughput_advisory** | `speedup_ratio >= 1.05`, `any_row_meets` | **Advisory only** (logs, does not fail) | Do **not** claim universal batch speedup until met on representative workloads |
+
+```bash
+python scripts/check_batch_acceptance.py --report benchmarks/reports/batch_solve_report.latest.json
+python scripts/check_batch_acceptance.py --tier throughput_advisory --report benchmarks/reports/batch_solve_report.latest.json
+```
+
+Larger action dimensions, GPU rows, and warm-start-heavy scenarios belong in future benchmark work if throughput is part of the product story.
 
 ## Regression tests (vendor lane)
 

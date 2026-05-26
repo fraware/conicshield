@@ -16,6 +16,8 @@ Mark these checks as **required** and disable bypass for administrators unless y
 
 **Do not** require `vendor-ci-moreau` as a mandatory status check (forks lack secrets; see binding attestation below).
 
+After changing required checks in GitHub, record the change in [`BRANCH_PROTECTION_RECORD.md`](BRANCH_PROTECTION_RECORD.md) (screenshot or link).
+
 **Path-filtered workflows:** `solver-touch` and `vendor-ci-moreau` only run when matching paths change. In GitHub, prefer **“Require status checks to pass”** with these jobs listed; skipped jobs on unrelated PRs are expected.
 
 ## Vendor lane (binding attestation, not required check)
