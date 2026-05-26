@@ -35,6 +35,24 @@ Re-activate the venv in each new shell: `source .venv/bin/activate` (from the re
 
 In **WSL**, use Linux-style paths to the repo (for example `cd /mnt/c/Users/<you>/conicshield`). Do not use `cd c:\...` in bash (it will fail). **PowerShell** on Windows may use `cd C:\Users\<you>\conicshield`.
 
+### Git Bash on Windows: do not reuse a WSL `.venv`
+
+If `make` or `python` fails with `No Python at '/usr/bin/python.exe'`, the active `.venv` was created inside **WSL** (Unix layout under `.venv/bin/`) but you are running **Git Bash** on Windows. Either:
+
+1. **Run vendor work in WSL** (recommended for Moreau): `cd /mnt/c/Users/<you>/conicshield`, `source .venv/bin/activate`, then `make upgrade-host-realistic-vendor`.
+2. **Recreate the venv on Windows** from the repo root in Git Bash or PowerShell:
+
+   ```bash
+   deactivate 2>/dev/null || true
+   rm -rf .venv
+   py -3 -m venv .venv
+   source .venv/Scripts/activate
+   python -m pip install -r requirements-dev.txt
+   python -m pip install -e ".[dev]"
+   ```
+
+3. **One-off override:** `make PYTHON="py -3" upgrade-host-realistic-vendor`
+
 ### Pytest tips
 
 Use `--tb=short` (not `short*`) for short tracebacks. To see **skipped** tests: add `-rs` to pytest.

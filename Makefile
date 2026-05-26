@@ -1,6 +1,29 @@
-PYTHON ?= python
+# Cross-platform interpreter for Make targets.
+# Git Bash + a WSL-created .venv exposes `python` -> /usr/bin/python.exe (broken on Windows).
+# Prefer .venv/Scripts/python.exe on MSYS, else the Windows `py` launcher, else python3.
+ifdef MSYSTEM
+  ifdef VIRTUAL_ENV
+    ifneq ($(wildcard $(VIRTUAL_ENV)/Scripts/python.exe),)
+      PYTHON ?= $(VIRTUAL_ENV)/Scripts/python.exe
+    else
+      PYTHON ?= $(shell py -3 -c "import sys; print(sys.executable)" 2>/dev/null || command -v python3 2>/dev/null || echo python)
+    endif
+  else
+    PYTHON ?= $(shell py -3 -c "import sys; print(sys.executable)" 2>/dev/null || command -v python3 2>/dev/null || echo python)
+  endif
+else
+  ifdef VIRTUAL_ENV
+    ifneq ($(wildcard $(VIRTUAL_ENV)/bin/python),)
+      PYTHON ?= $(VIRTUAL_ENV)/bin/python
+    else ifneq ($(wildcard $(VIRTUAL_ENV)/Scripts/python.exe),)
+      PYTHON ?= $(VIRTUAL_ENV)/Scripts/python.exe
+    endif
+  endif
+  PYTHON ?= python3
+  PYTHON ?= python
+endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report verify-reference-system
 
 test:
 	$(PYTHON) -m pytest -q
