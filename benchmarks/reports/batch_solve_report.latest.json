@@ -1,0 +1,190 @@
+{
+  "generated_at_utc": "2026-05-26T05:47:25Z",
+  "source": "output/host_realistic_refresh_verify/performance_summary.json",
+  "comparisons": [
+    {
+      "scenario_id": "n4_loose_batch16",
+      "conditioning": "loose",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 16,
+      "mean_sec_sequential": 0.009159733504930045,
+      "mean_sec_batched": 0.012028213503072038,
+      "speedup_ratio": 0.7615206948721541
+    },
+    {
+      "scenario_id": "n4_loose_batch4",
+      "conditioning": "loose",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 4,
+      "mean_sec_sequential": 0.002471119998517679,
+      "mean_sec_batched": 0.002347592500882456,
+      "speedup_ratio": 1.0526187988710942
+    },
+    {
+      "scenario_id": "n4_loose_batch8",
+      "conditioning": "loose",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 8,
+      "mean_sec_sequential": 0.004779890503414208,
+      "mean_sec_batched": 0.0052898344983987045,
+      "speedup_ratio": 0.9035992534097499
+    },
+    {
+      "scenario_id": "n4_nominal_batch16",
+      "conditioning": "nominal",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 16,
+      "mean_sec_sequential": 0.009053378496901132,
+      "mean_sec_batched": 0.00916706349744345,
+      "speedup_ratio": 0.9875985368079949
+    },
+    {
+      "scenario_id": "n4_nominal_batch4",
+      "conditioning": "nominal",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 4,
+      "mean_sec_sequential": 0.002259628501633415,
+      "mean_sec_batched": 0.002485502998752054,
+      "speedup_ratio": 0.9091232248635193
+    },
+    {
+      "scenario_id": "n4_nominal_batch8",
+      "conditioning": "nominal",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 8,
+      "mean_sec_sequential": 0.006224991502676858,
+      "mean_sec_batched": 0.004743554000015138,
+      "speedup_ratio": 1.3123053943640133
+    },
+    {
+      "scenario_id": "n4_tight_batch16",
+      "conditioning": "tight",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 16,
+      "mean_sec_sequential": 0.009210309999616584,
+      "mean_sec_batched": 0.008765993497945601,
+      "speedup_ratio": 1.0506863827557154
+    },
+    {
+      "scenario_id": "n4_tight_batch4",
+      "conditioning": "tight",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 4,
+      "mean_sec_sequential": 0.0024270085013995413,
+      "mean_sec_batched": 0.0023169050036813132,
+      "speedup_ratio": 1.0475218006535811
+    },
+    {
+      "scenario_id": "n4_tight_batch8",
+      "conditioning": "tight",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 8,
+      "mean_sec_sequential": 0.004440180000528926,
+      "mean_sec_batched": 0.004805817003216362,
+      "speedup_ratio": 0.9239178265750178
+    },
+    {
+      "scenario_id": "n8_loose_batch16",
+      "conditioning": "loose",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 16,
+      "mean_sec_sequential": 0.009777367497008527,
+      "mean_sec_batched": 0.010064246998808812,
+      "speedup_ratio": 0.971495184703412
+    },
+    {
+      "scenario_id": "n8_loose_batch4",
+      "conditioning": "loose",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 4,
+      "mean_sec_sequential": 0.002554522499849554,
+      "mean_sec_batched": 0.0026201744985883124,
+      "speedup_ratio": 0.9749436540298633
+    },
+    {
+      "scenario_id": "n8_loose_batch8",
+      "conditioning": "loose",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 8,
+      "mean_sec_sequential": 0.0050169130008725915,
+      "mean_sec_batched": 0.004807491000974551,
+      "speedup_ratio": 1.0435615999812766
+    },
+    {
+      "scenario_id": "n8_nominal_batch16",
+      "conditioning": "nominal",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 16,
+      "mean_sec_sequential": 0.009633601999667007,
+      "mean_sec_batched": 0.010243240496492945,
+      "speedup_ratio": 0.9404838247198566
+    },
+    {
+      "scenario_id": "n8_nominal_batch4",
+      "conditioning": "nominal",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 4,
+      "mean_sec_sequential": 0.002543374001106713,
+      "mean_sec_batched": 0.002459796996845398,
+      "speedup_ratio": 1.0339771958289645
+    },
+    {
+      "scenario_id": "n8_nominal_batch8",
+      "conditioning": "nominal",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 8,
+      "mean_sec_sequential": 0.00526397649809951,
+      "mean_sec_batched": 0.005061296498752199,
+      "speedup_ratio": 1.040045075287978
+    },
+    {
+      "scenario_id": "n8_tight_batch16",
+      "conditioning": "tight",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 16,
+      "mean_sec_sequential": 0.010709460504585877,
+      "mean_sec_batched": 0.009853373496298445,
+      "speedup_ratio": 1.0868826304624535
+    },
+    {
+      "scenario_id": "n8_tight_batch4",
+      "conditioning": "tight",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 4,
+      "mean_sec_sequential": 0.0023693434995948337,
+      "mean_sec_batched": 0.0024943704993347637,
+      "speedup_ratio": 0.9498763316142192
+    },
+    {
+      "scenario_id": "n8_tight_batch8",
+      "conditioning": "tight",
+      "device": "cpu",
+      "auto_tune": false,
+      "batch_size": 8,
+      "mean_sec_sequential": 0.004892355500487611,
+      "mean_sec_batched": 0.005598676500085276,
+      "speedup_ratio": 0.8738414338483557
+    }
+  ],
+  "summary": {
+    "pairs": 18,
+    "max_speedup_ratio": 1.3123053943640133
+  }
+}

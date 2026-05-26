@@ -1,0 +1,35 @@
+name: reference-authority
+
+# Public gate: index, snapshot, flagship invariants, and reference evidence tests.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+  workflow_dispatch:
+    # Monthly drift check on main (same as scheduled).
+    - cron: "0 6 1 * *"
+
+concurrency:
+  group: reference-authority-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project (dev)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: verify-reference-system
+        run: make verify-reference-system
+      - name: Committed batch acceptance report (viability policy)
+        run: |
+          python scripts/check_batch_acceptance.py \
+            --report benchmarks/reports/batch_solve_report.latest.json

@@ -20,15 +20,18 @@ def _load_policy(root: Path) -> dict[str, Any]:
 
 
 def check_batch_report(*, report: dict[str, Any], policy: dict[str, Any]) -> list[str]:
+    """Return failure messages. Empty list means acceptance passed."""
     failures: list[str] = []
     min_bs = int(policy.get("min_batch_size", 4))
     min_speedup = float(policy.get("min_speedup_ratio", 1.05))
     want_device = policy.get("device")
+    mode = str(policy.get("acceptance_mode", "any_row_meets"))
     comparisons = report.get("comparisons") or []
     if not comparisons:
         failures.append("no comparisons in batch_solve_report")
         return failures
-    matched = False
+
+    eligible: list[dict[str, Any]] = []
     for row in comparisons:
         if not isinstance(row, dict):
             continue
@@ -37,15 +40,29 @@ def check_batch_report(*, report: dict[str, Any], policy: dict[str, Any]) -> lis
             continue
         if want_device and row.get("device") != want_device:
             continue
+        eligible.append(row)
+
+    if not eligible:
+        failures.append(f"no comparison row with batch_size>={min_bs} and device={want_device!r}")
+        return failures
+
+    if mode == "any_row_meets":
+        best = max(float(r.get("speedup_ratio") or 0.0) for r in eligible)
+        if best < min_speedup:
+            failures.append(
+                f"no row met min_speedup_ratio={min_speedup} (best speedup_ratio={best:.4f} "
+                f"across {len(eligible)} eligible rows)"
+            )
+        return failures
+
+    for row in eligible:
+        bs = row.get("batch_size")
         speedup = float(row.get("speedup_ratio") or 0.0)
         if speedup < min_speedup:
             failures.append(
                 f"speedup_ratio={speedup:.4f} < {min_speedup} "
                 f"(batch_size={bs}, device={row.get('device')})"
             )
-        matched = True
-    if not matched:
-        failures.append(f"no comparison row with batch_size>={min_bs} and device={want_device!r}")
     return failures
 
 

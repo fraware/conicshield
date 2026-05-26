@@ -7,14 +7,37 @@ See docs/HOST_REALISTIC_REFRESH_PROCEDURE.md.
 from __future__ import annotations
 
 import argparse
+import json
+import shutil
 import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
+_FAMILY_ID = "conicshield-transition-bank-v1"
+
 
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
+
+
+def flagship_run_id(repo: Path) -> str | None:
+    """Family ``current_run_id`` when its published bundle exists on disk."""
+    current_path = repo / "benchmarks" / "releases" / _FAMILY_ID / "CURRENT.json"
+    if not current_path.is_file():
+        return None
+    run_id = json.loads(current_path.read_text(encoding="utf-8")).get("current_run_id")
+    if not isinstance(run_id, str) or not run_id.strip():
+        return None
+    if (repo / "benchmarks" / "published_runs" / run_id).is_dir():
+        return run_id
+    return None
+
+
+def default_refresh_run_id(repo: Path, *, new_milestone: bool) -> str:
+    if new_milestone:
+        return f"host-realistic-{datetime.now(UTC).strftime('%Y%m%d')}"
+    return flagship_run_id(repo) or f"host-realistic-{datetime.now(UTC).strftime('%Y%m%d')}"
 
 
 def _run(cmd: list[str], *, cwd: Path) -> int:
@@ -28,7 +51,17 @@ def main() -> int:
         "--run-id",
         type=str,
         default=None,
-        help="Published run id (default: host-realistic-YYYYMMDD from UTC date).",
+        help="Published run id (default: family current_run_id when published, else dated milestone).",
+    )
+    p.add_argument(
+        "--new-milestone",
+        action="store_true",
+        help="Use host-realistic-YYYYMMDD even when a flagship current_run_id exists.",
+    )
+    p.add_argument(
+        "--skip-vendor-verify",
+        action="store_true",
+        help="Skip performance sweep and batch acceptance (governance-only refresh).",
     )
     p.add_argument(
         "--live-graph-json",
@@ -56,7 +89,8 @@ def main() -> int:
     args = p.parse_args()
 
     repo = _repo_root()
-    run_id = args.run_id or f"host-realistic-{datetime.now(UTC).strftime('%Y%m%d')}"
+    run_id = args.run_id or default_refresh_run_id(repo, new_milestone=args.new_milestone)
+    print(f"Refresh target run_id={run_id}", file=sys.stderr)
     export = args.export_json or (
         repo / "benchmarks" / "external_evidence" / "offline_graph_export_upstream.json"
     )
@@ -104,11 +138,19 @@ def main() -> int:
         return rc
 
     published = repo / "benchmarks" / "published_runs" / run_id
-    if args.promote_release:
+    gdec = published / "governance_decision.md"
+    runs_gdec = repo / "benchmarks" / "runs" / run_id / "governance_decision.md"
+    if gdec.is_file() and "approve" in gdec.read_text(encoding="utf-8").lower():
+        runs_gdec.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(gdec, runs_gdec)
+
+    current_run_id = flagship_run_id(repo)
+    sync_release = args.promote_release or current_run_id == run_id
+    if sync_release:
         gdec = published / "governance_decision.md"
         if not gdec.is_file() or "approve" not in gdec.read_text(encoding="utf-8").lower():
             print(
-                f"Refusing --promote-release: complete and approve {gdec} first.",
+                f"Refusing release sync: complete and approve {gdec} first.",
                 file=sys.stderr,
             )
             return 2
@@ -120,7 +162,7 @@ def main() -> int:
                 "--run-dir",
                 str(published),
                 "--family-id",
-                "conicshield-transition-bank-v1",
+                _FAMILY_ID,
                 "--reason",
                 f"Host-realistic refresh cycle {run_id}",
             ],
@@ -132,14 +174,65 @@ def main() -> int:
         if rc != 0:
             return rc
 
+    if not args.governance_only and not args.skip_vendor_verify:
+        vdir = repo / "output" / "host_realistic_refresh_verify"
+        rc = _run(
+            [
+                sys.executable,
+                str(repo / "scripts" / "performance_benchmark.py"),
+                "--out-dir",
+                str(vdir),
+                "--repeats",
+                "5",
+                "--sweep",
+                "--batch-sizes",
+                "4,8,16",
+            ],
+            cwd=repo,
+        )
+        if rc != 0:
+            return rc
+        rc = _run(
+            [
+                sys.executable,
+                str(repo / "scripts" / "batch_solve_report.py"),
+                "--input",
+                str(vdir / "performance_summary.json"),
+                "--out",
+                str(vdir / "batch_solve_report.json"),
+            ],
+            cwd=repo,
+        )
+        if rc != 0:
+            return rc
+        latest = repo / "benchmarks" / "reports" / "batch_solve_report.latest.json"
+        latest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(vdir / "batch_solve_report.json", latest)
+        rc = _run(
+            [
+                sys.executable,
+                str(repo / "scripts" / "check_batch_acceptance.py"),
+                "--report",
+                str(vdir / "batch_solve_report.json"),
+            ],
+            cwd=repo,
+        )
+        if rc != 0:
+            return rc
+
+    # README sync before index/snapshot so --check gates see a stable tree.
     for script in (
+        "scripts/sync_published_run_readmes.py",
         "scripts/refresh_published_run_index.py",
         "scripts/generate_reference_authority_snapshot.py",
-        "scripts/sync_published_run_readmes.py",
     ):
         rc = _run([sys.executable, str(repo / script)], cwd=repo)
         if rc != 0:
             return rc
+
+    rc = _run([sys.executable, str(repo / "scripts" / "reference_authority_check.py")], cwd=repo)
+    if rc != 0:
+        return rc
 
     print(
         f"\nRefresh cycle complete for {run_id}. "

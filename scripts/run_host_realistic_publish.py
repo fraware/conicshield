@@ -191,6 +191,16 @@ def _write_governance_scaffold(
         return rc
     template = repo_root / "benchmarks" / "templates" / "governance_decision.template.md"
     dest = run_dir / "governance_decision.md"
+    published_decision = (
+        repo_root / "benchmarks" / "published_runs" / run_id / "governance_decision.md"
+    )
+    if published_decision.is_file():
+        if not dest.is_file():
+            shutil.copy2(published_decision, dest)
+        elif "approve" in published_decision.read_text(encoding="utf-8").lower():
+            published_text = published_decision.read_text(encoding="utf-8")
+            if "approve" not in dest.read_text(encoding="utf-8").lower():
+                shutil.copy2(published_decision, dest)
     if template.is_file() and not dest.is_file():
         text = template.read_text(encoding="utf-8")
         text = (

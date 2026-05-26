@@ -41,7 +41,7 @@ Solver-touching PRs require documented vendor proof (`vendor-ci-moreau` or maint
 
 ## Repeatable host-realistic operations
 
-Scheduled or event-driven refresh: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md), `make host-realistic-refresh-cycle`.
+Scheduled or event-driven refresh: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md), `make host-realistic-refresh-cycle`. CI: workflow `reference-authority` (`make verify-reference-system` + committed batch viability report).
 
 ## Optional refresh
 

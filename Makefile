@@ -23,7 +23,7 @@ else
   PYTHON ?= python
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance verify-reference-system reference-authority-check reference-authority-snapshot refresh-live-upstream-export host-realistic-refresh-cycle sync-published-readmes
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance verify-reference-system reference-authority-check reference-authority-snapshot refresh-live-upstream-export host-realistic-refresh-cycle host-realistic-refresh-milestone sync-published-readmes
 
 test:
 	$(PYTHON) -m pytest -q
@@ -64,7 +64,10 @@ check-batch-acceptance:
 	$(PYTHON) scripts/check_batch_acceptance.py
 
 host-realistic-refresh-cycle:
-	$(PYTHON) scripts/host_realistic_refresh_cycle.py --force
+	$(PYTHON) scripts/host_realistic_refresh_cycle.py --run-id host-realistic-20260525 --force
+
+host-realistic-refresh-milestone:
+	$(PYTHON) scripts/host_realistic_refresh_cycle.py --new-milestone --promote-release --force
 
 sync-published-readmes:
 	$(PYTHON) scripts/sync_published_run_readmes.py
@@ -103,6 +106,7 @@ verify-reference-system: reference-authority-check
 		tests/governance/test_check_batch_acceptance.py \
 		tests/governance/test_native_arm_publish_evidence.py \
 		tests/governance/test_run_host_realistic_publish.py \
+		tests/governance/test_host_realistic_refresh_cycle.py \
 		tests/governance/test_batch_solve_report.py \
 		tests/bench/test_inter_sim_export.py \
 		tests/scripts/test_export_inter_sim_cli.py \

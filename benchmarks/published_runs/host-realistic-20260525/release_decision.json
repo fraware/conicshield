@@ -4,6 +4,6 @@
   "target_family_id": "conicshield-transition-bank-v1",
   "mode": "same-family",
   "requires_family_bump": false,
-  "reason": "Promote flagship host-realistic vendor_native run as family current_run_id",
+  "reason": "Host-realistic refresh cycle host-realistic-20260525",
   "compatibility_reason": "Task contract compatible with current family"
 }

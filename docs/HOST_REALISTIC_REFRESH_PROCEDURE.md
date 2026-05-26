@@ -14,16 +14,21 @@
 Uses the committed upstream-shaped export in [`benchmarks/external_evidence/`](../benchmarks/external_evidence/). No live simulator dump required.
 
 ```bash
-# One command (licensed host, WSL recommended):
+# Refresh the family flagship (default: current_run_id on disk):
 make host-realistic-refresh-cycle
 
-# Or explicit run_id for a new milestone:
+# New dated milestone + promote to current_run_id:
+make host-realistic-refresh-milestone
+
+# Explicit run_id:
 python scripts/host_realistic_refresh_cycle.py \
   --run-id host-realistic-YYYYMMDD \
   --promote-release
 ```
 
-The script runs: vendor publish → parity → finalize → optional release → index → reference-authority snapshot.
+By default the cycle targets **`current_run_id`** from `benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json` when that published bundle exists. Use `--new-milestone` to allocate `host-realistic-YYYYMMDD` instead.
+
+The script runs: vendor publish → parity → finalize → **release sync** when `run_id` is the family `current_run_id` (or `--promote-release`) → vendor batch sweep → README/index/snapshot refresh.
 
 ## Live upstream refresh cycle
 

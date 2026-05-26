@@ -17,7 +17,12 @@ def _load_check_module():
 
 def test_check_batch_report_passes_above_threshold() -> None:
     mod = _load_check_module()
-    policy = {"min_batch_size": 4, "min_speedup_ratio": 1.05, "device": "cpu"}
+    policy = {
+        "min_batch_size": 4,
+        "min_speedup_ratio": 1.05,
+        "device": "cpu",
+        "acceptance_mode": "any_row_meets",
+    }
     report = {
         "comparisons": [
             {
@@ -32,13 +37,36 @@ def test_check_batch_report_passes_above_threshold() -> None:
     assert mod.check_batch_report(report=report, policy=policy) == []
 
 
-def test_check_batch_report_fails_below_threshold() -> None:
+def test_check_batch_report_fails_when_no_row_meets_threshold() -> None:
     mod = _load_check_module()
-    policy = {"min_batch_size": 4, "min_speedup_ratio": 1.05, "device": "cpu"}
+    policy = {
+        "min_batch_size": 4,
+        "min_speedup_ratio": 1.05,
+        "device": "cpu",
+        "acceptance_mode": "any_row_meets",
+    }
     report = {
         "comparisons": [
             {"batch_size": 4, "device": "cpu", "speedup_ratio": 1.01},
+            {"batch_size": 8, "device": "cpu", "speedup_ratio": 0.9},
         ]
     }
     failures = mod.check_batch_report(report=report, policy=policy)
     assert failures
+
+
+def test_check_batch_report_any_row_meets_passes() -> None:
+    mod = _load_check_module()
+    policy = {
+        "min_batch_size": 4,
+        "min_speedup_ratio": 1.05,
+        "device": "cpu",
+        "acceptance_mode": "any_row_meets",
+    }
+    report = {
+        "comparisons": [
+            {"batch_size": 4, "device": "cpu", "speedup_ratio": 0.7},
+            {"batch_size": 8, "device": "cpu", "speedup_ratio": 1.2},
+        ]
+    }
+    assert mod.check_batch_report(report=report, policy=policy) == []
