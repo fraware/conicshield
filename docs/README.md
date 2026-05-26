@@ -5,6 +5,11 @@ Policy and runbooks for ConicShield. The repository root [`README.md`](../README
 | Document | Purpose |
 |----------|---------|
 | [REFERENCE_AUTHORITY.md](REFERENCE_AUTHORITY.md) | Flagship release, closed loop, maintainer gates |
+| [HOST_REALISTIC_REFRESH_PROCEDURE.md](HOST_REALISTIC_REFRESH_PROCEDURE.md) | Repeatable host-realistic refresh cycle |
+| [REVIEWER_MERGE_CHECKLIST.md](REVIEWER_MERGE_CHECKLIST.md) | Binding merge checklist (Policy B) |
+| [PUBLISHED_BUNDLE_CATALOG.md](PUBLISHED_BUNDLE_CATALOG.md) | Published bundle artifact catalog |
+| [DIFFERENTIATION_PUBLIC_STANCE.md](DIFFERENTIATION_PUBLIC_STANCE.md) | Public claims vs deferred autograd |
+| [V2_STRATEGY.md](V2_STRATEGY.md) | v2 direction (Option A default) |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System layers and design intent |
 | [ENGINEERING_STATUS.md](ENGINEERING_STATUS.md) | What ships in-tree vs vendor-only |
 | [ROADMAP.md](ROADMAP.md) | External deps, closed milestones, open backlog |

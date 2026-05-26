@@ -54,6 +54,10 @@ What is **not** closed or only partially addressed:
 
 Possible follow-ons (not blocking core development): items in **Open backlog** and any new family forks when the task contract changes materially.
 
+## v2 direction
+
+See [`V2_STRATEGY.md`](V2_STRATEGY.md) — **Option A (deepen same family)** is the active default.
+
 ## Where to run commands
 
-[`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md). Verification layers: [`VERIFICATION_AND_STRESS_TEST_PLAN.md`](VERIFICATION_AND_STRESS_TEST_PLAN.md). Host-realistic checklist: [`HOST_REALISTIC_RUNBOOK.md`](HOST_REALISTIC_RUNBOOK.md). Solver paths: [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md).
+[`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md). Host-realistic refresh: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md). Merge law: [`REVIEWER_MERGE_CHECKLIST.md`](REVIEWER_MERGE_CHECKLIST.md). Solver paths: [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md).

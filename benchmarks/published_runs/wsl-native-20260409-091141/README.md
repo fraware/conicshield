@@ -1,4 +1,4 @@
-# Published run `host-realistic-20260525`
+# Published run `wsl-native-20260409-091141`
 
 Governed benchmark bundle for `conicshield-transition-bank-v1`.
 
@@ -6,10 +6,10 @@ Governed benchmark bundle for `conicshield-transition-bank-v1`.
 |-------|--------|
 | `evidence_tier` | `vendor_native` |
 | `projector_mode` | `real_projector` |
-| Host-realistic export evidence | yes |
+| Host-realistic export evidence | no |
 | Includes `shielded-native-moreau` | yes |
 | Parity fixture gold source | no |
-| Family `current_run_id` | yes |
+| Family `current_run_id` | no |
 | Governance `state` | `published` |
 
 ## What this run proves

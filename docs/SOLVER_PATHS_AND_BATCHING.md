@@ -1,58 +1,84 @@
 # Solver paths and batching
 
-ConicShield exposes three solve surfaces for the same QP family. Use this guide to pick the right path and to report benchmark evidence consistently.
+ConicShield exposes **three production-relevant solve modes** for the same QP family. Batch is a **first-class API**, not an internal benchmark trick.
 
-## Path comparison
+## Architecture (three modes)
 
-| Path | API / backend | Batch behavior | When to use |
-|------|----------------|----------------|-------------|
-| **Reference** | `CVXPYMoreauProjector`, `cp.MOREAU` | One problem per call | Parity gold, governance reference arm (`shielded-rules-plus-geometry`) |
-| **Sequential native** | `Backend.NATIVE_MOREAU`, `NativeMoreauCompiledProjector` | `CompiledSolver` with `batch_size=1` per shield step | Production inter-sim shield steps, warm-start reuse |
-| **True compiled batch** | `Backend.NATIVE_MOREAU_BATCH`, `create_batch_projector()` | One `CompiledSolver.solve(qs, bs)` per `project_batch` | Multi-proposal throughput, benchmark speedup evidence |
-| **Microbatch loop** | `native_microbatch` in `performance_benchmark.py` | Python loop over sequential solves | Baseline comparison only — not the production batch API |
+```mermaid
+flowchart TB
+  subgraph refLane [Reference lane]
+    CVX[CVXPYMoreauProjector]
+    CVX --> parityGate[Parity and governance gold]
+  end
+  subgraph seqLane [Sequential native lane]
+    NM[Backend.NATIVE_MOREAU]
+    CS1[CompiledSolver batch_size 1]
+    NM --> CS1
+    CS1 --> shieldStep[InterSim shield steps warm-start]
+  end
+  subgraph batchLane [True batched native lane]
+    NMB[Backend.NATIVE_MOREAU_BATCH]
+    CSB[create_batch_projector]
+    NMB --> CSB
+    CSB --> projectBatch[project_batch one solve per call]
+  end
+  shieldStep --> parityGate
+  projectBatch --> benchEvidence[batch_solve_report.json]
+```
 
-Programmatic entry points:
+| Mode | API | Batch behavior | Primary use |
+|------|-----|----------------|-------------|
+| **1 — Reference** | `CVXPYMoreauProjector`, `cp.MOREAU` | One QP per call | Parity gold, `shielded-rules-plus-geometry` |
+| **2 — Sequential native** | `Backend.NATIVE_MOREAU`, `create_projector()` | `CompiledSolver` with `batch_size=1` | Production shield steps, warm-start |
+| **3 — True compiled batch** | `Backend.NATIVE_MOREAU_BATCH`, `create_batch_projector()` | Single `solve(qs, bs)` over stacked problems | Throughput, multi-proposal shields |
+| *(baseline only)* | `native_microbatch` in benchmarks | Python loop calling sequential | Compare against mode 3 only |
 
-- Single step: `create_projector(Backend.NATIVE_MOREAU, ...)`
-- Batch: `create_batch_projector(...)` → `NativeMoreauCompiledBatchProjector`
-- Shield: `InterSimConicShield` (sequential) or `project_softmax_batch` (native batch path where applicable)
+**Default rule:** use mode 2 for single-step shields; use mode 3 when you have multiple proposals with shared structure.
+
+## Programmatic entry points
+
+```python
+from conicshield.core.solver_factory import Backend, create_batch_projector, create_projector
+
+# Sequential native (production step)
+projector = create_projector(spec, backend=Backend.NATIVE_MOREAU)
+
+# True batch (throughput)
+batch_projector = create_batch_projector(spec, backend=Backend.NATIVE_MOREAU_BATCH)
+```
+
+Shield: `InterSimConicShield.project` (sequential) or `project_softmax_batch` (native batch path).
 
 Details: [`MOREAU_API_NOTES.md`](MOREAU_API_NOTES.md), [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
-## Benchmark commands (licensed host)
+## Benchmark and verification bundle
 
-Generate timing rows (includes `native_microbatch` vs `native_compiled_real_batch`):
-
-```bash
-python scripts/performance_benchmark.py
-# optional sweep:
-python scripts/performance_benchmark.py --sweep --batch-sizes 4,8,16
-```
-
-Summarize speedup (sequential mean / batched mean):
+Licensed host standard sequence:
 
 ```bash
-python scripts/batch_solve_report.py output/performance_summary.json
-# writes output/batch_solve_report.json by default
+python scripts/performance_benchmark.py --batch-size 4
+python scripts/batch_solve_report.py
+python scripts/check_batch_acceptance.py
 ```
 
-## Evidence in governed runs
+`batch_solve_report.json` is part of the **vendor verification bundle** (Vendor CI and `run_live_vendor_tests.py`). Policy: [`benchmarks/reports/batch_acceptance_policy.json`](../benchmarks/reports/batch_acceptance_policy.json).
 
-Published benchmark bundles (`benchmarks/published_runs/<run_id>/`) record **per-arm** metrics in `summary.json`. The reference and native arms use sequential per-step solves inside `reference_run`. Batch speedup is **orthogonal** evidence from `performance_benchmark.py` / `batch_solve_report.json`, not a substitute for parity or promotion gates.
+### Acceptance threshold (vendor)
 
-Flagship host-realistic export loop: [`HOST_REALISTIC_RUNBOOK.md`](HOST_REALISTIC_RUNBOOK.md). Evidence tiers: [`REFERENCE_EVIDENCE_TIERS.md`](REFERENCE_EVIDENCE_TIERS.md).
+At `batch_size >= 4` on CPU, **compiled batch mean time** must beat **sequential microbatch** with `speedup_ratio >= 1.05` (5% faster). Enforced by `scripts/check_batch_acceptance.py` after benchmarks on licensed hosts.
 
-## Mental model
+## Regression tests (vendor lane)
 
-```mermaid
-flowchart LR
-  ref[Reference CVXPY]
-  seq[Native batch_size 1]
-  bat[Native compiled batch]
-  ref --> parity[Parity gate]
-  seq --> parity
-  bat --> bench[Throughput benchmarks]
-  seq --> prod[Production shield steps]
-```
+| Test | What it proves |
+|------|----------------|
+| `tests/vendor/native/test_native_moreau_projector.py::test_batched_compiled_matches_sequential_native` | Mode 3 matches mode 2 within tolerance |
+| `tests/vendor/native/test_shield_native_softmax_batch.py` | Shield batch path matches sequential row |
+| `tests/core/test_solver_factory.py` | `NATIVE_MOREAU_BATCH` is the batch factory default |
 
-**Strongest production path:** sequential native with warm-start. **Strongest throughput path:** `NATIVE_MOREAU_BATCH`. **Ground truth for gates:** reference + parity replay on the frozen fixture.
+Public CI runs factory contracts; full numeric batch parity runs under **`vendor-ci-moreau`** (solver-touch scope).
+
+## Governed benchmark bundles
+
+Published runs record **per-arm sequential** metrics in `summary.json`. Batch speedup is **orthogonal throughput evidence**, not a substitute for parity or promotion gates.
+
+Flagship: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md). Evidence tiers: [`REFERENCE_EVIDENCE_TIERS.md`](REFERENCE_EVIDENCE_TIERS.md).

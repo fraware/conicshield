@@ -11,6 +11,15 @@ GitHub branch protection is configured in the repository settings, not in this t
 
 **Path-filtered `solver-touch`:** the job is listed as required in branch protection but **skips** on PRs that do not touch solver/parity/benchmark paths (see workflow `paths:`). That is intentional: unrelated docs-only PRs should not wait on parity replay.
 
+## Repository law: Policy B (adopted)
+
+| Policy | Status |
+|--------|--------|
+| **A** — `vendor-ci-moreau` required on protected branch | Not adopted (fork-unfriendly) |
+| **B** — Public checks required + **binding maintainer attestation** for solver-touch | **Active** |
+
+Reviewer checklist: [`REVIEWER_MERGE_CHECKLIST.md`](REVIEWER_MERGE_CHECKLIST.md).
+
 ## Binding merge rule (solver-touching changes)
 
 PRs that touch native/Moreau/parity/published-run paths **must not merge** without vendor proof documented in the PR:

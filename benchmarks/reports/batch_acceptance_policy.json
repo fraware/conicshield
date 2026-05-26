@@ -1,0 +1,8 @@
+{
+  "schema_version": "conicshield_batch_acceptance_policy/v1",
+  "description": "Vendor-host acceptance thresholds for native compiled batch vs sequential microbatch.",
+  "min_batch_size": 4,
+  "min_speedup_ratio": 1.05,
+  "device": "cpu",
+  "notes": "Enforced on licensed hosts via scripts/check_batch_acceptance.py after performance_benchmark.py."
+}

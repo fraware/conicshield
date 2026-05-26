@@ -100,6 +100,7 @@ jobs:
           python scripts/reference_correctness_summary.py --out-dir "$VDIR"
           python scripts/performance_benchmark.py --out-dir "$VDIR" --repeats 5 --batch-size 4
           python scripts/batch_solve_report.py --input "$VDIR/performance_summary.json" --out "$VDIR/batch_solve_report.json"
+          python scripts/check_batch_acceptance.py --report "$VDIR/batch_solve_report.json"
           python scripts/differentiation_check.py --out-dir "$VDIR"
           python -m conicshield.parity.cli \
             --reference-dir tests/fixtures/parity_reference \

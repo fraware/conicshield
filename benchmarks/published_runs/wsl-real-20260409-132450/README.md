@@ -1,17 +1,29 @@
 # Published run `wsl-real-20260409-132450`
 
-`CURRENT.json` for family `conicshield-transition-bank-v1` points at this `run_id`. **Strict governance audit** expects a validate-passing bundle at this path (see `conicshield.benchmark_paths.resolve_run_directory`).
+Governed benchmark bundle for `conicshield-transition-bank-v1`.
 
-## Maintainer: commit the real bundle here
+| Field | Value |
+|-------|--------|
+| `evidence_tier` | `vendor_reference` |
+| `projector_mode` | `real_projector` |
+| Host-realistic export evidence | no |
+| Includes `shielded-native-moreau` | no |
+| Parity fixture gold source | yes |
+| Family `current_run_id` | no |
+| Governance `state` | `review-locked` |
 
-1. On the licensed host where this run was produced, confirm:
+## What this run proves
 
-   `python -m conicshield.artifacts.validator_cli --run-dir <path-to-bundle>`
+- Validated artifact surface (`validate_run_bundle`)
+- Benchmark arms in `summary.json` with governance gates in `governance_status.json`
 
-2. Copy the **entire** directory contents into this folder so it matches the published run (same `config.json`, `summary.json`, `episodes.jsonl`, `transition_bank.json`, `governance_status.json` when present, schema sidecars, etc.).
+## What this run does not claim
 
-3. Re-run locally from the repo root:
+- Differentiable runtime shield product guarantees (see `docs/DIFFERENTIATION_PUBLIC_STANCE.md`)
+- Live upstream simulator export unless `RUN_PROVENANCE.json` says so
 
-   `python -m conicshield.governance.audit_cli --strict`
+## Ops
 
-Until the files are present, clones of the repository cannot reproduce or audit the published bytes alongside registry metadata. Keeping this directory in sync with each publish is the chosen **in-repo immutable bundle** policy; see [`../README.md`](../README.md).
+- Refresh procedure: [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](../../docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)
+- Catalog spec: [`docs/PUBLISHED_BUNDLE_CATALOG.md`](../../docs/PUBLISHED_BUNDLE_CATALOG.md)
+

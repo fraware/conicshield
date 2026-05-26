@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-05-26T04:37:08Z",
+  "generated_at_utc": "2026-05-26T05:34:06Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
     "host-realistic-20260525",
@@ -49,8 +49,19 @@
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "6207f8a52bbf1af612d84d84c779b85d34f97e9be826b4009cfb097eae36334e"
+          "sha256": "533c021bbe091372d7a0e426de21d55a41cbc581bd7e84419666a33db695a47f"
         }
+      },
+      "catalog": {
+        "run_id": "host-realistic-20260525",
+        "evidence_tier": "vendor_native",
+        "host_realistic": true,
+        "includes_native_arm": true,
+        "parity_fixture_source": false,
+        "has_solver_versions": true,
+        "projector_mode": "real_projector",
+        "governance_state": "published",
+        "is_family_current_run": true
       }
     },
     {
@@ -89,7 +100,21 @@
         },
         "release_decision.json": {
           "sha256": "8ff93f876bc47fb202e445daafd9bbaec4f958ca739afad95b48057b22b03d4c"
+        },
+        "README.md": {
+          "sha256": "4ebecb32cf3174328e6dbf19695c7f5158e65892dbac4acbe6756b6c584fa489"
         }
+      },
+      "catalog": {
+        "run_id": "wsl-native-20260409-091141",
+        "evidence_tier": "vendor_native",
+        "host_realistic": false,
+        "includes_native_arm": true,
+        "parity_fixture_source": false,
+        "has_solver_versions": false,
+        "projector_mode": "real_projector",
+        "governance_state": "published",
+        "is_family_current_run": false
       }
     },
     {
@@ -133,8 +158,19 @@
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "9efa7d15133acb414756910531e1504a039286e945e2505067f6a57dc4b660bc"
+          "sha256": "456f6cc5d458c97307b4fb3d7f9a26e722e6251e18dfc0ce663b0c273384b180"
         }
+      },
+      "catalog": {
+        "run_id": "wsl-real-20260409-132450",
+        "evidence_tier": "vendor_reference",
+        "host_realistic": false,
+        "includes_native_arm": false,
+        "parity_fixture_source": true,
+        "has_solver_versions": true,
+        "projector_mode": "real_projector",
+        "governance_state": "review-locked",
+        "is_family_current_run": false
       }
     }
   ]

@@ -26,6 +26,8 @@ if str(_REPO_ROOT) not in sys.path:
 from conicshield.published_run_index import (  # noqa: E402
     PUBLISHED_RUN_OPTIONAL_INTEGRITY_FILENAMES,
     PUBLISHED_RUN_REQUIRED_INTEGRITY_FILENAMES,
+    build_run_catalog_metadata,
+    enrich_catalog_with_current_run,
 )
 
 
@@ -76,8 +78,16 @@ def _sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def _family_current_run_id(repo_root: Path) -> str | None:
+    current_path = repo_root / "benchmarks" / "releases" / "conicshield-transition-bank-v1" / "CURRENT.json"
+    if not current_path.is_file():
+        return None
+    return str(json.loads(current_path.read_text(encoding="utf-8")).get("current_run_id") or "") or None
+
+
 def build_index(*, repo_root: Path, published_root: Path) -> dict[str, Any]:
     allowed = _governed_run_ids(repo_root)
+    current_run_id = _family_current_run_id(repo_root)
     if not allowed:
         raise SystemExit("no governed run_ids found (registry/releases); refusing to emit an empty index")
     runs_payload: list[dict[str, Any]] = []
@@ -101,11 +111,14 @@ def build_index(*, repo_root: Path, published_root: Path) -> dict[str, Any]:
             p = run_dir / name
             if p.is_file():
                 integrity[name] = {"sha256": _sha256_file(p)}
+        catalog = build_run_catalog_metadata(run_dir=run_dir, repo_root=repo_root)
+        catalog = enrich_catalog_with_current_run(catalog=catalog, current_run_id=current_run_id)
         runs_payload.append(
             {
                 "run_id": rid,
                 "repository_relative_path": rel,
                 "integrity": integrity,
+                "catalog": catalog,
             }
         )
     if missing:

@@ -23,7 +23,7 @@ else
   PYTHON ?= python
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report verify-reference-system reference-authority-check reference-authority-snapshot refresh-live-upstream-export
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance verify-reference-system reference-authority-check reference-authority-snapshot refresh-live-upstream-export host-realistic-refresh-cycle sync-published-readmes
 
 test:
 	$(PYTHON) -m pytest -q
@@ -55,9 +55,19 @@ reference-correctness:
 perf-benchmark:
 	$(PYTHON) scripts/performance_benchmark.py --batch-size 4
 	$(PYTHON) scripts/batch_solve_report.py
+	$(PYTHON) scripts/check_batch_acceptance.py
 
 batch-solve-report:
 	$(PYTHON) scripts/batch_solve_report.py
+
+check-batch-acceptance:
+	$(PYTHON) scripts/check_batch_acceptance.py
+
+host-realistic-refresh-cycle:
+	$(PYTHON) scripts/host_realistic_refresh_cycle.py --force
+
+sync-published-readmes:
+	$(PYTHON) scripts/sync_published_run_readmes.py
 
 host-realistic-rehearsal:
 	$(PYTHON) scripts/run_host_realistic_publish.py \
@@ -89,6 +99,8 @@ verify-reference-system: reference-authority-check
 		tests/governance/test_reference_evidence_tiers.py \
 		tests/governance/test_reference_authority_invariants.py \
 		tests/governance/test_conic_suite_report_clusters.py \
+		tests/governance/test_published_run_catalog.py \
+		tests/governance/test_check_batch_acceptance.py \
 		tests/governance/test_native_arm_publish_evidence.py \
 		tests/governance/test_run_host_realistic_publish.py \
 		tests/governance/test_batch_solve_report.py \

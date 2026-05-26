@@ -61,6 +61,8 @@ def main() -> int:
     perf = _load(artifact_dir / "performance_summary.json")
     gov = _load(artifact_dir / "governance_dashboard.json")
     diff = _load(artifact_dir / "differentiation_summary.json")
+    batch_report = _load(artifact_dir / "batch_solve_report.json")
+    batch_policy = _load(_repo_root() / "benchmarks" / "reports" / "batch_acceptance_policy.json")
     ref_auth = _load(_repo_root() / "benchmarks" / "reports" / "reference_authority_snapshot.json")
     if ref_auth is None:
         try:
@@ -97,6 +99,8 @@ def main() -> int:
             "benchmarks/reports/reference_authority_snapshot.json",
             ref_auth,
         ),
+        ("Batch solve report", "batch_solve_report.json", batch_report),
+        ("Batch acceptance policy", "batch_acceptance_policy.json", batch_policy),
     ]:
         md_parts.append(f"## {title}")
         md_parts.append("")
@@ -133,6 +137,8 @@ def main() -> int:
   {_section("Governance", gov)}
   {_section("Differentiation", diff)}
   {_section("Reference authority", ref_auth)}
+  {_section("Batch solve report", batch_report)}
+  {_section("Batch acceptance policy", batch_policy)}
 </body>
 </html>
 """

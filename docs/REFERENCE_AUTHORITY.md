@@ -39,11 +39,15 @@ See [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md): reference CV
 
 Solver-touching PRs require documented vendor proof (`vendor-ci-moreau` or maintainer attestation). See [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md), [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md).
 
+## Repeatable host-realistic operations
+
+Scheduled or event-driven refresh: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md), `make host-realistic-refresh-cycle`.
+
 ## Optional refresh
 
 | When | Action |
 |------|--------|
-| Live inter-sim dump available | `python scripts/refresh_live_upstream_export.py --graph-json <dump.json>` then `make upgrade-host-realistic-vendor` |
+| Live inter-sim dump available | `python scripts/refresh_live_upstream_export.py --graph-json <dump.json>` then `make host-realistic-refresh-cycle` |
 | Governance only | `python scripts/upgrade_host_realistic_vendor.py --refresh-governance` |
 
 ## Explicitly deferred
