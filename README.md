@@ -1,9 +1,22 @@
-# ConicShield
+<div align="center">
+
+<pre>
+###############################################################################################
+#                     ____            _      ____  _     _      _     _                       #
+#                    / ___|___  _ __ (_) ___/ ___|| |__ (_) ___| | __| |                      #
+#                   | |   / _ \| '_ \| |/ __\___ \| '_ \| |/ _ \ |/ _` |                      #
+#                   | |__| (_) | | | | | (__ ___) | | | | |  __/ | (_| |                      #
+#                    \____\___/|_| |_|_|\___|____/|_| |_|_|\___|_|\__,_|                      #
+#                                                                                             #
+###############################################################################################
+</pre>
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **Runtime safety through convex projection — with evidence you can replay, validate, and govern.**
+
+</div>
 
 A policy proposes an action. ConicShield solves a constrained optimization problem to find the **nearest admissible** action under explicit safety constraints. The world sees the **corrected** action, not the raw proposal. Every intervention yields structured records you can hash, audit, and benchmark under family policy.
 
