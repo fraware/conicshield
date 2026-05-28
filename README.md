@@ -59,7 +59,9 @@ Refresh: `make host-realistic-refresh-cycle-licensed` — [`docs/HOST_REALISTIC_
 
 **Batch:** governed; viability-tested — not universal speedup ([`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md)). **Differentiation:** validation-only ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)).
 
-Docs index: [`docs/README.md`](docs/README.md). Merge: [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md). Local: `make reference-authority-check`, `make verify-reference-system`.
+**Start here:** [Researcher](docs/QUICKSTART_RESEARCHER.md) · [Integrator](docs/QUICKSTART_INTEGRATOR.md) · [Maintainer](docs/QUICKSTART_MAINTAINER.md) · [Examples](examples/README.md) · [Public claims](docs/PUBLIC_CLAIMS.md)
+
+Docs index: [`docs/README.md`](docs/README.md). Local: `make reference-authority-check`, `make verify-reference-system`, `python -m conicshield.published_runs.cli list`.
 
 ## Installation
 

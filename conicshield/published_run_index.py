@@ -28,6 +28,7 @@ PUBLISHED_RUN_OPTIONAL_INTEGRITY_FILENAMES: Final[tuple[str, ...]] = (
     "release_decision.json",
     "solver_versions.json",
     "README.md",
+    "COMMUNITY_METADATA.json",
 )
 
 EvidenceTier = Literal[

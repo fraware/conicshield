@@ -2,6 +2,11 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — Community-facing quickstarts, published_runs API, and examples
+
+- Audience entrypoints: `QUICKSTART_RESEARCHER`, `QUICKSTART_INTEGRATOR`, `QUICKSTART_MAINTAINER`.
+- `conicshield.published_runs` API + CLI; `COMMUNITY_METADATA.json` public schema; `examples/` suite.
+
 ### 2026-05-28 — Full refresh cadence gate and branch protection audit
 
 - `check_flagship_full_refresh_cadence.py` (requires `live-export-full` + `authority_ok` within 35 days).

@@ -68,24 +68,23 @@ def build_community_metadata(
         ps = _load_json(run_dir / "parity_out" / "parity_summary.json")
         parity_status = "green" if ps.get("passed") else str(ps.get("status", "present"))
 
+    parity_fixture_source = bool(catalog.get("parity_fixture_source"))
     return {
         "schema_version": "conicshield_community_metadata/v1",
         "run_id": rid,
         "family_id": "conicshield-transition-bank-v1",
         "evidence_tier": tier,
-        "host_realistic_evidence": host,
+        "host_realistic": host,
         "includes_native_arm": includes_native,
-        "fixture_source_candidate": bool(fixture_rid),
-        "parity_fixture_gold_for_repo": bool(catalog.get("parity_fixture_source")),
-        "solver_stack_recorded": solver_stack is not None,
-        "solver_stack": solver_stack,
         "projector_mode": prov.get("projector_mode"),
+        "is_family_current_run": bool(current_run_id) and rid == current_run_id,
+        "parity_fixture_source": parity_fixture_source,
+        "export_kind": export_kind or None,
         "source_export": (
             "benchmarks/external_evidence/offline_graph_export_upstream.json" if host else None
         ),
-        "export_kind": export_kind or None,
         "parity_status": parity_status,
-        "is_family_current_run": bool(current_run_id) and rid == current_run_id,
+        "solver_stack": solver_stack,
         "recommended_uses": _recommended_uses(
             tier=tier, host_realistic=host, includes_native=includes_native
         ),

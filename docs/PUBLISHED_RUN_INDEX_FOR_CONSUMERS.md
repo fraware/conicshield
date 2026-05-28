@@ -21,13 +21,16 @@ It is the **integrity catalog**, not the scientific claim. Scope lives in each b
    ```
 3. **Pick a run** — flagship: `host-realistic-20260525` (`current_run_id` in [`benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json`](../benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json)).
 4. **Read scope before metrics:**
-   - `benchmarks/published_runs/<run_id>/COMMUNITY_METADATA.json`
+   - `benchmarks/published_runs/<run_id>/COMMUNITY_METADATA.json` ([schema](COMMUNITY_METADATA_SCHEMA.md))
    - `benchmarks/published_runs/<run_id>/README.md`
 5. **Validate bundle shape:**
    ```bash
+   python -m conicshield.published_runs.cli verify <run_id>
    python scripts/validate_published_bundle_profile.py --run-id <run_id>
    python -m conicshield.artifacts.validator_cli --run-dir benchmarks/published_runs/<run_id>
    ```
+
+   Python API: `from conicshield.published_runs import load_run, verify_run, load_summary` — see [examples/load_flagship_run.py](../examples/load_flagship_run.py).
 
 ## Files to trust for what
 

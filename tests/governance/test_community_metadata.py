@@ -12,7 +12,7 @@ def test_flagship_community_metadata_shape() -> None:
     meta = build_community_metadata(run_dir=run_dir, repo_root=root, current_run_id="host-realistic-20260525")
     assert meta["schema_version"] == "conicshield_community_metadata/v1"
     assert meta["evidence_tier"] == "vendor_native"
-    assert meta["host_realistic_evidence"] is True
+    assert meta["host_realistic"] is True
     assert meta["includes_native_arm"] is True
     assert meta["is_family_current_run"] is True
     assert meta["solver_stack"] is not None
