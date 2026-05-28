@@ -5,10 +5,12 @@ Use this before declaring the **host-realistic flagship** reference system locke
 ## 1. Local verification (any maintainer machine)
 
 ```bash
-make verify-v1-lock
+make verify-v1-lock          # full gate (includes governance pytest subset)
+make verify-v1-lock-quick    # fast auditor summary (no verify-reference-system)
+python scripts/verify_v1_lock.py --json
 ```
 
-Equivalent to: `verify-reference-system`, `community-verify` (API + public examples, read-only), index `--check`, and reference status `--check`.
+Full target: `verify-reference-system`, `community-verify`, index/status `--check`, and `verify_v1_lock.py` report.
 
 ## 2. Flagship cadence
 

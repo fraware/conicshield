@@ -2,6 +2,10 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — v1 lock verification script
+
+- `scripts/verify_v1_lock.py` + `make verify-v1-lock-quick`; CONTRIBUTING leads with Community layer for consumers.
+
 ### 2026-05-28 — Community onboarding hub and read-only verify gate
 
 - `docs/COMMUNITY_LAYER.md`, `docs/PUBLISHED_RUNS_API.md`; `community-verify` no longer mutates bundles in CI.

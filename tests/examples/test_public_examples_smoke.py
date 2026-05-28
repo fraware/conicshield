@@ -32,3 +32,7 @@ def test_load_flagship_run_example() -> None:
 
 def test_minimal_reference_projection_example() -> None:
     _run("minimal_reference_projection.py")
+
+
+def test_compare_reference_vs_native_metrics_example() -> None:
+    _run("compare_reference_vs_native_metrics.py")

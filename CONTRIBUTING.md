@@ -2,7 +2,9 @@
 
 Thank you for contributing. This repository separates **public structural CI** from **vendor Moreau validation** by design.
 
-**Audience guides:** [Researcher](docs/QUICKSTART_RESEARCHER.md) · [Integrator](docs/QUICKSTART_INTEGRATOR.md) · [Maintainer](docs/QUICKSTART_MAINTAINER.md) · [Public claims](docs/PUBLIC_CLAIMS.md) · [Examples](examples/README.md)
+**Using the repo (not changing it)?** Start at [Community layer](docs/COMMUNITY_LAYER.md) — quickstarts, published-run API, and runnable examples.
+
+**Changing the repo?** Continue below. Audience guides: [Researcher](docs/QUICKSTART_RESEARCHER.md) · [Integrator](docs/QUICKSTART_INTEGRATOR.md) · [Maintainer](docs/QUICKSTART_MAINTAINER.md) · [Public claims](docs/PUBLIC_CLAIMS.md)
 
 ## Before you open a PR
 
@@ -20,7 +22,7 @@ These checks run on every PR to `main` and should be green:
 | `quality` | Lint, types, default pytest, verification scripts |
 | `conic-trusted-shape` | CLARABEL/SCS structural conic correctness (no vendor secrets) |
 | `governance-audit` | Published-run index integrity, governance audit CLI, publish rehearsal |
-| `reference-authority` | `verify-reference-system`, batch viability, published bundle profile |
+| `reference-authority` | `verify-reference-system`, `community-verify`, batch viability, bundle profile |
 
 ## Path-filtered checks
 

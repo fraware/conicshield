@@ -119,6 +119,8 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
             "docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md",
             "docs/PUBLIC_CLAIMS.md",
             "docs/QUICKSTART_RESEARCHER.md",
+            "docs/COMMUNITY_LAYER.md",
+            "docs/PUBLISHED_RUNS_API.md",
         ],
     }
 

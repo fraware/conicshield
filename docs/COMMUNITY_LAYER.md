@@ -42,6 +42,7 @@ Each bundle ships **`COMMUNITY_METADATA.json`** (scope, uses, limitations) — r
 |--------|----------|
 | [verify_published_run_index.py](../examples/verify_published_run_index.py) | Researcher |
 | [inspect_flagship_bundle.py](../examples/inspect_flagship_bundle.py) | Researcher |
+| [compare_reference_vs_native_metrics.py](../examples/compare_reference_vs_native_metrics.py) | Researcher |
 | [minimal_reference_projection.py](../examples/minimal_reference_projection.py) | Integrator |
 | [true_batched_compiled_projection.py](../examples/true_batched_compiled_projection.py) | Integrator (vendor) |
 
