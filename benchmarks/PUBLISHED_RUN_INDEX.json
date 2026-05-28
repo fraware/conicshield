@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-05-28T16:30:17Z",
+  "generated_at_utc": "2026-05-28T16:40:15Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
     "host-realistic-20260525",
@@ -40,7 +40,7 @@
           "sha256": "692f5803a79c0a4eb7185533e111c1a755d98d4d2cc01afbbccd1f390b3d2e17"
         },
         "governance_decision.md": {
-          "sha256": "503347b0097a4833beed9b89e39bfa5c1236c289fce12729bc28631f78e8c17b"
+          "sha256": "1e32a38cccd37de5557222f130fe458c0e0adb374234f3fce7bd3c95d1ac8ff7"
         },
         "release_decision.json": {
           "sha256": "3acae9b15626813f0af3bfd47484c65dc9b34012eb98b98518caf9e176739ccd"

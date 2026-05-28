@@ -45,7 +45,10 @@ def test_export_provenance_links_flagship_run() -> None:
     )
     assert prov.get("export_json") == "benchmarks/external_evidence/offline_graph_export_upstream.json"
     assert prov.get("flagship_run_id") == _FLAGSHIP
-    assert prov.get("export_kind") == "structural_committed"
+    assert prov.get("export_kind") == "live_upstream_dump"
+    assert prov.get("graph_shape") == "host_realistic_fork"
+    history = prov.get("refresh_history") or []
+    assert history and history[-1].get("export_kind") == "live_upstream_dump"
 
 
 def test_committed_batch_solve_report_example_shape() -> None:

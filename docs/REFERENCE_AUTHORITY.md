@@ -1,59 +1,76 @@
 # Reference authority
 
-ConicShield is maintained as a **governed reference system** for one primary benchmark family (`conicshield-transition-bank-v1`). This page is the single map of what “reference authority” means in practice.
+Single map for the governed reference system. Family: **`conicshield-transition-bank-v1`**.
 
-## Flagship release
+## Flagship (`current_run_id`)
 
-| Item | Value |
-|------|--------|
-| Family | `conicshield-transition-bank-v1` |
-| `current_run_id` | **`host-realistic-20260525`** |
-| Evidence tier | `vendor_native` (`RUN_PROVENANCE.json`) |
+| Field | Value |
+|-------|--------|
+| `run_id` | **`host-realistic-20260525`** |
+| `state` | `published` (gates green) |
+| `evidence_tier` | `vendor_native` |
+| `projector_mode` | `real_projector` |
 | Export | [`benchmarks/external_evidence/offline_graph_export_upstream.json`](../benchmarks/external_evidence/offline_graph_export_upstream.json) |
+| `EXPORT_PROVENANCE.export_kind` | `live_upstream_dump` |
 | Integrity | [`benchmarks/PUBLISHED_RUN_INDEX.json`](../benchmarks/PUBLISHED_RUN_INDEX.json) (schema v2) |
+| Snapshot | [`benchmarks/reports/reference_authority_snapshot.json`](../benchmarks/reports/reference_authority_snapshot.json) |
 
-Historical bundles (`wsl-real-*`, `wsl-native-*`) remain in `benchmark_bundle_paths` for comparison.
+Comparison bundles: `wsl-real-20260409-132450`, `wsl-native-20260409-091141` (`benchmark_bundle_paths` in `CURRENT.json`).
 
-## Closed loop (in-repo)
+## Evidence qualification (required language)
+
+Use this wording internally and externally:
+
+1. **Closed loop:** export → bank → `reference_run` → `published_runs/<run_id>/` → parity → finalize → release is implemented and CI-governed.
+2. **Live export:** `export_kind: live_upstream_dump` means the graph was captured through pinned **inter-sim-rl `RLEnvironment`** ([`live_dumps/*.provenance.json`](../benchmarks/external_evidence/live_dumps/)).
+3. **Graph content:** host-realistic **fork** topology (Root → NodeA/NodeB/NodeC), not a Maps/session-built navigation graph.
+4. **Not claimed:** universal batch speedup; production shield autograd; second benchmark family operational coverage.
+
+Bundle detail: [`benchmarks/published_runs/host-realistic-20260525/README.md`](../benchmarks/published_runs/host-realistic-20260525/README.md).
+
+## Closed loop
 
 ```text
 export → transition_bank → reference_run → published_runs/<run_id>/ → parity → finalize → release
 ```
 
-Orchestration: [`scripts/run_host_realistic_publish.py`](../scripts/run_host_realistic_publish.py), [`scripts/upgrade_host_realistic_vendor.py`](../scripts/upgrade_host_realistic_vendor.py).
+Scripts: [`run_host_realistic_publish.py`](../scripts/run_host_realistic_publish.py), [`host_realistic_refresh_cycle.py`](../scripts/host_realistic_refresh_cycle.py).
 
-## Maintainer gates
+## Maintainer commands
 
-| Gate | Command |
+| Task | Command |
 |------|---------|
-| Reference authority (index + audit + flagship) | `make reference-authority-check` or `python scripts/reference_authority_check.py` |
-| Refresh committed snapshot | `make reference-authority-snapshot` → `benchmarks/reports/reference_authority_snapshot.json` |
-| Public verification bundle | `make verify-reference-system` |
-| Strict governance audit | `python -m conicshield.governance.audit_cli --strict` |
+| Full authority gate | `make reference-authority-check` |
+| Public evidence pytest bundle | `make verify-reference-system` |
+| Refresh snapshot | `make reference-authority-snapshot` |
+| Strict audit | `python -m conicshield.governance.audit_cli --strict` |
+| Flagship refresh | `make host-realistic-refresh-cycle` (licensed WSL) |
 
-## Solver evidence (three paths)
+Cadence log: [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md).
 
-See [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md): reference CVXPY, sequential native (`batch_size=1`), true compiled batch (`NATIVE_MOREAU_BATCH`).
+## Solver and batch
 
-## Merge trust (binding)
+Three solve modes: [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md).
 
-Solver-touching PRs require documented vendor proof (`vendor-ci-moreau` or maintainer attestation). See [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md), [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md).
+- Reference: `CVXPYMoreauProjector`
+- Sequential native: `Backend.NATIVE_MOREAU`, `batch_size=1`
+- Compiled batch: `Backend.NATIVE_MOREAU_BATCH`
 
-## Repeatable host-realistic operations
+CI enforces batch **viability** (`speedup_ratio >= 0.98`, `any_row_meets`). **Throughput** (`>= 1.05`) is advisory only.
 
-Scheduled or event-driven refresh: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md), [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md), `make host-realistic-refresh-cycle`. CI: workflow `reference-authority` (required on `main` per [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md)).
+## Merge policy
 
-## Optional refresh
+Required on `main`: `quality`, `conic-trusted-shape`, `governance-audit`, `reference-authority`, `solver-touch`.
 
-| When | Action |
-|------|--------|
-| Live inter-sim capture | `make capture-inter-sim-graph` → `make refresh-live-upstream-export-live` → `make host-realistic-refresh-cycle` (or `--live-graph-json` on the cycle) |
-| Governance only | `python scripts/upgrade_host_realistic_vendor.py --refresh-governance` |
+`vendor-ci-moreau` is **not** required (Policy B). Solver-touch PRs need green vendor CI **or** maintainer attestation: [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md), [`REVIEWER_MERGE_CHECKLIST.md`](REVIEWER_MERGE_CHECKLIST.md).
 
-## Explicitly deferred
+## Deferred (out of v1 claims)
 
-- Production shield autograd product claims (FD validation only)
-- Second benchmark family until published
-- `progress` / `clearance` constraint semantics
+| Item | Doc |
+|------|-----|
+| Production shield autograd | [`DIFFERENTIATION_PUBLIC_STANCE.md`](DIFFERENTIATION_PUBLIC_STANCE.md) |
+| Second family publish | [`conicshield-shield-qp-micro-v1`](../benchmarks/releases/conicshield-shield-qp-micro-v1/FAMILY_README.md) |
+| `progress` / `clearance` constraints | [adr/001](adr/001-progress-clearance-constraints.md) |
+| Richer upstream navigation graph | Re-capture when `REVISION` or host dump changes |
 
-See [`ROADMAP.md`](ROADMAP.md) open backlog.
+Backlog: [`ROADMAP.md`](ROADMAP.md).

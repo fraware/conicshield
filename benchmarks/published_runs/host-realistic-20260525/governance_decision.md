@@ -27,6 +27,6 @@ Same-family flagship **host-realistic** external-evidence run (`vendor_native`, 
 
 ## Follow-ups
 
-- Re-capture live graph when `third_party/inter-sim-rl/REVISION` sha changes or a richer Maps/session dump exists (`make capture-inter-sim-graph`).
-- Record each refresh in `docs/REFERENCE_REFRESH_LOG.md`.
-- Parity fixture promotion remains governed by S2 reference policy (`REGENERATION_NOTE.md`).
+- Re-capture when `third_party/inter-sim-rl/REVISION` changes or a **navigation-session** graph exists (not fork-only).
+- Log each refresh in `docs/REFERENCE_REFRESH_LOG.md`.
+- Parity gold: S2 policy only (`tests/fixtures/parity_reference/REGENERATION_NOTE.md`).

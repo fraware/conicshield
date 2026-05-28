@@ -26,6 +26,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.txt
           python -m pip install -e ".[dev]"
+      - name: Expected branch protection list (local audit helper)
+        run: python scripts/verify_expected_branch_protection.py
       - name: verify-reference-system
         run: make verify-reference-system
       - name: Published bundle file profile (all tiers)

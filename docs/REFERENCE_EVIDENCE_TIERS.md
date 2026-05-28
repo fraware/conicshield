@@ -1,33 +1,35 @@
 # Reference evidence tiers
 
-ConicShield separates **what the repo proves in public CI** from **what requires a licensed Moreau stack**. Published runs are labeled by tier in `RUN_PROVENANCE.json` (`evidence_tier`).
+Label: `RUN_PROVENANCE.json` → `evidence_tier`.
 
-| Tier | `evidence_tier` | Projector | Export source | Example `run_id` |
-|------|-----------------|-----------|---------------|------------------|
-| **S0 — contract smoke** | `contract_fixture` | passthrough or reference | `tests/fixtures/offline_graph_export_minimal.json` | CI rehearsal only |
-| **S1 — structural export loop** | `structural_export` | passthrough (or reference without native) | `benchmarks/external_evidence/` (non-minimal graph) | Historical rehearsal only |
-| **S2 — vendor reference** | `vendor_reference` | real CVXPY/Moreau reference | any validated export | `wsl-real-20260409-132450` |
-| **S3 — vendor native** | `vendor_native` | native compiled + parity | governed export | **`host-realistic-20260525`** (flagship), `wsl-native-20260409-091141` |
+| Tier | `evidence_tier` | Projector | Export | Example `run_id` |
+|------|-----------------|-----------|--------|------------------|
+| S0 | `contract_fixture` | passthrough / reference | minimal fixture | CI only |
+| S1 | `structural_export` | passthrough or reference, no native publish | non-minimal committed export | rehearsal |
+| S2 | `vendor_reference` | real CVXPY/Moreau | validated export | `wsl-real-20260409-132450` |
+| S3 | `vendor_native` | native + parity | governed export | **`host-realistic-20260525`**, `wsl-native-20260409-091141` |
 
-## Public CI coverage
+**Flagship (S3):** `host-realistic-20260525` — family `current_run_id`, `live_upstream_dump`, fork graph via inter-sim API.
 
-| Tier | Enforced without vendor secrets |
-|------|--------------------------------|
-| S0–S1 | `governance-audit`, `verify-reference-system`, host-realistic provenance tests |
-| S2–S3 | `solver-touch` index/parity; full solve oracle requires `vendor-ci-moreau` or maintainer attestation |
+## CI enforcement
 
-## Refresh / re-publish
+| Tier | Without vendor secrets |
+|------|------------------------|
+| S0–S1 | `governance-audit`, `verify-reference-system` |
+| S2–S3 | Above + `solver-touch`; solves need `vendor-ci-moreau` or maintainer attestation |
 
-On a licensed host with patched `inter-sim-rl`:
+Required on `main`: includes `reference-authority` — [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md).
+
+## Refresh (flagship)
 
 ```bash
-make upgrade-host-realistic-vendor
-# or governance-only:
-python scripts/upgrade_host_realistic_vendor.py --refresh-governance
+make capture-inter-sim-graph
+make refresh-live-upstream-export-live
+make host-realistic-refresh-cycle
 ```
 
-Or follow [`HOST_REALISTIC_RUNBOOK.md`](HOST_REALISTIC_RUNBOOK.md) step by step.
+Log: [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md).
 
-## Parity fixture policy
+## Parity fixture
 
-Parity gold (`tests/fixtures/parity_reference/`) is promoted from **S2** reference bundles, not from S1 structural runs. See [`tests/fixtures/parity_reference/REGENERATION_NOTE.md`](../tests/fixtures/parity_reference/REGENERATION_NOTE.md).
+Gold: `tests/fixtures/parity_reference/` — promote from **S2** only. [`REGENERATION_NOTE.md`](../tests/fixtures/parity_reference/REGENERATION_NOTE.md).

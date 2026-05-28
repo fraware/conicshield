@@ -1,88 +1,59 @@
-# Host-realistic refresh procedure (repeatable operations)
+# Host-realistic refresh procedure
 
-`host-realistic-20260525` is the **current reference milestone**, not a one-time proof. This procedure turns the closed export loop into a **routine maintainer cycle**.
+**Flagship:** `host-realistic-20260525` (`current_run_id`). **Log every cycle:** [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md).
+
+Licensed **Linux/WSL** host required for native arm, parity, and batch sweep.
+
+## Standard cycle (current export)
+
+```bash
+make capture-inter-sim-graph
+make refresh-live-upstream-export-live
+make host-realistic-refresh-cycle
+```
+
+What this does:
+
+1. Capture `offline_transition_graph` via pinned inter-sim `RLEnvironment` → `benchmarks/external_evidence/live_dumps/`.
+2. Replace `offline_graph_export_upstream.json`; set `EXPORT_PROVENANCE.export_kind` to `live_upstream_dump`.
+3. Re-publish bundle, release sync (same `run_id`), batch viability check, index + snapshot + `reference_authority_check`.
+
+Default `run_id`: family `current_run_id` from `CURRENT.json`.
+
+## Variants
+
+| Goal | Command |
+|------|---------|
+| Same flagship, full refresh | `make host-realistic-refresh-cycle` |
+| New dated run + promote | `make host-realistic-refresh-milestone` |
+| Explicit run id | `python scripts/host_realistic_refresh_cycle.py --run-id host-realistic-YYYYMMDD --force` |
+| Governance only | `python scripts/upgrade_host_realistic_vendor.py --run-id <id> --refresh-governance` |
+| Skip batch sweep | `... --skip-vendor-verify` |
 
 ## Cadence
 
 | Trigger | Action |
 |---------|--------|
-| **Scheduled** | Monthly, or once per upstream environment change |
-| **Event-driven** | See [When live re-export is required](#when-live-re-export-is-required) |
+| Monthly / calendar | Run standard cycle; append row to [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md) |
+| `inter-sim-rl` REVISION change | Re-capture graph + full cycle |
+| Solver / native / batch code change | Full cycle + vendor attestation on PR |
 
-## Standard refresh cycle (structural export)
+## After each cycle (commit)
 
-Uses the committed upstream-shaped export in [`benchmarks/external_evidence/`](../benchmarks/external_evidence/). No live simulator dump required.
+1. `benchmarks/published_runs/<run_id>/` (if changed)
+2. `benchmarks/PUBLISHED_RUN_INDEX.json`
+3. `benchmarks/external_evidence/EXPORT_PROVENANCE.json`
+4. `benchmarks/reports/reference_authority_snapshot.json`
+5. `benchmarks/reports/batch_solve_report.latest.json` (if batch ran)
+6. Row in [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md)
+7. [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md) solver rows from flagship `solver_versions.json`
 
-```bash
-# Refresh the family flagship (default: current_run_id on disk):
-make host-realistic-refresh-cycle
+## Evidence qualification (do not overstate)
 
-# New dated milestone + promote to current_run_id:
-make host-realistic-refresh-milestone
+- `live_upstream_dump` = inter-sim API capture at pinned sha, **fork** topology.
+- Not a Maps/session navigation graph unless a future capture documents one.
 
-# Explicit run_id:
-python scripts/host_realistic_refresh_cycle.py \
-  --run-id host-realistic-YYYYMMDD \
-  --promote-release
-```
+## Related
 
-By default the cycle targets **`current_run_id`** from `benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json` when that published bundle exists. Use `--new-milestone` to allocate `host-realistic-YYYYMMDD` instead.
-
-The script runs: vendor publish → parity → finalize → **release sync** when `run_id` is the family `current_run_id` (or `--promote-release`) → vendor batch sweep → README/index/snapshot refresh.
-
-## Live upstream refresh cycle
-
-Capture the graph from pinned `inter-sim-rl` via `RLEnvironment` (M2 patch required), refresh the committed export, then re-publish:
-
-```bash
-# 1. Capture raw offline_transition_graph (host-realistic fork via upstream API)
-make capture-inter-sim-graph
-
-# 2. Replace committed export + EXPORT_PROVENANCE (export_kind: live_upstream_dump)
-make refresh-live-upstream-export-live
-
-# 3. Full governed refresh (defaults to current_run_id)
-python scripts/host_realistic_refresh_cycle.py \
-  --live-graph-json benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json \
-  --force
-```
-
-Or one shot after capture: pass `--live-graph-json` to the refresh cycle (it re-runs step 2 internally).
-
-## When live re-export is required
-
-Maintainers **must** capture a fresh upstream export when any of the following change materially:
-
-| Change | Why |
-|--------|-----|
-| Upstream simulator patch / `inter-sim-rl` revision pin | Graph topology or transition semantics may drift |
-| Action semantics | Benchmark arms compare against new behavior |
-| Transition-bank generation | Bank structure must match upstream |
-| Shield context / constraint wiring | Native and reference paths must see same spec |
-| Solver path (native Moreau, batch API, warm-start) | Performance and parity claims depend on solver stack |
-
-If only governance metadata or docs change, a structural re-publish with `--refresh-governance` is enough.
-
-## After each cycle
-
-1. Commit `benchmarks/published_runs/<run_id>/` and whitelist in [`.gitignore`](../benchmarks/published_runs/.gitignore) if new.
-2. Update `benchmark_bundle_paths` in `CURRENT.json` when the run should remain discoverable.
-3. `python scripts/refresh_published_run_index.py` and commit `PUBLISHED_RUN_INDEX.json`.
-4. `make reference-authority-snapshot` if `current_run_id` or flagship gates changed.
-5. If parity gold moves: follow [`PARITY_AND_FIXTURES.md`](PARITY_AND_FIXTURES.md) and update `REGENERATION_NOTE.md`.
-6. Record vendor attestation in the PR (see [`REVIEWER_MERGE_CHECKLIST.md`](REVIEWER_MERGE_CHECKLIST.md)).
-
-## Milestone vs release
-
-| Goal | What to do |
-|------|------------|
-| New auditable bundle only | Refresh cycle **without** `--promote-release` |
-| New family `current_run_id` | Refresh cycle **with** `--promote-release` + approved `governance_decision.md` |
-
-Treat each successful cycle as a **dated milestone** (`host-realistic-YYYYMMDD`). Promote to `current_run_id` only when gates are green and maintainers approve same-family publish.
-
-## Related docs
-
-- [`HOST_REALISTIC_RUNBOOK.md`](HOST_REALISTIC_RUNBOOK.md) — technical checklist
-- [`REFERENCE_AUTHORITY.md`](REFERENCE_AUTHORITY.md) — flagship release map
-- [`PUBLISHED_BUNDLE_CATALOG.md`](PUBLISHED_BUNDLE_CATALOG.md) — artifact surface per bundle
+- [`HOST_REALISTIC_RUNBOOK.md`](HOST_REALISTIC_RUNBOOK.md) — manual step list
+- [`REFERENCE_AUTHORITY.md`](REFERENCE_AUTHORITY.md) — flagship map

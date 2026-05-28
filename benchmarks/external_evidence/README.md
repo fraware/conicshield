@@ -1,47 +1,37 @@
-# External evidence (host-realistic export)
+# External evidence
 
-Committed artifacts that demonstrate the **export → transition bank → publish → parity** loop without relying on `tests/fixtures/offline_graph_export_minimal.json`.
+Committed export for the host-realistic loop. **Flagship bundle:** [`../published_runs/host-realistic-20260525/`](../published_runs/host-realistic-20260525/).
 
 | File | Role |
 |------|------|
-| [`offline_graph_export_upstream.json`](offline_graph_export_upstream.json) | `offline_transition_graph_export/v1` with multi-branch graph (Root → NodeA/NodeB/NodeC) |
-| [`EXPORT_PROVENANCE.json`](EXPORT_PROVENANCE.json) | Pin and notes for upstream `inter-sim-rl` revision |
+| [`offline_graph_export_upstream.json`](offline_graph_export_upstream.json) | `offline_transition_graph_export/v1` (multi-branch graph) |
+| [`EXPORT_PROVENANCE.json`](EXPORT_PROVENANCE.json) | `export_kind`, pin, [`refresh_history`](EXPORT_PROVENANCE.json) |
+| [`live_dumps/`](live_dumps/) | Raw graph + capture provenance from `make capture-inter-sim-graph` |
 
-**Flagship published bundle:** [`../published_runs/host-realistic-20260525/`](../published_runs/host-realistic-20260525/) — `RUN_PROVENANCE.json` references this export at **`vendor_native`** tier.
+## Current export kind
 
-## Committed structural graph vs live upstream dump
+`EXPORT_PROVENANCE.export_kind` is **`live_upstream_dump`**.
 
-| Kind | What it is | When to use |
-|------|------------|-------------|
-| **Committed structural graph** | Multi-branch graph checked into this directory (rehearsal fork or prior export) | Proves the governed loop in public CI without a live simulator session |
-| **Live upstream dump** | Raw graph captured via `make capture-inter-sim-graph` (pinned `RLEnvironment` + M2 patch) then `refresh_live_upstream_export.py` | Replaces `offline_graph_export_upstream.json`; updates `EXPORT_PROVENANCE.json` (`export_kind: live_upstream_dump`) |
+| Claim | Status |
+|-------|--------|
+| Graph validated via inter-sim `RLEnvironment` at pinned sha | Yes |
+| Topology | Host-realistic **fork** (Root → NodeA/NodeB/NodeC) |
+| Maps/session navigation graph | **No** — unless a future capture says otherwise |
 
-After replacing the JSON, re-run:
+## Refresh
 
 ```bash
-make upgrade-host-realistic-vendor
+make capture-inter-sim-graph
+make refresh-live-upstream-export-live
+make host-realistic-refresh-cycle
 ```
 
-## Regenerate structural export JSON
+Cadence: [`../../docs/REFERENCE_REFRESH_LOG.md`](../../docs/REFERENCE_REFRESH_LOG.md).
+
+## Structural rehearsal only (CI)
 
 ```bash
 make export-upstream-rehearsal
 ```
 
-## Produce or refresh published bundle
-
-```bash
-make upgrade-host-realistic-vendor
-# or:
-python scripts/run_host_realistic_publish.py \
-  --export-json benchmarks/external_evidence/offline_graph_export_upstream.json \
-  --run-id host-realistic-20260525 \
-  --no-passthrough \
-  --include-native-arm \
-  --governance-scaffold \
-  --copy-to-published \
-  --refresh-index \
-  --force
-```
-
-Keep schema validation and provenance fields aligned when the export file changes.
+Does not replace flagship provenance for vendor-native claims.

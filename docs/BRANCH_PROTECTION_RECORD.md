@@ -24,17 +24,23 @@ Solver-touching PRs must include vendor proof in the PR body even when `vendor-c
 | Date (UTC) | Changed by | Evidence |
 |------------|------------|----------|
 | 2026-05-26 | Engineering plan v1 lock | Docs aligned; machine-readable spec: `.github/expected-branch-protection-main.json` |
-| 2026-05-26 | Calendar refresh #3 | Cadence recorded in `REFERENCE_REFRESH_LOG.md` |
+| 2026-05-28 | Calendar refresh #3 | Cadence in [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md) (`5485dfb`) |
 
 ### Verify locally
 
 ```bash
-python scripts/verify_expected_branch_protection.py
+make verify-branch-protection-expectations
+# After `gh auth login` (admin read): compares GitHub required checks to spec; exits 1 on mismatch.
+```
+
+### Apply / audit (maintainer)
+
+```bash
+python scripts/print_branch_protection_gh_recipe.py   # gh api PUT recipe
+make verify-branch-protection-expectations            # compare after gh auth login
 ```
 
 ### Screenshot / export (attach in PR or paste link)
 
-<!-- Maintainer: paste image or link to GitHub branch protection screenshot showing required checks:
-     quality, conic-trusted-shape, governance-audit, reference-authority, solver-touch
-     (vendor-ci-moreau NOT required)
--->
+<!-- Required: quality, conic-trusted-shape, governance-audit, reference-authority, solver-touch -->
+<!-- NOT required: vendor-ci-moreau -->

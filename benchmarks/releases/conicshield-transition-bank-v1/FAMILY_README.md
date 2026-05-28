@@ -1,23 +1,33 @@
-# Benchmark Family: conicshield-transition-bank-v1
+# Family `conicshield-transition-bank-v1`
 
-**Governance:** [../../../docs/BENCHMARK_GOVERNANCE.md](../../../docs/BENCHMARK_GOVERNANCE.md), [../../../docs/RELEASE_POLICY.md](../../../docs/RELEASE_POLICY.md).
-
-## Purpose
-This family defines the current semantic contract for the ConicShield transition-bank benchmark.
-
-## Task contract
-See `FAMILY_MANIFEST.json`.
+Governance: [`docs/BENCHMARK_GOVERNANCE.md`](../../../docs/BENCHMARK_GOVERNANCE.md), [`docs/RELEASE_POLICY.md`](../../../docs/RELEASE_POLICY.md).
 
 ## Current release
-See `CURRENT.json` (gates and `publishable_arms` are explained in [`docs/BENCHMARK_GOVERNANCE.md`](../../../docs/BENCHMARK_GOVERNANCE.md)). After parity work, gate fields may be updated with `finalize_cli --sync-current-release` per [`docs/MAINTAINER_RUNBOOK.md`](../../../docs/MAINTAINER_RUNBOOK.md).
 
-## Historical releases
-See `HISTORY.json`.
+| Field | Value |
+|-------|--------|
+| `current_run_id` | **`host-realistic-20260525`** |
+| Tier | S3 `vendor_native` |
+| Export | `live_upstream_dump` (fork graph via inter-sim API) |
 
-## Committed run bundles (audit)
+Machine-readable: `CURRENT.json`, `HISTORY.json`, `FAMILY_MANIFEST.json`.
 
-Canonical benchmark trees for this family live under [`../../published_runs/`](../../published_runs/README.md). `CURRENT.json` lists `benchmark_bundle_paths` (current and superseded runs referenced in `HISTORY.json`) so reviewers can open the same paths in Git without guessing `run_id` layout. Integrity hashes for committed bundles: [`../../PUBLISHED_RUN_INDEX.json`](../../PUBLISHED_RUN_INDEX.json) (see [`benchmarks/published_runs/README.md`](../../published_runs/README.md)).
+Refresh cadence: [`docs/REFERENCE_REFRESH_LOG.md`](../../../docs/REFERENCE_REFRESH_LOG.md).
 
-**Evidence tiers:** [`../../../docs/REFERENCE_EVIDENCE_TIERS.md`](../../../docs/REFERENCE_EVIDENCE_TIERS.md). **`current_run_id`:** `host-realistic-20260525` (flagship **S3** `vendor_native`). Historical bundles: `wsl-real-*`, `wsl-native-*`.
+## Bundles
 
-**Other families:** a second family directory exists as scaffold only — [`../conicshield-shield-qp-micro-v1/FAMILY_README.md`](../conicshield-shield-qp-micro-v1/FAMILY_README.md).
+Paths in `CURRENT.json` → `benchmark_bundle_paths`. Integrity: [`PUBLISHED_RUN_INDEX.json`](../../PUBLISHED_RUN_INDEX.json).
+
+| `run_id` | Role |
+|----------|------|
+| `host-realistic-20260525` | Flagship current |
+| `wsl-real-20260409-132450` | S2 reference; parity gold source |
+| `wsl-native-20260409-091141` | S3 historical |
+
+## Gate refresh without new run
+
+`finalize_cli --sync-current-release` — same `current_run_id`, updated parity columns only.
+
+## Other families
+
+`conicshield-shield-qp-micro-v1` — uninitialized; do not use for external claims.

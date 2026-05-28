@@ -30,45 +30,35 @@ flowchart LR
 
 ---
 
-## Why this repository exists
+## v1 reference system
 
-ConicShield is not only a solver wrapper. It ships a **full governance spine**: validated benchmark bundles, native–reference **parity** gates, promotion rules, release orchestration, audit CLI, and dashboards — so benchmark claims stay meaningful as code and contracts evolve.
+| Item | Value |
+|------|--------|
+| Flagship | [`host-realistic-20260525`](benchmarks/published_runs/host-realistic-20260525/) |
+| Family | `conicshield-transition-bank-v1` |
+| Tier | `vendor_native`, `live_upstream_dump` |
+| Map | [`docs/REFERENCE_AUTHORITY.md`](docs/REFERENCE_AUTHORITY.md) |
 
-**Shield projection (implemented constraint kinds):** `simplex`, `turn_feasibility`, `box`, `rate`. `progress` and `clearance` are deferred; see [`docs/adr/001-progress-clearance-constraints.md`](docs/adr/001-progress-clearance-constraints.md).
+**Qualification:** export loop is closed in-repo; graph is host-realistic **fork** via inter-sim `RLEnvironment` — **not** a Maps/session navigation graph.
 
-| Mode | Who it’s for |
-|------|----------------|
-| **Public / reference** | Contributors without vendor secrets: governance, schemas, replay, CI-green core tests. |
-| **Vendor (Moreau)** | Opt-in, Linux/WSL2: native compiled path, CUDA where licensed, **Vendor CI** workflow `vendor-ci-moreau` (manual dispatch). |
+| Artifact | Path |
+|----------|------|
+| Export | [`benchmarks/external_evidence/offline_graph_export_upstream.json`](benchmarks/external_evidence/offline_graph_export_upstream.json) |
+| Index | [`benchmarks/PUBLISHED_RUN_INDEX.json`](benchmarks/PUBLISHED_RUN_INDEX.json) |
+| Release pointer | [`benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json`](benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json) |
 
-### Where benchmark artifacts live
+Refresh: `make host-realistic-refresh-cycle` — [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](docs/HOST_REALISTIC_REFRESH_PROCEDURE.md).
 
-| Artifact | Location |
-|----------|----------|
-| Committed governed run bundles | `benchmarks/published_runs/<run_id>/` |
-| SHA-256 integrity index | `benchmarks/PUBLISHED_RUN_INDEX.json` (schema ≥ 2: hashes the full `validate_run_bundle` file set plus optional governance/provenance; regenerate: `python scripts/refresh_published_run_index.py`; CI: `--check`) |
-| Family release pointer (`current_run_id`, gates) | `benchmarks/releases/<family_id>/CURRENT.json` |
-| Frozen parity gold stream | `tests/fixtures/parity_reference/` (source run documented in `REGENERATION_NOTE.md`) |
+**Constraints implemented:** `simplex`, `turn_feasibility`, `box`, `rate`. `progress` / `clearance`: deferred — [adr](docs/adr/001-progress-clearance-constraints.md).
 
-Details: [`benchmarks/published_runs/README.md`](benchmarks/published_runs/README.md), [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md).
-
-### Canonical host-realistic export evidence
-
-The **export → bank → publish → parity** loop is closed in-repo at **`vendor_native`** tier:
-
-| Item | Location |
+| Lane | Audience |
 |------|----------|
-| Upstream-shaped offline export (not the minimal contract fixture) | [`benchmarks/external_evidence/offline_graph_export_upstream.json`](benchmarks/external_evidence/offline_graph_export_upstream.json) |
-| Flagship published run (`real_projector`, native arm, green gates) | [`benchmarks/published_runs/host-realistic-20260525/`](benchmarks/published_runs/host-realistic-20260525/) |
-| One-command orchestration / refresh | [`scripts/run_host_realistic_publish.py`](scripts/run_host_realistic_publish.py), [`scripts/upgrade_host_realistic_vendor.py`](scripts/upgrade_host_realistic_vendor.py) |
+| Public CI | No vendor secrets |
+| Vendor | Linux/WSL2 + Moreau license; `vendor-ci-moreau` or Policy B attestation |
 
-Live export path: `make capture-inter-sim-graph` → `make refresh-live-upstream-export-live` (see [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)). Current committed export is `live_upstream_dump` with **host-realistic fork** topology validated through inter-sim `RLEnvironment` — not a full Maps/session navigation graph.
+**Batch:** governed; viability-tested — not universal speedup ([`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md)). **Differentiation:** validation-only ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)).
 
-Solver paths (reference vs sequential native vs true batch): [`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md). Batch API is governed and viability-tested; **do not claim universal batch speedup** in external materials until throughput advisory tiers are met. Differentiation: validation-only ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)).
-
----
-
-Contributing and merge policy: [`CONTRIBUTING.md`](CONTRIBUTING.md), [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md). Reference authority map: [`docs/REFERENCE_AUTHORITY.md`](docs/REFERENCE_AUTHORITY.md). Evidence tiers: [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md). Local gates: `make reference-authority-check`, `make verify-reference-system`.
+Docs index: [`docs/README.md`](docs/README.md). Merge: [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md). Local: `make reference-authority-check`, `make verify-reference-system`.
 
 ## Installation
 

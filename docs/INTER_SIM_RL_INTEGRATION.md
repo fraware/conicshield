@@ -1,107 +1,66 @@
-# `inter-sim-rl` integration plan
+# inter-sim-rl integration
 
-This repository is intentionally standalone. It does not vendor the external `inter-sim-rl` codebase.
+ConicShield does not vendor upstream code. Pin: [`third_party/inter-sim-rl/REVISION`](../third_party/inter-sim-rl/REVISION).
 
-**Benchmark closure (export → bank → governed publish):** Demonstrated in-repo via [`benchmarks/external_evidence/`](../benchmarks/external_evidence/) and published run `host-realistic-20260525` ([docs/ROADMAP.md](ROADMAP.md)). **Live upstream re-export:** [docs/HOST_REALISTIC_RUNBOOK.md](HOST_REALISTIC_RUNBOOK.md), [`scripts/export_inter_sim_offline_graph.py`](../scripts/export_inter_sim_offline_graph.py).
+**Flagship evidence:** export → publish closed with `host-realistic-20260525` ([`REFERENCE_AUTHORITY.md`](REFERENCE_AUTHORITY.md)).
 
-**Canonical upstream:** [https://github.com/fraware/inter-sim-rl](https://github.com/fraware/inter-sim-rl)
-
-## Integration seam
-
-1. external environment produces a state object and a four-action space
-2. external policy produces four Q-values or action scores
-3. ConicShield consumes:
-   - `q_values`
-   - `action_space`
-   - `context`
-4. ConicShield returns a corrected action string
-
-## Expected action space
-
-```python
-["turn_left", "turn_right", "go_straight", "turn_back"]
-```
-
-## Expected context shape
-
-At minimum:
-- `allowed_actions`
-- `blocked_actions`
-- `action_upper_bounds`
-- `rule_choice`
-- `previous_instruction`
-- `hazard_score`
-
-Optional:
-- `current_heading_deg`
-- `branch_bearings_deg`
-- transition-bank candidate metadata
-
-## Recommended patch surface in the external environment
-
-- add `get_shield_context()`
-- preserve the current observation contract
-- let chosen action affect transitions
-- expose a transition-bank export path (see below)
-
-## Transition bank export contract
-
-After the M2 patch, `RLEnvironment` can run with `offline_transition_graph: Dict[str, List[Dict]]` (address to candidate edges). To freeze a bank for ConicShield:
-
-1. Serialize that graph plus coordinates for every visited address into **offline_transition_graph_export/v1** JSON (schema: [`schemas/offline_transition_graph_export.schema.json`](../schemas/offline_transition_graph_export.schema.json)).
-2. Build a validated transition bank file:
-
-   ```bash
-   python -m conicshield.bench.build_transition_bank \
-     --from-offline-graph-export path/to/export.json \
-     --out /tmp/bank.json
-   ```
-
-Example minimal export: [`tests/fixtures/offline_graph_export_minimal.json`](../tests/fixtures/offline_graph_export_minimal.json).
-
-## End-to-end chain without a live environment
-
-You can exercise the full **export → bank → benchmark bundle** spine using only in-repo JSON and no running simulator:
-
-1. Use [`tests/fixtures/offline_graph_export_minimal.json`](../tests/fixtures/offline_graph_export_minimal.json) (or a copy of your own export that validates against [`schemas/offline_transition_graph_export.schema.json`](../schemas/offline_transition_graph_export.schema.json)).
-2. Run [`scripts/produce_reference_bundle.py`](../scripts/produce_reference_bundle.py) with `--export-json` and `--run-id` (add `--passthrough` on unlicensed hosts; use `--no-passthrough` for governed reference arms).
-3. Validate with `python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>`.
-
-This path matches the operational P0 sequence in [`benchmarks/runs/README.md`](../benchmarks/runs/README.md) without API calls into a patched host.
-
-**Production acceptance (P2):** pinned [`third_party/inter-sim-rl/REVISION`](../third_party/inter-sim-rl/REVISION); committed upstream-shaped export under `benchmarks/external_evidence/`; flagship published run `host-realistic-20260525` at **`vendor_native`** (family `current_run_id`). **Optional refresh:** live `offline_transition_graph` re-export via `export_inter_sim_offline_graph.py --graph-json ...` then `make upgrade-host-realistic-vendor`. Minimal fixture remains contract-only smoke.
-
-Engineering control for clone URL and revision: [`third_party/inter-sim-rl/README.md`](../third_party/inter-sim-rl/README.md).
-
-## Revision pin
-
-Pinned `main` at the time this record was updated (see `third_party/inter-sim-rl/REVISION` for the same values):
+## Pin (current)
 
 | Field | Value |
-| ----- | ----- |
-| Repository | [fraware/inter-sim-rl](https://github.com/fraware/inter-sim-rl) |
-| Branch | `main` |
+|-------|--------|
+| Repository | https://github.com/fraware/inter-sim-rl |
 | SHA | `f1f04ee11d064262f5ee2810abfcb01715260182` |
-| Commit | [view on GitHub](https://github.com/fraware/inter-sim-rl/commit/f1f04ee11d064262f5ee2810abfcb01715260182) |
+| Checkout | `third_party/inter-sim-rl/checkout` or `INTERSIM_RL_ROOT` |
 
-Re-validate and update the SHA when ConicShield or upstream APIs change.
+Re-validate on API changes; update `REVISION` and re-run capture + refresh cycle.
 
-Optional local checkout: submodule at `third_party/inter-sim-rl/checkout`, or set `INTERSIM_RL_ROOT` to a clone root.
+## Runtime seam
 
-End-to-end tests that import upstream `RLEnvironment` require **`matplotlib`** (pulled in via `pip install -e ".[dev]"`). Install dev deps before running `tests/test_inter_sim_rl_e2e.py`.
+| Step | Contract |
+|------|----------|
+| Input | `q_values`, `action_space`, `context` (see `schemas/shield_context.schema.json`) |
+| Output | Corrected action string |
+| Actions | `turn_left`, `turn_right`, `go_straight`, `turn_back` |
 
-In-repo contract tests validate payloads against `schemas/shield_context.schema.json`; they do not require the upstream repo to be present.
+M2 patch: `get_shield_context()`, action-conditioned transitions, `offline_transition_graph` export.
 
-## Related Fraware repository
+## Export → bank
 
-[LabTrust-Gym](https://github.com/fraware/LabTrust-Gym) is a separate multi-agent lab automation environment. It is not the `inter-sim-rl` integration target; a reference `main` SHA is recorded in `third_party/inter-sim-rl/REVISION_LABTRUST_GYM` for cross-repo bookkeeping.
+1. `offline_transition_graph` dict JSON (or `make capture-inter-sim-graph`)
+2. `export_inter_sim_offline_graph.py` → `offline_transition_graph_export/v1`
+3. `build_transition_bank --from-offline-graph-export`
 
-## Contract validation
+Schema: [`schemas/offline_transition_graph_export.schema.json`](../schemas/offline_transition_graph_export/schema.json).
 
-Python adapters may validate context with `conicshield.adapters.inter_sim_rl.context_validate.validate_shield_context_dict` or `ShieldContextModel.from_mapping` (`context_model.py`).
+## Capture path (flagship)
 
-## Related ConicShield documentation
+```bash
+make capture-inter-sim-graph          # RLEnvironment + host-realistic fork
+make refresh-live-upstream-export-live
+```
 
-- [DEVENV.md](DEVENV.md) — `inter_sim_rl` pytest marker and optional CI workflow
-- [README.md](../README.md) — `third_party/` pin and integration overview
-- [schemas/shield_context.schema.json](../schemas/shield_context.schema.json) — contract schema
+Writes `benchmarks/external_evidence/live_dumps/` and updates `EXPORT_PROVENANCE.json` (`export_kind: live_upstream_dump`).
+
+**Not claimed:** full Maps/session graph unless a future capture documents it.
+
+## CI without upstream checkout
+
+- Structural export: `make export-upstream-rehearsal`
+- Minimal fixture: contract smoke only — not flagship tier
+
+## Tests
+
+- `pytest -m inter_sim_rl` — needs checkout + dev deps
+- Workflow: `inter-sim-rl-ci.yml` (manual dispatch)
+
+## Validation
+
+`conicshield.adapters.inter_sim_rl.context_validate.validate_shield_context_dict`
+
+## Related
+
+- [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md)
+- [`benchmarks/external_evidence/README.md`](../benchmarks/external_evidence/README.md)
+- [`third_party/inter-sim-rl/README.md`](../third_party/inter-sim-rl/README.md)
+
+LabTrust-Gym: separate repo; `REVISION_LABTRUST_GYM` for bookkeeping only.

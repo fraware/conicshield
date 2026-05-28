@@ -1,55 +1,41 @@
-# Checklist: endorse `shielded-native-moreau`
+# Native arm publish checklist
 
-## Canonical command block (licensed host)
+Goal: `shielded-native-moreau` in `publishable_arms` with green parity/promotion.
 
-**Flagship (in-repo):** `host-realistic-20260525` is the family `current_run_id` with `vendor_native` evidence. Refresh with `make upgrade-host-realistic-vendor` or `--refresh-governance`.
+**Flagship:** `host-realistic-20260525` — refresh with `make host-realistic-refresh-cycle`.
+
+## Fast path (flagship)
 
 ```bash
-# Export → bundle (real projector + native arm)
-make upgrade-host-realistic-vendor
+make host-realistic-refresh-cycle
+```
 
-# Or explicit run_id:
-python scripts/publish_native_arm_bundle.py \
-  --export-json benchmarks/external_evidence/offline_graph_export_upstream.json \
-  --run-id host-realistic-20260525 \
-  --force
+Or:
 
-# Step-by-step:
+```bash
 python scripts/run_host_realistic_publish.py \
   --export-json benchmarks/external_evidence/offline_graph_export_upstream.json \
   --run-id host-realistic-20260525 \
-  --no-passthrough \
-  --include-native-arm \
-  --governance-scaffold \
-  --copy-to-published \
-  --refresh-index
-
-python scripts/governed_local_promotion.py all --source benchmarks/runs/<run_id>
+  --no-passthrough --include-native-arm \
+  --governance-scaffold --copy-to-published --refresh-index --force
 ```
 
-Then parity, `finalize_cli`, copy to `benchmarks/published_runs/<run_id>/`, `governance_decision.md`, `release_cli`, `audit_cli --strict` (below).
+Then: approved `governance_decision.md` → `release_cli` → `audit_cli --strict`.
 
----
+## `finalize_cli` requirements
 
-`finalize_cli` adds `shielded-native-moreau` to `publishable_arms` only when **all** of the following hold:
+1. `summary.json` row `"label": "shielded-native-moreau"` (real projector, not passthrough).
+2. `parity_out/parity_summary.json` — pass `--parity-summary-path` to `finalize_cli`.
+3. Promotion thresholds green (`conicshield/governance/promotion.py`).
 
-1. **`summary.json`** includes a row with `"label": "shielded-native-moreau"` (produce it with a real projector, not `--passthrough-projector`):
+## Manual sequence
 
-   ```bash
-   python -m conicshield.bench.reference_run \
-     --out benchmarks/runs/<run_id> \
-     --bank /path/to/transition_bank.json \
-     --include-native-arm
-   ```
+| Step | Command |
+|------|---------|
+| Bundle | `reference_run` with `--no-passthrough`, native arm |
+| Validate | `validator_cli --run-dir …` |
+| Parity | `conicshield.parity.cli` vs `tests/fixtures/parity_reference/` |
+| Finalize | `finalize_cli` + `--parity-summary-path` |
+| Publish | `governance_decision.md` → `release_cli` |
 
-2. **Parity evidence** for the native path: run `conicshield.parity.cli` against the frozen fixture and pass `--parity-summary-path` to `finalize_cli` so `parity_gate` is green for native endorsement.
-
-3. **Promotion gate** green (latency thresholds vs geometry reference in `summary.json`, per finalize rules).
-
-4. **Artifact validation** passes on the run directory; copy the validated bundle to `benchmarks/published_runs/<run_id>/` before merge (see [`benchmarks/published_runs/README.md`](../benchmarks/published_runs/README.md)).
-
-5. **Governance sequence:** `finalize_cli` (with `--parity-summary-path` pointing at `parity_summary.json`) → add `governance_decision.md` from [`benchmarks/templates/governance_decision.template.md`](../benchmarks/templates/governance_decision.template.md) to the **same** directory you will pass to `release_cli` (required for real publish; not for `--dry-run`) → `release_cli` (dry-run then real) → `audit_cli --strict`. Details: [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md), [`benchmarks/published_runs/README.md`](../benchmarks/published_runs/README.md).
-
-Reference-only publishes (no native row in `summary.json`) may still show green parity for the reference stream; they do **not** prove native-arm promotion.
-
-6. **Regression lock (CI):** After merge, [`solver-touch`](../.github/workflows/solver-touch.yml) runs [`tests/governance/test_native_arm_publish_evidence.py`](../tests/governance/test_native_arm_publish_evidence.py) so the committed `benchmarks/published_runs/<current_run_id>/summary.json` cannot silently lose the `shielded-native-moreau` row while the arm remains in `publishable_arms`. The same workflow exercises full **published-run index** checks (SHA-256 for required bundle files, parity-note `run_id`s, etc.); refresh [`benchmarks/PUBLISHED_RUN_INDEX.json`](../benchmarks/PUBLISHED_RUN_INDEX.json) after any bundle edit.
+Detail: [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md), [`HOST_REALISTIC_RUNBOOK.md`](HOST_REALISTIC_RUNBOOK.md).

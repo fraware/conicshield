@@ -57,8 +57,10 @@ Do not commit license keys, Gemfury tokens, or filled `.env` files.
 
 Do not claim or document support for:
 
-- `progress` / `clearance` constraint kinds (deferred per ADR),
-- production shield autograd (Layer F is finite-difference sanity only until roadmap closes autograd),
-- a second benchmark family until `current_run_id` is published.
+- `progress` / `clearance` constraint kinds ([ADR](docs/adr/001-progress-clearance-constraints.md)),
+- production shield autograd ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)),
+- `conicshield-shield-qp-micro-v1` or other families as reference authority (flagship is `host-realistic-20260525` only),
+- Maps/session navigation graphs (export is host-realistic fork via inter-sim),
+- universal batch speedup (viability ≠ throughput advisory).
 
-See [`docs/ROADMAP.md`](docs/ROADMAP.md) and [`docs/ENGINEERING_STATUS.md`](docs/ENGINEERING_STATUS.md).
+See [`docs/ROADMAP.md`](docs/ROADMAP.md), [`docs/REFERENCE_AUTHORITY.md`](docs/REFERENCE_AUTHORITY.md).

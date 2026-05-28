@@ -1,96 +1,55 @@
 # Solver paths and batching
 
-ConicShield exposes **three production-relevant solve modes** for the same QP family. Batch is a **first-class API**, not an internal benchmark trick.
+Three production solve modes for the same QP family. Batch is a first-class API (`Backend.NATIVE_MOREAU_BATCH`), not a benchmark-only shortcut.
 
-## Architecture (three modes)
+## Modes
 
-```mermaid
-flowchart TB
-  subgraph refLane [Reference lane]
-    CVX[CVXPYMoreauProjector]
-    CVX --> parityGate[Parity and governance gold]
-  end
-  subgraph seqLane [Sequential native lane]
-    NM[Backend.NATIVE_MOREAU]
-    CS1[CompiledSolver batch_size 1]
-    NM --> CS1
-    CS1 --> shieldStep[InterSim shield steps warm-start]
-  end
-  subgraph batchLane [True batched native lane]
-    NMB[Backend.NATIVE_MOREAU_BATCH]
-    CSB[create_batch_projector]
-    NMB --> CSB
-    CSB --> projectBatch[project_batch one solve per call]
-  end
-  shieldStep --> parityGate
-  projectBatch --> benchEvidence[batch_solve_report.json]
-```
+| Mode | API | Use |
+|------|-----|-----|
+| Reference | `CVXPYMoreauProjector`, `cp.MOREAU` | Parity gold, `shielded-rules-plus-geometry` |
+| Sequential native | `Backend.NATIVE_MOREAU`, `create_projector()` | Shield steps, warm-start |
+| Compiled batch | `Backend.NATIVE_MOREAU_BATCH`, `create_batch_projector()` | Stacked proposals, throughput experiments |
 
-| Mode | API | Batch behavior | Primary use |
-|------|-----|----------------|-------------|
-| **1 — Reference** | `CVXPYMoreauProjector`, `cp.MOREAU` | One QP per call | Parity gold, `shielded-rules-plus-geometry` |
-| **2 — Sequential native** | `Backend.NATIVE_MOREAU`, `create_projector()` | `CompiledSolver` with `batch_size=1` | Production shield steps, warm-start |
-| **3 — True compiled batch** | `Backend.NATIVE_MOREAU_BATCH`, `create_batch_projector()` | Single `solve(qs, bs)` over stacked problems | Throughput, multi-proposal shields |
-| *(baseline only)* | `native_microbatch` in benchmarks | Python loop calling sequential | Compare against mode 3 only |
-
-**Default rule:** use mode 2 for single-step shields; use mode 3 when you have multiple proposals with shared structure.
-
-## Programmatic entry points
+Benchmark compares `native_microbatch` (Python loop, batch 1) vs `native_compiled_real_batch` only to judge mode 3.
 
 ```python
 from conicshield.core.solver_factory import Backend, create_batch_projector, create_projector
-
-# Sequential native (production step)
-projector = create_projector(spec, backend=Backend.NATIVE_MOREAU)
-
-# True batch (throughput)
-batch_projector = create_batch_projector(spec, backend=Backend.NATIVE_MOREAU_BATCH)
 ```
 
-Shield: `InterSimConicShield.project` (sequential) or `project_softmax_batch` (native batch path).
+Shield: `InterSimConicShield.project` (sequential) or `project_softmax_batch` (batch).
 
-Details: [`MOREAU_API_NOTES.md`](MOREAU_API_NOTES.md), [`ARCHITECTURE.md`](ARCHITECTURE.md).
-
-## Benchmark and verification bundle
-
-Licensed host standard sequence:
+## Verification (licensed host)
 
 ```bash
-python scripts/performance_benchmark.py --batch-size 4
-python scripts/batch_solve_report.py
-python scripts/check_batch_acceptance.py
+python scripts/performance_benchmark.py --out-dir output/perf --repeats 5 --sweep --batch-sizes 4,8,16
+python scripts/batch_solve_report.py --input output/perf/performance_summary.json --out output/perf/batch_solve_report.json
+python scripts/check_batch_acceptance.py --tier viability --report output/perf/batch_solve_report.json
+python scripts/check_batch_acceptance.py --tier throughput_advisory --report output/perf/batch_solve_report.json
 ```
 
-`batch_solve_report.json` is part of the **vendor verification bundle** (Vendor CI and `run_live_vendor_tests.py`). Policy: [`benchmarks/reports/batch_acceptance_policy.json`](../benchmarks/reports/batch_acceptance_policy.json).
+## Acceptance tiers
 
-### Acceptance tiers (vendor)
+Policy: [`batch_acceptance_policy.json`](../benchmarks/reports/batch_acceptance_policy.json) (v2).
 
-Policy v2: [`batch_acceptance_policy.json`](../benchmarks/reports/batch_acceptance_policy.json).
+| Tier | Threshold | CI |
+|------|-----------|-----|
+| **viability** | `speedup_ratio >= 0.98`, `any_row_meets`, CPU sweep 4/8/16 | **Required** (`reference-authority`, `vendor-ci-moreau`) |
+| **throughput_advisory** | `>= 1.05`, `any_row_meets` | **Advisory** (log only) |
 
-| Tier | Threshold | CI enforcement | External narrative |
-|------|-----------|----------------|-------------------|
-| **viability** | `speedup_ratio >= 0.98`, `any_row_meets`, sweep 4/8/16 on CPU | **Required** (`reference-authority`, `vendor-ci-moreau`) | “Batch API works and is governed” |
-| **throughput_advisory** | `speedup_ratio >= 1.05`, `any_row_meets` | **Advisory only** (logs, does not fail) | Do **not** claim universal batch speedup until met on representative workloads |
+**Public narrative:** “Batch API is governed and viability-tested.” **Do not** claim universal batch speedup.
 
-```bash
-python scripts/check_batch_acceptance.py --report benchmarks/reports/batch_solve_report.latest.json
-python scripts/check_batch_acceptance.py --tier throughput_advisory --report benchmarks/reports/batch_solve_report.latest.json
-```
+## Vendor regression tests
 
-Larger action dimensions, GPU rows, and warm-start-heavy scenarios belong in future benchmark work if throughput is part of the product story.
+| Test | Proves |
+|------|--------|
+| `test_batched_compiled_matches_sequential_native` | Mode 3 ≈ mode 2 |
+| `test_shield_native_softmax_batch` | Shield batch path |
+| `test_solver_factory` | `NATIVE_MOREAU_BATCH` factory |
 
-## Regression tests (vendor lane)
+Full numeric parity: `vendor-ci-moreau` / `make test-vendor-moreau`.
 
-| Test | What it proves |
-|------|----------------|
-| `tests/vendor/native/test_native_moreau_projector.py::test_batched_compiled_matches_sequential_native` | Mode 3 matches mode 2 within tolerance |
-| `tests/vendor/native/test_shield_native_softmax_batch.py` | Shield batch path matches sequential row |
-| `tests/core/test_solver_factory.py` | `NATIVE_MOREAU_BATCH` is the batch factory default |
+## Governed bundles
 
-Public CI runs factory contracts; full numeric batch parity runs under **`vendor-ci-moreau`** (solver-touch scope).
+`summary.json` records per-arm sequential metrics. Batch report is orthogonal throughput evidence, not a substitute for parity or promotion gates.
 
-## Governed benchmark bundles
-
-Published runs record **per-arm sequential** metrics in `summary.json`. Batch speedup is **orthogonal throughput evidence**, not a substitute for parity or promotion gates.
-
-Flagship: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md). Evidence tiers: [`REFERENCE_EVIDENCE_TIERS.md`](REFERENCE_EVIDENCE_TIERS.md).
+Flagship: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md). Tiers: [`REFERENCE_EVIDENCE_TIERS.md`](REFERENCE_EVIDENCE_TIERS.md).

@@ -49,16 +49,24 @@ Use the fixture regeneration procedure. Do not overwrite the fixture casually.
 ### Case E: a run appears good and all gates are green
 Use **`release_cli`** for a full publish (updates `CURRENT.json`, `HISTORY.json`, and `benchmarks/registry.json`). To refresh gate columns on `CURRENT.json` for an **already published** run after new parity evidence, use **`finalize_cli`** with **`--parity-summary-path`** and **`--sync-current-release`** — do not edit `CURRENT.json` by hand.
 
-## Reference authority (flagship release)
+## Reference authority (flagship)
 
-Family **`conicshield-transition-bank-v1`** points at **`host-realistic-20260525`** (`vendor_native`, external export evidence). See [`REFERENCE_AUTHORITY.md`](REFERENCE_AUTHORITY.md).
+`current_run_id`: **`host-realistic-20260525`** (`vendor_native`, `live_upstream_dump`). Map: [`REFERENCE_AUTHORITY.md`](REFERENCE_AUTHORITY.md).
 
 ```bash
-make reference-authority-check    # index + audit --strict + flagship alignment
-make verify-reference-system      # above + governance/bench pytest bundle
+make reference-authority-check
+make verify-reference-system
 ```
 
-Live upstream re-export: `python scripts/refresh_live_upstream_export.py --graph-json <dump.json>` then `make upgrade-host-realistic-vendor`.
+Refresh (licensed WSL):
+
+```bash
+make capture-inter-sim-graph
+make refresh-live-upstream-export-live
+make host-realistic-refresh-cycle
+```
+
+Log: [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md). Do not claim Maps/session graph unless capture provenance documents it.
 
 ## Standard commands
 

@@ -1,69 +1,37 @@
 # CI merge gates
 
-GitHub branch protection is configured in the repository settings, not in this tree. **Required** checks for `main` (see [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md)):
+GitHub **Settings → Branches → `main`** must match [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md) and [`.github/expected-branch-protection-main.json`](../.github/expected-branch-protection-main.json). Audit: [`BRANCH_PROTECTION_RECORD.md`](BRANCH_PROTECTION_RECORD.md).
+
+## Required status checks
 
 | Check | Workflow | Role |
 |-------|----------|------|
-| `quality` | [`ci.yml`](../.github/workflows/ci.yml) | Ruff, Ruff format, Mypy, default-marker pytest + coverage, verification scripts |
-| `conic-trusted-shape` | [`ci.yml`](../.github/workflows/ci.yml) | Public CLARABEL/SCS conic structural gate (no vendor MOREAU) |
-| `governance-audit` | [`governance-audit.yml`](../.github/workflows/governance-audit.yml) | Published-run index `--check`, export rehearsal, governance `audit_cli` rehearsal |
-| `reference-authority` | [`reference-authority.yml`](../.github/workflows/reference-authority.yml) | `verify-reference-system`, committed batch **viability** report, published bundle profile |
-| `solver-touch` | [`solver-touch.yml`](../.github/workflows/solver-touch.yml) | **Path-filtered:** index SHA-256 vs disk, parity-note `run_id`s, native-arm publish evidence, parity tests |
+| `quality` | [`ci.yml`](../.github/workflows/ci.yml) | Lint, types, default pytest |
+| `conic-trusted-shape` | [`ci.yml`](../.github/workflows/ci.yml) | CLARABEL/SCS structural gate |
+| `governance-audit` | [`governance-audit.yml`](../.github/workflows/governance-audit.yml) | Index `--check`, publish rehearsal |
+| `reference-authority` | [`reference-authority.yml`](../.github/workflows/reference-authority.yml) | `verify-reference-system`, batch viability, bundle profile |
+| `solver-touch` | [`solver-touch.yml`](../.github/workflows/solver-touch.yml) | Path-filtered parity + native-arm evidence |
 
-Enable these in GitHub **Settings → Branches** for `main` (audit trail: [`BRANCH_PROTECTION_RECORD.md`](BRANCH_PROTECTION_RECORD.md)). Must match [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md).
+**Not required:** `vendor-ci-moreau` (Policy B below).
 
-**Path-filtered `solver-touch`:** the job is listed as required in branch protection but **skips** on PRs that do not touch solver/parity/benchmark paths (see workflow `paths:`). That is intentional: unrelated docs-only PRs should not wait on parity replay.
+`solver-touch` skips when PR paths do not match — expected for docs-only PRs.
 
-## Repository law: Policy B (adopted)
+## Policy B (binding)
 
-| Policy | Status |
-|--------|--------|
-| **A** — `vendor-ci-moreau` required on protected branch | Not adopted (fork-unfriendly) |
-| **B** — Public checks required + **binding maintainer attestation** for solver-touch | **Active** |
+Solver-touch PRs merge only with vendor proof in the PR body:
 
-Reviewer checklist: [`REVIEWER_MERGE_CHECKLIST.md`](REVIEWER_MERGE_CHECKLIST.md).
+1. Green `vendor-ci-moreau` on canonical repo, **or**
+2. Maintainer attestation (`workflow_dispatch` URL or `make test-vendor-moreau` excerpt).
 
-## Binding merge rule (solver-touching changes)
+Forks: maintainer merges after attestation. Checklist: [`REVIEWER_MERGE_CHECKLIST.md`](REVIEWER_MERGE_CHECKLIST.md), [PR template](../.github/pull_request_template.md).
 
-PRs that touch native/Moreau/parity/published-run paths **must not merge** without vendor proof documented in the PR:
-
-1. Green **`vendor-ci-moreau`** on the canonical repository (automatic path match or `workflow_dispatch`), **or**
-2. Maintainer attestation: link to a green manual workflow run **or** paste a summary from licensed local `make test-vendor-moreau`.
-
-**Forks (no secrets):** only maintainers merge after attestation; authors run public CI locally and request vendor validation.
-
-`vendor-ci-moreau` is **not** a required GitHub status check (fork-friendly). The attestation rule above is **binding** for humans reviewing merges. See [`CONTRIBUTING.md`](../CONTRIBUTING.md) and [`.github/pull_request_template.md`](../.github/pull_request_template.md).
-
-## Two trust lanes
-
-```mermaid
-flowchart TB
-  subgraph publicLane [Public lane always on PR]
-    Q[quality]
-    CTS[conic-trusted-shape]
-    GA[governance-audit]
-    RA[reference-authority]
-  end
-  subgraph conditionalLane [Path-filtered]
-    ST[solver-touch]
-    VC[vendor-ci-moreau optional]
-  end
-  publicLane --> Merge[merge to main]
-  conditionalLane --> Merge
-```
+## Lanes
 
 | Lane | Checks | Secrets |
 |------|--------|---------|
-| **Public** | `quality`, `conic-trusted-shape`, `governance-audit`, `reference-authority` | None |
-| **Vendor** | `vendor-ci-moreau` (path-triggered on canonical repo PRs + manual dispatch) | `GEMFURY_TOKEN`, `MOREAU_LICENSE_KEY` |
+| Public | All required above except vendor solves | None |
+| Vendor | `vendor-ci-moreau` when secrets present | `GEMFURY_TOKEN`, `MOREAU_LICENSE_KEY` |
 
-`conic-trusted-shape` is the permanent public structural compromise: broad CI coverage without vendor credentials.
+`vendor-ci-moreau`: [`solver-ci.yml`](../.github/workflows/solver-ci.yml) — `workflow_dispatch` + path-filtered PRs.
 
-## Vendor Moreau workflow
-
-[`solver-ci.yml`](../.github/workflows/solver-ci.yml) (`vendor-ci-moreau`):
-
-- **`workflow_dispatch`** — always available on the canonical repo.
-- **`pull_request`** — same path filters as `solver-touch` when secrets exist.
-
-See [`DEVENV.md`](DEVENV.md) for the full matrix and optional workflows.
+Verify expected list: `python scripts/verify_expected_branch_protection.py`

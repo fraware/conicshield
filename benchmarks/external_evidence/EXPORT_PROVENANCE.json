@@ -6,7 +6,7 @@
   "export_kind": "live_upstream_dump",
   "graph_shape": "host_realistic_fork",
   "flagship_run_id": "host-realistic-20260525",
-  "notes": "Live upstream dump replaced committed structural export. Re-run make upgrade-host-realistic-vendor.",
+  "notes": "Refresh: make capture-inter-sim-graph && make refresh-live-upstream-export-live && make host-realistic-refresh-cycle (docs/HOST_REALISTIC_REFRESH_PROCEDURE.md).",
   "exported_at_utc": "2026-05-28T16:28:33Z",
   "source_graph_json": "benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json",
   "refresh_history": [

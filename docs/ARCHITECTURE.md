@@ -2,73 +2,56 @@
 
 ## Mission
 
-ConicShield is a proof-aware runtime safety layer and a governed benchmark system.
+Proof-aware runtime safety + governed benchmarks. Policy proposes actions; ConicShield projects to the nearest admissible action under `SafetySpec`; evidence and publication gates decide what claims are allowed.
 
-It sits between:
+## Layers
 
-- a policy that proposes actions
-- a structured safety specification
-- a runtime optimizer that corrects actions
-- an evidence pipeline that records interventions
-- a governance stack that decides which results are trustworthy
+| Layer | Responsibility |
+|-------|----------------|
+| Policy | Q-values / scores |
+| Shield | Simplex + constraints + decode (`simplex`, `turn_feasibility`, `box`, `rate`) |
+| Solver | Reference (CVXPY/Moreau); native sequential; native compiled batch |
+| Evidence | Interventions, timing, solver status |
+| Benchmark | Frozen banks → validated bundles |
+| Governance | `review-locked` → `published`; family forks on contract change |
 
-## Thesis
+`progress` / `clearance`: schema only — [adr/001](adr/001-progress-clearance-constraints.md).
 
-The project is not a generic solver demo. It targets **learned controllers** and systems where safety must be **evidence-backed**: a policy proposes an action, a safety layer defines admissibility, an optimizer finds the nearest admissible action, interventions are recorded, and **benchmark claims** are governed so comparisons stay meaningful over time.
+## Solver paths
 
-**Why conic optimization:** the shield encodes “stay close to the proposal” subject to hard constraints and optional geometry priors, with structured outputs suitable for replay and audit.
+| Mode | API |
+|------|-----|
+| Reference | `CVXPYMoreauProjector` |
+| Sequential native | `Backend.NATIVE_MOREAU` |
+| Compiled batch | `Backend.NATIVE_MOREAU_BATCH` |
 
-**Why governance is first-class:** a benchmark is a claim about a **stable task**. The repo therefore ships schemas, bundle validation, parity checks, family manifests, release orchestration, audit, and dashboards — not only application code.
+Parity binds native to reference on frozen fixture. Detail: [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md).
 
-## Layered view
+## Governance flow
 
-### 1. Policy layer
+```text
+parity_summary → finalize_cli → governance_status (review-locked)
+  → governance_decision.md (approve) → release_cli → CURRENT.json / HISTORY
+```
 
-Policy outputs action scores or Q-values.
+`finalize_cli --sync-current-release`: refresh gate columns on published `current_run_id` without new `run_id`.
 
-### 2. Shield layer
+## Layout
 
-The shield turns scores into a simplex distribution, applies hard admissibility and optional geometry priors, and decodes back to a concrete action.
+| Path | Content |
+|------|---------|
+| `conicshield/` | Package |
+| `schemas/` | Bundle + context schemas |
+| `benchmarks/published_runs/` | Committed governed bundles |
+| `benchmarks/runs/` | Ephemeral (gitignored) |
+| `benchmarks/external_evidence/` | Flagship export |
+| `tests/fixtures/parity_reference/` | Parity gold |
+| `scripts/` | Refresh, reports, checks |
 
-**Constraint kinds compiled for projection today:** `simplex`, `turn_feasibility`, `box`, and `rate` (see `SafetySpec` in `conicshield/specs/schema.py`). Kinds `progress` and `clearance` exist on the schema but are **not** implemented for the shield QP yet; see [adr/001-progress-clearance-constraints.md](adr/001-progress-clearance-constraints.md) and [ENGINEERING_STATUS.md](ENGINEERING_STATUS.md).
+## Reference system (v1)
 
-### 3. Solver layer
-
-Two paths are supported:
-
-- reference path: CVXPY/Moreau
-- production path: native Moreau `CompiledSolver` (shared CSR structure, batch size 1 per step; see `NativeMoreauCompiledProjector`; **true multi-problem batching** via `NativeMoreauCompiledBatchProjector`; optional **batched softmax** path on `InterSimConicShield` where multiple proposals are projected together)
-
-The native path inherits trust through **parity** against the reference stream on a frozen fixture.
-
-### 4. Evidence layer
-
-Interventions record proposed and corrected distributions, chosen action, active constraints, solver status, and timing where applicable.
-
-### 5. Benchmark layer
-
-Benchmarks run on frozen transition-bank artifacts and serialize into validated run bundles (not live environment calls for published evaluations).
-
-### 6. Governance layer
-
-Governance decides whether results are candidates, review-locked, published, or deprecated. Semantic task changes **fork families** instead of silently overwriting scores. Parity evidence from `conicshield.parity.cli` feeds `finalize_cli` (`--parity-summary-path`); `release_cli` publishes full release metadata (real publish also requires `governance_decision.md` in the run directory), and `finalize_cli --sync-current-release` can refresh gate columns on `CURRENT.json` without a republish when the run id is unchanged.
-
-## Repository layout
-
-| Area | Location |
-|------|----------|
-| Package code | `conicshield/` |
-| JSON Schemas for bundles | `schemas/` |
-| Benchmark registry and releases | `benchmarks/` |
-| Published governed bundles (canonical) | `benchmarks/published_runs/<run_id>/` |
-| Ephemeral local bundles | `benchmarks/runs/<run_id>/` (gitignored) |
-| Frozen parity fixture | `tests/fixtures/parity_reference/` |
-| Maintainer scripts (verification, perf, dashboard) | `scripts/` |
-| Tests | `tests/` (see `tests/README.md`) |
-| Policies and verification ladder | `docs/` |
+Flagship: `host-realistic-20260525`. Map: [`REFERENCE_AUTHORITY.md`](REFERENCE_AUTHORITY.md).
 
 ## Related
 
-- [README.md](../README.md) — documentation map and quick commands
-- [VERIFICATION_AND_STRESS_TEST_PLAN.md](VERIFICATION_AND_STRESS_TEST_PLAN.md) — trust ladder
-- [BENCHMARK_GOVERNANCE.md](BENCHMARK_GOVERNANCE.md) — publication rules
+[`VERIFICATION_AND_STRESS_TEST_PLAN.md`](VERIFICATION_AND_STRESS_TEST_PLAN.md), [`BENCHMARK_GOVERNANCE.md`](BENCHMARK_GOVERNANCE.md), [`README.md`](README.md).
