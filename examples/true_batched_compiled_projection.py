@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
-"""True batched compiled solve via NativeMoreauCompiledBatchProjector (requires vendor Moreau)."""
+"""True batched compiled solve via NativeMoreauCompiledBatchProjector.
+
+Audience: integrator evaluating native batch API existence.
+Prerequisites: vendor Moreau installed and licensed; ``pip install -e ".[solver]"`` or project .venv.
+Proves: ``create_batch_projector`` + ``project_batch`` returns shape (K, n) on a minimal spec.
+Does not prove: universal throughput wins — read docs/SOLVER_PATHS_AND_BATCHING.md for scenario-dependent
+  performance and viability-only public narrative.
+Expected: prints input/output shapes and corrected batch array, or exits 0 with Skip if no Moreau.
+"""
 
 from __future__ import annotations
 
-import numpy as np
-
 import sys
 from pathlib import Path
+
+import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import minimal_spec  # noqa: E402
@@ -45,6 +53,7 @@ def main() -> int:
     print("input shape:", proposals.shape)
     print("output shape:", corrected.shape)
     print("corrected_batch:\n", corrected)
+    print("\nBatch path exists; throughput claims are scenario-governed — see SOLVER_PATHS_AND_BATCHING.md.")
     return 0
 
 

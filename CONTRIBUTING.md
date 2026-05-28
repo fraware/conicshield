@@ -13,6 +13,13 @@ Thank you for contributing. This repository separates **public structural CI** f
 3. For benchmark/governance changes, run `make verify-reference-system` and `make community-verify` when touching published bundles or `conicshield.published_runs`.
 4. Read [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md), [`docs/REVIEWER_MERGE_CHECKLIST.md`](docs/REVIEWER_MERGE_CHECKLIST.md), and [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md).
 
+## Public claim surface (review rule)
+
+Any PR that changes **README**, **docs/**, **examples/**, or **published bundle READMEs** in ways that affect what outsiders may believe must:
+
+1. Cite alignment with at least one authority doc: [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md), [`docs/ROADMAP.md`](docs/ROADMAP.md), [`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md), or [`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md) (in PR description or diff comments).
+2. Pass `python scripts/check_public_claim_phrases.py` (also run via `make verify-v1-lock-quick`).
+
 ## Required CI (public lane)
 
 These checks run on every PR to `main` and should be green:

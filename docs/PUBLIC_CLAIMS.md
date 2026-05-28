@@ -1,6 +1,8 @@
 # Public claims
 
-Short claim surface for engineers, collaborators, and external materials. Source: [README.md](../README.md), [CONTRIBUTING.md](../CONTRIBUTING.md), [DIFFERENTIATION_PUBLIC_STANCE.md](DIFFERENTIATION_PUBLIC_STANCE.md), [ROADMAP.md](ROADMAP.md).
+Short authoritative claim surface for engineers, collaborators, and external materials.
+
+PRs that change public-facing docs or examples must cite this file (or ROADMAP / DIFFERENTIATION_PUBLIC_STANCE / SOLVER_PATHS_AND_BATCHING) and pass `python scripts/check_public_claim_phrases.py`.
 
 ## Safe to claim publicly now
 

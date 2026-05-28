@@ -2,6 +2,12 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — Community front door and frozen published-runs v1 API
+
+- README **Start here** block; [COMMUNITY_LAYER.md](docs/COMMUNITY_LAYER.md) as default public map.
+- [PUBLISHED_RUNS_API.md](docs/PUBLISHED_RUNS_API.md) v1 stability contract; CLI `summary` / `provenance`.
+- Publication-grade bundle README template + `check_public_claim_phrases.py`; examples discipline pass.
+
 ### 2026-05-28 — v1 lock verification script
 
 - `scripts/verify_v1_lock.py` + `make verify-v1-lock-quick`; CONTRIBUTING leads with Community layer for consumers.

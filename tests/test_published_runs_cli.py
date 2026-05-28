@@ -37,3 +37,15 @@ def test_cli_current_family() -> None:
     proc = _run("current")
     assert proc.returncode == 0
     assert proc.stdout.strip() == "host-realistic-20260525"
+
+
+def test_cli_summary_and_provenance_flagship() -> None:
+    summary = _run("summary", "host-realistic-20260525")
+    assert summary.returncode == 0
+    rows = json.loads(summary.stdout)
+    assert any(r.get("label") == "shielded-native-moreau" for r in rows)
+
+    prov = _run("provenance", "host-realistic-20260525")
+    assert prov.returncode == 0
+    payload = json.loads(prov.stdout)
+    assert payload.get("projector_mode") == "real_projector"

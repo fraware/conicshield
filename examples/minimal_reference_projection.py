@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""One reference (CVXPY/Moreau) projection on the minimal supported spec."""
+"""One reference (CVXPY/Moreau) projection on the minimal supported spec.
+
+Audience: integrator (public/reference stack).
+Prerequisites: ``pip install -e ".[dev]"``; CVXPY/Moreau available in environment.
+Proves: ``create_projector`` + ``Backend.CVXPY_MOREAU`` returns a corrected action vector.
+Does not prove: native batch speedup or vendor-native parity.
+Expected: prints proposed and corrected vectors (or Skip if solver unavailable).
+"""
 
 from __future__ import annotations
 

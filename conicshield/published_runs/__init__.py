@@ -1,6 +1,16 @@
-"""Public dataset interface for governed published benchmark bundles."""
+"""Public dataset interface for governed published benchmark bundles.
+
+Stable v1 surface (do not rename without a major version bump):
+
+- ``list_runs``, ``get_current_run``, ``load_run``, ``verify_run``
+- ``load_summary``, ``load_provenance``, ``load_episodes``
+- ``index_path``, ``ensure_community_metadata``
+
+See ``docs/PUBLISHED_RUNS_API.md`` for stability guarantees.
+"""
 
 from conicshield.published_runs.api import (
+    PUBLISHED_RUNS_API_VERSION,
     current_family_run,
     ensure_community_metadata,
     get_current_run,
@@ -22,6 +32,7 @@ from conicshield.published_runs.models import (
 )
 
 __all__ = [
+    "PUBLISHED_RUNS_API_VERSION",
     "CommunityMetadata",
     "IntegrityEntry",
     "PublishedRunBundle",

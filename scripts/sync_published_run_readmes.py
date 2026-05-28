@@ -65,11 +65,15 @@ def _render_readme(
     if (run_dir / "parity_out" / "parity_summary.json").is_file():
         ps = json.loads((run_dir / "parity_out" / "parity_summary.json").read_text(encoding="utf-8"))
         parity_status = "green" if ps.get("passed") else str(ps.get("status", "present"))
+    gov_state = gov
+    integrity_note = "Run `python -m conicshield.published_runs.cli verify` after clone"
 
     lines = [
         f"# Published run `{run_id}`",
         "",
         blurb,
+        "",
+        "Publication-grade governed benchmark bundle. Read [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) first.",
         "",
         "| Field | Value |",
         "|-------|--------|",
@@ -84,7 +88,8 @@ def _render_readme(
         if catalog.get("host_realistic")
         else f"| Export source | n/a |",
         f"| Parity status | `{parity_status}` |",
-        f"| Scope contract | [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) |",
+        f"| Governance state | `{gov_state}` |",
+        f"| Index integrity | {integrity_note} |",
         "",
         "## What this run proves",
         "",
@@ -101,24 +106,32 @@ def _render_readme(
             "## What this run does not prove",
             "",
             "- Production differentiable shield / autograd product ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](../../docs/DIFFERENTIATION_PUBLIC_STANCE.md))",
-            "- Universal batch speedup ([`docs/SOLVER_PATHS_AND_BATCHING.md`](../../docs/SOLVER_PATHS_AND_BATCHING.md))",
-            "- Full Maps/session navigation graph (fork topology unless provenance says otherwise)",
+            "- Claim of universal batch throughput win ([`docs/SOLVER_PATHS_AND_BATCHING.md`](../../docs/SOLVER_PATHS_AND_BATCHING.md))",
+            "- Full upstream Maps/session navigation graph (fork topology only unless provenance documents more)",
             "",
             "## Validate and inspect",
             "",
             "```bash",
             "python -m conicshield.published_runs.cli verify " + run_id,
+            "python -m conicshield.published_runs.cli show " + run_id,
             "python -m conicshield.artifacts.validator_cli --run-dir " + run_rel_path,
             "python scripts/validate_published_bundle_profile.py --run-id " + run_id,
             "```",
             "",
-            "Python API:",
+            "Python API (v1 stable — see [`docs/PUBLISHED_RUNS_API.md`](../../docs/PUBLISHED_RUNS_API.md)):",
             "",
             "```python",
-            "from conicshield.published_runs import load_run, load_summary, verify_run",
+            "from conicshield.published_runs import load_run, load_summary, load_provenance, verify_run",
             f"verify_run({run_id!r})",
             f"bundle = load_run({run_id!r})",
             "```",
+            "",
+            "## Cite this artifact",
+            "",
+            "Cite the **`run_id`**, repository **commit SHA**, and [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) scope. "
+            "Distinguish **artifact identity** from scientific conclusions — see "
+            "[`docs/CITING_CONICSHIELD_ARTIFACTS.md`](../../docs/CITING_CONICSHIELD_ARTIFACTS.md) "
+            "and [`docs/PUBLIC_CLAIMS.md`](../../docs/PUBLIC_CLAIMS.md).",
             "",
         ]
     )

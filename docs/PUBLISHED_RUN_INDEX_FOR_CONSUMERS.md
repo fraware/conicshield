@@ -56,6 +56,14 @@ It is the **integrity catalog**, not the scientific claim. Scope lives in each b
 | `solver_versions.json` | Vendor stack snapshot (when present) |
 | `parity_out/` | Native vs reference replay (when present) |
 
+## Index schema stability (v2)
+
+Stable fields (do not rename without a schema bump): `schema_version`, `runs[].run_id`, `runs[].repository_relative_path`, `runs[].integrity` (file → `sha256`).
+
+Optional / may grow: `runs[].catalog` denormalized flags. New integrity files may be added; run `python scripts/refresh_published_run_index.py` after bundle edits.
+
+Full API + CLI: [PUBLISHED_RUNS_API.md](PUBLISHED_RUNS_API.md).
+
 ## What the index does not guarantee
 
 - Universal batch speedup (see [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md))

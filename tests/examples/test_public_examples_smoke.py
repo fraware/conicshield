@@ -36,3 +36,7 @@ def test_minimal_reference_projection_example() -> None:
 
 def test_compare_reference_vs_native_metrics_example() -> None:
     _run("compare_reference_vs_native_metrics.py")
+
+
+def test_load_published_runs_api_example() -> None:
+    _run("load_published_runs_api.py")

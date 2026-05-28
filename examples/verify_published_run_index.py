@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Verify PUBLISHED_RUN_INDEX integrity and list governed run ids."""
+"""Verify PUBLISHED_RUN_INDEX integrity and list governed run ids.
+
+Audience: researcher building tools on the integrity catalog.
+Prerequisites: ``pip install -e .`` from repo root.
+Proves: ``refresh_published_run_index.py --check``, ``list_runs``, ``get_current_run``, ``verify_run``.
+Does not prove: bundle scientific claims or publish pipeline correctness beyond index hashes.
+Expected: index integrity OK; lists run ids; verify_run OK for family current.
+"""
 
 from __future__ import annotations
 

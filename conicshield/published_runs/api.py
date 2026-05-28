@@ -1,6 +1,22 @@
-"""Stable consumer API for committed published benchmark bundles."""
+"""Stable consumer API for committed published benchmark bundles.
+
+v1 public surface — frozen for external tools and notebooks:
+
+    from conicshield.published_runs import list_runs, get_current_run, verify_run, load_summary
+
+    for entry in list_runs():
+        print(entry.run_id)
+
+    verify_run("host-realistic-20260525")
+    bundle = get_current_run("conicshield-transition-bank-v1")
+    rows = load_summary(bundle.run_id)
+
+See ``PUBLISHED_RUNS_API_VERSION`` and ``docs/PUBLISHED_RUNS_API.md``.
+"""
 
 from __future__ import annotations
+
+PUBLISHED_RUNS_API_VERSION = "v1"
 
 import json
 from pathlib import Path
@@ -67,13 +83,24 @@ def _index_entry(run: dict[str, Any]) -> PublishedRunIndexEntry:
 
 
 def list_runs(*, repo_root: Path | None = None) -> tuple[PublishedRunIndexEntry, ...]:
-    """Return all runs listed in ``PUBLISHED_RUN_INDEX.json``."""
+    """Return all runs listed in ``PUBLISHED_RUN_INDEX.json`` (v1 stable).
+
+    Example::
+
+        ids = [e.run_id for e in list_runs()]
+    """
     payload = load_published_run_index(repo_root=_repo_root(repo_root))
     return tuple(_index_entry(r) for r in payload.get("runs", []))
 
 
 def load_run(run_id: str, *, repo_root: Path | None = None) -> PublishedRunBundle:
-    """Load bundle metadata and paths for a governed ``run_id``."""
+    """Load bundle metadata and paths for a governed ``run_id`` (v1 stable).
+
+    Example::
+
+        bundle = load_run("host-realistic-20260525")
+        assert bundle.community is not None
+    """
     root = _repo_root(repo_root)
     for entry in list_runs(repo_root=root):
         if entry.run_id == run_id:
@@ -102,7 +129,12 @@ def load_run(run_id: str, *, repo_root: Path | None = None) -> PublishedRunBundl
 
 
 def verify_run(run_id: str, *, repo_root: Path | None = None) -> None:
-    """Verify SHA-256 integrity for ``run_id`` (raises ``AssertionError`` on mismatch)."""
+    """Verify SHA-256 integrity for ``run_id`` (v1 stable; raises on mismatch).
+
+    Example::
+
+        verify_run("host-realistic-20260525")
+    """
     import hashlib
 
     bundle = load_run(run_id, repo_root=repo_root)
@@ -119,7 +151,12 @@ def verify_run(run_id: str, *, repo_root: Path | None = None) -> None:
 
 
 def get_current_run(family_id: str, *, repo_root: Path | None = None) -> PublishedRunBundle:
-    """Return the published bundle for a family's ``current_run_id``."""
+    """Return the published bundle for a family's ``current_run_id`` (v1 stable).
+
+    Example::
+
+        bundle = get_current_run("conicshield-transition-bank-v1")
+    """
     root = _repo_root(repo_root)
     current_path = root / "benchmarks" / "releases" / family_id / "CURRENT.json"
     if not current_path.is_file():
@@ -137,7 +174,13 @@ def current_family_run(family_id: str, *, repo_root: Path | None = None) -> Publ
 
 
 def load_provenance(run_id: str, *, repo_root: Path | None = None) -> RunProvenance:
-    """Load ``RUN_PROVENANCE.json`` as a structured record."""
+    """Load ``RUN_PROVENANCE.json`` as a structured record (v1 stable).
+
+    Example::
+
+        prov = load_provenance("host-realistic-20260525")
+        assert prov.projector_mode == "real_projector"
+    """
     bundle = load_run(run_id, repo_root=repo_root)
     raw = dict(bundle.run_provenance or {})
     return RunProvenance(
@@ -153,7 +196,13 @@ def load_provenance(run_id: str, *, repo_root: Path | None = None) -> RunProvena
 
 
 def load_summary(run_id: str, *, repo_root: Path | None = None) -> tuple[SummaryRow, ...]:
-    """Load ``summary.json`` arm rows for a published run."""
+    """Load ``summary.json`` arm rows for a published run (v1 stable).
+
+    Example::
+
+        ref = next(r for r in load_summary("host-realistic-20260525") if "geometry" in r.label)
+        nat = next(r for r in load_summary("host-realistic-20260525") if "native" in r.label)
+    """
     bundle = load_run(run_id, repo_root=repo_root)
     raw = json.loads((bundle.path / "summary.json").read_text(encoding="utf-8"))
     rows = raw if isinstance(raw, list) else []

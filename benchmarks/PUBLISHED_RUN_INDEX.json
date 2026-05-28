@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-05-28T18:06:51Z",
+  "generated_at_utc": "2026-05-28T18:32:05Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
     "host-realistic-20260525",
@@ -49,7 +49,7 @@
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "964a574d4db5ba67b89f7bb30a35026d49f6ff4d157ca026cd7633b4f01ec86b"
+          "sha256": "34772f5e47404fe66bee70d6ba0531ce079630db052fcf82c4deb0dd36b0f7a9"
         },
         "COMMUNITY_METADATA.json": {
           "sha256": "7f90be26414fc37cbf4264a2eb249e96fbd812cb5816440e6a96f9d9e9f55797"
@@ -105,7 +105,7 @@
           "sha256": "8ff93f876bc47fb202e445daafd9bbaec4f958ca739afad95b48057b22b03d4c"
         },
         "README.md": {
-          "sha256": "77e1a39e23c4372f9c35bbb1fc08a4ce6fd2d371cd1e3016fa73419a94a49d8c"
+          "sha256": "8f10802c53bc74f0c9ef8d25ff3f629302fe653f67ebab54f697af2fd19adbd2"
         },
         "COMMUNITY_METADATA.json": {
           "sha256": "9ec9905740af298888ad444cd0bb6b95c665752a92ff3992f856543feca3371d"
@@ -164,7 +164,7 @@
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "ebb3b72b0c01d0bb069ad028adb68ca0c92c04a5128c2dede5113a1dc9c8e276"
+          "sha256": "8cad5e7f35fddd1a17361654a56b493ab7abdba1c1ea970bc835e0f6f6e50d68"
         },
         "COMMUNITY_METADATA.json": {
           "sha256": "dc3b5406635ab19eeea7480e5f51090eca9a21e634a5343c94e991286f8b8b55"

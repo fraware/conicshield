@@ -59,6 +59,7 @@ def main() -> int:
                 "--tb=line",
             ],
         ),
+        ("public_claim_phrases", [py, str(root / "scripts" / "check_public_claim_phrases.py")]),
     ]
     for name, cmd in steps:
         ok, msg = _run(cmd, cwd=root, label=name)

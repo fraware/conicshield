@@ -1,8 +1,8 @@
-# Documentation index
+# Documentation index (maintainers and auditors)
 
-Start here after the repository [`README.md`](../README.md).
+**Outside users should not start here.** Use the public front door: **[COMMUNITY_LAYER.md](COMMUNITY_LAYER.md)** (linked prominently from the [top-level README](../README.md)).
 
-**External users:** [COMMUNITY_LAYER.md](COMMUNITY_LAYER.md) (quickstarts + API + examples in one page).
+This index maps the **reference system**, governance, and refresh procedures for maintainers.
 
 ## Start by audience
 

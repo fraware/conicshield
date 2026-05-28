@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Walk through host-realistic-20260525: README, metadata, governance, summary."""
+"""Walk through host-realistic-20260525 publication artifact fields.
+
+Audience: researcher validating the flagship bundle without governance internals.
+Prerequisites: ``pip install -e .`` from repo root.
+Proves: index integrity, evidence tier, host-realistic flag, native arm, governance gates, provenance.
+Does not prove: Maps/session navigation graph, autograd product, or universal batch speedup.
+Expected: integrity OK; printed tier/host_realistic/native/governance/verify status lines.
+"""
 
 from __future__ import annotations
 
@@ -24,22 +31,22 @@ def main() -> int:
         except (OSError, ValueError):
             pass
     root = Path.cwd()
+
+    print("=== verify_run (index integrity) ===")
     verify_run(FLAGSHIP, repo_root=root)
-    print(f"integrity OK: {FLAGSHIP}\n")
+    print("integrity OK")
 
     bundle = get_current_run(FAMILY, repo_root=root)
     assert bundle.run_id == FLAGSHIP
 
+    print("\n=== README (first lines) ===")
     readme = bundle.path / "README.md"
-    print("=== README (first lines) ===")
     if readme.is_file():
-        for line in readme.read_text(encoding="utf-8").splitlines()[:12]:
+        for line in readme.read_text(encoding="utf-8").splitlines()[:10]:
             print(line)
-    print()
 
-    meta_path = bundle.path / "COMMUNITY_METADATA.json"
-    print("=== COMMUNITY_METADATA.json ===")
-    print("path:", meta_path.relative_to(root))
+    print("\n=== COMMUNITY_METADATA.json ===")
+    print("path:", (bundle.path / "COMMUNITY_METADATA.json").relative_to(root))
     if bundle.community:
         c = bundle.community
         print("evidence_tier:", c.evidence_tier)
@@ -47,27 +54,25 @@ def main() -> int:
         print("includes_native_arm:", c.includes_native_arm)
         print("export_kind:", c.export_kind)
         print("parity_status:", c.parity_status)
-        print("recommended_uses:", c.recommended_uses[:2], "...")
-        print("known_limitations:", c.known_limitations[0])
-    print()
 
-    print("=== governance_status.json ===")
+    print("\n=== governance_status.json ===")
     gov = bundle.governance_status or {}
-    print("state:", gov.get("state"))
+    print("governance state:", gov.get("state"))
+    print("artifact_gate:", gov.get("artifact_gate"))
+    print("parity_gate:", gov.get("parity_gate"))
+    print("promotion_gate:", gov.get("promotion_gate"))
     print("publishable_arms:", gov.get("publishable_arms"))
-    print("gates:", {k: gov.get(k) for k in ("artifact_gate", "parity_gate", "promotion_gate")})
-    native_in_summary = "shielded-native-moreau" in {r.label for r in load_summary(FLAGSHIP, repo_root=root)}
-    print("native arm in summary.json:", native_in_summary)
-    print()
+
+    labels = {r.label for r in load_summary(FLAGSHIP, repo_root=root)}
+    print("native arm in summary:", "shielded-native-moreau" in labels)
 
     prov = load_provenance(FLAGSHIP, repo_root=root)
-    print("=== RUN_PROVENANCE.json ===")
+    print("\n=== RUN_PROVENANCE.json ===")
     print("projector_mode:", prov.projector_mode)
     print("host_realistic_evidence:", prov.host_realistic_evidence)
-    print("export_source:", prov.export_source)
-    print()
+    print("evidence_tier:", prov.evidence_tier)
 
-    print("=== summary.json arms ===")
+    print("\n=== summary.json (arms) ===")
     for row in load_summary(FLAGSHIP, repo_root=root):
         print(f"  {row.label}: p50_ms={row.solve_time_p50_ms}")
     return 0

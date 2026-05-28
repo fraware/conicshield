@@ -20,6 +20,26 @@
 
 A policy proposes an action. ConicShield solves a constrained optimization problem to find the **nearest admissible** action under explicit safety constraints. The world sees the **corrected** action, not the raw proposal. Every intervention yields structured records you can hash, audit, and benchmark under family policy.
 
+---
+
+## Start here
+
+| You want to… | Go here |
+|--------------|---------|
+| **Use or cite published benchmarks** (recommended for outsiders) | **[Community layer](docs/COMMUNITY_LAYER.md)** — quickstarts, `conicshield.published_runs` API, runnable [examples](examples/README.md) |
+| **Operate the reference system** (maintainers, auditors) | [Documentation index](docs/README.md) — cadence, governance, refresh procedures |
+
+The **community entrypoint** is for researchers, integrators, and anyone consuming `host-realistic-20260525` without reading internal policy graphs. **Maintainer / reference-system docs** live under [`docs/README.md`](docs/README.md) and [`docs/REFERENCE_SYSTEM.md`](docs/REFERENCE_SYSTEM.md).
+
+```bash
+pip install -e ".[dev]"
+python examples/verify_published_run_index.py    # researcher: index + flagship verify
+python -m conicshield.published_runs.cli current # family current_run_id
+make verify-v1-lock-quick                        # auditor: is v1 still coherent?
+```
+
+---
+
 ```mermaid
 flowchart LR
     Q[Scores / Q-values] --> S[ConicShield]
@@ -59,9 +79,7 @@ Refresh: `make host-realistic-refresh-cycle-licensed` — [`docs/HOST_REALISTIC_
 
 **Batch:** governed; viability-tested — not universal speedup ([`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md)). **Differentiation:** validation-only ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)).
 
-**Start here:** [Community layer](docs/COMMUNITY_LAYER.md) · [Researcher](docs/QUICKSTART_RESEARCHER.md) · [Integrator](docs/QUICKSTART_INTEGRATOR.md) · [Maintainer](docs/QUICKSTART_MAINTAINER.md) · [Examples](examples/README.md)
-
-Docs index: [`docs/README.md`](docs/README.md). Local: `make verify-v1-lock`, `make community-verify`, `python -m conicshield.published_runs.cli list`. Maintainer lock: [`docs/V1_LOCK_CHECKLIST.md`](docs/V1_LOCK_CHECKLIST.md).
+Published-run API: [`docs/PUBLISHED_RUNS_API.md`](docs/PUBLISHED_RUNS_API.md) · Claims: [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md)
 
 ## Installation
 

@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""CLI for published benchmark bundles: list, show, verify."""
+"""CLI mirroring the v1 ``conicshield.published_runs`` Python API."""
 
 from __future__ import annotations
 
 import argparse
 import json
 import sys
-from pathlib import Path
+from dataclasses import asdict
 
 from conicshield.published_runs import (
+    PUBLISHED_RUNS_API_VERSION,
     get_current_run,
     list_runs,
+    load_provenance,
     load_run,
     load_summary,
     verify_run,
@@ -23,20 +25,9 @@ def _cmd_list(_: argparse.Namespace) -> int:
     return 0
 
 
-def _cmd_show(args: argparse.Namespace) -> int:
-    bundle = load_run(args.run_id)
-    summary = load_summary(args.run_id)
-    payload = {
-        "run_id": bundle.run_id,
-        "path": str(bundle.path),
-        "evidence_tier": (
-            bundle.community.evidence_tier if bundle.community else None
-        ),
-        "governance_state": (bundle.governance_status or {}).get("state"),
-        "publishable_arms": (bundle.governance_status or {}).get("publishable_arms"),
-        "summary_labels": [r.label for r in summary],
-    }
-    print(json.dumps(payload, indent=2))
+def _cmd_current(args: argparse.Namespace) -> int:
+    bundle = get_current_run(args.family_id)
+    print(bundle.run_id)
     return 0
 
 
@@ -46,29 +37,72 @@ def _cmd_verify(args: argparse.Namespace) -> int:
     return 0
 
 
-def _cmd_current(args: argparse.Namespace) -> int:
-    bundle = get_current_run(args.family_id)
-    print(bundle.run_id)
+def _cmd_show(args: argparse.Namespace) -> int:
+    bundle = load_run(args.run_id)
+    summary = load_summary(args.run_id)
+    payload = {
+        "api_version": PUBLISHED_RUNS_API_VERSION,
+        "run_id": bundle.run_id,
+        "path": str(bundle.path),
+        "evidence_tier": bundle.community.evidence_tier if bundle.community else None,
+        "host_realistic": bundle.community.host_realistic if bundle.community else None,
+        "includes_native_arm": bundle.community.includes_native_arm if bundle.community else None,
+        "governance_state": (bundle.governance_status or {}).get("state"),
+        "publishable_arms": (bundle.governance_status or {}).get("publishable_arms"),
+        "summary_labels": [r.label for r in summary],
+    }
+    print(json.dumps(payload, indent=2))
+    return 0
+
+
+def _cmd_summary(args: argparse.Namespace) -> int:
+    rows = []
+    for row in load_summary(args.run_id):
+        rows.append(
+            {
+                "label": row.label,
+                "solve_time_p50_ms": row.solve_time_p50_ms,
+                **row.extra,
+            }
+        )
+    print(json.dumps(rows, indent=2))
+    return 0
+
+
+def _cmd_provenance(args: argparse.Namespace) -> int:
+    prov = load_provenance(args.run_id)
+    print(json.dumps(asdict(prov), indent=2))
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description=__doc__)
+    p = argparse.ArgumentParser(
+        description=__doc__,
+        epilog="API stability: docs/PUBLISHED_RUNS_API.md (v1 frozen surface).",
+    )
     sub = p.add_subparsers(dest="command", required=True)
 
-    sub.add_parser("list", help="List governed run ids").set_defaults(func=_cmd_list)
+    sub.add_parser("list", help="List governed run ids (list_runs)").set_defaults(func=_cmd_list)
 
-    show = sub.add_parser("show", help="Show bundle summary JSON")
-    show.add_argument("run_id")
-    show.set_defaults(func=_cmd_show)
+    current = sub.add_parser("current", help="Print family current_run_id (get_current_run)")
+    current.add_argument("family_id", nargs="?", default="conicshield-transition-bank-v1")
+    current.set_defaults(func=_cmd_current)
 
-    verify = sub.add_parser("verify", help="Verify index SHA-256 for run_id")
+    verify = sub.add_parser("verify", help="Verify index SHA-256 (verify_run)")
     verify.add_argument("run_id")
     verify.set_defaults(func=_cmd_verify)
 
-    current = sub.add_parser("current", help="Print family current_run_id")
-    current.add_argument("family_id", nargs="?", default="conicshield-transition-bank-v1")
-    current.set_defaults(func=_cmd_current)
+    show = sub.add_parser("show", help="Bundle overview JSON (load_run + summary labels)")
+    show.add_argument("run_id")
+    show.set_defaults(func=_cmd_show)
+
+    summary = sub.add_parser("summary", help="summary.json rows (load_summary)")
+    summary.add_argument("run_id")
+    summary.set_defaults(func=_cmd_summary)
+
+    prov = sub.add_parser("provenance", help="RUN_PROVENANCE.json (load_provenance)")
+    prov.add_argument("run_id")
+    prov.set_defaults(func=_cmd_provenance)
 
     args = p.parse_args(argv)
     return int(args.func(args))
