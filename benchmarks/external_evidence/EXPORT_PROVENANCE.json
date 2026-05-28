@@ -28,7 +28,7 @@
       "refresh_index": 3,
       "completed_at_utc": "2026-05-28T16:28:58Z",
       "trigger": "calendar-cadence",
-      "git_ref": "714e213",
+      "git_ref": "5485dfb",
       "export_kind": "live_upstream_dump",
       "notes": "make capture-inter-sim-graph; refresh-live-upstream-export-live; host-realistic-refresh-cycle"
     }
