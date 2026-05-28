@@ -9,12 +9,12 @@
 | Workstream | Artifact |
 |------------|----------|
 | Refresh cadence | [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md), `make host-realistic-refresh-cycle` |
-| Merge enforcement | `reference-authority` required on `main`; [`BRANCH_PROTECTION_RECORD.md`](BRANCH_PROTECTION_RECORD.md) |
+| Merge enforcement | `reference-authority` + [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md) |
 | Bundle clarity | `sync_published_run_readmes.py`, `validate_published_bundle_profile.py` |
 | Batch honesty | Viability CI; throughput advisory only — [`SOLVER_PATHS_AND_BATCHING.md`](SOLVER_PATHS_AND_BATCHING.md) |
 | Upstream evidence | Re-capture when `REVISION` or navigation graph changes |
 
-**Exit criteria before Option B:** refresh cadence boring; branch protection enforced; export story documented (fork vs session graph).
+**Exit criteria before Option B:** refresh cadence boring; `make verify-v1-lock` green on `main`; export story documented (fork vs session graph).
 
 ## Option B (deferred)
 

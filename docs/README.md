@@ -17,7 +17,7 @@ Public claim boundaries: [PUBLIC_CLAIMS.md](PUBLIC_CLAIMS.md). Examples: [exampl
 | Document | Use when |
 |----------|----------|
 | [REFERENCE_SYSTEM.md](REFERENCE_SYSTEM.md) | Auditor one-page map + status JSON |
-| [V1_LOCK_CHECKLIST.md](V1_LOCK_CHECKLIST.md) | Pre-lock verification and branch protection |
+| [V1_LOCK_CHECKLIST.md](V1_LOCK_CHECKLIST.md) | Pre-lock verification (`make verify-v1-lock`) |
 | [REFERENCE_AUTHORITY.md](REFERENCE_AUTHORITY.md) | Flagship `host-realistic-20260525`, gates, closed loop |
 | [HOST_REALISTIC_CADENCE_POLICY.md](HOST_REALISTIC_CADENCE_POLICY.md) | Monthly + immediate refresh triggers |
 | [REFERENCE_AUTHORITY_LOG.md](REFERENCE_AUTHORITY_LOG.md) | Durable refresh log |
@@ -29,8 +29,6 @@ Public claim boundaries: [PUBLIC_CLAIMS.md](PUBLIC_CLAIMS.md). Examples: [exampl
 | [HOST_REALISTIC_REFRESH_PROCEDURE.md](HOST_REALISTIC_REFRESH_PROCEDURE.md) | Maintainer refresh commands |
 | [REFERENCE_EVIDENCE_TIERS.md](REFERENCE_EVIDENCE_TIERS.md) | `evidence_tier` S0–S3 |
 | [CI_MERGE_GATES.md](CI_MERGE_GATES.md) | Required GitHub checks, Policy B |
-| [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md) | Enable checks on `main` |
-| [BRANCH_PROTECTION_RECORD.md](BRANCH_PROTECTION_RECORD.md) | Screenshot / audit trail |
 | [REVIEWER_MERGE_CHECKLIST.md](REVIEWER_MERGE_CHECKLIST.md) | Merge sign-off |
 
 ## Benchmark publish and artifacts

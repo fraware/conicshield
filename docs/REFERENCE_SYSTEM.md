@@ -68,4 +68,4 @@ python scripts/check_flagship_full_refresh_cadence.py --max-days 35
 python scripts/generate_reference_system_status.py --check
 ```
 
-Branch protection (admin token): `python scripts/audit_branch_protection_api.py`
+Pre-lock verification: `make verify-v1-lock` ([`V1_LOCK_CHECKLIST.md`](V1_LOCK_CHECKLIST.md))

@@ -221,7 +221,7 @@ See also [`docs/README.md`](docs/README.md) for a compact index.
 - [`docs/HOST_REALISTIC_RUNBOOK.md`](docs/HOST_REALISTIC_RUNBOOK.md) — flagship host-realistic loop (closed in-repo; refresh checklist)
 - [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md) — S0–S3 evidence tiers for published runs
 - [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md) · [`docs/NATIVE_ARM_PUBLISH_CHECKLIST.md`](docs/NATIVE_ARM_PUBLISH_CHECKLIST.md)
-- [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md) — required checks and binding vendor attestation
+- [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md) — CI checks and binding vendor attestation (Policy B)
 - [`docs/RELEASE_POLICY.md`](docs/RELEASE_POLICY.md) · [`docs/PARITY_AND_FIXTURES.md`](docs/PARITY_AND_FIXTURES.md)
 - [`benchmarks/DASHBOARD_README.md`](benchmarks/DASHBOARD_README.md) · [`benchmarks/runs/README.md`](benchmarks/runs/README.md)
 - [`docs/MAINTAINER_RUNBOOK.md`](docs/MAINTAINER_RUNBOOK.md)

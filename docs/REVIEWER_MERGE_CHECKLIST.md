@@ -38,4 +38,4 @@ Merge checklist:
 
 Maintainers merge only after running or dispatching vendor CI on the fork branch and linking evidence.
 
-See also: [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md), [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md), [`.github/pull_request_template.md`](../.github/pull_request_template.md).
+See also: [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md), [`.github/pull_request_template.md`](../.github/pull_request_template.md).

@@ -61,20 +61,16 @@ Use `--tb=short` (not `short*`) for short tracebacks. To see **skipped** tests: 
 
 On every PR and push to `main`:
 
-- **`conic-trusted-shape`** — runs only [`tests/reference/test_reference_conic_trusted_shape.py`](../tests/reference/test_reference_conic_trusted_shape.py) (CLARABEL/SCS structural correctness; no vendor MOREAU). Safe to mark **required** in branch protection for a visible public conic gate.
+- **`conic-trusted-shape`** — runs only [`tests/reference/test_reference_conic_trusted_shape.py`](../tests/reference/test_reference_conic_trusted_shape.py) (CLARABEL/SCS structural correctness; no vendor MOREAU).
 - **`quality`** — Ruff check and format check, Mypy on `conicshield` and `tests`, full default-marker pytest with coverage over `conicshield`, then verification scripts.
 - **`governance-audit`** ([`.github/workflows/governance-audit.yml`](../.github/workflows/governance-audit.yml)) — on every PR/push to `main`: `refresh_published_run_index.py --check` (required + optional integrity surface), `audit_cli`, passthrough publish rehearsal, strict audit.
 - **`solver-touch`** ([`.github/workflows/solver-touch.yml`](../.github/workflows/solver-touch.yml)) — path-filtered (see workflow `paths:`). Index checks, host-realistic provenance tests, native-arm evidence, parity. No vendor Moreau required.
 
 Install path matches contributor setup: `pip install -e ".[dev]"` in public/reference mode.
 
-### Recommended branch protection
+### Merge gates
 
-See [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md). Require on `main`:
-
-- **`quality`**, **`conic-trusted-shape`**, **`governance-audit`** (always)
-- **`solver-touch`** (path-filtered; skipped when paths do not match)
-- **`vendor-ci-moreau`** (path-filtered on canonical repo when secrets exist; see [`CONTRIBUTING.md`](../CONTRIBUTING.md))
+See [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md). Typical PR checks: **`quality`**, **`conic-trusted-shape`**, **`governance-audit`**, **`reference-authority`**, **`solver-touch`** (path-filtered). **`vendor-ci-moreau`** is Policy B attestation, not a default required check.
 
 ## Default pytest marker filter
 

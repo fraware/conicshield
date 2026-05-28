@@ -43,13 +43,6 @@ Auditable in Git; do not re-open without a new milestone:
 | System status | `reference_system_status.json`, `generate_reference_system_status.py` |
 | v1 lock gate | `make verify-v1-lock`, [`V1_LOCK_CHECKLIST.md`](V1_LOCK_CHECKLIST.md) |
 
-## v1 lock (manual, one-time)
-
-| Item | Action |
-|------|--------|
-| Branch protection on GitHub | `python scripts/apply_branch_protection_github.py --apply`; record in [`BRANCH_PROTECTION_RECORD.md`](BRANCH_PROTECTION_RECORD.md) |
-| CI green on `main` | Push + confirm required checks |
-
 ## Open backlog
 
 | # | Item | Next action |

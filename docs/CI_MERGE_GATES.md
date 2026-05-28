@@ -1,8 +1,8 @@
 # CI merge gates
 
-GitHub **Settings → Branches → `main`** must match [`BRANCH_PROTECTION.md`](BRANCH_PROTECTION.md) and [`.github/expected-branch-protection-main.json`](../.github/expected-branch-protection-main.json). Audit: [`BRANCH_PROTECTION_RECORD.md`](BRANCH_PROTECTION_RECORD.md).
+Workflows that run on PRs to `main`. Review checklist: [`REVIEWER_MERGE_CHECKLIST.md`](REVIEWER_MERGE_CHECKLIST.md).
 
-## Required status checks
+## Status checks (canonical)
 
 | Check | Workflow | Role |
 |-------|----------|------|
@@ -12,7 +12,7 @@ GitHub **Settings → Branches → `main`** must match [`BRANCH_PROTECTION.md`](
 | `reference-authority` | [`reference-authority.yml`](../.github/workflows/reference-authority.yml) | `verify-reference-system`, `community-verify`, batch viability, bundle profile |
 | `solver-touch` | [`solver-touch.yml`](../.github/workflows/solver-touch.yml) | Path-filtered parity + native-arm evidence |
 
-**Not required:** `vendor-ci-moreau` (Policy B below).
+**Not required on every PR:** `vendor-ci-moreau` (Policy B below).
 
 `solver-touch` skips when PR paths do not match — expected for docs-only PRs.
 
@@ -29,9 +29,7 @@ Forks: maintainer merges after attestation. Checklist: [`REVIEWER_MERGE_CHECKLIS
 
 | Lane | Checks | Secrets |
 |------|--------|---------|
-| Public | All required above except vendor solves | None |
+| Public | All checks above except vendor solves | None |
 | Vendor | `vendor-ci-moreau` when secrets present | `GEMFURY_TOKEN`, `MOREAU_LICENSE_KEY` |
 
 `vendor-ci-moreau`: [`solver-ci.yml`](../.github/workflows/solver-ci.yml) — `workflow_dispatch` + path-filtered PRs.
-
-Verify expected list: `python scripts/verify_expected_branch_protection.py`

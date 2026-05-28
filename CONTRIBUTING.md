@@ -9,7 +9,7 @@ Thank you for contributing. This repository separates **public structural CI** f
 1. Install the dev environment ([`docs/DEVENV.md`](docs/DEVENV.md)).
 2. Run `make lint typecheck` and `make test` (or `python -m pytest tests/ -q`).
 3. For benchmark/governance changes, run `make verify-reference-system` and `make community-verify` when touching published bundles or `conicshield.published_runs`.
-4. Read [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md), [`docs/REVIEWER_MERGE_CHECKLIST.md`](docs/REVIEWER_MERGE_CHECKLIST.md), [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md), and [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md).
+4. Read [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md), [`docs/REVIEWER_MERGE_CHECKLIST.md`](docs/REVIEWER_MERGE_CHECKLIST.md), and [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md).
 
 ## Required CI (public lane)
 

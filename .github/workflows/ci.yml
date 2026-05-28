@@ -11,7 +11,6 @@ concurrency:
 
 jobs:
   # Explicit always-on check for CLARABEL/SCS-only conic suite shape (no vendor Moreau).
-  # Optional: require this job in branch protection alongside `quality`.
   conic-trusted-shape:
     runs-on: ubuntu-latest
     steps:
