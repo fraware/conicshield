@@ -2,6 +2,11 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — Full refresh cadence gate and branch protection audit
+
+- `check_flagship_full_refresh_cadence.py` (requires `live-export-full` + `authority_ok` within 35 days).
+- `batch_public_narrative` in reference system status; branch protection snapshot export workflow.
+
 ### 2026-05-28 — Refresh #4 full cycle (licensed)
 
 - `make host-realistic-refresh-cycle-licensed` on WSL; refresh #4 amended to `live-export-full` with `authority_ok`.

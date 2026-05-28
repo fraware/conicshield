@@ -86,9 +86,15 @@ def main() -> int:
             ),
         }
     )
+    rev_path = repo / "third_party" / "inter-sim-rl" / "REVISION"
+    if rev_path.is_file():
+        for line in rev_path.read_text(encoding="utf-8").splitlines():
+            if line.startswith("sha="):
+                prov["inter_sim_revision_sha"] = line.split("=", 1)[1].strip()
+                break
     prov_path.write_text(json.dumps(prov, indent=2) + "\n", encoding="utf-8")
     print(f"Updated {prov_path}", file=sys.stderr)
-    print("\nNext (licensed host):\n  make upgrade-host-realistic-vendor", file=sys.stderr)
+    print("\nNext (licensed host):\n  make host-realistic-refresh-cycle-licensed", file=sys.stderr)
     return 0
 
 

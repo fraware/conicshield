@@ -23,6 +23,8 @@ def test_reference_system_status_builds() -> None:
     assert payload["flagship_run_id"] == "host-realistic-20260525"
     assert payload["reference_authority_aligned"] is True
     assert payload["full_cycle_refresh_count"] >= 1
+    assert payload["full_refresh_cadence_ok"] is True
+    assert payload["batch_public_narrative"] == "viability_only"
     assert payload["cadence_policy_ok"] is True
 
 

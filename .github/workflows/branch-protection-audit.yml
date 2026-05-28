@@ -8,6 +8,7 @@ on:
 permissions:
   administration: read
   contents: read
+  issues: write
 
 jobs:
   audit:
@@ -15,11 +16,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Compare main protection to expected spec
+        id: audit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python scripts/verify_expected_branch_protection.py
-          python scripts/audit_branch_protection_api.py --warn-only
-      - name: Record audit note
+          python scripts/export_branch_protection_snapshot.py --out benchmarks/reports/branch_protection_remote_snapshot.json || true
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python scripts/audit_branch_protection_api.py
+          else
+            python scripts/audit_branch_protection_api.py --warn-only
+          fi
+      - name: Upload remote protection snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-protection-remote-snapshot
+          path: benchmarks/reports/branch_protection_remote_snapshot.json
+          if-no-files-found: ignore
+      - name: Open issue when protection mismatches (dispatch only)
+        if: failure() && github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Attach Settings screenshot to docs/BRANCH_PROTECTION_RECORD.md when protection changes."
+          gh issue create \
+            --title "branch protection drift on main" \
+            --body "Run \`python scripts/print_branch_protection_gh_recipe.py\` and attach screenshot to docs/BRANCH_PROTECTION_RECORD.md. Workflow: branch-protection-audit."

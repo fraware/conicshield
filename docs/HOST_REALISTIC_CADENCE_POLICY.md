@@ -38,6 +38,7 @@ Each refresh must complete, in order:
 
 ```bash
 python scripts/check_reference_refresh_cadence.py --max-days 35
+python scripts/check_flagship_full_refresh_cadence.py --max-days 35
 ```
 
-Fails CI when the last `EXPORT_PROVENANCE.last_flagship_refresh_at_utc` is older than 35 days (monthly policy + slack).
+Fails CI when export or **full** (`live-export-full` + `authority_ok`) refresh is older than 35 days.

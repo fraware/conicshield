@@ -45,9 +45,8 @@ Licensed command: `make host-realistic-refresh-cycle-licensed`
 
 ```bash
 make verify-reference-system
-make reference-authority-check
+python scripts/check_flagship_full_refresh_cadence.py --max-days 35
 python scripts/generate_reference_system_status.py --check
-python scripts/check_reference_refresh_cadence.py --max-days 35
 ```
 
 Branch protection (admin token): `python scripts/audit_branch_protection_api.py`

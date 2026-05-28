@@ -30,6 +30,14 @@ def _inter_sim_revision(repo: Path) -> str | None:
     return None
 
 
+def _full_refresh_within_days(last_full_at: str | None, *, max_days: float) -> bool:
+    if not last_full_at:
+        return False
+    then = datetime.strptime(str(last_full_at), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+    age = (datetime.now(UTC) - then).total_seconds() / 86400.0
+    return age <= max_days
+
+
 def _cadence_days(repo: Path) -> float | None:
     prov_path = repo / "benchmarks" / "external_evidence" / "EXPORT_PROVENANCE.json"
     if not prov_path.is_file():
@@ -49,10 +57,12 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
     prov = _load_json(root / "benchmarks" / "external_evidence" / "EXPORT_PROVENANCE.json")
     history = list(prov.get("refresh_history") or [])
     full_cycles = [h for h in history if h.get("workflow") == "live-export-full" and h.get("authority_ok")]
+    last_full_at = full_cycles[-1].get("completed_at_utc") if full_cycles else None
     batch_path = root / "benchmarks" / "reports" / "batch_solve_report.latest.json"
     batch_story = None
     if batch_path.is_file():
         batch_story = _load_json(batch_path).get("batch_story")
+    batch_public_narrative = "viability_only"
     expected_bp = _load_json(root / ".github" / "expected-branch-protection-main.json")
 
     age = _cadence_days(root)
@@ -69,9 +79,12 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
         "last_flagship_refresh_at_utc": prov.get("last_flagship_refresh_at_utc"),
         "refresh_count": len(history),
         "full_cycle_refresh_count": len(full_cycles),
+        "last_full_refresh_at_utc": last_full_at,
         "cadence_age_days": age,
         "cadence_policy_ok": cadence_ok,
+        "full_refresh_cadence_ok": _full_refresh_within_days(last_full_at, max_days=35.0),
         "batch_story": batch_story,
+        "batch_public_narrative": batch_public_narrative,
         "inter_sim_revision": _inter_sim_revision(root),
         "expected_required_checks": expected_bp.get("required_status_checks"),
         "public_claims": {
@@ -108,6 +121,7 @@ def main() -> int:
         data = json.loads(text)
         data.pop("generated_at_utc", None)
         data.pop("cadence_age_days", None)
+        data.pop("full_refresh_cadence_ok", None)
         return json.dumps(data, sort_keys=True)
 
     if args.check:

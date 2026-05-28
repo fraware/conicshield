@@ -37,7 +37,8 @@ flowchart LR
 | Flagship | [`host-realistic-20260525`](benchmarks/published_runs/host-realistic-20260525/) |
 | Family | `conicshield-transition-bank-v1` |
 | Tier | `vendor_native`, `live_upstream_dump` |
-| Map | [`docs/REFERENCE_AUTHORITY.md`](docs/REFERENCE_AUTHORITY.md) |
+| Map | [`docs/REFERENCE_SYSTEM.md`](docs/REFERENCE_SYSTEM.md) |
+| Status | [`benchmarks/reports/reference_system_status.json`](benchmarks/reports/reference_system_status.json) |
 
 **Qualification:** export loop is closed in-repo; graph is host-realistic **fork** via inter-sim `RLEnvironment` — **not** a Maps/session navigation graph.
 
@@ -47,7 +48,7 @@ flowchart LR
 | Index | [`benchmarks/PUBLISHED_RUN_INDEX.json`](benchmarks/PUBLISHED_RUN_INDEX.json) |
 | Release pointer | [`benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json`](benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json) |
 
-Refresh: `make host-realistic-refresh-cycle` — [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](docs/HOST_REALISTIC_REFRESH_PROCEDURE.md).
+Refresh: `make host-realistic-refresh-cycle-licensed` — [`docs/HOST_REALISTIC_CADENCE_POLICY.md`](docs/HOST_REALISTIC_CADENCE_POLICY.md).
 
 **Constraints implemented:** `simplex`, `turn_feasibility`, `box`, `rate`. `progress` / `clearance`: deferred — [adr](docs/adr/001-progress-clearance-constraints.md).
 
