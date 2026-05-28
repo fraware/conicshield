@@ -29,7 +29,7 @@ Governed benchmark bundle `wsl-native-20260409-091141` at evidence tier `vendor_
 
 ```bash
 python -m conicshield.published_runs.cli verify wsl-native-20260409-091141
-python -m conicshield.artifacts.validator_cli --run-dir C:/Users/mateo/conicshield/benchmarks/published_runs/wsl-native-20260409-091141
+python -m conicshield.artifacts.validator_cli --run-dir benchmarks/published_runs/wsl-native-20260409-091141
 python scripts/validate_published_bundle_profile.py --run-id wsl-native-20260409-091141
 ```
 

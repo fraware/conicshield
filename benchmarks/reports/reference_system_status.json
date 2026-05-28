@@ -1,6 +1,6 @@
 {
   "schema_version": "conicshield_reference_system_status/v1",
-  "generated_at_utc": "2026-05-28T17:28:31Z",
+  "generated_at_utc": "2026-05-28T17:35:59Z",
   "flagship_run_id": "host-realistic-20260525",
   "family_id": "conicshield-transition-bank-v1",
   "reference_authority_aligned": true,
@@ -10,11 +10,19 @@
   "refresh_count": 4,
   "full_cycle_refresh_count": 1,
   "last_full_refresh_at_utc": "2026-05-28T17:00:56Z",
-  "cadence_age_days": 0.019166417858796296,
+  "cadence_age_days": 0.024344344143518517,
   "cadence_policy_ok": true,
   "full_refresh_cadence_ok": true,
   "batch_story": "throughput_win",
   "batch_public_narrative": "viability_only",
+  "community_dataset": {
+    "api_module": "conicshield.published_runs",
+    "cli_entry": "conicshield-published-runs",
+    "community_metadata_schema": "conicshield_community_metadata/v1",
+    "published_run_count": 3,
+    "verify_make_target": "community-verify",
+    "finalize_script": "scripts/finalize_community_dataset.py"
+  },
   "inter_sim_revision": "f1f04ee11d064262f5ee2810abfcb01715260182",
   "expected_required_checks": [
     "quality",
@@ -32,6 +40,8 @@
     "docs/REFERENCE_SYSTEM.md",
     "docs/REFERENCE_AUTHORITY.md",
     "docs/HOST_REALISTIC_CADENCE_POLICY.md",
-    "docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md"
+    "docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md",
+    "docs/PUBLIC_CLAIMS.md",
+    "docs/QUICKSTART_RESEARCHER.md"
   ]
 }

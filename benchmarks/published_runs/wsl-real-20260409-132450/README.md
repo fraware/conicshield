@@ -29,7 +29,7 @@ Governed benchmark bundle `wsl-real-20260409-132450` at evidence tier `vendor_re
 
 ```bash
 python -m conicshield.published_runs.cli verify wsl-real-20260409-132450
-python -m conicshield.artifacts.validator_cli --run-dir C:/Users/mateo/conicshield/benchmarks/published_runs/wsl-real-20260409-132450
+python -m conicshield.artifacts.validator_cli --run-dir benchmarks/published_runs/wsl-real-20260409-132450
 python scripts/validate_published_bundle_profile.py --run-id wsl-real-20260409-132450
 ```
 

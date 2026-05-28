@@ -46,6 +46,8 @@ See [`HOST_REALISTIC_CADENCE_POLICY.md`](HOST_REALISTIC_CADENCE_POLICY.md). Mont
 6. `python scripts/record_reference_refresh.py` (or use default `--record-refresh` on refresh cycle)
 7. [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md) via `python scripts/update_engineering_status_from_flagship.py`
 8. `python scripts/sync_community_metadata.py`
+9. `make finalize-community-dataset` (metadata, READMEs, index hashes, contract validation)
+10. `make community-verify` before opening the PR
 
 ## Evidence qualification (do not overstate)
 

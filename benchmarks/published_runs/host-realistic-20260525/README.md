@@ -30,7 +30,7 @@ Flagship **host-realistic** governed bundle: closed export→bank→publish loop
 
 ```bash
 python -m conicshield.published_runs.cli verify host-realistic-20260525
-python -m conicshield.artifacts.validator_cli --run-dir C:/Users/mateo/conicshield/benchmarks/published_runs/host-realistic-20260525
+python -m conicshield.artifacts.validator_cli --run-dir benchmarks/published_runs/host-realistic-20260525
 python scripts/validate_published_bundle_profile.py --run-id host-realistic-20260525
 ```
 

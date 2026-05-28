@@ -8,6 +8,7 @@ import json
 import sys
 from pathlib import Path
 
+from conicshield.governance.community_metadata_contract import validate_community_metadata
 from conicshield.published_run_index import (
     build_run_catalog_metadata,
     classify_evidence_tier,
@@ -49,6 +50,11 @@ def check_bundle(
     for rel in ordered:
         if not (run_dir / rel).is_file() and not (run_dir / rel).is_dir():
             failures.append(f"missing {rel} (tier={tier})")
+    meta_path = run_dir / "COMMUNITY_METADATA.json"
+    if meta_path.is_file():
+        payload = json.loads(meta_path.read_text(encoding="utf-8"))
+        for msg in validate_community_metadata(payload, expected_run_id=run_dir.name):
+            failures.append(f"COMMUNITY_METADATA.json: {msg}")
     return failures
 
 

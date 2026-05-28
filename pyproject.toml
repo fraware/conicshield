@@ -30,6 +30,9 @@ dependencies = [
   "jsonschema>=4.23",
 ]
 
+[project.scripts]
+conicshield-published-runs = "conicshield.published_runs.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/fraware/conicshield"
 Repository = "https://github.com/fraware/conicshield"

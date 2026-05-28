@@ -20,8 +20,8 @@ Log each cycle: [REFERENCE_AUTHORITY_LOG.md](REFERENCE_AUTHORITY_LOG.md) (also u
 1. Produce under `benchmarks/runs/<run_id>/` (non-passthrough for vendor claims).
 2. `validator_cli` → parity → `finalize_cli` → copy to `benchmarks/published_runs/<run_id>/`.
 3. `governance_decision.md` (approve) → `release_cli` → `audit_cli --strict`.
-4. `python scripts/refresh_published_run_index.py`
-5. `python scripts/sync_community_metadata.py` && `python scripts/sync_published_run_readmes.py`
+4. `make finalize-community-dataset` (metadata, READMEs, index hashes, `COMMUNITY_METADATA` contract)
+5. `make community-verify` before opening the PR
 
 Full procedures: [MAINTAINER_RUNBOOK.md](MAINTAINER_RUNBOOK.md), [PUBLISHED_BUNDLE_CATALOG.md](PUBLISHED_BUNDLE_CATALOG.md).
 

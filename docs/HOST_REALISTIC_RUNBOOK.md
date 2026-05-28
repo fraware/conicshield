@@ -1,6 +1,6 @@
 # Host-realistic runbook
 
-Manual steps for the export → publish loop. **Routine refresh:** [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md) (`make host-realistic-refresh-cycle`).
+Manual steps for the export → publish loop. **Routine refresh:** [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md) (`make host-realistic-refresh-cycle-licensed` on a licensed Linux/WSL host).
 
 ## Preconditions
 

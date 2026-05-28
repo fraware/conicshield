@@ -68,6 +68,11 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
     age = _cadence_days(root)
     cadence_ok = age is not None and age <= 35.0
 
+    from conicshield.published_run_index import load_published_run_index
+
+    index = load_published_run_index(repo_root=root)
+    published_run_count = len(index.get("runs") or [])
+
     return {
         "schema_version": "conicshield_reference_system_status/v1",
         "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -85,6 +90,14 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
         "full_refresh_cadence_ok": _full_refresh_within_days(last_full_at, max_days=35.0),
         "batch_story": batch_story,
         "batch_public_narrative": batch_public_narrative,
+        "community_dataset": {
+            "api_module": "conicshield.published_runs",
+            "cli_entry": "conicshield-published-runs",
+            "community_metadata_schema": "conicshield_community_metadata/v1",
+            "published_run_count": published_run_count,
+            "verify_make_target": "community-verify",
+            "finalize_script": "scripts/finalize_community_dataset.py",
+        },
         "inter_sim_revision": _inter_sim_revision(root),
         "expected_required_checks": expected_bp.get("required_status_checks"),
         "public_claims": {
@@ -97,6 +110,8 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
             "docs/REFERENCE_AUTHORITY.md",
             "docs/HOST_REALISTIC_CADENCE_POLICY.md",
             "docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md",
+            "docs/PUBLIC_CLAIMS.md",
+            "docs/QUICKSTART_RESEARCHER.md",
         ],
     }
 

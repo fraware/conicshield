@@ -15,12 +15,25 @@ ConicShield ships **governed, hash-indexed benchmark bundles** that record shiel
 | Bundle | [`benchmarks/published_runs/host-realistic-20260525/`](../benchmarks/published_runs/host-realistic-20260525/) |
 | Scope | [`COMMUNITY_METADATA.json`](../benchmarks/published_runs/host-realistic-20260525/COMMUNITY_METADATA.json) |
 
+## Python API (recommended)
+
+```python
+from conicshield.published_runs import load_run, verify_run, load_summary
+
+verify_run("host-realistic-20260525")
+bundle = load_run("host-realistic-20260525")
+print(bundle.community.known_limitations)
+```
+
+Runnable walkthrough: [`examples/load_flagship_run.py`](../examples/load_flagship_run.py). After `pip install -e .`, the same CLI is available as `conicshield-published-runs`.
+
 ## Verify the published-run index
 
 ```bash
 python scripts/refresh_published_run_index.py --check
 python -m conicshield.published_runs.cli list
 python -m conicshield.published_runs.cli verify host-realistic-20260525
+# or: conicshield-published-runs verify host-realistic-20260525
 ```
 
 Details: [PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md](PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md), [PUBLISHED_RUN_INDEX_SCHEMA.md](PUBLISHED_RUN_INDEX_SCHEMA.md).

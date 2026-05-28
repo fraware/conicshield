@@ -35,6 +35,7 @@ def _one_liner(*, run_id: str, tier: str, host: bool, current: bool, native: boo
 def _render_readme(
     *,
     run_id: str,
+    run_rel_path: str,
     run_dir: Path,
     catalog: dict[str, object],
     export_prov: dict,
@@ -104,7 +105,7 @@ def _render_readme(
             "",
             "```bash",
             "python -m conicshield.published_runs.cli verify " + run_id,
-            "python -m conicshield.artifacts.validator_cli --run-dir " + str(run_dir).replace("\\", "/"),
+            "python -m conicshield.artifacts.validator_cli --run-dir " + run_rel_path,
             "python scripts/validate_published_bundle_profile.py --run-id " + run_id,
             "```",
             "",
@@ -161,7 +162,13 @@ def main() -> int:
         catalog = run.get("catalog") or build_run_catalog_metadata(run_dir=run_dir, repo_root=root)
         catalog = dict(catalog)
         catalog["is_family_current_run"] = rid == current_run_id
-        text = _render_readme(run_id=rid, run_dir=run_dir, catalog=catalog, export_prov=export_prov)
+        text = _render_readme(
+            run_id=rid,
+            run_rel_path=rel,
+            run_dir=run_dir,
+            catalog=catalog,
+            export_prov=export_prov,
+        )
         dest = run_dir / "README.md"
         dest.write_text(text, encoding="utf-8")
         print(dest, file=sys.stderr)

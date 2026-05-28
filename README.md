@@ -61,7 +61,7 @@ Refresh: `make host-realistic-refresh-cycle-licensed` — [`docs/HOST_REALISTIC_
 
 **Start here:** [Researcher](docs/QUICKSTART_RESEARCHER.md) · [Integrator](docs/QUICKSTART_INTEGRATOR.md) · [Maintainer](docs/QUICKSTART_MAINTAINER.md) · [Examples](examples/README.md) · [Public claims](docs/PUBLIC_CLAIMS.md)
 
-Docs index: [`docs/README.md`](docs/README.md). Local: `make reference-authority-check`, `make verify-reference-system`, `python -m conicshield.published_runs.cli list`.
+Docs index: [`docs/README.md`](docs/README.md). Local: `make reference-authority-check`, `make verify-reference-system`, `make community-verify`, `python -m conicshield.published_runs.cli list`.
 
 ## Installation
 

@@ -23,7 +23,7 @@ else
   PYTHON ?= python
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata check-reference-refresh-cadence check-flagship-full-refresh-cadence verify-branch-protection-expectations verify-reference-system reference-authority-check reference-authority-snapshot reference-system-status reference-system-status-check capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata sync-published-run-readmes sync-published-readmes finalize-community-dataset community-verify check-reference-refresh-cadence check-flagship-full-refresh-cadence verify-branch-protection-expectations verify-reference-system reference-authority-check reference-authority-snapshot reference-system-status reference-system-status-check capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
 
 test:
 	$(PYTHON) -m pytest -q
@@ -78,8 +78,7 @@ host-realistic-refresh-cycle-licensed: capture-inter-sim-graph refresh-live-upst
 host-realistic-refresh-milestone:
 	$(PYTHON) scripts/host_realistic_refresh_cycle.py --new-milestone --promote-release --force
 
-sync-published-readmes:
-	$(PYTHON) scripts/sync_published_run_readmes.py
+sync-published-readmes: sync-published-run-readmes
 
 host-realistic-rehearsal:
 	$(PYTHON) scripts/run_host_realistic_publish.py \
@@ -126,6 +125,18 @@ verify-branch-protection-expectations:
 sync-community-metadata:
 	$(PYTHON) scripts/sync_community_metadata.py
 
+sync-published-run-readmes:
+	$(PYTHON) scripts/sync_published_run_readmes.py
+
+finalize-community-dataset:
+	$(PYTHON) scripts/finalize_community_dataset.py
+
+community-verify: sync-community-metadata sync-published-run-readmes
+	$(PYTHON) -m pytest tests/test_published_runs_api.py tests/test_published_runs_cli.py -q --tb=short
+	$(PYTHON) examples/inspect_flagship_bundle.py
+	$(PYTHON) -m conicshield.published_runs.cli list
+	$(PYTHON) -m conicshield.published_runs.cli verify host-realistic-20260525
+
 check-reference-refresh-cadence:
 	$(PYTHON) scripts/check_reference_refresh_cadence.py --max-days 35
 
@@ -149,6 +160,9 @@ verify-reference-system: reference-authority-check reference-system-status-check
 		tests/governance/test_record_reference_refresh.py \
 		tests/governance/test_reference_system_status.py \
 		tests/governance/test_flagship_full_refresh_cadence.py \
+		tests/governance/test_community_metadata_contract.py \
+		tests/governance/test_published_run_readme_paths.py \
+		tests/test_published_runs_api.py \
 		tests/governance/test_run_host_realistic_publish.py \
 		tests/governance/test_host_realistic_refresh_cycle.py \
 		tests/governance/test_batch_solve_report.py \

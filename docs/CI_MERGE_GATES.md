@@ -9,7 +9,7 @@ GitHub **Settings → Branches → `main`** must match [`BRANCH_PROTECTION.md`](
 | `quality` | [`ci.yml`](../.github/workflows/ci.yml) | Lint, types, default pytest |
 | `conic-trusted-shape` | [`ci.yml`](../.github/workflows/ci.yml) | CLARABEL/SCS structural gate |
 | `governance-audit` | [`governance-audit.yml`](../.github/workflows/governance-audit.yml) | Index `--check`, publish rehearsal |
-| `reference-authority` | [`reference-authority.yml`](../.github/workflows/reference-authority.yml) | `verify-reference-system`, batch viability, bundle profile |
+| `reference-authority` | [`reference-authority.yml`](../.github/workflows/reference-authority.yml) | `verify-reference-system`, `community-verify`, batch viability, bundle profile |
 | `solver-touch` | [`solver-touch.yml`](../.github/workflows/solver-touch.yml) | Path-filtered parity + native-arm evidence |
 
 **Not required:** `vendor-ci-moreau` (Policy B below).

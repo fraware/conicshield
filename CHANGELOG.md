@@ -2,6 +2,14 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — Community dataset verification hardening
+
+- `community_metadata_contract` enforced in `validate_published_bundle_profile.py` and governance tests.
+- `make community-verify` and `make finalize-community-dataset`; wired into `reference-authority` CI and refresh cycle.
+- `community_dataset` block in `reference_system_status.json`; `finalize_community_dataset.py` orchestrator.
+- Published bundle README validate commands use repo-relative paths; index hashes refreshed.
+- `conicshield-published-runs` console script; README path regression test.
+
 ### 2026-05-28 — Community-facing quickstarts, published_runs API, and examples
 
 - Audience entrypoints: `QUICKSTART_RESEARCHER`, `QUICKSTART_INTEGRATOR`, `QUICKSTART_MAINTAINER`.

@@ -40,6 +40,8 @@ jobs:
           python scripts/generate_reference_system_status.py --check
       - name: verify-reference-system
         run: make verify-reference-system
+      - name: Community dataset smoke (API, CLI, flagship example)
+        run: make community-verify
       - name: Published bundle file profile (all tiers)
         run: python scripts/validate_published_bundle_profile.py
       - name: Committed batch acceptance report (viability — required)

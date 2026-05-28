@@ -238,11 +238,12 @@ def main() -> int:
         if rc != 0:
             return rc
 
+    rc = _run([sys.executable, str(repo / "scripts" / "finalize_community_dataset.py")], cwd=repo)
+    if rc != 0:
+        return rc
     for script in (
-        "scripts/sync_community_metadata.py",
-        "scripts/sync_published_run_readmes.py",
-        "scripts/refresh_published_run_index.py",
         "scripts/generate_reference_authority_snapshot.py",
+        "scripts/generate_reference_system_status.py",
     ):
         rc = _run([sys.executable, str(repo / script)], cwd=repo)
         if rc != 0:

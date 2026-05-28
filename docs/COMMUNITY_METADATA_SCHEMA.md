@@ -36,7 +36,8 @@ Public scope contract for each governed bundle under `benchmarks/published_runs/
 python scripts/sync_community_metadata.py
 ```
 
-Builder: `conicshield.governance.community_metadata.build_community_metadata`.
+Builder: `conicshield.governance.community_metadata.build_community_metadata`.  
+Contract check: `conicshield.governance.community_metadata_contract.validate_community_metadata` (enforced in `validate_published_bundle_profile.py` and `make verify-reference-system`).
 
 ## Read in Python
 
