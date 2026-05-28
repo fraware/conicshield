@@ -2,9 +2,9 @@
 
 GitHub branch protection is configured in repository **Settings → Branches** (not in this tree). Use this checklist when enabling or auditing merge gates.
 
-## Required status checks
+## Required status checks (v1 canonical)
 
-Mark these checks as **required** and disable bypass for administrators unless your team explicitly allows it:
+Mark these checks as **required** on `main` and disable bypass for administrators unless your team explicitly allows it. This list must match [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md) and [`.github/expected-branch-protection-main.json`](../.github/expected-branch-protection-main.json).
 
 | Check | Workflow | Notes |
 |-------|----------|-------|

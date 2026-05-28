@@ -6,7 +6,7 @@ Cadence record for `conicshield-transition-bank-v1` / `host-realistic-20260525`.
 |---|------------|---------|-------------|--------------------------------|-------------------|
 | 1 | 2026-05-26 | Event-driven (refresh execution) | `2ff5fea` — release sync, batch viability, reference gates | `structural_committed` → then live path | yes |
 | 2 | 2026-05-26 | Event-driven (live export + full cycle) | `381004e` — `capture-inter-sim-graph`, `live_upstream_dump`, full `host-realistic-refresh-cycle` | `live_upstream_dump` | yes |
-| 3 | (next) | **Scheduled** — monthly `reference-authority` cron or maintainer calendar refresh | Record commit SHA here after `make host-realistic-refresh-cycle` | expect `live_upstream_dump` | run `reference_authority_check` |
+| 3 | 2026-05-28 | **Calendar / cadence** — maintainer scheduled refresh (`make capture-inter-sim-graph` → `refresh-live-upstream-export-live` → `host-realistic-refresh-cycle`) | `714e213` | `live_upstream_dump` | yes |
 
 ## Standard refresh commands (licensed WSL host)
 

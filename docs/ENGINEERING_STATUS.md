@@ -39,9 +39,9 @@ Pinned **dev lockfile** versions (public CI) and project lower bounds; replace t
 
 | Package       | Version (reference) | Date validated (UTC) | Notes        |
 | ------------- | ------------------- | -------------------- | ------------ |
-| `moreau`      | `0.3.0` (vendor wheel; not in public `requirements-dev.txt`) | 2026-05-26 | Flagship `solver_versions.json` after live refresh cycle (`381004e`) |
-| `cvxpy`       | `1.8.2` (`requirements-dev.txt`); project `>=1.8.2` | 2026-05-26 | Matches flagship bundle |
-| `cvxpylayers` | `1.0.4` (`requirements-dev.txt`); project `>=1.0.4` | 2026-05-26 | Matches flagship bundle |
+| `moreau`      | `0.3.0` (vendor wheel; not in public `requirements-dev.txt`) | 2026-05-28 | Flagship `solver_versions.json` after calendar refresh #3 (cadence) |
+| `cvxpy`       | `1.8.2` (`requirements-dev.txt`); project `>=1.8.2` | 2026-05-28 | Matches flagship bundle |
+| `cvxpylayers` | `1.0.4` (`requirements-dev.txt`); project `>=1.0.4` | 2026-05-28 | Matches flagship bundle |
 
 The Vendor CI job uploads `solver_versions.json` and may append a filtered `pip freeze` to the job Summary for copying here.
 

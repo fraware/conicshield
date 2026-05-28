@@ -1,0 +1,20 @@
+{
+  "schema_version": "conicshield_branch_protection_expected/v1",
+  "branch": "main",
+  "required_status_checks": [
+    "quality",
+    "conic-trusted-shape",
+    "governance-audit",
+    "reference-authority",
+    "solver-touch"
+  ],
+  "not_required_status_checks": [
+    "vendor-ci-moreau"
+  ],
+  "policy_b": "solver-touching PRs require vendor-ci-moreau green OR maintainer attestation in PR body",
+  "docs": [
+    "docs/BRANCH_PROTECTION.md",
+    "docs/CI_MERGE_GATES.md",
+    "docs/BRANCH_PROTECTION_RECORD.md"
+  ]
+}

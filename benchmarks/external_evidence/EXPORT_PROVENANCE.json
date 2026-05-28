@@ -6,8 +6,8 @@
   "export_kind": "live_upstream_dump",
   "graph_shape": "host_realistic_fork",
   "flagship_run_id": "host-realistic-20260525",
-  "notes": "Graph captured via inter-sim RLEnvironment (host-realistic fork). Not a Maps/session-built navigation graph. Cadence: docs/REFERENCE_REFRESH_LOG.md.",
-  "exported_at_utc": "2026-05-26T06:05:03Z",
+  "notes": "Live upstream dump replaced committed structural export. Re-run make upgrade-host-realistic-vendor.",
+  "exported_at_utc": "2026-05-28T16:28:33Z",
   "source_graph_json": "benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json",
   "refresh_history": [
     {
@@ -23,7 +23,15 @@
       "trigger": "event-driven-live-export",
       "git_ref": "381004e",
       "export_kind": "live_upstream_dump"
+    },
+    {
+      "refresh_index": 3,
+      "completed_at_utc": "2026-05-28T16:28:58Z",
+      "trigger": "calendar-cadence",
+      "git_ref": "714e213",
+      "export_kind": "live_upstream_dump",
+      "notes": "make capture-inter-sim-graph; refresh-live-upstream-export-live; host-realistic-refresh-cycle"
     }
   ],
-  "last_flagship_refresh_at_utc": "2026-05-26T06:05:21Z"
+  "last_flagship_refresh_at_utc": "2026-05-28T16:28:58Z"
 }

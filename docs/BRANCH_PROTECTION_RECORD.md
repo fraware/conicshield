@@ -23,8 +23,18 @@ Solver-touching PRs must include vendor proof in the PR body even when `vendor-c
 
 | Date (UTC) | Changed by | Evidence |
 |------------|------------|----------|
-| 2026-05-26 | Engineering plan v1 lock | Docs aligned; enable `reference-authority` in GitHub UI and attach screenshot below |
+| 2026-05-26 | Engineering plan v1 lock | Docs aligned; machine-readable spec: `.github/expected-branch-protection-main.json` |
+| 2026-05-26 | Calendar refresh #3 | Cadence recorded in `REFERENCE_REFRESH_LOG.md` |
+
+### Verify locally
+
+```bash
+python scripts/verify_expected_branch_protection.py
+```
 
 ### Screenshot / export (attach in PR or paste link)
 
-<!-- Maintainer: paste image or link to GitHub branch protection screenshot showing required checks listed above. -->
+<!-- Maintainer: paste image or link to GitHub branch protection screenshot showing required checks:
+     quality, conic-trusted-shape, governance-audit, reference-authority, solver-touch
+     (vendor-ci-moreau NOT required)
+-->

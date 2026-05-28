@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-05-26T06:19:45Z",
+  "generated_at_utc": "2026-05-28T16:30:17Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
     "host-realistic-20260525",
@@ -13,19 +13,19 @@
       "repository_relative_path": "benchmarks/published_runs/host-realistic-20260525",
       "integrity": {
         "config.json": {
-          "sha256": "317c93d00bf9ba3f470df31bdec786ab381ad40433ddbf62e7bcf8cf6c24a04b"
+          "sha256": "9431b5663b2529065aa7a8d62bca8f484015aee97295a8a0bac7459227e6048a"
         },
         "config.schema.json": {
           "sha256": "dc0d0af539739180848d298d3a8e112fda79dbec96091ed42dce7bcae58005bd"
         },
         "summary.json": {
-          "sha256": "a3ade3d7a4c5877634522440038f5e0a58e72825d233aec4fed0df28897c0ae3"
+          "sha256": "c7fb6e485b8c40ef63eb88852e146002e545f5d36c5e4ba29f6044ba467a5bf9"
         },
         "summary.schema.json": {
           "sha256": "c54f6deb392afcefae57e7822bd00c1191c47263655e3f76cfeb432576310fa6"
         },
         "episodes.jsonl": {
-          "sha256": "e3552d3aeb092887f8a105c6e887db9a42d713effad617ac06376d92d30af474"
+          "sha256": "56a228727a81d4b453f999be57c718a18285f2df3a22d02fde6650f632956a21"
         },
         "episodes.schema.json": {
           "sha256": "94819ce8fddc8fd4ab880d219bc1c65654158a7a0a2884de644a70e4a3dfdff2"

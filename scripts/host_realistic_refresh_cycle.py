@@ -212,6 +212,8 @@ def main() -> int:
             [
                 sys.executable,
                 str(repo / "scripts" / "check_batch_acceptance.py"),
+                "--tier",
+                "viability",
                 "--report",
                 str(vdir / "batch_solve_report.json"),
             ],

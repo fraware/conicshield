@@ -1,7 +1,7 @@
 {
   "benchmark_name": "host-realistic-20260525",
   "description": "Frozen parity fixture",
-  "created_at_utc": "2026-05-26T06:05:14Z",
+  "created_at_utc": "2026-05-28T16:28:49Z",
   "policy": {
     "policy_id": "policy_fixture",
     "checkpoint": null,
