@@ -40,9 +40,19 @@ Licensed full refresh: `make host-realistic-refresh-cycle-licensed` ([procedure]
 
 After push, confirm green: `quality`, `conic-trusted-shape`, `governance-audit`, `reference-authority`, `solver-touch` (when paths match). See [`CI_MERGE_GATES.md`](CI_MERGE_GATES.md).
 
+## Machine status (committed)
+
+```bash
+python scripts/print_v1_status.py
+python scripts/verify_v1_lock.py --json
+```
+
+Reads [`benchmarks/reports/reference_system_status.json`](../benchmarks/reports/reference_system_status.json). Expect `reference_authority_aligned: true`, `full_refresh_cadence_ok: true`, `cadence_policy_ok: true`.
+
 ## v1 complete when
 
 - [ ] `make verify-v1-lock` passes locally
+- [ ] `make onboard` passes (community smoke + status)
 - [ ] `reference-authority` green on `main`
 - [ ] At least one `live-export-full` refresh with `authority_ok` within 35 days
 

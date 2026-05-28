@@ -5,6 +5,7 @@
 ## Testing
 
 - [ ] Default CI (`quality`, `conic-trusted-shape`, `governance-audit`, `reference-authority`) is green or pending
+- [ ] If `docs/`, `examples/`, or published bundle READMEs changed public claims: cited [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md) (or related stance doc) and `python scripts/check_public_claim_phrases.py` passes
 
 ## Solver / parity / published runs
 

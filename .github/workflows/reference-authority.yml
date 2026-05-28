@@ -40,6 +40,8 @@ jobs:
         run: make verify-reference-system
       - name: Community dataset smoke (API, CLI, flagship example)
         run: make community-verify
+      - name: v1 lock quick (auditor entrypoint)
+        run: make verify-v1-lock-quick
       - name: Published bundle file profile (all tiers)
         run: python scripts/validate_published_bundle_profile.py
       - name: Committed batch acceptance report (viability — required)

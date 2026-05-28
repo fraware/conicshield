@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-"""One native compiled sequential projection (requires vendor Moreau)."""
+"""One native compiled sequential projection (requires vendor Moreau).
+
+Audience: integrator evaluating sequential native compiled path.
+Prerequisites: vendor Moreau installed and licensed; ``pip install -e ".[solver]"`` or project .venv.
+Proves: ``create_projector(..., Backend.NATIVE_MOREAU)`` returns a corrected action vector.
+Does not prove: batched throughput wins or parity against reference without separate parity run.
+Expected: prints proposed/corrected vectors, or exits 0 with Skip if Moreau unavailable.
+"""
 
 from __future__ import annotations
 
-import numpy as np
-
 import sys
 from pathlib import Path
+
+import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import minimal_spec  # noqa: E402
@@ -37,7 +44,8 @@ def main() -> int:
             print("Skip: Moreau license not available.", exc)
             return 0
         raise
-    print("corrected_action:", result.corrected_action)
+    print("proposed:", proposed)
+    print("corrected:", result)
     return 0
 
 

@@ -2,6 +2,11 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — v1 release note, onboard target, and CI lock quick gate
+
+- [`docs/V1_REFERENCE_RELEASE.md`](docs/V1_REFERENCE_RELEASE.md), `make onboard`, `scripts/print_v1_status.py`.
+- `reference-authority` runs `verify-v1-lock-quick`; PR template public-claims checkbox.
+
 ### 2026-05-28 — Community front door and frozen published-runs v1 API
 
 - README **Start here** block; [COMMUNITY_LAYER.md](docs/COMMUNITY_LAYER.md) as default public map.

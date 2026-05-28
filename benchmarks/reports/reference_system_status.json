@@ -1,6 +1,6 @@
 {
   "schema_version": "conicshield_reference_system_status/v1",
-  "generated_at_utc": "2026-05-28T18:32:31Z",
+  "generated_at_utc": "2026-05-28T18:45:41Z",
   "flagship_run_id": "host-realistic-20260525",
   "family_id": "conicshield-transition-bank-v1",
   "reference_authority_aligned": true,
@@ -10,7 +10,7 @@
   "refresh_count": 4,
   "full_cycle_refresh_count": 1,
   "last_full_refresh_at_utc": "2026-05-28T17:00:56Z",
-  "cadence_age_days": 0.06360137756944444,
+  "cadence_age_days": 0.07274463219907408,
   "cadence_policy_ok": true,
   "full_refresh_cadence_ok": true,
   "batch_story": "throughput_win",
@@ -23,7 +23,8 @@
     "verify_make_target": "community-verify",
     "finalize_script": "scripts/finalize_community_dataset.py",
     "onboarding_doc": "docs/COMMUNITY_LAYER.md",
-    "api_doc": "docs/PUBLISHED_RUNS_API.md"
+    "api_doc": "docs/PUBLISHED_RUNS_API.md",
+    "v1_release_doc": "docs/V1_REFERENCE_RELEASE.md"
   },
   "inter_sim_revision": "f1f04ee11d064262f5ee2810abfcb01715260182",
   "ci_merge_checks": [

@@ -79,7 +79,7 @@ Refresh: `make host-realistic-refresh-cycle-licensed` — [`docs/HOST_REALISTIC_
 
 **Batch:** governed; viability-tested — not universal speedup ([`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md)). **Differentiation:** validation-only ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)).
 
-Published-run API: [`docs/PUBLISHED_RUNS_API.md`](docs/PUBLISHED_RUNS_API.md) · Claims: [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md)
+v1 release: [`docs/V1_REFERENCE_RELEASE.md`](docs/V1_REFERENCE_RELEASE.md) · API: [`docs/PUBLISHED_RUNS_API.md`](docs/PUBLISHED_RUNS_API.md) · Claims: [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md)
 
 ## Installation
 

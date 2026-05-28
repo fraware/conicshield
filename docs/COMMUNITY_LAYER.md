@@ -2,7 +2,11 @@
 
 **Start here** if you are new to the repository. This page is the default map for researchers, integrators, and anyone citing published benchmarks.
 
-Maintainer depth (cadence, governance graph, refresh scripts) lives in [`docs/README.md`](README.md) — not required for consumption.
+v1 release summary: [`V1_REFERENCE_RELEASE.md`](V1_REFERENCE_RELEASE.md). Maintainer depth (cadence, governance graph, refresh scripts) lives in [`docs/README.md`](README.md) — not required for consumption.
+
+```bash
+make onboard   # community-verify + status snapshot (recommended first run)
+```
 
 ## Choose your path (< 10 minutes)
 

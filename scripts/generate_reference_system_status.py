@@ -98,6 +98,7 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
             "finalize_script": "scripts/finalize_community_dataset.py",
             "onboarding_doc": "docs/COMMUNITY_LAYER.md",
             "api_doc": "docs/PUBLISHED_RUNS_API.md",
+            "v1_release_doc": "docs/V1_REFERENCE_RELEASE.md",
         },
         "inter_sim_revision": _inter_sim_revision(root),
         "ci_merge_checks": [

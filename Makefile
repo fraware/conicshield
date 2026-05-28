@@ -26,7 +26,7 @@ else
   endif
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata sync-published-run-readmes sync-published-readmes finalize-community-dataset community-verify check-reference-refresh-cadence check-flagship-full-refresh-cadence verify-v1-lock verify-v1-lock-quick verify-reference-system reference-authority-check reference-authority-snapshot reference-system-status reference-system-status-check capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata sync-published-run-readmes sync-published-readmes finalize-community-dataset community-verify check-reference-refresh-cadence check-flagship-full-refresh-cadence verify-v1-lock verify-v1-lock-quick v1-status onboard verify-reference-system reference-authority-check reference-authority-snapshot reference-system-status reference-system-status-check capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
 
 test:
 	$(PYTHON) -m pytest -q
@@ -128,6 +128,13 @@ verify-v1-lock: verify-reference-system community-verify reference-system-status
 
 verify-v1-lock-quick:
 	$(PYTHON) scripts/verify_v1_lock.py
+
+v1-status:
+	$(PYTHON) scripts/print_v1_status.py
+
+onboard: community-verify v1-status
+	@echo ""
+	@echo "Community onboarding OK. Next: docs/COMMUNITY_LAYER.md"
 
 sync-community-metadata:
 	$(PYTHON) scripts/sync_community_metadata.py

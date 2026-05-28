@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Load flagship bundle via published_runs API (typed, no governance deep-dive)."""
+"""Short published_runs API demo on the flagship bundle.
+
+Audience: researcher needing a minimal API sample (see load_published_runs_api.py for full tour).
+Prerequisites: ``pip install -e .`` from repo root.
+Proves: ``verify_run``, ``get_current_run``, ``load_summary``, ``load_provenance``.
+Does not prove: governance internals or scientific claims beyond bundle metadata.
+Expected: integrity OK line; path, tier, arm/episode counts.
+"""
 
 from __future__ import annotations
 
