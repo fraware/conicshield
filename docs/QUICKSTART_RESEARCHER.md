@@ -18,11 +18,19 @@ ConicShield ships **governed, hash-indexed benchmark bundles** that record shiel
 ## Python API (recommended)
 
 ```python
-from conicshield.published_runs import load_run, verify_run, load_summary
+from conicshield.published_runs import (
+    get_current_run,
+    load_run,
+    load_provenance,
+    load_summary,
+    verify_run,
+)
 
 verify_run("host-realistic-20260525")
 bundle = load_run("host-realistic-20260525")
 print(bundle.community.known_limitations)
+prov = load_provenance("host-realistic-20260525")
+current = get_current_run("conicshield-transition-bank-v1")
 ```
 
 Runnable walkthrough: [`examples/load_flagship_run.py`](../examples/load_flagship_run.py). After `pip install -e .`, the same CLI is available as `conicshield-published-runs`.
@@ -55,7 +63,7 @@ python scripts/validate_published_bundle_profile.py --run-id host-realistic-2026
 | `RUN_PROVENANCE.json` | How the bundle was produced (`projector_mode`, `evidence_tier`, export source) |
 | `COMMUNITY_METADATA.json` | **Read first** — recommended uses and explicit limitations |
 
-Example: [examples/inspect_flagship_bundle.py](../examples/inspect_flagship_bundle.py), [examples/load_flagship_run.py](../examples/load_flagship_run.py).
+Examples: [verify_published_run_index.py](../examples/verify_published_run_index.py), [inspect_flagship_bundle.py](../examples/inspect_flagship_bundle.py).
 
 ## What this repo does **not** claim
 

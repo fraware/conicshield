@@ -11,6 +11,7 @@ Governed benchmark bundle `wsl-native-20260409-091141` at evidence tier `vendor_
 | Parity fixture gold source | no |
 | Family `current_run_id` | no |
 | Export `export_kind` | `live_upstream_dump` |
+| Export source | n/a |
 | Parity status | `n/a` |
 | Scope contract | [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) |
 

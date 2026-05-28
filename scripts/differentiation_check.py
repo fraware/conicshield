@@ -303,6 +303,11 @@ def collect_differentiation_report(
             "native": None,
             "extras": extras,
             "errors": errors,
+            "public_product_claim": "none",
+            "layer_f_note": (
+                "Layer F validates local sensitivity and FD consistency; "
+                "it is not a public autograd guarantee."
+            ),
             "recommended_next_steps": [
                 "Install solver extras on a licensed host (see README / MAINTAINER_RUNBOOK).",
                 "Re-run this script; optional --include-native for native FD smoke.",
@@ -380,7 +385,14 @@ def _write_md(path: Path, data: dict[str, Any]) -> None:
         "",
         f"**Public product claim:** {data.get('public_product_claim', 'none')}",
         "",
-        str(data.get("layer_f_note", "")),
+        "## Validation stance (Layer F)",
+        "",
+        str(
+            data.get(
+                "layer_f_note",
+                "Validation layer only — not a public autograd or differentiable-shield product guarantee.",
+            )
+        ),
         "",
     ]
     ref = data.get("reference")

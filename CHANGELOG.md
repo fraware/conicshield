@@ -2,6 +2,11 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — Community API and examples alignment
+
+- `get_current_run`, `load_provenance` (`RunProvenance`); `examples/verify_published_run_index.py`.
+- Flagship `inspect_flagship_bundle` walkthrough; README export-source row; differentiation Layer F stance in report MD.
+
 ### 2026-05-28 — Remove branch protection tooling
 
 - Dropped GitHub branch protection scripts, workflow, docs, and `expected-branch-protection-main.json`.

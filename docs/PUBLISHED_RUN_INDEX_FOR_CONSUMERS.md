@@ -30,7 +30,18 @@ It is the **integrity catalog**, not the scientific claim. Scope lives in each b
    python -m conicshield.artifacts.validator_cli --run-dir benchmarks/published_runs/<run_id>
    ```
 
-   Python API: `from conicshield.published_runs import load_run, verify_run, load_summary` — see [examples/load_flagship_run.py](../examples/load_flagship_run.py).
+   Python API:
+   ```python
+   from conicshield.published_runs import (
+       list_runs,
+       get_current_run,
+       load_run,
+       verify_run,
+       load_summary,
+       load_provenance,
+   )
+   ```
+   Examples: [verify_published_run_index.py](../examples/verify_published_run_index.py), [inspect_flagship_bundle.py](../examples/inspect_flagship_bundle.py).
 
 ## Files to trust for what
 

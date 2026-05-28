@@ -11,6 +11,7 @@ Flagship **host-realistic** governed bundle: closed export→bank→publish loop
 | Parity fixture gold source | no |
 | Family `current_run_id` | yes |
 | Export `export_kind` | `live_upstream_dump` |
+| Export source | `benchmarks/external_evidence/offline_graph_export_upstream.json` |
 | Parity status | `present` |
 | Scope contract | [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) |
 

@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 from conicshield.published_runs import (
-    current_family_run,
+    get_current_run,
     list_runs,
     load_run,
     load_summary,
@@ -47,7 +47,7 @@ def _cmd_verify(args: argparse.Namespace) -> int:
 
 
 def _cmd_current(args: argparse.Namespace) -> int:
-    bundle = current_family_run(args.family_id)
+    bundle = get_current_run(args.family_id)
     print(bundle.run_id)
     return 0
 

@@ -44,6 +44,6 @@ python -m conicshield.published_runs.cli show host-realistic-20260525
 ```
 
 ```python
-from conicshield.published_runs import current_family_run
-bundle = current_family_run("conicshield-transition-bank-v1")
+from conicshield.published_runs import get_current_run
+bundle = get_current_run("conicshield-transition-bank-v1")
 ```

@@ -11,7 +11,8 @@ python examples/<script>.py
 | [minimal_reference_projection.py](minimal_reference_projection.py) | Integrator | No | No | Reference CVXPY path on minimal spec |
 | [native_compiled_projection.py](native_compiled_projection.py) | Integrator | **Yes** | No | Sequential native compiled `project()` |
 | [true_batched_compiled_projection.py](true_batched_compiled_projection.py) | Integrator | **Yes** | No | True batch `project_batch()` / `CompiledSolver` |
-| [inspect_flagship_bundle.py](inspect_flagship_bundle.py) | Researcher | No | **Yes** | Index verify + governance + summary arms |
+| [verify_published_run_index.py](verify_published_run_index.py) | Researcher | No | **Yes** | Index `--check`, list runs, verify current |
+| [inspect_flagship_bundle.py](inspect_flagship_bundle.py) | Researcher | No | **Yes** | README, metadata, governance, provenance, summary |
 | [load_flagship_run.py](load_flagship_run.py) | Researcher | No | **Yes** | `published_runs` API load paths |
 | [compare_reference_vs_native_metrics.py](compare_reference_vs_native_metrics.py) | Researcher | No | **Yes** | Arm metrics from flagship `summary.json` |
 | [refresh_published_bundle_readmes.py](refresh_published_bundle_readmes.py) | Maintainer | No | **Yes** | Metadata + README + index sync |

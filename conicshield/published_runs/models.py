@@ -50,6 +50,18 @@ class PublishedRunIndexEntry:
 
 
 @dataclass(frozen=True)
+class RunProvenance:
+    """Typed view of ``RUN_PROVENANCE.json`` for a published bundle."""
+
+    run_id: str
+    evidence_tier: str | None
+    projector_mode: str | None
+    host_realistic_evidence: bool
+    export_source: str | None
+    extra: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
 class PublishedRunBundle:
     run_id: str
     path: Path

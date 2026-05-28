@@ -11,6 +11,7 @@ Governed benchmark bundle `wsl-real-20260409-132450` at evidence tier `vendor_re
 | Parity fixture gold source | yes |
 | Family `current_run_id` | no |
 | Export `export_kind` | `live_upstream_dump` |
+| Export source | n/a |
 | Parity status | `n/a` |
 | Scope contract | [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) |
 

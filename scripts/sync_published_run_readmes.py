@@ -80,6 +80,9 @@ def _render_readme(
         f"| Parity fixture gold source | {fixture} |",
         f"| Family `current_run_id` | {current} |",
         f"| Export `export_kind` | `{export_kind}` |",
+        f"| Export source | `benchmarks/external_evidence/offline_graph_export_upstream.json` |"
+        if catalog.get("host_realistic")
+        else f"| Export source | n/a |",
         f"| Parity status | `{parity_status}` |",
         f"| Scope contract | [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) |",
         "",

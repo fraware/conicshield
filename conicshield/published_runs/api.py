@@ -17,6 +17,7 @@ from conicshield.published_runs.models import (
     IntegrityEntry,
     PublishedRunBundle,
     PublishedRunIndexEntry,
+    RunProvenance,
     SummaryRow,
 )
 
@@ -117,7 +118,7 @@ def verify_run(run_id: str, *, repo_root: Path | None = None) -> None:
             raise AssertionError(f"sha256 mismatch for {fp}")
 
 
-def current_family_run(family_id: str, *, repo_root: Path | None = None) -> PublishedRunBundle:
+def get_current_run(family_id: str, *, repo_root: Path | None = None) -> PublishedRunBundle:
     """Return the published bundle for a family's ``current_run_id``."""
     root = _repo_root(repo_root)
     current_path = root / "benchmarks" / "releases" / family_id / "CURRENT.json"
@@ -128,6 +129,27 @@ def current_family_run(family_id: str, *, repo_root: Path | None = None) -> Publ
     if not isinstance(run_id, str) or not run_id.strip():
         raise ValueError(f"family {family_id!r} has no current_run_id")
     return load_run(run_id, repo_root=root)
+
+
+def current_family_run(family_id: str, *, repo_root: Path | None = None) -> PublishedRunBundle:
+    """Alias of :func:`get_current_run`."""
+    return get_current_run(family_id, repo_root=repo_root)
+
+
+def load_provenance(run_id: str, *, repo_root: Path | None = None) -> RunProvenance:
+    """Load ``RUN_PROVENANCE.json`` as a structured record."""
+    bundle = load_run(run_id, repo_root=repo_root)
+    raw = dict(bundle.run_provenance or {})
+    return RunProvenance(
+        run_id=run_id,
+        evidence_tier=raw.get("evidence_tier") if raw.get("evidence_tier") is not None else None,
+        projector_mode=raw.get("projector_mode") if raw.get("projector_mode") is not None else None,
+        host_realistic_evidence=bool(raw.get("host_realistic_evidence", False)),
+        export_source=(
+            str(raw["export_source"]) if raw.get("export_source") is not None else None
+        ),
+        extra={k: v for k, v in raw.items() if k not in ("evidence_tier", "projector_mode", "host_realistic_evidence", "export_source")},
+    )
 
 
 def load_summary(run_id: str, *, repo_root: Path | None = None) -> tuple[SummaryRow, ...]:
