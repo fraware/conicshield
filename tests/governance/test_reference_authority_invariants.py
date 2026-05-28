@@ -51,6 +51,8 @@ def test_export_provenance_links_flagship_run() -> None:
     assert len(history) >= 2
     live = [h for h in history if h.get("export_kind") == "live_upstream_dump"]
     assert len(live) >= 1
+    full = [h for h in history if h.get("workflow") == "live-export-full" and h.get("authority_ok")]
+    assert full, "at least one refresh must complete live-export-full with authority_ok"
 
 
 def test_committed_batch_solve_report_example_shape() -> None:

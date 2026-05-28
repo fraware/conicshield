@@ -13,8 +13,8 @@
   "artifact_gate": "green",
   "parity_gate": "green",
   "promotion_gate": "green",
-  "published_at_utc": "2026-05-28T16:28:58.397141+00:00",
-  "notes": "Flagship host-realistic-20260525; calendar refresh #3 2026-05-28 (live_upstream_dump). Cadence: docs/REFERENCE_REFRESH_LOG.md",
+  "published_at_utc": "2026-05-28T17:00:33.576742+00:00",
+  "notes": "Host-realistic refresh cycle host-realistic-20260525",
   "benchmark_bundle_paths": [
     "benchmarks/published_runs/wsl-native-20260409-091141",
     "benchmarks/published_runs/wsl-real-20260409-132450",

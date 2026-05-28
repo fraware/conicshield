@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-05-28T16:56:54Z",
+  "generated_at_utc": "2026-05-28T17:00:53Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
     "host-realistic-20260525",
@@ -13,19 +13,19 @@
       "repository_relative_path": "benchmarks/published_runs/host-realistic-20260525",
       "integrity": {
         "config.json": {
-          "sha256": "9431b5663b2529065aa7a8d62bca8f484015aee97295a8a0bac7459227e6048a"
+          "sha256": "1502ff06e4cc110e4c8608fca8b71417535c3d77c9ef3dfe7ac6658b08becd06"
         },
         "config.schema.json": {
           "sha256": "dc0d0af539739180848d298d3a8e112fda79dbec96091ed42dce7bcae58005bd"
         },
         "summary.json": {
-          "sha256": "c7fb6e485b8c40ef63eb88852e146002e545f5d36c5e4ba29f6044ba467a5bf9"
+          "sha256": "01f2845c2d67d9f55b70bf7c9b472c27e0cb9d9584ae71226d7920c646403753"
         },
         "summary.schema.json": {
           "sha256": "c54f6deb392afcefae57e7822bd00c1191c47263655e3f76cfeb432576310fa6"
         },
         "episodes.jsonl": {
-          "sha256": "56a228727a81d4b453f999be57c718a18285f2df3a22d02fde6650f632956a21"
+          "sha256": "9be9455dcc563f05aa85d5c17c7613df1c6c94d95456d33e3cf0f86b554a8985"
         },
         "episodes.schema.json": {
           "sha256": "94819ce8fddc8fd4ab880d219bc1c65654158a7a0a2884de644a70e4a3dfdff2"
@@ -49,7 +49,7 @@
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "05c7f635116d028c119f070570bd7a36169ebfb9c2b2aa4ef4686c7eea0e6451"
+          "sha256": "55824239f21cb77042484430deaebb09f3f5e11a4456252877e20a030c5eb29d"
         }
       },
       "catalog": {
@@ -102,7 +102,7 @@
           "sha256": "8ff93f876bc47fb202e445daafd9bbaec4f958ca739afad95b48057b22b03d4c"
         },
         "README.md": {
-          "sha256": "58b971722fdb3c5157956f4d17beaabc88157494e486f033d38c6d2fd1b04e9e"
+          "sha256": "57d42db230f9dae99541ffcba104dc90a61b20a696f655f1c4cc7bfa6ce51297"
         }
       },
       "catalog": {
@@ -158,7 +158,7 @@
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "bf60884d0cef30dc21976e2c694eb396481516d2e0daacdd238b59ac98d964cf"
+          "sha256": "99cd3f579bf44349a7262970f4a267a461a2cf627fc67e18bc20657b1319fc3c"
         }
       },
       "catalog": {

@@ -7,12 +7,12 @@ Licensed **Linux/WSL** host required for native arm, parity, and batch sweep.
 ## Standard cycle (current export)
 
 ```bash
-make capture-inter-sim-graph
-make refresh-live-upstream-export-live
-make host-realistic-refresh-cycle
+make host-realistic-refresh-cycle-licensed
 ```
 
-(`host-realistic-refresh-cycle` records the refresh in `REFERENCE_AUTHORITY_LOG` and `EXPORT_PROVENANCE` by default.)
+Licensed WSL/Linux with project `.venv` and Moreau. Records and amends the refresh log (`--amend-last-refresh` after export-only CI).
+
+Export-only (no bundle): monthly workflow [`.github/workflows/host-realistic-refresh-cadence.yml`](../.github/workflows/host-realistic-refresh-cadence.yml).
 
 What this does:
 

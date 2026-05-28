@@ -10,15 +10,14 @@ Policy: [`HOST_REALISTIC_CADENCE_POLICY.md`](HOST_REALISTIC_CADENCE_POLICY.md). 
 | 2 | 2026-05-26T06:05:21Z | event-driven-live-export | live-export | live_upstream_dump | `381004e` | yes | capture + full cycle |
 | 3 | 2026-05-28T16:28:58Z | calendar-cadence | live-export | live_upstream_dump | `5485dfb` | yes | monthly maintainer cycle |
 
-| 4 | 2026-05-28T16:56:46Z | calendar-cadence-workflow | live-export | live_upstream_dump | `bcd8be1` | no | Local scheduled export refresh; full bundle cycle requires licensed host |
+| 4 | 2026-05-28T17:00:56Z | calendar-cadence | live-export-full | live_upstream_dump | `2777cc6` | yes | host-realistic-refresh-cycle host-realistic-20260525 |
 
 <!-- Append rows via: python scripts/record_reference_refresh.py -->
 
 ## Live workflow (required for cadence sign-off)
 
 ```bash
-make capture-inter-sim-graph
-make refresh-live-upstream-export-live
-make host-realistic-refresh-cycle
-python scripts/record_reference_refresh.py --trigger calendar-cadence --workflow live-export
+make host-realistic-refresh-cycle-licensed
 ```
+
+(Export-only monthly CI uses `host-realistic-refresh-cadence` workflow; amend with `--amend-last-refresh` when completing the licensed cycle.)

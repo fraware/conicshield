@@ -1,8 +1,8 @@
 {
   "schema_version": "conicshield_live_graph_capture/v1",
-  "captured_at_utc": "2026-05-28T16:53:53Z",
+  "captured_at_utc": "2026-05-28T17:00:15Z",
   "graph_json": "benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json",
-  "intersim_root": "C:\\Users\\mateo\\conicshield\\third_party\\inter-sim-rl\\checkout",
+  "intersim_root": "/mnt/c/Users/mateo/conicshield/third_party/inter-sim-rl/checkout",
   "upstream_repository": "https://github.com/fraware/inter-sim-rl",
   "upstream_sha": "f1f04ee11d064262f5ee2810abfcb01715260182",
   "graph_source": "conicshield.bench.inter_sim_export.fork_graph_for_rehearsal",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Append a flagship refresh row to REFERENCE_AUTHORITY_LOG and EXPORT_PROVENANCE.refresh_history."""
+"""Append or amend flagship refresh rows in REFERENCE_AUTHORITY_LOG and EXPORT_PROVENANCE."""
 
 from __future__ import annotations
 
@@ -29,43 +29,8 @@ def _git_ref(repo: Path) -> str:
     return "unknown"
 
 
-def _append_provenance_history(
+def _format_log_row(
     *,
-    prov_path: Path,
-    trigger: str,
-    workflow: str,
-    export_kind: str,
-    git_ref: str,
-    authority_ok: bool,
-    notes: str,
-) -> int:
-    prov: dict = {}
-    if prov_path.is_file():
-        prov = json.loads(prov_path.read_text(encoding="utf-8"))
-    history = list(prov.get("refresh_history") or [])
-    next_idx = max((int(h.get("refresh_index", 0)) for h in history), default=0) + 1
-    now = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    history.append(
-        {
-            "refresh_index": next_idx,
-            "completed_at_utc": now,
-            "trigger": trigger,
-            "workflow": workflow,
-            "export_kind": export_kind,
-            "git_ref": git_ref,
-            "authority_ok": authority_ok,
-            "notes": notes,
-        }
-    )
-    prov["refresh_history"] = history
-    prov["last_flagship_refresh_at_utc"] = now
-    prov_path.write_text(json.dumps(prov, indent=2) + "\n", encoding="utf-8")
-    return next_idx
-
-
-def _append_log_table_row(
-    *,
-    log_path: Path,
     index: int,
     completed_at_utc: str,
     trigger: str,
@@ -74,18 +39,91 @@ def _append_log_table_row(
     git_ref: str,
     authority_ok: bool,
     notes: str,
-) -> None:
-    text = log_path.read_text(encoding="utf-8")
-    marker = "<!-- Append rows via:"
-    row = (
+) -> str:
+    return (
         f"| {index} | {completed_at_utc} | {trigger} | {workflow} | {export_kind} | "
-        f"`{git_ref}` | {'yes' if authority_ok else 'no'} | {notes} |"
+        f"`{git_ref}` | {'yes' if authority_ok else 'no'} | {notes or '—'} |"
     )
-    if marker in text:
-        text = text.replace(marker, f"{row}\n\n{marker}", 1)
+
+
+def _upsert_log_row(*, log_path: Path, index: int, row: str) -> None:
+    text = log_path.read_text(encoding="utf-8")
+    pattern = re.compile(rf"^\| {index} \| [^\n]+\n", re.MULTILINE)
+    if pattern.search(text):
+        text = pattern.sub(row + "\n", text, count=1)
     else:
-        text = text.rstrip() + "\n" + row + "\n"
+        marker = "<!-- Append rows via:"
+        if marker in text:
+            text = text.replace(marker, f"{row}\n\n{marker}", 1)
+        else:
+            text = text.rstrip() + "\n" + row + "\n"
     log_path.write_text(text, encoding="utf-8")
+
+
+def _record_entry(
+    *,
+    prov_path: Path,
+    log_path: Path,
+    trigger: str,
+    workflow: str,
+    export_kind: str,
+    git_ref: str,
+    authority_ok: bool,
+    notes: str,
+    amend_last: bool,
+) -> int:
+    prov: dict = {}
+    if prov_path.is_file():
+        prov = json.loads(prov_path.read_text(encoding="utf-8"))
+    history = list(prov.get("refresh_history") or [])
+    now = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    if amend_last and history:
+        entry = dict(history[-1])
+        idx = int(entry.get("refresh_index", len(history)))
+        entry.update(
+            {
+                "completed_at_utc": now,
+                "trigger": trigger,
+                "workflow": workflow,
+                "export_kind": export_kind,
+                "git_ref": git_ref,
+                "authority_ok": authority_ok,
+                "notes": notes,
+            }
+        )
+        history[-1] = entry
+    else:
+        idx = max((int(h.get("refresh_index", 0)) for h in history), default=0) + 1
+        history.append(
+            {
+                "refresh_index": idx,
+                "completed_at_utc": now,
+                "trigger": trigger,
+                "workflow": workflow,
+                "export_kind": export_kind,
+                "git_ref": git_ref,
+                "authority_ok": authority_ok,
+                "notes": notes,
+            }
+        )
+
+    prov["refresh_history"] = history
+    prov["last_flagship_refresh_at_utc"] = now
+    prov_path.write_text(json.dumps(prov, indent=2) + "\n", encoding="utf-8")
+
+    row = _format_log_row(
+        index=idx,
+        completed_at_utc=now,
+        trigger=trigger,
+        workflow=workflow,
+        export_kind=export_kind,
+        git_ref=git_ref,
+        authority_ok=authority_ok,
+        notes=notes,
+    )
+    _upsert_log_row(log_path=log_path, index=idx, row=row)
+    return idx
 
 
 def main() -> int:
@@ -94,11 +132,16 @@ def main() -> int:
     p.add_argument(
         "--workflow",
         default="live-export",
-        help="live-export | governance-only | manual",
+        help="live-export | live-export-full | governance-only | manual",
     )
     p.add_argument("--export-kind", default="live_upstream_dump")
     p.add_argument("--authority-ok", action="store_true", help="reference_authority_check passed")
     p.add_argument("--notes", default="")
+    p.add_argument(
+        "--amend-last",
+        action="store_true",
+        help="Update the latest refresh_history entry instead of appending.",
+    )
     args = p.parse_args()
 
     repo = _repo_root()
@@ -108,35 +151,19 @@ def main() -> int:
         print(f"Missing {log_path}", file=sys.stderr)
         return 2
 
-    # Remove stale placeholder row 4 if present (pending partial)
-    text = log_path.read_text(encoding="utf-8")
-    text = re.sub(r"\| 4 \| [^\n]+\n", "", text)
-    log_path.write_text(text, encoding="utf-8")
-
-    git_ref = _git_ref(repo)
-    idx = _append_provenance_history(
+    idx = _record_entry(
         prov_path=prov_path,
+        log_path=log_path,
         trigger=args.trigger,
         workflow=args.workflow,
         export_kind=args.export_kind,
-        git_ref=git_ref,
+        git_ref=_git_ref(repo),
         authority_ok=args.authority_ok,
         notes=args.notes,
+        amend_last=args.amend_last,
     )
-    history = json.loads(prov_path.read_text(encoding="utf-8"))["refresh_history"]
-    completed = history[-1]["completed_at_utc"]
-    _append_log_table_row(
-        log_path=log_path,
-        index=idx,
-        completed_at_utc=completed,
-        trigger=args.trigger,
-        workflow=args.workflow,
-        export_kind=args.export_kind,
-        git_ref=git_ref,
-        authority_ok=args.authority_ok,
-        notes=args.notes or "—",
-    )
-    print(f"Recorded refresh #{idx} at {completed}", file=sys.stderr)
+    verb = "Amended" if args.amend_last else "Recorded"
+    print(f"{verb} refresh #{idx}", file=sys.stderr)
     return 0
 
 

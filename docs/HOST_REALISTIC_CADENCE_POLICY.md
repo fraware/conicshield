@@ -20,12 +20,8 @@ Binding schedule for flagship `host-realistic-20260525` (`conicshield-transition
 
 Each refresh must complete, in order:
 
-1. `make capture-inter-sim-graph` (live export)
-2. `make refresh-live-upstream-export-live`
-3. `make host-realistic-refresh-cycle` (publish → parity → finalize → release sync → batch viability → index → snapshot → authority check)
-4. Commit governed artifacts (see procedure doc)
-5. `python scripts/record_reference_refresh.py` (append [`REFERENCE_AUTHORITY_LOG.md`](REFERENCE_AUTHORITY_LOG.md) + `EXPORT_PROVENANCE.refresh_history`)
-6. `python scripts/update_engineering_status_from_flagship.py`
+1. `make host-realistic-refresh-cycle-licensed` (capture → export → publish → parity → release → batch → index → snapshot → authority check → log amend)
+2. Commit governed artifacts (see procedure doc)
 
 `--skip-vendor-verify` is for export-only or governance-only emergencies; **do not** use for monthly cadence sign-off.
 
@@ -34,7 +30,7 @@ Each refresh must complete, in order:
 | Requirement | How verified |
 |-------------|----------------|
 | ≥2 independent refreshes on flagship path | [`REFERENCE_AUTHORITY_LOG.md`](REFERENCE_AUTHORITY_LOG.md) rows |
-| ≥1 refresh tied to live upstream workflow | Row with `live_upstream_dump` + `workflow=live-export` |
+| ≥1 refresh tied to live upstream workflow | Row with `live_upstream_dump` + `workflow=live-export-full` + `authority_ok` |
 | Authority aligned after each cycle | `reference_authority_check` green; committed `reference_authority_snapshot.json` |
 | Unattended schedule evidenced | Monthly workflow run + log row `trigger=calendar-cadence-workflow` |
 

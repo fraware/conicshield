@@ -78,6 +78,18 @@
       "status": "published",
       "published_at_utc": "2026-05-28T16:28:58.397141+00:00",
       "reason": "Host-realistic refresh cycle host-realistic-20260525"
+    },
+    {
+      "run_id": "host-realistic-20260525",
+      "status": "deprecated",
+      "deprecated_at_utc": "2026-05-28T17:00:33.576742+00:00",
+      "reason": "Superseded by host-realistic-20260525"
+    },
+    {
+      "run_id": "host-realistic-20260525",
+      "status": "published",
+      "published_at_utc": "2026-05-28T17:00:33.576742+00:00",
+      "reason": "Host-realistic refresh cycle host-realistic-20260525"
     }
   ]
 }

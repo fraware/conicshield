@@ -2,6 +2,11 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — Refresh #4 full cycle (licensed)
+
+- `make host-realistic-refresh-cycle-licensed` on WSL; refresh #4 amended to `live-export-full` with `authority_ok`.
+- `check_flagship_refresh_triggers.py` in CI; `record_reference_refresh.py --amend-last`.
+
 ### 2026-05-28 — Cadence policy, community bundles, batch story v2
 
 - `HOST_REALISTIC_CADENCE_POLICY.md`, `REFERENCE_AUTHORITY_LOG.md`, monthly `host-realistic-refresh-cadence` workflow.

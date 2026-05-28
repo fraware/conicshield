@@ -10,7 +10,7 @@ Governed benchmark bundle for `conicshield-transition-bank-v1`.
 | Includes `shielded-native-moreau` | yes |
 | Parity fixture gold source | no |
 | Family `current_run_id` | yes |
-| Governance `state` | `published` |
+| Governance `state` | `review-locked` |
 | Committed export `export_kind` | `live_upstream_dump` |
 | Parity status | `present` |
 | Machine-readable scope | [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) |

@@ -97,6 +97,11 @@ def main() -> int:
         action="store_true",
         help="Append REFERENCE_AUTHORITY_LOG + EXPORT_PROVENANCE.refresh_history after success.",
     )
+    p.add_argument(
+        "--amend-last-refresh",
+        action="store_true",
+        help="With --record-refresh: update the latest log row (e.g. after export-only refresh).",
+    )
     args = p.parse_args()
 
     repo = _repo_root()
@@ -250,20 +255,21 @@ def main() -> int:
     _run([sys.executable, str(repo / "scripts" / "update_engineering_status_from_flagship.py")], cwd=repo)
 
     if args.record_refresh:
-        rc = _run(
-            [
-                sys.executable,
-                str(repo / "scripts" / "record_reference_refresh.py"),
-                "--trigger",
-                args.trigger,
-                "--workflow",
-                "live-export",
-                "--authority-ok",
-                "--notes",
-                f"host-realistic-refresh-cycle {run_id}",
-            ],
-            cwd=repo,
-        )
+        workflow = "live-export-full" if not args.skip_vendor_verify else "live-export"
+        cmd = [
+            sys.executable,
+            str(repo / "scripts" / "record_reference_refresh.py"),
+            "--trigger",
+            args.trigger,
+            "--workflow",
+            workflow,
+            "--authority-ok",
+            "--notes",
+            f"host-realistic-refresh-cycle {run_id}",
+        ]
+        if args.amend_last_refresh:
+            cmd.append("--amend-last")
+        rc = _run(cmd, cwd=repo)
         if rc != 0:
             return rc
 
