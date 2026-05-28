@@ -96,6 +96,8 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
             "published_run_count": published_run_count,
             "verify_make_target": "community-verify",
             "finalize_script": "scripts/finalize_community_dataset.py",
+            "onboarding_doc": "docs/COMMUNITY_LAYER.md",
+            "api_doc": "docs/PUBLISHED_RUNS_API.md",
         },
         "inter_sim_revision": _inter_sim_revision(root),
         "ci_merge_checks": [

@@ -1,6 +1,6 @@
 # Quickstart: researcher
 
-Curated path for **inspecting and citing** committed benchmark bundles without reading the full governance graph.
+Curated path for **inspecting and citing** committed benchmark bundles without reading the full governance graph (~10 min). Hub: [COMMUNITY_LAYER.md](COMMUNITY_LAYER.md).
 
 ## What ConicShield proves (in this repo)
 

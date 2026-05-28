@@ -59,7 +59,7 @@ Refresh: `make host-realistic-refresh-cycle-licensed` — [`docs/HOST_REALISTIC_
 
 **Batch:** governed; viability-tested — not universal speedup ([`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md)). **Differentiation:** validation-only ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)).
 
-**Start here:** [Researcher](docs/QUICKSTART_RESEARCHER.md) · [Integrator](docs/QUICKSTART_INTEGRATOR.md) · [Maintainer](docs/QUICKSTART_MAINTAINER.md) · [Examples](examples/README.md) · [Public claims](docs/PUBLIC_CLAIMS.md)
+**Start here:** [Community layer](docs/COMMUNITY_LAYER.md) · [Researcher](docs/QUICKSTART_RESEARCHER.md) · [Integrator](docs/QUICKSTART_INTEGRATOR.md) · [Maintainer](docs/QUICKSTART_MAINTAINER.md) · [Examples](examples/README.md)
 
 Docs index: [`docs/README.md`](docs/README.md). Local: `make verify-v1-lock`, `make community-verify`, `python -m conicshield.published_runs.cli list`. Maintainer lock: [`docs/V1_LOCK_CHECKLIST.md`](docs/V1_LOCK_CHECKLIST.md).
 

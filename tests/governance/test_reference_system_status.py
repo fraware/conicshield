@@ -29,6 +29,7 @@ def test_reference_system_status_builds() -> None:
     community = payload.get("community_dataset") or {}
     assert community.get("api_module") == "conicshield.published_runs"
     assert community.get("published_run_count", 0) >= 1
+    assert community.get("onboarding_doc") == "docs/COMMUNITY_LAYER.md"
     assert "reference-authority" in (payload.get("ci_merge_checks") or [])
 
 

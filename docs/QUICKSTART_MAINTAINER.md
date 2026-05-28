@@ -1,6 +1,6 @@
 # Quickstart: maintainer
 
-Curated path for **refreshing, publishing, and gating** the reference system.
+Curated path for **refreshing, publishing, and gating** the reference system (~10 min). Hub: [COMMUNITY_LAYER.md](COMMUNITY_LAYER.md).
 
 ## Refresh cycle (flagship)
 

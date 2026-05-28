@@ -134,9 +134,8 @@ sync-published-run-readmes:
 finalize-community-dataset:
 	$(PYTHON) scripts/finalize_community_dataset.py
 
-community-verify: sync-community-metadata sync-published-run-readmes
-	$(PYTHON) -m pytest tests/test_published_runs_api.py tests/test_published_runs_cli.py -q --tb=short
-	$(PYTHON) examples/inspect_flagship_bundle.py
+community-verify:
+	$(PYTHON) -m pytest tests/test_published_runs_api.py tests/test_published_runs_cli.py tests/examples/test_public_examples_smoke.py -q --tb=short
 	$(PYTHON) -m conicshield.published_runs.cli list
 	$(PYTHON) -m conicshield.published_runs.cli verify host-realistic-20260525
 

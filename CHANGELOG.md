@@ -2,6 +2,11 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — Community onboarding hub and read-only verify gate
+
+- `docs/COMMUNITY_LAYER.md`, `docs/PUBLISHED_RUNS_API.md`; `community-verify` no longer mutates bundles in CI.
+- Public examples smoke tests (`tests/examples/test_public_examples_smoke.py`).
+
 ### 2026-05-28 — Community API and examples alignment
 
 - `get_current_run`, `load_provenance` (`RunProvenance`); `examples/verify_published_run_index.py`.

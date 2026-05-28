@@ -1,6 +1,6 @@
 # Quickstart: integrator
 
-Curated path for **using ConicShield as a library** on the public/reference stack.
+Curated path for **using ConicShield as a library** on the public/reference stack (~10 min). Hub: [COMMUNITY_LAYER.md](COMMUNITY_LAYER.md).
 
 ## Install (public / reference)
 

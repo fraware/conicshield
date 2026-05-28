@@ -8,7 +8,7 @@ Use this before declaring the **host-realistic flagship** reference system locke
 make verify-v1-lock
 ```
 
-Equivalent to: `verify-reference-system`, `community-verify`, index `--check`, and reference status `--check`.
+Equivalent to: `verify-reference-system`, `community-verify` (API + public examples, read-only), index `--check`, and reference status `--check`.
 
 ## 2. Flagship cadence
 

@@ -2,6 +2,8 @@
 
 Start here after the repository [`README.md`](../README.md).
 
+**External users:** [COMMUNITY_LAYER.md](COMMUNITY_LAYER.md) (quickstarts + API + examples in one page).
+
 ## Start by audience
 
 | You are | Start here |
@@ -25,6 +27,7 @@ Public claim boundaries: [PUBLIC_CLAIMS.md](PUBLIC_CLAIMS.md). Examples: [exampl
 | [PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md](PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md) | External bundle consumption |
 | [PUBLISHED_RUN_INDEX_SCHEMA.md](PUBLISHED_RUN_INDEX_SCHEMA.md) | Index stability contract |
 | [COMMUNITY_METADATA_SCHEMA.md](COMMUNITY_METADATA_SCHEMA.md) | `COMMUNITY_METADATA.json` fields |
+| [PUBLISHED_RUNS_API.md](PUBLISHED_RUNS_API.md) | `conicshield.published_runs` reference |
 | [CITING_CONICSHIELD_ARTIFACTS.md](CITING_CONICSHIELD_ARTIFACTS.md) | How to cite runs and index |
 | [HOST_REALISTIC_REFRESH_PROCEDURE.md](HOST_REALISTIC_REFRESH_PROCEDURE.md) | Maintainer refresh commands |
 | [REFERENCE_EVIDENCE_TIERS.md](REFERENCE_EVIDENCE_TIERS.md) | `evidence_tier` S0–S3 |
