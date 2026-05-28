@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Repeatable host-realistic refresh: export → publish → parity → finalize → optional release → index.
 
-See docs/HOST_REALISTIC_REFRESH_PROCEDURE.md.
+See CONTRIBUTING.md and make host-realistic-refresh-cycle-licensed.
 """
 
 from __future__ import annotations
@@ -95,7 +95,7 @@ def main() -> int:
     p.add_argument(
         "--record-refresh",
         action="store_true",
-        help="Append REFERENCE_AUTHORITY_LOG + EXPORT_PROVENANCE.refresh_history after success.",
+        help="Append reference_refresh_log + EXPORT_PROVENANCE.refresh_history after success.",
     )
     p.add_argument(
         "--amend-last-refresh",
@@ -276,7 +276,7 @@ def main() -> int:
 
     print(
         f"\nRefresh cycle complete for {run_id}. "
-        "Commit published_runs/, PUBLISHED_RUN_INDEX.json, reports/, docs/REFERENCE_AUTHORITY_LOG.md.",
+        "Commit published_runs/, PUBLISHED_RUN_INDEX.json, reports/, benchmarks/reports/reference_refresh_log.md.",
         file=sys.stderr,
     )
     return 0

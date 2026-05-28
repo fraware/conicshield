@@ -1,6 +1,6 @@
 # Patches against upstream [inter-sim-rl](https://github.com/fraware/inter-sim-rl)
 
-**ConicShield:** [README.md](../../README.md), [docs/INTER_SIM_RL_INTEGRATION.md](../../docs/INTER_SIM_RL_INTEGRATION.md).
+**ConicShield:** [README.md](../../README.md).
 
 ## `conicshield-m2-shield-context-and-transitions.patch`
 

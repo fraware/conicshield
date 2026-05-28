@@ -1,32 +1,7 @@
-# Release Decision Record
+# Review record
 
-Human-facing template; governed rules live in [`docs/RELEASE_POLICY.md`](../../docs/RELEASE_POLICY.md) and [`docs/BENCHMARK_GOVERNANCE.md`](../../docs/BENCHMARK_GOVERNANCE.md).
-
-## Run
-- Run ID:
-- Benchmark family:
-- Task contract version:
-- Fixture version:
-
-## Why this run is comparable
-- 
-
-## Gates
-- Artifact gate:
-- Parity gate:
-- Promotion gate:
-- Review-locked:
-
-## What changed
-- 
-
-## What regressed, if anything
-- 
-
-## Publishable arms
-- 
-
-## Decision
-- [ ] Publish
-- [ ] Keep as candidate
-- [ ] Reject
+- PR:
+- Reviewer:
+- Vendor attestation (if solver-touch):
+- `make verify-v1-lock-quick`:
+- Public claims checked against [`docs/PUBLIC_CLAIMS.md`](../../docs/PUBLIC_CLAIMS.md):

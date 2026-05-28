@@ -1,34 +1,33 @@
 #!/usr/bin/env python3
-"""True batched compiled solve via NativeMoreauCompiledBatchProjector.
+"""True batched compiled solve via ``NativeMoreauCompiledBatchProjector``.
 
 Audience: integrator evaluating native batch API existence.
-Prerequisites: vendor Moreau installed and licensed; ``pip install -e ".[solver]"`` or project .venv.
-Proves: ``create_batch_projector`` + ``project_batch`` returns shape (K, n) on a minimal spec.
-Does not prove: universal throughput wins — read docs/SOLVER_PATHS_AND_BATCHING.md for scenario-dependent
-  performance and viability-only public narrative.
-Expected: prints input/output shapes and corrected batch array, or exits 0 with Skip if no Moreau.
+Prerequisites: vendor Moreau installed and licensed; ``pip install -e ".[solver]"`` on Linux/WSL.
+Proves: ``create_batch_projector`` + ``project_batch`` returns shape ``(K, n)`` with simplex-feasible rows.
+Does not prove: universal throughput wins — true batch exists in code; public narrative is
+  **viability_only** (see ``benchmarks/reports/reference_system_status.json`` and
+  docs/SOLVER_PATHS_AND_BATCHING.md).
+Expected: input/output shapes; corrected batch array; per-row simplex sums ~ 1.0 — or SKIP.
 """
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import minimal_spec  # noqa: E402
+from _common import configure_stdio, minimal_spec, section, skip
 
 from conicshield.core.moreau_compiled import NativeMoreauCompiledOptions
 from conicshield.core.solver_factory import create_batch_projector
 
 
 def main() -> int:
+    configure_stdio()
+
+    section("Environment")
     try:
         import moreau  # noqa: F401
     except ImportError as exc:
-        print("Skip: moreau not installed.", exc)
-        return 0
+        return skip("moreau not installed", detail=exc)
 
     batch = create_batch_projector(
         spec=minimal_spec(),
@@ -43,17 +42,30 @@ def main() -> int:
         ],
         dtype=np.float64,
     )
+
+    section("project_batch")
     try:
         corrected = batch.project_batch(proposals, prev)
     except RuntimeError as exc:
         if "license" in str(exc).lower():
-            print("Skip: Moreau license not available.", exc)
-            return 0
+            return skip("Moreau license not available", detail=exc)
         raise
+
     print("input shape:", proposals.shape)
     print("output shape:", corrected.shape)
-    print("corrected_batch:\n", corrected)
-    print("\nBatch path exists; throughput claims are scenario-governed — see SOLVER_PATHS_AND_BATCHING.md.")
+    if corrected.shape != proposals.shape:
+        print("unexpected output shape")
+        return 1
+
+    section("Per-row simplex check")
+    for i, row in enumerate(corrected):
+        s = float(np.sum(row))
+        print(f"  row {i}: sum={s:.6f} corrected={np.round(row, 4).tolist()}")
+        if abs(s - 1.0) > 1e-3:
+            print(f"  WARN: row {i} not on simplex within 1e-3")
+
+    section("Done")
+    print("Throughput claims are scenario-governed — see docs/SOLVER_PATHS_AND_BATCHING.md.")
     return 0
 
 

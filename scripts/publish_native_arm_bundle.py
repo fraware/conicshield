@@ -2,7 +2,7 @@
 """Canonical native-arm publish entry: reference bundle + governed promotion hints.
 
 Does not replace ``finalize_cli`` / ``release_cli`` / human ``governance_decision.md``.
-See ``docs/NATIVE_ARM_PUBLISH_CHECKLIST.md``.
+See CONTRIBUTING.md.
 """
 
 from __future__ import annotations
@@ -66,7 +66,7 @@ def main() -> int:
         "  3. Copy to benchmarks/published_runs/<run_id>/ + governance_decision.md\n"
         "  4. release_cli → audit_cli --strict\n"
         "  5. python scripts/refresh_published_run_index.py\n"
-        "See docs/NATIVE_ARM_PUBLISH_CHECKLIST.md",
+        "See CONTRIBUTING.md",
         file=sys.stderr,
     )
     return 0

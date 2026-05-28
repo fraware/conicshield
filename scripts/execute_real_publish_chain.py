@@ -129,20 +129,6 @@ def main() -> int:
     ) != 0:
         return 1
 
-    if args.solver_versions is not None:
-        update_cmd = [
-            exe,
-            str(
-                root / "scripts" / "update_engineering_status_from_solver_versions.py"
-            ),
-            "--solver-versions",
-            str(args.solver_versions.resolve()),
-        ]
-        if args.solver_version_date_utc:
-            update_cmd.extend(["--date-utc", args.solver_version_date_utc])
-        if _run(update_cmd, cwd=root) != 0:
-            return 1
-
     print("Real publish chain completed.")
     return 0
 

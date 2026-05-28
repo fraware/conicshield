@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Licensed-host upgrade: live export → vendor-backed ``host-realistic-20260525`` publish.
 
-Requires Moreau + patched inter-sim-rl. See ``docs/REFERENCE_EVIDENCE_TIERS.md``.
+Requires Moreau + patched inter-sim-rl. See CONTRIBUTING.md and README.
 
 Example:
 

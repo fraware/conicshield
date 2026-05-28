@@ -44,7 +44,7 @@ python -m conicshield.published_runs.cli verify host-realistic-20260525
 # or: conicshield-published-runs verify host-realistic-20260525
 ```
 
-Details: [PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md](PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md), [PUBLISHED_RUN_INDEX_SCHEMA.md](PUBLISHED_RUN_INDEX_SCHEMA.md).
+Details: [PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md](PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md), [PUBLISHED_RUNS_API.md](PUBLISHED_RUNS_API.md).
 
 ## Validate a committed bundle
 
@@ -79,4 +79,4 @@ From [CONTRIBUTING.md](../CONTRIBUTING.md) and [PUBLIC_CLAIMS.md](PUBLIC_CLAIMS.
 
 - [CITING_CONICSHIELD_ARTIFACTS.md](CITING_CONICSHIELD_ARTIFACTS.md)
 - [examples/README.md](../examples/README.md)
-- Full index: [docs/README.md](README.md) (maintainer-oriented)
+- Doc list: [docs/README.md](README.md)

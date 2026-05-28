@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Append or amend flagship refresh rows in REFERENCE_AUTHORITY_LOG and EXPORT_PROVENANCE."""
+"""Append or amend flagship refresh rows in reference_refresh_log and EXPORT_PROVENANCE."""
 
 from __future__ import annotations
 
@@ -161,7 +161,7 @@ def main() -> int:
 
     repo = _repo_root()
     prov_path = repo / "benchmarks" / "external_evidence" / "EXPORT_PROVENANCE.json"
-    log_path = repo / "docs" / "REFERENCE_AUTHORITY_LOG.md"
+    log_path = repo / "benchmarks" / "reports" / "reference_refresh_log.md"
     if not log_path.is_file():
         print(f"Missing {log_path}", file=sys.stderr)
         return 2

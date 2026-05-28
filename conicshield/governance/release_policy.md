@@ -1,26 +1,9 @@
-# Release Orchestration Policy
+# Release policy (in-tree)
 
-Authoritative duplicate of release rules in [`docs/RELEASE_POLICY.md`](../../docs/RELEASE_POLICY.md) and [`docs/BENCHMARK_GOVERNANCE.md`](../../docs/BENCHMARK_GOVERNANCE.md). Prefer editing the `docs/` copies for cross-repo links; keep this file aligned.
+Governed release rules enforced by `release_cli`, `finalize_cli`, and `audit_cli`.
 
-The release orchestrator has exactly two legal outputs:
-1. same-family publication
-2. new-family fork and publication
+- Family `CURRENT.json` is updated only through governed tooling or an explicit maintainer PR with `make verify-reference-system` green.
+- Do not hand-edit `publishable_arms` or gate fields without parity artifacts.
+- Flagship authority: `host-realistic-20260525` for `conicshield-transition-bank-v1`.
 
-## Same-family publication
-
-Allowed only when:
-- the run is already review-locked
-- artifact gate is green
-- promotion gate is green
-- parity gate is green where required
-- family compatibility check says the task contract is still the same family
-
-## New-family fork and publication
-
-Required when:
-- the run is promotable, but
-- the candidate task contract is not compatible with the current published family
-
-A family bump requires:
-- `--allow-family-bump`
-- `FAMILY_BUMP_NOTE.md` in the run directory
+Public claims: [`docs/PUBLIC_CLAIMS.md`](../../docs/PUBLIC_CLAIMS.md). Maintainer workflow: [`CONTRIBUTING.md`](../../CONTRIBUTING.md).

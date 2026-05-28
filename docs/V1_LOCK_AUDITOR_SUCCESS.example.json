@@ -1,0 +1,12 @@
+{
+  "v1_lock_checks": [
+    {"check": "index_integrity", "ok": true},
+    {"check": "reference_system_status", "ok": true},
+    {"check": "export_cadence", "ok": true},
+    {"check": "full_refresh_cadence", "ok": true},
+    {"check": "bundle_profile", "ok": true},
+    {"check": "community_verify", "ok": true},
+    {"check": "public_claim_phrases", "ok": true}
+  ],
+  "all_ok": true
+}

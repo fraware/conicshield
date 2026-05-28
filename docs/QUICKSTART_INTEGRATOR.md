@@ -63,4 +63,4 @@ Contributing / PR rules: [CONTRIBUTING.md](../CONTRIBUTING.md).
 ## Next steps
 
 - [examples/README.md](../examples/README.md)
-- [docs/README.md](README.md)
+- [COMMUNITY_LAYER.md](COMMUNITY_LAYER.md)

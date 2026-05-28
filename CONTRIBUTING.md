@@ -2,76 +2,49 @@
 
 Thank you for contributing. This repository separates **public structural CI** from **vendor Moreau validation** by design.
 
-**Using the repo (not changing it)?** Start at [Community layer](docs/COMMUNITY_LAYER.md) — quickstarts, published-run API, and runnable examples.
+**Using the repo (not changing it)?** Start at [Community layer](docs/COMMUNITY_LAYER.md) — then run `make onboard`.
 
-**Changing the repo?** Continue below. Audience guides: [Researcher](docs/QUICKSTART_RESEARCHER.md) · [Integrator](docs/QUICKSTART_INTEGRATOR.md) · [Maintainer](docs/QUICKSTART_MAINTAINER.md) · [Public claims](docs/PUBLIC_CLAIMS.md)
+**Changing the repo?** Continue below. Guides: [Researcher](docs/QUICKSTART_RESEARCHER.md) · [Integrator](docs/QUICKSTART_INTEGRATOR.md) · [Public claims](docs/PUBLIC_CLAIMS.md)
 
 ## Before you open a PR
 
 1. Install the dev environment ([`docs/DEVENV.md`](docs/DEVENV.md)).
-2. Run `make lint typecheck` and `make test` (or `python -m pytest tests/ -q`).
-3. For benchmark/governance changes, run `make verify-reference-system` and `make community-verify` when touching published bundles or `conicshield.published_runs`.
-4. Read [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md), [`docs/REVIEWER_MERGE_CHECKLIST.md`](docs/REVIEWER_MERGE_CHECKLIST.md), and [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md).
+2. Run `make onboard` (or `make community-verify` when touching published bundles or `conicshield.published_runs`).
+3. Run `make lint typecheck` and `make test`.
+4. For benchmark/governance changes: `make verify-reference-system`, `make community-verify`, and `make verify-v1-lock-quick` when appropriate.
 
-## Public claim surface (review rule)
+## Public claim surface
 
-Any PR that changes **README**, **docs/**, **examples/**, or **published bundle READMEs** in ways that affect what outsiders may believe must:
+PRs that change **README**, **docs/**, **examples/**, or **published bundle READMEs** must:
 
-1. Cite alignment with at least one authority doc: [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md), [`docs/ROADMAP.md`](docs/ROADMAP.md), [`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md), or [`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md) (in PR description or diff comments).
-2. Pass `python scripts/check_public_claim_phrases.py` (also run via `make verify-v1-lock-quick`).
+1. Align with [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md) (and related stance docs linked from [COMMUNITY_LAYER.md](docs/COMMUNITY_LAYER.md)).
+2. Pass `python scripts/check_public_claim_phrases.py` (included in `make verify-v1-lock-quick`).
 
 ## Required CI (public lane)
-
-These checks run on every PR to `main` and should be green:
 
 | Check | What it proves |
 |-------|----------------|
 | `quality` | Lint, types, default pytest, verification scripts |
-| `conic-trusted-shape` | CLARABEL/SCS structural conic correctness (no vendor secrets) |
-| `governance-audit` | Published-run index integrity, governance audit CLI, publish rehearsal |
-| `reference-authority` | `verify-reference-system`, `community-verify`, batch viability, bundle profile |
+| `conic-trusted-shape` | CLARABEL/SCS structural conic correctness |
+| `governance-audit` | Index integrity, audit CLI, publish rehearsal |
+| `reference-authority` | `verify-reference-system`, `community-verify`, bundle profile |
 
-## Path-filtered checks
+Path-filtered: `solver-touch`, `vendor-ci-moreau` (see [`docs/DEVENV.md`](docs/DEVENV.md)).
 
-| Check | When it runs |
-|-------|----------------|
-| `solver-touch` | PRs touching solver, parity, `benchmarks/published_runs/`, governance scripts, etc. |
-| `vendor-ci-moreau` | Same paths on the **canonical** repository when `GEMFURY_TOKEN` and `MOREAU_LICENSE_KEY` are configured |
+## Vendor Moreau (Policy B)
 
-If `solver-touch` does not appear on your PR, you did not change tracked paths — that is expected.
+Solver-touching PRs need vendor proof in the PR body: green `vendor-ci-moreau`, maintainer workflow link, or licensed `make test-vendor-moreau` summary. Do not commit license keys or `.env` secrets.
 
-## Vendor Moreau policy (binding attestation)
+## Published benchmark bundles
 
-Solver-touching PRs **must not merge** without vendor proof in the PR body. `vendor-ci-moreau` is **not** a required GitHub status check (fork-friendly); the attestation rule is binding for reviewers.
+1. Validate under `benchmarks/runs/<run_id>/`.
+2. Copy to `benchmarks/published_runs/<run_id>/` (update `.gitignore` allowlist).
+3. Update family `CURRENT.json` when appropriate.
+4. `make finalize-community-dataset` then `python scripts/refresh_published_run_index.py`.
+5. `make verify-v1-lock-quick` before merge.
 
-**Canonical repository (secrets available):** include one of:
-
-- Green `vendor-ci-moreau` (automatic on path match), or
-- Link to a maintainer `workflow_dispatch` run on your branch, or
-- Licensed local `make test-vendor-moreau` summary (paste key pass/fail lines).
-
-**Forks (no secrets):** run public CI locally, then ask a maintainer to merge only after vendor attestation above.
-
-Do not commit license keys, Gemfury tokens, or filled `.env` files.
-
-## Changing published benchmark bundles
-
-1. Produce and validate under `benchmarks/runs/<run_id>/`.
-2. Copy to `benchmarks/published_runs/<run_id>/` and whitelist the path in [`benchmarks/published_runs/.gitignore`](benchmarks/published_runs/.gitignore).
-3. Add the path to the family `benchmark_bundle_paths` in `benchmarks/releases/<family_id>/CURRENT.json` when appropriate.
-4. Run `python scripts/refresh_published_run_index.py` and commit `benchmarks/PUBLISHED_RUN_INDEX.json`.
-5. Follow [`docs/MAINTAINER_RUNBOOK.md`](docs/MAINTAINER_RUNBOOK.md) for finalize / release / audit when publishing.
-
-**Host-realistic export evidence:** use [`scripts/run_host_realistic_publish.py`](scripts/run_host_realistic_publish.py) with a non-minimal export JSON (see [`benchmarks/external_evidence/`](benchmarks/external_evidence/)).
+**Host-realistic refresh:** `make host-realistic-refresh-cycle-licensed` (records [`benchmarks/reports/reference_refresh_log.md`](benchmarks/reports/reference_refresh_log.md)).
 
 ## Scope discipline
 
-Do not claim or document support for:
-
-- `progress` / `clearance` constraint kinds ([ADR](docs/adr/001-progress-clearance-constraints.md)),
-- production shield autograd ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)),
-- `conicshield-shield-qp-micro-v1` or other families as reference authority (flagship is `host-realistic-20260525` only),
-- Maps/session navigation graphs (export is host-realistic fork via inter-sim),
-- universal batch speedup (viability ≠ throughput advisory).
-
-See [`docs/ROADMAP.md`](docs/ROADMAP.md), [`docs/REFERENCE_AUTHORITY.md`](docs/REFERENCE_AUTHORITY.md).
+Do not claim: `progress`/`clearance` constraints, production autograd, non-flagship families as reference authority, Maps/session navigation graphs, universal batch speedup. See [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md).

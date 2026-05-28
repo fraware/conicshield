@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Host-realistic loop: upstream export JSON → bundle → optional published_runs copy.
 
-Follows ``docs/HOST_REALISTIC_RUNBOOK.md``. Rejects the minimal contract fixture unless
+Host-realistic publish helper. Rejects the minimal contract fixture unless
 ``--allow-minimal-fixture`` is set (host-realistic evidence must not use only that path).
 
 Example (licensed host, real projector):
@@ -244,7 +244,7 @@ def _print_governance_summary(run_dir: Path) -> None:
     if "shielded-native-moreau" not in (status.get("publishable_arms") or []):
         print(
             "Native arm not in publishable_arms; see gate_details in governance_status.json. "
-            "Next: release_cli / audit_cli per docs/NATIVE_ARM_PUBLISH_CHECKLIST.md",
+            "Next: release_cli / audit_cli (see CONTRIBUTING.md)",
             file=sys.stderr,
         )
 
@@ -408,7 +408,7 @@ def main() -> int:
     else:
         print(
             "\nNext: governed_local_promotion.py validate/parity-sync/index; "
-            "finalize_cli / release_cli per docs/MAINTAINER_RUNBOOK.md",
+            "finalize_cli / release_cli per CONTRIBUTING.md",
             file=sys.stderr,
         )
     return 0

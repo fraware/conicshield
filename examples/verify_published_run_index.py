@@ -1,40 +1,61 @@
 #!/usr/bin/env python3
-"""Verify PUBLISHED_RUN_INDEX integrity and list governed run ids.
+"""Verify the published-run integrity index and family current run.
 
-Audience: researcher building tools on the integrity catalog.
-Prerequisites: ``pip install -e .`` from repo root.
+Audience: researcher building tools on ``PUBLISHED_RUN_INDEX.json``.
+Prerequisites: ``pip install -e .`` from repository root; run with cwd = repo root.
 Proves: ``refresh_published_run_index.py --check``, ``list_runs``, ``get_current_run``, ``verify_run``.
-Does not prove: bundle scientific claims or publish pipeline correctness beyond index hashes.
-Expected: index integrity OK; lists run ids; verify_run OK for family current.
+Does not prove: scientific conclusions, publish pipeline correctness beyond on-disk hashes.
+Expected: index OK; all indexed runs verify; ``current_run_id`` is ``host-realistic-20260525``.
 """
 
 from __future__ import annotations
 
 import subprocess
 import sys
-from pathlib import Path
+
+from _common import FAMILY_ID, configure_stdio, repo_root, section
 
 from conicshield.published_runs import get_current_run, index_path, list_runs, verify_run
 
 
 def main() -> int:
-    root = Path(__file__).resolve().parents[1]
+    configure_stdio()
+    root = repo_root()
     py = sys.executable
+
+    section("Index path")
     idx = index_path(repo_root=root)
-    print("index:", idx)
+    print(idx.relative_to(root))
+
+    section("Index integrity (refresh_published_run_index.py --check)")
     subprocess.check_call(
         [py, str(root / "scripts" / "refresh_published_run_index.py"), "--check"],
         cwd=str(root),
     )
-    print("index integrity OK")
+    print("OK")
 
-    for entry in list_runs(repo_root=root):
-        print(f"  run_id={entry.run_id}  path={entry.repository_relative_path}")
+    section("Indexed runs (list_runs)")
+    entries = list_runs(repo_root=root)
+    for entry in entries:
+        print(f"  {entry.run_id}")
+        print(f"    path: {entry.repository_relative_path}")
+        print(f"    files in integrity map: {len(entry.integrity)}")
 
-    current = get_current_run("conicshield-transition-bank-v1", repo_root=root)
-    print("\ncurrent_run_id:", current.run_id)
-    verify_run(current.run_id, repo_root=root)
-    print("verify_run OK:", current.run_id)
+    section("Per-run verify_run")
+    for entry in entries:
+        verify_run(entry.run_id, repo_root=root)
+        print(f"  OK  {entry.run_id}")
+
+    section("Family current (get_current_run)")
+    current = get_current_run(FAMILY_ID, repo_root=root)
+    print("family:", FAMILY_ID)
+    print("current_run_id:", current.run_id)
+    if current.community:
+        print("evidence_tier:", current.community.evidence_tier)
+        print("is_family_current_run:", current.community.is_family_current_run)
+
+    section("Done")
+    print("Next: python examples/load_published_runs_api.py")
     return 0
 
 

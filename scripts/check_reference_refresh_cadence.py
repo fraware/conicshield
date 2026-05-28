@@ -33,7 +33,7 @@ def main() -> int:
     if age_days > args.max_days:
         print(
             f"Flagship refresh stale: {age_days:.1f} days since {last} (max {args.max_days}). "
-            "Run HOST_REALISTIC_REFRESH_PROCEDURE.md on a licensed host.",
+            "Run make host-realistic-refresh-cycle-licensed on a licensed host.",
             file=sys.stderr,
         )
         return 1

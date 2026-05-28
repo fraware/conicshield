@@ -7,34 +7,23 @@ Committed governed bundles. Ephemeral work: `benchmarks/runs/<run_id>/` (gitigno
 ## Integrity
 
 ```bash
-python scripts/refresh_published_run_index.py --check
-python scripts/validate_published_bundle_profile.py
-make verify-reference-system
+python -m conicshield.published_runs.cli verify host-realistic-20260525
+make community-verify
+make verify-v1-lock-quick
 ```
 
-Index: [`PUBLISHED_RUN_INDEX.json`](../PUBLISHED_RUN_INDEX.json) (schema v2, SHA-256).
+Index: [`PUBLISHED_RUN_INDEX.json`](../PUBLISHED_RUN_INDEX.json) (schema v2, SHA-256). Consumers: [`docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md`](../../docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md).
 
-## Publish sequence
+## Publish (maintainers)
 
-1. Produce under `benchmarks/runs/<run_id>/` (non-passthrough for vendor claims).
-2. `validator_cli --run-dir …`
-3. Parity → `finalize_cli` (`--parity-summary-path` when native).
-4. Copy to `published_runs/<run_id>/`; whitelist in [`.gitignore`](.gitignore).
-5. `governance_decision.md` (approve) → `release_cli` → `audit_cli --strict`.
-6. `refresh_published_run_index.py`; commit index.
+See [`CONTRIBUTING.md`](../../CONTRIBUTING.md). Typical: validate run → finalize → copy here → `make finalize-community-dataset` → refresh index.
 
-**Host-realistic:** `make host-realistic-refresh-cycle` — [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](../../docs/HOST_REALISTIC_REFRESH_PROCEDURE.md).
+**Host-realistic refresh:** `make host-realistic-refresh-cycle-licensed`.
 
 ## Layout (typical)
 
-- Validator required: `config.json`, `summary.json`, `episodes.jsonl`, `transition_bank.json` (+ schemas)
-- Governance: `governance_status.json`, `RUN_PROVENANCE.json`, `governance_decision.md`, `release_decision.json`
-- Flagship adds: `solver_versions.json`, `parity_out/`, `README.md`
+- `config.json`, `summary.json`, `episodes.jsonl`, `transition_bank.json`
+- `governance_status.json`, `RUN_PROVENANCE.json`, `COMMUNITY_METADATA.json`, `README.md`
+- Flagship: `solver_versions.json`, `parity_out/`
 
-Catalog: [`docs/PUBLISHED_BUNDLE_CATALOG.md`](../../docs/PUBLISHED_BUNDLE_CATALOG.md).
-
-## Rehearsal only
-
-`--passthrough` / minimal fixture — not for parity promotion or `vendor_native` claims.
-
-Full detail: [`docs/MAINTAINER_RUNBOOK.md`](../../docs/MAINTAINER_RUNBOOK.md).
+Public entry: [`docs/COMMUNITY_LAYER.md`](../../docs/COMMUNITY_LAYER.md).

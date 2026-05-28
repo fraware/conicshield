@@ -6,7 +6,7 @@
   "export_kind": "live_upstream_dump",
   "graph_shape": "host_realistic_fork",
   "flagship_run_id": "host-realistic-20260525",
-  "notes": "Refresh: make capture-inter-sim-graph && make refresh-live-upstream-export-live && make host-realistic-refresh-cycle (docs/HOST_REALISTIC_REFRESH_PROCEDURE.md).",
+  "notes": "Refresh: make host-realistic-refresh-cycle-licensed.",
   "exported_at_utc": "2026-05-28T17:00:16Z",
   "source_graph_json": "benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json",
   "refresh_history": [

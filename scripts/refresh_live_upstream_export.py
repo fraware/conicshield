@@ -82,7 +82,7 @@ def main() -> int:
             "notes": args.upstream_notes
             or (
                 "Refresh: make capture-inter-sim-graph && make refresh-live-upstream-export-live "
-                "&& make host-realistic-refresh-cycle (docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)."
+                "&& make host-realistic-refresh-cycle-licensed."
             ),
         }
     )

@@ -1,6 +1,6 @@
 # Governance decision record
 
-**Policy:** [BENCHMARK_GOVERNANCE.md](../../docs/BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](../../docs/MAINTAINER_RUNBOOK.md) (publish sequence).
+**Policy:** [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 Replace placeholders before publish. This file must exist as `governance_decision.md` in the run directory; `publish_from_governance_status` requires it alongside `governance_status.json`.
 

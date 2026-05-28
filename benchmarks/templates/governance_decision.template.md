@@ -1,32 +1,10 @@
-# Governance decision record
+# Governance decision — {{run_id}}
 
-**Policy:** [BENCHMARK_GOVERNANCE.md](../../docs/BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](../../docs/MAINTAINER_RUNBOOK.md) (publish sequence).
-
-Replace placeholders before publish. Copy this file to the run directory as `governance_decision.md` **before** `python -m conicshield.governance.release_cli` **without** `--dry-run`. `finalize_cli` and `release_cli --dry-run` do not read it; `publish_from_governance_status` requires it alongside `governance_status.json`.
-
-## Run
-
-- **run_id:** `<RUN_ID>`
-- **family_id:** `<FAMILY_ID>`
-- **task_contract_version:** `<TASK_CONTRACT_VERSION>`
-- **fixture_version:** `<FIXTURE_VERSION>`
+**Policy:** governed publish sequence in [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
 
 ## Decision
 
-- **Outcome:** `<approve | reject | defer>`
-- **Reviewer(s):** `<names or roles>`
-- **Date (UTC):** `<ISO-8601>`
+- [ ] Approve for publish
+- [ ] Reject
 
-## Evidence
-
-- Artifact validation: `<pass | fail>` — notes: `<...>`
-- Native parity (if native arm is publishable): `<green | red | n/a>` — summary path: `<path/to/parity_summary.json>`
-- Promotion / review-lock gates: `<...>`
-
-## Rationale
-
-`<Why this run is or is not eligible for same-family publish. Reference benchmark card, risk, or semantic changes.>`
-
-## Follow-ups
-
-- `<e.g. bump family, refresh fixture, solver stack pin update>`
+## Notes

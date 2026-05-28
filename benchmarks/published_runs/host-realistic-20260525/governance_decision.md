@@ -1,6 +1,6 @@
 # Governance decision record
 
-**Policy:** [BENCHMARK_GOVERNANCE.md](../../docs/BENCHMARK_GOVERNANCE.md), [MAINTAINER_RUNBOOK.md](../../docs/MAINTAINER_RUNBOOK.md) (publish sequence).
+**Policy:** [CONTRIBUTING.md](../../CONTRIBUTING.md) (publish sequence).
 
 ## Run
 
@@ -28,5 +28,5 @@ Same-family flagship **host-realistic** external-evidence run (`vendor_native`, 
 ## Follow-ups
 
 - Re-capture when `third_party/inter-sim-rl/REVISION` changes or a **navigation-session** graph exists (not fork-only).
-- Log each refresh in `docs/REFERENCE_REFRESH_LOG.md`.
+- Log each refresh in `benchmarks/reports/reference_refresh_log.md`.
 - Parity gold: S2 policy only (`tests/fixtures/parity_reference/REGENERATION_NOTE.md`).

@@ -36,7 +36,7 @@ conicshield-published-runs = "conicshield.published_runs.cli:main"
 [project.urls]
 Homepage = "https://github.com/fraware/conicshield"
 Repository = "https://github.com/fraware/conicshield"
-Documentation = "https://github.com/fraware/conicshield#readme"
+Documentation = "https://github.com/fraware/conicshield/blob/main/docs/COMMUNITY_LAYER.md"
 Issues = "https://github.com/fraware/conicshield/issues"
 
 [project.optional-dependencies]

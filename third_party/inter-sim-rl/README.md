@@ -1,6 +1,6 @@
 # inter-sim-rl (external upstream)
 
-**ConicShield docs:** [docs/INTER_SIM_RL_INTEGRATION.md](../../docs/INTER_SIM_RL_INTEGRATION.md), [README.md](../../README.md).
+**ConicShield:** [README.md](../../README.md), `third_party/inter-sim-rl/REVISION`, `scripts/capture_inter_sim_offline_graph.py`.
 
 ConicShield integrates through a thin adapter; navigation RL code lives in the canonical upstream repository:
 
@@ -19,7 +19,7 @@ See [PATCHES.md](PATCHES.md) and `patches/conicshield-m2-shield-context-and-tran
 
 ## Revision pin
 
-The commit validated for integration work with this tree is recorded in `REVISION` (same SHA is summarized in `docs/INTER_SIM_RL_INTEGRATION.md`).
+The commit validated for integration work with this tree is recorded in `REVISION`.
 
 Clone at that revision:
 

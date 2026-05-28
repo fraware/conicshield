@@ -59,7 +59,7 @@ def main() -> int:
         return 0
 
     log_updated = any(
-        f == "docs/REFERENCE_AUTHORITY_LOG.md"
+        f == "benchmarks/reports/reference_refresh_log.md"
         or f == "benchmarks/external_evidence/EXPORT_PROVENANCE.json"
         or f.startswith("benchmarks/published_runs/host-realistic-")
         for f in changed
@@ -72,7 +72,7 @@ def main() -> int:
     for f in triggered:
         print(f"  - {f}", file=sys.stderr)
     print(
-        "Run HOST_REALISTIC_REFRESH_PROCEDURE.md and commit REFERENCE_AUTHORITY_LOG + EXPORT_PROVENANCE.",
+        "Run make host-realistic-refresh-cycle-licensed and commit reference_refresh_log + EXPORT_PROVENANCE.",
         file=sys.stderr,
     )
     return 1

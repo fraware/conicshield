@@ -80,4 +80,4 @@ Policy: [`batch_acceptance_policy.json`](../benchmarks/reports/batch_acceptance_
 `InterSimConicShield.project` — sequential (mode 2).  
 `InterSimConicShield.project_softmax_batch` — batch path (mode 3).
 
-Flagship refresh: [`HOST_REALISTIC_REFRESH_PROCEDURE.md`](HOST_REALISTIC_REFRESH_PROCEDURE.md).
+Flagship refresh: `make host-realistic-refresh-cycle-licensed` ([`CONTRIBUTING.md`](../CONTRIBUTING.md)).

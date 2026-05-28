@@ -233,7 +233,7 @@ def assert_index_includes_required_hashes(*, repo_root: Path | None = None) -> N
 
 
 def assert_canonical_evidence_tiers(*, repo_root: Path | None = None) -> None:
-    """Lock expected evidence tiers for canonical published runs (see docs/REFERENCE_EVIDENCE_TIERS.md)."""
+    """Lock expected evidence tiers for canonical published runs (see tests/governance)."""
     root = repo_root if repo_root is not None else Path.cwd()
     expected: dict[str, EvidenceTier] = {
         "host-realistic-20260525": "vendor_native",
@@ -248,7 +248,7 @@ def assert_canonical_evidence_tiers(*, repo_root: Path | None = None) -> None:
         if got != want:
             raise AssertionError(
                 f"run {run_id}: evidence_tier {got!r} != expected {want!r}; "
-                f"update RUN_PROVENANCE or docs/REFERENCE_EVIDENCE_TIERS.md"
+                f"update RUN_PROVENANCE or governance tests"
             )
 
 

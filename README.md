@@ -14,195 +14,159 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Runtime safety through convex projection — with evidence you can replay, validate, and govern.**
+**Runtime safety through convex projection — with evidence you can replay, validate, and cite.**
 
 </div>
 
-A policy proposes an action. ConicShield solves a constrained optimization problem to find the **nearest admissible** action under explicit safety constraints. The world sees the **corrected** action, not the raw proposal. Every intervention yields structured records you can hash, audit, and benchmark under family policy.
+A policy proposes an action. ConicShield solves a constrained optimization problem to find the **nearest admissible** action under explicit safety constraints. The environment sees the **corrected** action. Each step can be recorded as structured, hash-verified benchmark evidence.
 
 ---
 
-## Start here
+## Start here (community)
 
-| You want to… | Go here |
-|--------------|---------|
-| **Use or cite published benchmarks** (recommended for outsiders) | **[Community layer](docs/COMMUNITY_LAYER.md)** — quickstarts, `conicshield.published_runs` API, runnable [examples](examples/README.md) |
-| **Operate the reference system** (maintainers, auditors) | [Documentation index](docs/README.md) — cadence, governance, refresh procedures |
+> **Product homepage:** [`docs/COMMUNITY_LAYER.md`](docs/COMMUNITY_LAYER.md)  
+> **v1 release:** [`docs/V1_REFERENCE_RELEASE.md`](docs/V1_REFERENCE_RELEASE.md)  
+> **After install, run:** `make onboard`
 
-The **community entrypoint** is for researchers, integrators, and anyone consuming `host-realistic-20260525` without reading internal policy graphs. **Maintainer / reference-system docs** live under [`docs/README.md`](docs/README.md) and [`docs/REFERENCE_SYSTEM.md`](docs/REFERENCE_SYSTEM.md).
+| Link | Purpose |
+|------|---------|
+| [Community layer](docs/COMMUNITY_LAYER.md) | Quickstarts, API, examples, public claims |
+| [Published-runs API](docs/PUBLISHED_RUNS_API.md) | Frozen v1 Python + CLI (`list`, `current`, `verify`, …) |
+| [Examples](examples/README.md) | Runnable scripts (researcher + integrator) |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | PR workflow and maintainer targets |
+
+All public docs: [`docs/README.md`](docs/README.md).
+
+### Try it in about a minute
+
+From the repository root (Linux, macOS, or WSL recommended):
 
 ```bash
-pip install -e ".[dev]"
-python examples/verify_published_run_index.py    # researcher: index + flagship verify
-python -m conicshield.published_runs.cli current # family current_run_id
-make verify-v1-lock-quick                        # auditor: is v1 still coherent?
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+python -m pip install -U pip
+python -m pip install -e ".[dev]"
+make onboard
+python examples/load_published_runs_api.py
 ```
 
+`make onboard` runs community tests, verifies the flagship bundle integrity, and prints a v1 status snapshot.
+
 ---
+
+## How it works
 
 ```mermaid
 flowchart LR
     Q[Scores / Q-values] --> S[ConicShield]
     S --> A[Corrected action]
-    S --> E[Evidence & metadata]
+    S --> E[Evidence and metadata]
     A --> R[Environment]
 ```
 
 ---
 
-## v1 reference system
+## v1 reference artifact (flagship)
 
 | Item | Value |
 |------|--------|
-| Flagship | [`host-realistic-20260525`](benchmarks/published_runs/host-realistic-20260525/) |
+| Flagship run | [`host-realistic-20260525`](benchmarks/published_runs/host-realistic-20260525/) |
 | Family | `conicshield-transition-bank-v1` |
-| Tier | `vendor_native`, `live_upstream_dump` |
-| Map | [`docs/REFERENCE_SYSTEM.md`](docs/REFERENCE_SYSTEM.md) |
-| Status | [`benchmarks/reports/reference_system_status.json`](benchmarks/reports/reference_system_status.json) |
+| Evidence tier | `vendor_native`, `real_projector` |
+| Export | `live_upstream_dump` (host-realistic **fork** topology) |
+| Machine status | [`benchmarks/reports/reference_system_status.json`](benchmarks/reports/reference_system_status.json) |
 
-**Qualification:** export loop is closed in-repo; graph is host-realistic **fork** via inter-sim `RLEnvironment` — **not** a Maps/session navigation graph.
+**Read first:** [`COMMUNITY_METADATA.json`](benchmarks/published_runs/host-realistic-20260525/COMMUNITY_METADATA.json) before `summary.json`.
 
 | Artifact | Path |
 |----------|------|
-| Export | [`benchmarks/external_evidence/offline_graph_export_upstream.json`](benchmarks/external_evidence/offline_graph_export_upstream.json) |
-| Index | [`benchmarks/PUBLISHED_RUN_INDEX.json`](benchmarks/PUBLISHED_RUN_INDEX.json) |
-| Release pointer | [`benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json`](benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json) |
+| Integrity index | [`benchmarks/PUBLISHED_RUN_INDEX.json`](benchmarks/PUBLISHED_RUN_INDEX.json) |
+| Family current | [`benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json`](benchmarks/releases/conicshield-transition-bank-v1/CURRENT.json) |
+| Upstream export | [`benchmarks/external_evidence/offline_graph_export_upstream.json`](benchmarks/external_evidence/offline_graph_export_upstream.json) |
 
-Refresh: `make host-realistic-refresh-cycle-licensed` — [`docs/HOST_REALISTIC_CADENCE_POLICY.md`](docs/HOST_REALISTIC_CADENCE_POLICY.md).
+**Scope (honest bounds):** host-realistic **fork** topology only (does not prove full upstream navigation export). Batch narrative is **viability-only** (does not claim throughput wins). Differentiation is **validation-only** (not a public autograd product). Details: [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md), [`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md), [`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md).
 
-**Constraints implemented:** `simplex`, `turn_feasibility`, `box`, `rate`. `progress` / `clearance`: deferred — [adr](docs/adr/001-progress-clearance-constraints.md).
+**Constraints in v1:** `simplex`, `turn_feasibility`, `box`, `rate` — not `progress` / `clearance`.
 
-| Lane | Audience |
-|------|----------|
-| Public CI | No vendor secrets |
-| Vendor | Linux/WSL2 + Moreau license; `vendor-ci-moreau` or Policy B attestation |
+### Consumer API (stable v1)
 
-**Batch:** governed; viability-tested — not universal speedup ([`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md)). **Differentiation:** validation-only ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](docs/DIFFERENTIATION_PUBLIC_STANCE.md)).
+```python
+from conicshield.published_runs import get_current_run, verify_run, load_summary
 
-v1 release: [`docs/V1_REFERENCE_RELEASE.md`](docs/V1_REFERENCE_RELEASE.md) · API: [`docs/PUBLISHED_RUNS_API.md`](docs/PUBLISHED_RUNS_API.md) · Claims: [`docs/PUBLIC_CLAIMS.md`](docs/PUBLIC_CLAIMS.md)
+verify_run("host-realistic-20260525")
+bundle = get_current_run("conicshield-transition-bank-v1")
+print(bundle.run_id, bundle.community.known_limitations)
+```
+
+CLI: `python -m conicshield.published_runs.cli verify host-realistic-20260525`  
+Canonical walkthrough: [`examples/load_published_runs_api.py`](examples/load_published_runs_api.py)
+
+---
 
 ## Installation
 
-### Public / reference (matches default CI)
+### Default (public CI — no vendor secrets)
 
-On **Linux / WSL**, use a **virtual environment** first (system Python is often PEP 668–protected and may only expose `python3`). See **Linux / WSL** under [docs/DEVENV.md](docs/DEVENV.md).
+Use a **virtual environment** on Linux/WSL ([`docs/DEVENV.md`](docs/DEVENV.md)):
 
 ```bash
-python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
+make onboard
 ```
 
-After editing dev dependencies in `pyproject.toml`, refresh the lockfile:
+### Vendor Moreau (optional — native compiled path)
 
-```bash
-make compile-deps
-```
-
-### Vendor Moreau (extra index + license)
-
-Use **Linux or WSL2**. This project expects the **vendor-distributed** Moreau stack — not an arbitrary `pip install moreau` from the default index.
+Linux/WSL2 + [Moreau license](https://docs.moreau.so/installation.html). Do not commit tokens or `.env` secrets.
 
 ```bash
 export MOREAU_EXTRA_INDEX_URL="https://<TOKEN>:@pypi.fury.io/optimalintellect/"
 export MOREAU_LICENSE_KEY="<YOUR_MOREAU_LICENSE_KEY>"
 bash scripts/bootstrap_moreau.sh
-```
-
-Or install manually:
-
-```bash
-python -m pip install -e ".[dev]"
-python -m pip install "moreau[cuda]" --extra-index-url "$MOREAU_EXTRA_INDEX_URL"
 python -m moreau check
 ```
 
-**Secrets:** never commit tokens, license keys, or a filled-in `.env`. Copy [`.env.example`](.env.example) to `.env` for local variable names only.
-
-**Live vendor test lane (local):** after `moreau check` succeeds, run solver-marked tests with keys from `.env`:
-
-```bash
-python scripts/run_live_vendor_tests.py
-# Optional: python scripts/run_live_vendor_tests.py --parallel auto -- -k native
-```
-
-See [`tests/live/README.md`](tests/live/README.md) for details.
+Live vendor tests: `python scripts/run_live_vendor_tests.py` ([`tests/live/README.md`](tests/live/README.md)).
 
 ---
 
-## Supported Python & CI
+## Verify before you trust
+
+| Command | Who | What it checks |
+|---------|-----|----------------|
+| `make onboard` | Everyone | Community API, examples smoke, flagship integrity |
+| `make verify-v1-lock-quick` | Auditors | Index, cadence, bundle profile, public claims |
+| `make verify-v1-lock` | Maintainers | Full gate before a public “locked” announcement |
+
+```bash
+make verify-v1-lock-quick
+python scripts/verify_v1_lock.py --json
+```
+
+---
+
+## Development
 
 | | |
 |:---|:---|
-| **Python** | **3.11+** (`requires-python` in [`pyproject.toml`](pyproject.toml)) |
-| **CI matrix** | **3.11** and **3.12** — ruff, mypy, pytest + coverage (no solver extras by default) |
-| **Details** | [docs/DEVENV.md](docs/DEVENV.md) — pytest markers, optional workflows, Vendor CI |
-| **Moreau docs** | [Installation](https://docs.moreau.so/installation.html) · [CVXPY integration](https://docs.moreau.so/guide/cvxpy-integration.html) |
+| **Python** | 3.11+ (CI: 3.11, 3.12) |
+| **Default tests** | `make test` (excludes vendor-only / slow markers) |
+| **Lint / types** | `make lint` · `make typecheck` |
+| **CI overview** | [`docs/DEVENV.md`](docs/DEVENV.md) |
 
----
-
-## Quick commands
-
-| Goal | Command |
-|------|---------|
-| Extended static + tests + strict audit (maintainer gate) | `make verify-extended` |
-| Integrity index matches disk (after editing `benchmarks/published_runs/`) | `python scripts/refresh_published_run_index.py --check` |
-| Live tests (Moreau + optional inter-sim-rl; reads `.env`) | `python scripts/run_live_vendor_tests.py --bootstrap` once per venv, then `python scripts/run_live_vendor_tests.py` |
-| Governed bundle steps (validate → parity fixture → index check) | `python scripts/governed_local_promotion.py --help` |
-| Validate a run bundle | `python -m conicshield.artifacts.validator_cli --run-dir benchmarks/runs/<run_id>` |
-| Strict governance audit | `python -m conicshield.governance.audit_cli --strict` |
-| Finalize run + optional parity path + optional CURRENT sync | `python -m conicshield.governance.finalize_cli --run-dir ... --family-id ... --task-contract-version v1 --fixture-version fixture-v1 --reference-fixture-dir tests/fixtures/parity_reference --parity-summary-path output/.../parity_summary.json --current-release-path benchmarks/releases/<family>/CURRENT.json` (add `--sync-current-release` to push gates into `CURRENT.json` for the same published run) |
-| Governance dashboard JSON/MD | `python -m conicshield.governance.dashboard_cli --json-output output/governance_dashboard.json --markdown-output output/governance_dashboard.md` |
-| Release dry-run | `python -m conicshield.governance.release_cli --run-dir benchmarks/runs/<run_id> --family-id conicshield-transition-bank-v1 --reason "candidate release review" --dry-run` |
-
----
-
-## Tests
-
-Default `make test` / `pytest` runs the core suite and **excludes** vendor-only and slow markers (see [docs/DEVENV.md](docs/DEVENV.md)).
-
-```bash
-make test
-make test-reference          # same as default filters, explicit
-make test-vendor-moreau      # requires Moreau + license
-make test-solver             # solver-marked aggregate
-make smoke-solver            # solver smoke CLI JSON
-make verify-extended         # ruff + format + mypy + cov-gates + slow + inter_sim e2e + audit_cli --strict
-```
-
-Branch protection and required checks: [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md).
-
----
-
-## Verification ladder
-
-Layered checks (environment → smoke → reference correctness → parity → performance → governance) are documented in **[docs/VERIFICATION_AND_STRESS_TEST_PLAN.md](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)** (commands, artifacts, and policies).
-
-**Typical local sequence**
-
-```bash
-make env-check
-make smoke-check
-make reference-correctness
-make trust-dashboard
-# With vendor stack: make perf-benchmark, make parity-native-licensed
-# Layer G / D helpers: make artifact-validation-report
-# After parity: make parity-report
-```
-
-Artifacts land under `output/` (ignored by git). **CI** uploads `output/` as `verification-output-<python-version>`. The **Vendor CI** workflow (`vendor-ci-moreau`) produces a **`vendor_verification_bundle`** (env, smoke, reference correctness, performance plots when solves succeed, parity, artifact validation report, parity report, trust dashboard).
+Maintainer publish/refresh: `make verify-reference-system`, `make host-realistic-refresh-cycle-licensed` — see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
 
 ## Repository layout
 
 ```text
-conicshield/     # installable package: adapters, bench, core, governance, parity, specs
-schemas/         # JSON Schema for bundles (repo root; not packaged)
-benchmarks/      # registry, releases; published bundles under benchmarks/published_runs/
-scripts/         # maintainer CLIs (env, smoke, perf, trust dashboard)
-tests/           # pytest; see tests/README.md (e.g. tests/reference/ for Layer C)
-docs/            # architecture, policies, verification ladder
-third_party/     # upstream pins and patches (not full checkouts)
+conicshield/          # library: core, specs, governance, published_runs API
+benchmarks/           # published_runs/, releases/, reports/
+examples/             # public runnable scripts
+docs/                 # start at COMMUNITY_LAYER.md
+scripts/              # maintainer and verification CLIs
+tests/                # pytest
+schemas/              # bundle JSON Schema
 ```
 
 ---
@@ -211,58 +175,13 @@ third_party/     # upstream pins and patches (not full checkouts)
 
 1. **Formal intent, operational enforcement** — constraints are not decorative.
 2. **Minimal intervention** — project only as far as safety requires.
-3. **Evidence by default** — every shield step is recordable.
+3. **Evidence by default** — shield steps are recordable and indexable.
 4. **Reproducible bundles** — benchmarks are artifacts, not ad hoc logs.
-5. **Parity before trust** — native compiled paths must match the governed reference stream.
-6. **Families, not silent overwrites** — semantic task changes fork benchmark families.
+5. **Parity before trust** — native paths must match the governed reference stream.
+6. **Families, not silent overwrites** — semantic changes fork benchmark families.
 
 ---
 
-## Documentation map
+## License
 
-See also [`docs/README.md`](docs/README.md) for a compact index.
-
-**Status & roadmap**
-
-- [`docs/REFERENCE_AUTHORITY.md`](docs/REFERENCE_AUTHORITY.md) — flagship release, gates, and maintainer checklist
-- [`docs/ENGINEERING_STATUS.md`](docs/ENGINEERING_STATUS.md) — what is implemented, CI, solver pins
-- [`docs/ROADMAP.md`](docs/ROADMAP.md) — external dependencies and deferred work
-
-**Verification & trust**
-
-- [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md) — trust ladder, layers, performance/differentiation policy
-- [`docs/DEVENV.md`](docs/DEVENV.md) — Python matrix, markers, workflows
-- [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md) — recommended GitHub required checks
-
-**Governance & benchmarks**
-
-- [`docs/HOST_REALISTIC_RUNBOOK.md`](docs/HOST_REALISTIC_RUNBOOK.md) — flagship host-realistic loop (closed in-repo; refresh checklist)
-- [`docs/REFERENCE_EVIDENCE_TIERS.md`](docs/REFERENCE_EVIDENCE_TIERS.md) — S0–S3 evidence tiers for published runs
-- [`docs/BENCHMARK_GOVERNANCE.md`](docs/BENCHMARK_GOVERNANCE.md) · [`docs/NATIVE_ARM_PUBLISH_CHECKLIST.md`](docs/NATIVE_ARM_PUBLISH_CHECKLIST.md)
-- [`docs/CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md) — CI checks and binding vendor attestation (Policy B)
-- [`docs/RELEASE_POLICY.md`](docs/RELEASE_POLICY.md) · [`docs/PARITY_AND_FIXTURES.md`](docs/PARITY_AND_FIXTURES.md)
-- [`benchmarks/DASHBOARD_README.md`](benchmarks/DASHBOARD_README.md) · [`benchmarks/runs/README.md`](benchmarks/runs/README.md)
-- [`docs/MAINTAINER_RUNBOOK.md`](docs/MAINTAINER_RUNBOOK.md)
-
-**Moreau & solvers**
-
-- [`docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md`](docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md)
-- [`docs/MOREAU_API_NOTES.md`](docs/MOREAU_API_NOTES.md)
-- [`docs/SOLVER_PATHS_AND_BATCHING.md`](docs/SOLVER_PATHS_AND_BATCHING.md) — reference vs sequential native vs compiled batch
-- Parity, performance, and differentiation policies: [`docs/PARITY_AND_FIXTURES.md`](docs/PARITY_AND_FIXTURES.md), [`docs/VERIFICATION_AND_STRESS_TEST_PLAN.md`](docs/VERIFICATION_AND_STRESS_TEST_PLAN.md)
-
-**Design & integration**
-
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- [`docs/INTER_SIM_RL_INTEGRATION.md`](docs/INTER_SIM_RL_INTEGRATION.md)
-- [`docs/adr/001-progress-clearance-constraints.md`](docs/adr/001-progress-clearance-constraints.md)
-
-**Tests**
-
-- [`tests/README.md`](tests/README.md)
-
----
-
-## Optional dependencies
-
-Governance, artifact validation, and audit paths run **without** `cvxpy` or `moreau`. If the solver stack is absent: governance tests still pass, parity replay can use fakes, and solver-backed execution fails with an explicit optional-dependency error.
+MIT — see [LICENSE](LICENSE).

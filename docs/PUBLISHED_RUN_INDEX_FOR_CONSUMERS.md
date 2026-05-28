@@ -72,4 +72,4 @@ Full API + CLI: [PUBLISHED_RUNS_API.md](PUBLISHED_RUNS_API.md).
 
 ## Flagship export chain
 
-Host-realistic runs link to [`benchmarks/external_evidence/EXPORT_PROVENANCE.json`](../benchmarks/external_evidence/EXPORT_PROVENANCE.json) and [`docs/REFERENCE_AUTHORITY_LOG.md`](REFERENCE_AUTHORITY_LOG.md).
+Host-realistic runs link to [`benchmarks/external_evidence/EXPORT_PROVENANCE.json`](../benchmarks/external_evidence/EXPORT_PROVENANCE.json) and [`benchmarks/reports/reference_refresh_log.md`](../benchmarks/reports/reference_refresh_log.md).

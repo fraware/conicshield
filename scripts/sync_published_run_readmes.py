@@ -21,15 +21,17 @@ def _export_provenance(repo: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _one_liner(*, run_id: str, tier: str, host: bool, current: bool, native: bool) -> str:
+def _artifact_sentence(*, run_id: str, tier: str, host: bool, current: bool, native: bool) -> str:
     if run_id == "host-realistic-20260525":
         return (
-            "Flagship **host-realistic** governed bundle: closed export→bank→publish loop at "
-            f"`{tier}` with native Moreau arm and family `current_run_id`."
+            "Public **host-realistic** benchmark artifact: a governed, hash-indexed run recording "
+            f"shielded RL episodes at evidence tier `{tier}` with native Moreau arm and family `current_run_id`."
         )
-    if current == "yes":
-        return f"Family **current** published run at `{tier}` with native arm={native}."
-    return f"Governed benchmark bundle `{run_id}` at evidence tier `{tier}`."
+    if current:
+        return (
+            f"Governed benchmark artifact `{run_id}` at tier `{tier}` (family current run; native arm={native})."
+        )
+    return f"Governed benchmark artifact `{run_id}` at evidence tier `{tier}`."
 
 
 def _render_readme(
@@ -46,56 +48,64 @@ def _render_readme(
     fixture = "yes" if catalog.get("parity_fixture_source") else "no"
     current = "yes" if catalog.get("is_family_current_run") else "no"
     mode = catalog.get("projector_mode") or "n/a"
-    gov = catalog.get("governance_state") or "n/a"
+    gov_state = catalog.get("governance_state") or "n/a"
     export_kind = export_prov.get("export_kind", "n/a")
-    blurb = _one_liner(
-        run_id=run_id,
-        tier=str(tier),
-        host=host == "yes",
-        current=current,
-        native=native == "yes",
+    graph_shape = export_prov.get("graph_shape", "n/a") if catalog.get("host_realistic") else "n/a"
+    graph_note = (
+        "Host-realistic **fork** via inter-sim `RLEnvironment` (fork topology only; does not prove full upstream navigation export)."
+        if catalog.get("host_realistic")
+        else "See `RUN_PROVENANCE.json` for export scope."
     )
+
+    parity_status = "n/a"
+    if (run_dir / "parity_out" / "parity_summary.json").is_file():
+        ps = json.loads((run_dir / "parity_out" / "parity_summary.json").read_text(encoding="utf-8"))
+        parity_status = "green" if ps.get("passed") else str(ps.get("status", "present"))
+
     solver_lines: list[str] = []
     sv_path = run_dir / "solver_versions.json"
     if sv_path.is_file():
         sv = json.loads(sv_path.read_text(encoding="utf-8"))
         for pkg, ver in sorted(sv.items()):
             solver_lines.append(f"- `{pkg}`: `{ver}`")
-    parity_status = "n/a"
-    if (run_dir / "parity_out" / "parity_summary.json").is_file():
-        ps = json.loads((run_dir / "parity_out" / "parity_summary.json").read_text(encoding="utf-8"))
-        parity_status = "green" if ps.get("passed") else str(ps.get("status", "present"))
-    gov_state = gov
-    integrity_note = "Run `python -m conicshield.published_runs.cli verify` after clone"
 
     lines = [
         f"# Published run `{run_id}`",
         "",
-        blurb,
+        _artifact_sentence(
+            run_id=run_id,
+            tier=str(tier),
+            host=host == "yes",
+            current=current,
+            native=native == "yes",
+        ),
         "",
-        "Publication-grade governed benchmark bundle. Read [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) first.",
+        "Read [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) before `summary.json`.",
         "",
         "| Field | Value |",
         "|-------|--------|",
         f"| `evidence_tier` | `{tier}` |",
         f"| `projector_mode` | `{mode}` |",
-        f"| Host-realistic | {host} |",
-        f"| Native arm (`shielded-native-moreau`) | {native} |",
-        f"| Parity fixture gold source | {fixture} |",
-        f"| Family `current_run_id` | {current} |",
         f"| Export `export_kind` | `{export_kind}` |",
-        f"| Export source | `benchmarks/external_evidence/offline_graph_export_upstream.json` |"
-        if catalog.get("host_realistic")
-        else f"| Export source | n/a |",
+        f"| Graph shape (qualification) | `{graph_shape}` — {graph_note} |",
+        f"| Native arm (`shielded-native-moreau`) | {native} |",
         f"| Parity status | `{parity_status}` |",
+        f"| Host-realistic path | {host} |",
+        f"| Family `current_run_id` | {current} |",
         f"| Governance state | `{gov_state}` |",
-        f"| Index integrity | {integrity_note} |",
         "",
-        "## What this run proves",
-        "",
-        "- Validator-required bundle surface passes `validate_run_bundle`",
-        "- `summary.json` arms with governance gates recorded in `governance_status.json`",
     ]
+    if solver_lines:
+        lines.extend(["## Solver stack", ""] + solver_lines + [""])
+
+    lines.extend(
+        [
+            "## What this run proves",
+            "",
+            "- Validator-required bundle surface passes `validate_run_bundle`",
+            "- `summary.json` arms with governance gates recorded in `governance_status.json`",
+        ]
+    )
     if catalog.get("host_realistic"):
         lines.append(
             "- Host-realistic export → transition bank → publish path is **closed in-repo**"
@@ -107,36 +117,30 @@ def _render_readme(
             "",
             "- Production differentiable shield / autograd product ([`docs/DIFFERENTIATION_PUBLIC_STANCE.md`](../../docs/DIFFERENTIATION_PUBLIC_STANCE.md))",
             "- Claim of universal batch throughput win ([`docs/SOLVER_PATHS_AND_BATCHING.md`](../../docs/SOLVER_PATHS_AND_BATCHING.md))",
-            "- Full upstream Maps/session navigation graph (fork topology only unless provenance documents more)",
+            "- Full upstream navigation export (fork topology only unless provenance documents more)",
             "",
-            "## Validate and inspect",
+            "## Verify this artifact",
             "",
             "```bash",
             "python -m conicshield.published_runs.cli verify " + run_id,
             "python -m conicshield.published_runs.cli show " + run_id,
+            "python -m conicshield.published_runs.cli summary " + run_id,
+            "python -m conicshield.published_runs.cli provenance " + run_id,
             "python -m conicshield.artifacts.validator_cli --run-dir " + run_rel_path,
             "python scripts/validate_published_bundle_profile.py --run-id " + run_id,
             "```",
             "",
-            "Python API (v1 stable — see [`docs/PUBLISHED_RUNS_API.md`](../../docs/PUBLISHED_RUNS_API.md)):",
-            "",
-            "```python",
-            "from conicshield.published_runs import load_run, load_summary, load_provenance, verify_run",
-            f"verify_run({run_id!r})",
-            f"bundle = load_run({run_id!r})",
-            "```",
+            "Canonical API example: [`examples/load_published_runs_api.py`](../../examples/load_published_runs_api.py).",
             "",
             "## Cite this artifact",
             "",
-            "Cite the **`run_id`**, repository **commit SHA**, and [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) scope. "
-            "Distinguish **artifact identity** from scientific conclusions — see "
-            "[`docs/CITING_CONICSHIELD_ARTIFACTS.md`](../../docs/CITING_CONICSHIELD_ARTIFACTS.md) "
-            "and [`docs/PUBLIC_CLAIMS.md`](../../docs/PUBLIC_CLAIMS.md).",
+            "Cite **`run_id`**, repository **commit SHA**, and [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json). "
+            "Artifact identity is not a scientific conclusion — follow "
+            "[`docs/CITING_CONICSHIELD_ARTIFACTS.md`](../../docs/CITING_CONICSHIELD_ARTIFACTS.md) and "
+            "[`docs/PUBLIC_CLAIMS.md`](../../docs/PUBLIC_CLAIMS.md).",
             "",
         ]
     )
-    if solver_lines:
-        lines.extend(["## Solver stack", ""] + solver_lines + [""])
     if catalog.get("host_realistic"):
         lines.extend(
             [
@@ -144,8 +148,8 @@ def _render_readme(
                 "",
                 "- `benchmarks/external_evidence/offline_graph_export_upstream.json` "
                 f"(`{export_kind}`)",
-                "- Authority log: [`docs/REFERENCE_AUTHORITY_LOG.md`](../../docs/REFERENCE_AUTHORITY_LOG.md)",
-                "- Export provenance: [`benchmarks/external_evidence/EXPORT_PROVENANCE.json`](../../benchmarks/external_evidence/EXPORT_PROVENANCE.json)",
+                "- [`benchmarks/external_evidence/EXPORT_PROVENANCE.json`](../../benchmarks/external_evidence/EXPORT_PROVENANCE.json)",
+                "- Refresh log: [`benchmarks/reports/reference_refresh_log.md`](../../benchmarks/reports/reference_refresh_log.md)",
                 "",
             ]
         )
@@ -153,9 +157,9 @@ def _render_readme(
         [
             "## Further reading",
             "",
-            "- Consumer guide: [`docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md`](../../docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md)",
-            "- Citation: [`docs/CITING_CONICSHIELD_ARTIFACTS.md`](../../docs/CITING_CONICSHIELD_ARTIFACTS.md)",
-            "- Maintainer refresh: [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](../../docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)",
+            "- Public entry: [`docs/COMMUNITY_LAYER.md`](../../docs/COMMUNITY_LAYER.md)",
+            "- Index consumers: [`docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md`](../../docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md)",
+            "- Maintainers: [`CONTRIBUTING.md`](../../CONTRIBUTING.md)",
             "",
         ]
     )

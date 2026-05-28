@@ -85,5 +85,4 @@ jobs:
             benchmarks/releases/**/HISTORY.json
             benchmarks/runs/${{ inputs.run_id }}/governance_status.json
             benchmarks/runs/${{ inputs.run_id }}/governance_status.schema.json
-            docs/ENGINEERING_STATUS.md
           if-no-files-found: warn

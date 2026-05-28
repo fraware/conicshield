@@ -30,7 +30,7 @@
 ### 2026-05-28 — Remove branch protection tooling
 
 - Dropped GitHub branch protection scripts, workflow, docs, and `expected-branch-protection-main.json`.
-- `verify-v1-lock` and `reference_system_status.json` use `ci_merge_checks` only; see [`CI_MERGE_GATES.md`](docs/CI_MERGE_GATES.md).
+- `verify-v1-lock` and `reference_system_status.json` use `ci_merge_checks` only; see [`docs/DEVENV.md`](docs/DEVENV.md).
 
 ### 2026-05-28 — v1 lock checklist and branch protection apply tooling
 

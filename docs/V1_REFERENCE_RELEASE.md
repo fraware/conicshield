@@ -17,29 +17,40 @@ Public name for the governed **host-realistic flagship** reference system shippe
 
 - Reproducible, hash-verified benchmark bundles for external researchers
 - Library integration via reference CVXPY and (with license) native Moreau paths
-- A closed maintainer loop: export → bank → publish → parity → index
+- A closed export → bank → publish → parity → index loop (operational detail in Makefile / `scripts/`)
 
 ## What v1 is not
 
-See [PUBLIC_CLAIMS.md](PUBLIC_CLAIMS.md): no production autograd product, no universal batch speedup claim, no Maps/session navigation graph, no second-family authority.
+Aligned with [PUBLIC_CLAIMS.md](PUBLIC_CLAIMS.md): no production autograd product, no Maps/session navigation graph, no second-family authority; public batch narrative is **viability_only** (does not claim throughput wins). `progress` / `clearance` constraint kinds are not implemented.
 
 ## How to consume (start here)
 
-1. [COMMUNITY_LAYER.md](COMMUNITY_LAYER.md)
-2. `python examples/verify_published_run_index.py`
+```bash
+pip install -e ".[dev]"
+make onboard
+```
+
+1. [COMMUNITY_LAYER.md](COMMUNITY_LAYER.md) — product homepage
+2. [examples/load_published_runs_api.py](../examples/load_published_runs_api.py) — canonical API walkthrough
 3. [CITING_CONICSHIELD_ARTIFACTS.md](CITING_CONICSHIELD_ARTIFACTS.md)
 
 ## How to verify coherence
 
+| Command | When |
+|---------|------|
+| `make verify-v1-lock-quick` | Day-to-day auditor check |
+| `make verify-v1-lock` | Pre-announcement lock gate |
+| `python scripts/print_v1_status.py` | Human-readable status snapshot |
+
 ```bash
 make verify-v1-lock-quick
-python scripts/print_v1_status.py
+python scripts/verify_v1_lock.py --json
 ```
+
+Example success output: [`V1_LOCK_AUDITOR_SUCCESS.example.json`](V1_LOCK_AUDITOR_SUCCESS.example.json).
 
 Machine snapshot: [`benchmarks/reports/reference_system_status.json`](../benchmarks/reports/reference_system_status.json).
 
-## Maintainer operations
+## Maintainers
 
-- Refresh: [HOST_REALISTIC_REFRESH_PROCEDURE.md](HOST_REALISTIC_REFRESH_PROCEDURE.md)
-- Lock gate: [V1_LOCK_CHECKLIST.md](V1_LOCK_CHECKLIST.md)
-- Strategy: [V2_STRATEGY.md](V2_STRATEGY.md) (Option A active; B/C deferred)
+See [CONTRIBUTING.md](../CONTRIBUTING.md). Typical targets: `make verify-v1-lock`, `make host-realistic-refresh-cycle-licensed`, `make finalize-community-dataset`. Refresh log: [`benchmarks/reports/reference_refresh_log.md`](../benchmarks/reports/reference_refresh_log.md).

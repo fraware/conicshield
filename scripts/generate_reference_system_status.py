@@ -114,14 +114,14 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
             "host_realistic_graph": "fork via inter-sim RLEnvironment; not Maps/session navigation",
         },
         "docs": [
-            "docs/REFERENCE_SYSTEM.md",
-            "docs/REFERENCE_AUTHORITY.md",
-            "docs/HOST_REALISTIC_CADENCE_POLICY.md",
+            "docs/COMMUNITY_LAYER.md",
+            "docs/V1_REFERENCE_RELEASE.md",
+            "docs/PUBLISHED_RUNS_API.md",
             "docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md",
             "docs/PUBLIC_CLAIMS.md",
             "docs/QUICKSTART_RESEARCHER.md",
-            "docs/COMMUNITY_LAYER.md",
-            "docs/PUBLISHED_RUNS_API.md",
+            "docs/QUICKSTART_INTEGRATOR.md",
+            "docs/DEVENV.md",
         ],
     }
 

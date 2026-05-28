@@ -3,7 +3,7 @@
 
 Use ``--shield-inter-sim`` on a licensed host to record central FD on ``InterSimConicShield`` (matches
 ``tests/vendor/diff/test_inter_sim_shield_projection_fd.py``). Autograd vs FD when ``enable_grad`` matters
-remains a vendor follow-on (see docs/ROADMAP.md P1).
+remains validation-only (see docs/DIFFERENTIATION_PUBLIC_STANCE.md).
 """
 
 from __future__ import annotations

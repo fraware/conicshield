@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       record_refresh:
-        description: Append REFERENCE_AUTHORITY_LOG row after export steps
+        description: Append reference_refresh_log row after export steps
         type: boolean
         default: true
 
@@ -55,4 +55,4 @@ jobs:
       - name: Reminder — full cycle on licensed host
         run: |
           echo "Next: make host-realistic-refresh-cycle-licensed"
-          echo "See docs/HOST_REALISTIC_CADENCE_POLICY.md"
+          echo "See CONTRIBUTING.md and benchmarks/reports/reference_refresh_log.md"

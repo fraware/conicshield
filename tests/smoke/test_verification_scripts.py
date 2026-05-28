@@ -82,20 +82,6 @@ def test_first_governance_publish_script_help_exits_zero() -> None:
     assert r.returncode == 0, r.stderr
 
 
-def test_update_engineering_status_script_help_exits_zero() -> None:
-    r = subprocess.run(
-        [
-            sys.executable,
-            str(_REPO / "scripts" / "update_engineering_status_from_solver_versions.py"),
-            "--help",
-        ],
-        cwd=str(_REPO),
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert r.returncode == 0, r.stderr
-
 
 def test_execute_real_publish_chain_script_help_exits_zero() -> None:
     r = subprocess.run(

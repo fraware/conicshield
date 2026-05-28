@@ -17,7 +17,7 @@ class TransitionCandidateModel(BaseModel):
 
 
 class ShieldContextModel(BaseModel):
-    """Pydantic mirror of the minimum contract in docs/INTER_SIM_RL_INTEGRATION.md."""
+    """Pydantic mirror of the minimum inter-sim export contract (see scripts/capture_inter_sim_offline_graph.py)."""
 
     model_config = ConfigDict(extra="allow")
 

@@ -600,7 +600,7 @@ def main() -> int:
         "errors": errors,
         "cuda_claim_note": (
             "CUDA rows only when device_available(cuda) and solve succeeds; "
-            "see docs/VERIFICATION_AND_STRESS_TEST_PLAN.md (Performance policy)"
+            "see docs/SOLVER_PATHS_AND_BATCHING.md (batch viability policy)"
         ),
     }
     summary_path = out_dir / "performance_summary.json"

@@ -24,6 +24,20 @@ Does not publish, refresh parity, or mutate the index — use maintainer scripts
 
 Dataclasses: `PublishedRunBundle`, `CommunityMetadata`, `RunProvenance`, `SummaryRow`, `PublishedRunIndexEntry`, `IntegrityEntry`.
 
+### Stable output fields (v1)
+
+| Type | Stable fields consumers may rely on |
+|------|-------------------------------------|
+| `PublishedRunIndexEntry` | `run_id`, `repository_relative_path`, `integrity` (`IntegrityEntry.path`, `.sha256`), `catalog` |
+| `PublishedRunBundle` | `run_id`, `path`, `index_entry`, `community`, `governance_status`, `run_provenance` |
+| `CommunityMetadata` | `run_id`, `family_id`, `evidence_tier`, `projector_mode`, `known_limitations`, `recommended_uses` |
+| `RunProvenance` | `run_id`, `evidence_tier`, `projector_mode`, `host_realistic_evidence`, `export_source`, `extra` |
+| `SummaryRow` | `label`, `solve_time_p50_ms`, `extra` (arm-specific metrics) |
+| `IntegrityEntry` | `path`, `sha256` |
+| CLI subcommands | `list`, `current`, `verify`, `show`, `summary`, `provenance` — stdout is human-readable text |
+
+New optional attributes on dataclasses may appear in v1.x; required fields above will not be renamed or removed without a major API version bump.
+
 ### May expand in v1.x (backward compatible)
 
 - Optional fields on dataclasses (with defaults)
@@ -73,7 +87,7 @@ prov = load_provenance(bundle.run_id)
 print(prov.evidence_tier, prov.projector_mode)
 ```
 
-Runnable walkthrough: [examples/load_published_runs_api.py](../examples/load_published_runs_api.py).
+**Canonical walkthrough** (list → current → verify → summary → provenance): [examples/load_published_runs_api.py](../examples/load_published_runs_api.py).
 
 ## CLI (mirrors Python API)
 

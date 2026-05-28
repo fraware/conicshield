@@ -1,6 +1,6 @@
 # Upstream patch checklist ([inter-sim-rl](https://github.com/fraware/inter-sim-rl))
 
-**ConicShield:** [docs/INTER_SIM_RL_INTEGRATION.md](../../docs/INTER_SIM_RL_INTEGRATION.md).
+**ConicShield:** [README.md](../../README.md), `REVISION`.
 
 Use this when cutting a release of the upstream environment that ConicShield benchmarks against.
 
@@ -8,4 +8,4 @@ Use this when cutting a release of the upstream environment that ConicShield ben
 - [ ] Transition sampling depends on the **chosen** discrete action where multiple graph branches exist; document tie-break (duration, distance, lexical) to match `ReplayGraphEnvironment._canonical_candidate_sort_key`.
 - [ ] Deterministic fallback when the requested action class has no matching edge.
 - [ ] DQN observation vector compatible with `InterSimKerasDQNPolicy` (1D `get_state_vector()` or array).
-- [ ] Update `third_party/inter-sim-rl/REVISION` and `docs/INTER_SIM_RL_INTEGRATION.md` with the new SHA after validation.
+- [ ] Update `third_party/inter-sim-rl/REVISION` after validation.

@@ -57,7 +57,7 @@ def _print_next_steps(*, run_dir: Path, family_id: str) -> None:
         f"  1. Parity replay: python -m conicshield.parity.cli "
         f"--reference-dir tests/fixtures/parity_reference --out-dir output/parity_out\n"
         f"  2. finalize_cli --run-dir {run_dir} --family-id {family_id} ... "
-        f"(see docs/MAINTAINER_RUNBOOK.md)\n"
+        f"(see CONTRIBUTING.md)\n"
         f"  3. Copy validated bundle to benchmarks/published_runs/<run_id>/ if not already there.\n"
         f"  4. python scripts/refresh_published_run_index.py\n",
         file=sys.stderr,

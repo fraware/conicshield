@@ -111,7 +111,7 @@ def _preflight_vendor_imports_or_exit() -> None:
             "(missing ``CompiledSolver``). On Windows this is usually a PyPI stub or an unsupported install.\n"
             "Use WSL2 + Linux wheels from your GemFury index, or uninstall the wrong package:\n"
             f'  "{exe}" -m pip uninstall -y moreau\n'
-            "Then install again under WSL per README / docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md."
+            "Then install again under WSL per README and docs/DEVENV.md."
         )
 
     try:
