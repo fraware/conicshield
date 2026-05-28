@@ -17,6 +17,7 @@ Public claim boundaries: [PUBLIC_CLAIMS.md](PUBLIC_CLAIMS.md). Examples: [exampl
 | Document | Use when |
 |----------|----------|
 | [REFERENCE_SYSTEM.md](REFERENCE_SYSTEM.md) | Auditor one-page map + status JSON |
+| [V1_LOCK_CHECKLIST.md](V1_LOCK_CHECKLIST.md) | Pre-lock verification and branch protection |
 | [REFERENCE_AUTHORITY.md](REFERENCE_AUTHORITY.md) | Flagship `host-realistic-20260525`, gates, closed loop |
 | [HOST_REALISTIC_CADENCE_POLICY.md](HOST_REALISTIC_CADENCE_POLICY.md) | Monthly + immediate refresh triggers |
 | [REFERENCE_AUTHORITY_LOG.md](REFERENCE_AUTHORITY_LOG.md) | Durable refresh log |

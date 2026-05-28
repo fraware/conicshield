@@ -19,11 +19,14 @@ else
       PYTHON ?= $(VIRTUAL_ENV)/Scripts/python.exe
     endif
   endif
-  PYTHON ?= python3
-  PYTHON ?= python
+  ifeq ($(OS),Windows_NT)
+    PYTHON ?= python
+  else
+    PYTHON ?= python3
+  endif
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata sync-published-run-readmes sync-published-readmes finalize-community-dataset community-verify check-reference-refresh-cadence check-flagship-full-refresh-cadence verify-branch-protection-expectations verify-reference-system reference-authority-check reference-authority-snapshot reference-system-status reference-system-status-check capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata sync-published-run-readmes sync-published-readmes finalize-community-dataset community-verify check-reference-refresh-cadence check-flagship-full-refresh-cadence verify-branch-protection-expectations apply-branch-protection-github verify-v1-lock verify-reference-system reference-authority-check reference-authority-snapshot reference-system-status reference-system-status-check capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
 
 test:
 	$(PYTHON) -m pytest -q
@@ -121,6 +124,12 @@ refresh-live-upstream-export-live: capture-inter-sim-graph
 
 verify-branch-protection-expectations:
 	$(PYTHON) scripts/verify_expected_branch_protection.py
+
+apply-branch-protection-github:
+	$(PYTHON) scripts/apply_branch_protection_github.py
+
+verify-v1-lock: verify-reference-system community-verify reference-system-status-check verify-branch-protection-expectations
+	$(PYTHON) scripts/refresh_published_run_index.py --check
 
 sync-community-metadata:
 	$(PYTHON) scripts/sync_community_metadata.py

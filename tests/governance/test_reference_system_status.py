@@ -29,6 +29,8 @@ def test_reference_system_status_builds() -> None:
     community = payload.get("community_dataset") or {}
     assert community.get("api_module") == "conicshield.published_runs"
     assert community.get("published_run_count", 0) >= 1
+    bp = payload.get("branch_protection") or {}
+    assert bp.get("lock_checklist") == "docs/V1_LOCK_CHECKLIST.md"
 
 
 def test_committed_reference_system_status_check() -> None:

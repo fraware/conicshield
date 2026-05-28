@@ -2,6 +2,11 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — v1 lock checklist and branch protection apply tooling
+
+- `docs/V1_LOCK_CHECKLIST.md`, `make verify-v1-lock`, `apply_branch_protection_github.py`.
+- Windows Makefile uses `python` (not `python3`); `branch_protection` block in reference system status.
+
 ### 2026-05-28 — Community dataset verification hardening
 
 - `community_metadata_contract` enforced in `validate_published_bundle_profile.py` and governance tests.

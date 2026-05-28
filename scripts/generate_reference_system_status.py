@@ -64,6 +64,13 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
         batch_story = _load_json(batch_path).get("batch_story")
     batch_public_narrative = "viability_only"
     expected_bp = _load_json(root / ".github" / "expected-branch-protection-main.json")
+    bp_snapshot_path = root / "benchmarks" / "reports" / "branch_protection_remote_snapshot.json"
+    bp_snapshot = _load_json(bp_snapshot_path) if bp_snapshot_path.is_file() else {}
+    expected_checks = list(expected_bp.get("required_status_checks") or [])
+    remote_checks = list(bp_snapshot.get("required_contexts") or [])
+    branch_protection_aligned: bool | None = None
+    if remote_checks:
+        branch_protection_aligned = set(remote_checks) == set(expected_checks)
 
     age = _cadence_days(root)
     cadence_ok = age is not None and age <= 35.0
@@ -99,7 +106,14 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
             "finalize_script": "scripts/finalize_community_dataset.py",
         },
         "inter_sim_revision": _inter_sim_revision(root),
-        "expected_required_checks": expected_bp.get("required_status_checks"),
+        "expected_required_checks": expected_checks,
+        "branch_protection": {
+            "expected_checks": expected_checks,
+            "remote_snapshot_at_utc": bp_snapshot.get("generated_at_utc"),
+            "remote_aligned": branch_protection_aligned,
+            "apply_script": "scripts/apply_branch_protection_github.py",
+            "lock_checklist": "docs/V1_LOCK_CHECKLIST.md",
+        },
         "public_claims": {
             "batch": "true batch path exists; viability-governed; not universal speedup",
             "differentiation": "validation only; not public autograd product",

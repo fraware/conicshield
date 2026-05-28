@@ -1,6 +1,6 @@
 {
   "schema_version": "conicshield_reference_system_status/v1",
-  "generated_at_utc": "2026-05-28T17:35:59Z",
+  "generated_at_utc": "2026-05-28T17:38:47Z",
   "flagship_run_id": "host-realistic-20260525",
   "family_id": "conicshield-transition-bank-v1",
   "reference_authority_aligned": true,
@@ -10,7 +10,7 @@
   "refresh_count": 4,
   "full_cycle_refresh_count": 1,
   "last_full_refresh_at_utc": "2026-05-28T17:00:56Z",
-  "cadence_age_days": 0.024344344143518517,
+  "cadence_age_days": 0.026292527858796298,
   "cadence_policy_ok": true,
   "full_refresh_cadence_ok": true,
   "batch_story": "throughput_win",
@@ -31,6 +31,19 @@
     "reference-authority",
     "solver-touch"
   ],
+  "branch_protection": {
+    "expected_checks": [
+      "quality",
+      "conic-trusted-shape",
+      "governance-audit",
+      "reference-authority",
+      "solver-touch"
+    ],
+    "remote_snapshot_at_utc": null,
+    "remote_aligned": null,
+    "apply_script": "scripts/apply_branch_protection_github.py",
+    "lock_checklist": "docs/V1_LOCK_CHECKLIST.md"
+  },
   "public_claims": {
     "batch": "true batch path exists; viability-governed; not universal speedup",
     "differentiation": "validation only; not public autograd product",

@@ -36,8 +36,11 @@ make verify-branch-protection-expectations
 ### Apply / audit (maintainer)
 
 ```bash
-python scripts/print_branch_protection_gh_recipe.py   # gh api PUT recipe
-make verify-branch-protection-expectations            # compare after gh auth login
+python scripts/apply_branch_protection_github.py          # dry-run
+python scripts/apply_branch_protection_github.py --apply    # GITHUB_TOKEN admin
+python scripts/print_branch_protection_gh_recipe.py       # alternative gh api PUT recipe
+make verify-branch-protection-expectations
+python scripts/audit_branch_protection_api.py
 python scripts/audit_branch_protection_api.py         # GITHUB_TOKEN / gh with admin read
 ```
 

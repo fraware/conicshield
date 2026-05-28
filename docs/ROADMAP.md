@@ -38,7 +38,17 @@ Auditable in Git; do not re-open without a new milestone:
 | inter-sim pin | `third_party/inter-sim-rl/REVISION`; capture via `make capture-inter-sim-graph` |
 | Refresh cadence | `HOST_REALISTIC_CADENCE_POLICY.md`, monthly workflows, `REFERENCE_AUTHORITY_LOG.md` |
 | Community bundles | `COMMUNITY_METADATA.json`, `PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md` |
+| Community API | `conicshield.published_runs`, `community-verify` CI, `finalize_community_dataset` |
+| Quickstarts & claims | `QUICKSTART_*`, `PUBLIC_CLAIMS.md`, `CITING_CONICSHIELD_ARTIFACTS.md` |
 | System status | `reference_system_status.json`, `generate_reference_system_status.py` |
+| v1 lock gate | `make verify-v1-lock`, [`V1_LOCK_CHECKLIST.md`](V1_LOCK_CHECKLIST.md) |
+
+## v1 lock (manual, one-time)
+
+| Item | Action |
+|------|--------|
+| Branch protection on GitHub | `python scripts/apply_branch_protection_github.py --apply`; record in [`BRANCH_PROTECTION_RECORD.md`](BRANCH_PROTECTION_RECORD.md) |
+| CI green on `main` | Push + confirm required checks |
 
 ## Open backlog
 
