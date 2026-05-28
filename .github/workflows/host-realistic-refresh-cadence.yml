@@ -1,0 +1,55 @@
+name: host-realistic-refresh-cadence
+
+# Monthly unattended export refresh + cadence guard. Full publish still requires a licensed host.
+on:
+  schedule:
+    - cron: "0 7 1 * *"
+  workflow_dispatch:
+    inputs:
+      record_refresh:
+        description: Append REFERENCE_AUTHORITY_LOG row after export steps
+        type: boolean
+        default: true
+
+concurrency:
+  group: host-realistic-refresh-cadence-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  export-refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project (dev)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Live graph capture (inter-sim fork)
+        run: |
+          python scripts/capture_inter_sim_offline_graph.py \
+            --host-realistic-fork \
+            --out benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json
+      - name: Refresh committed upstream export
+        run: |
+          python scripts/refresh_live_upstream_export.py \
+            --graph-json benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json \
+            --upstream-notes "Scheduled workflow host-realistic-refresh-cadence"
+      - name: Record refresh (export path)
+        if: github.event_name == 'schedule' || github.event.inputs.record_refresh != 'false'
+        run: |
+          python scripts/record_reference_refresh.py \
+            --trigger calendar-cadence-workflow \
+            --workflow live-export \
+            --notes "Scheduled CI: capture + upstream export; licensed host must run host-realistic-refresh-cycle for bundle publish"
+      - name: Cadence staleness check
+        run: python scripts/check_reference_refresh_cadence.py --max-days 35
+      - name: Reminder — full cycle on licensed host
+        run: |
+          echo "Next: make host-realistic-refresh-cycle --record-refresh --trigger calendar-cadence on licensed WSL"
+          echo "See docs/HOST_REALISTIC_CADENCE_POLICY.md"

@@ -24,6 +24,7 @@ def _export_provenance(repo: Path) -> dict:
 def _render_readme(
     *,
     run_id: str,
+    run_dir: Path,
     catalog: dict[str, object],
     export_prov: dict,
 ) -> str:
@@ -35,6 +36,17 @@ def _render_readme(
     mode = catalog.get("projector_mode") or "n/a"
     gov = catalog.get("governance_state") or "n/a"
     export_kind = export_prov.get("export_kind", "n/a")
+    meta_path = run_dir / "COMMUNITY_METADATA.json"
+    solver_lines: list[str] = []
+    sv_path = run_dir / "solver_versions.json"
+    if sv_path.is_file():
+        sv = json.loads(sv_path.read_text(encoding="utf-8"))
+        for pkg, ver in sorted(sv.items()):
+            solver_lines.append(f"- `{pkg}`: `{ver}`")
+    parity_status = "n/a"
+    if (run_dir / "parity_out" / "parity_summary.json").is_file():
+        ps = json.loads((run_dir / "parity_out" / "parity_summary.json").read_text(encoding="utf-8"))
+        parity_status = "green" if ps.get("passed") else str(ps.get("status", "present"))
     lines = [
         f"# Published run `{run_id}`",
         "",
@@ -50,6 +62,8 @@ def _render_readme(
         f"| Family `current_run_id` | {current} |",
         f"| Governance `state` | `{gov}` |",
         f"| Committed export `export_kind` | `{export_kind}` |",
+        f"| Parity status | `{parity_status}` |",
+        f"| Machine-readable scope | [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) |",
         "",
         "## What this run proves",
         "",
@@ -57,9 +71,25 @@ def _render_readme(
         "- Benchmark arms in `summary.json` with governance gates in `governance_status.json`",
         "- Host-realistic export → bank → publish → parity loop is closed in-repo when `host_realistic` is yes",
         "",
-        "## Evidence qualification",
-        "",
     ]
+    if solver_lines:
+        lines.extend(["## Solver stack", ""] + solver_lines + [""])
+    if catalog.get("host_realistic"):
+        src = "benchmarks/external_evidence/offline_graph_export_upstream.json"
+        lines.extend(
+            [
+                "## Source export",
+                "",
+                f"- `{src}` (`export_kind: {export_kind}`)",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "## Evidence qualification",
+            "",
+        ]
+    )
     if catalog.get("host_realistic"):
         lines.extend(
             [
@@ -69,7 +99,7 @@ def _render_readme(
                 "pinned **inter-sim-rl `RLEnvironment`** (see `benchmarks/external_evidence/live_dumps/*.provenance.json`).",
                 "- **Graph content:** host-realistic **fork topology** (Root → NodeA/NodeB/NodeC), not a full "
                 "Maps/session-built navigation graph unless provenance explicitly says otherwise.",
-                "- **Cadence:** recorded in [`docs/REFERENCE_REFRESH_LOG.md`](../../docs/REFERENCE_REFRESH_LOG.md).",
+                "- **Cadence:** [`docs/REFERENCE_AUTHORITY_LOG.md`](../../docs/REFERENCE_AUTHORITY_LOG.md).",
                 "",
             ]
         )
@@ -85,10 +115,15 @@ def _render_readme(
             "",
             "- Refresh procedure: [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](../../docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)",
             "- Catalog spec: [`docs/PUBLISHED_BUNDLE_CATALOG.md`](../../docs/PUBLISHED_BUNDLE_CATALOG.md)",
+            "- Consume index: [`docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md`](../../docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md)",
             "- Bundle file profile: `python scripts/validate_published_bundle_profile.py`",
             "",
         ]
     )
+    if not meta_path.is_file():
+        lines.append(
+            "_Run `python scripts/sync_community_metadata.py` to generate COMMUNITY_METADATA.json._\n"
+        )
     return "\n".join(lines) + "\n"
 
 
@@ -108,7 +143,7 @@ def main() -> int:
         catalog = run.get("catalog") or build_run_catalog_metadata(run_dir=run_dir, repo_root=root)
         catalog = dict(catalog)
         catalog["is_family_current_run"] = rid == current_run_id
-        text = _render_readme(run_id=rid, catalog=catalog, export_prov=export_prov)
+        text = _render_readme(run_id=rid, run_dir=run_dir, catalog=catalog, export_prov=export_prov)
         dest = run_dir / "README.md"
         dest.write_text(text, encoding="utf-8")
         print(dest, file=sys.stderr)

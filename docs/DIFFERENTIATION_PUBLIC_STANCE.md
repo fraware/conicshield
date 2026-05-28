@@ -1,5 +1,9 @@
 # Differentiation public stance
 
+`differentiation_check.py` writes `layer_f_note` into every report:
+
+> Layer F validates local sensitivity and FD consistency; it is not a public autograd guarantee.
+
 ## Public claims (allowed)
 
 - Layer F is **internal validation**: `scripts/differentiation_check.py`, optional torch/jax toy probes, `--shield-inter-sim` on licensed hosts.

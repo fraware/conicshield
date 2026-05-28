@@ -6,9 +6,9 @@
   "export_kind": "live_upstream_dump",
   "graph_shape": "host_realistic_fork",
   "flagship_run_id": "host-realistic-20260525",
-  "notes": "Refresh: make capture-inter-sim-graph && make refresh-live-upstream-export-live && make host-realistic-refresh-cycle (docs/HOST_REALISTIC_REFRESH_PROCEDURE.md).",
-  "exported_at_utc": "2026-05-28T16:28:33Z",
-  "source_graph_json": "benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json",
+  "notes": "Live upstream dump replaced committed structural export. Re-run make upgrade-host-realistic-vendor.",
+  "exported_at_utc": "2026-05-28T16:54:01Z",
+  "source_graph_json": "benchmarks\\external_evidence\\live_dumps\\offline_transition_graph_host_realistic.json",
   "refresh_history": [
     {
       "refresh_index": 1,
@@ -31,7 +31,17 @@
       "git_ref": "5485dfb",
       "export_kind": "live_upstream_dump",
       "notes": "make capture-inter-sim-graph; refresh-live-upstream-export-live; host-realistic-refresh-cycle"
+    },
+    {
+      "refresh_index": 4,
+      "completed_at_utc": "2026-05-28T16:56:46Z",
+      "trigger": "calendar-cadence-workflow",
+      "workflow": "live-export",
+      "export_kind": "live_upstream_dump",
+      "git_ref": "bcd8be1",
+      "authority_ok": false,
+      "notes": "Local scheduled export refresh; full bundle cycle requires licensed host"
     }
   ],
-  "last_flagship_refresh_at_utc": "2026-05-28T16:28:58Z"
+  "last_flagship_refresh_at_utc": "2026-05-28T16:56:46Z"
 }

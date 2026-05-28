@@ -186,5 +186,8 @@
   "summary": {
     "pairs": 18,
     "max_speedup_ratio": 1.2455192585765367
-  }
+  },
+  "schema_version": "conicshield_batch_solve_report/v2",
+  "batch_story": "throughput_win",
+  "batch_story_advisory": "Throughput advisory tier met on at least one row; still not a universal speedup claim."
 }

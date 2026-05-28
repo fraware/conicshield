@@ -13,7 +13,8 @@
     "RUN_PROVENANCE.json",
     "governance_decision.md",
     "release_decision.json",
-    "README.md"
+    "README.md",
+    "COMMUNITY_METADATA.json"
   ],
   "tier_required": {
     "contract_fixture": [],

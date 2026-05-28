@@ -1,0 +1,31 @@
+{
+  "schema_version": "conicshield_community_metadata/v1",
+  "run_id": "wsl-real-20260409-132450",
+  "family_id": "conicshield-transition-bank-v1",
+  "evidence_tier": "vendor_reference",
+  "host_realistic_evidence": false,
+  "includes_native_arm": false,
+  "fixture_source_candidate": true,
+  "parity_fixture_gold_for_repo": true,
+  "solver_stack_recorded": true,
+  "solver_stack": {
+    "moreau": "0.3.0",
+    "cvxpy": "1.8.2",
+    "cvxpylayers": "1.0.4"
+  },
+  "projector_mode": "real_projector",
+  "source_export": null,
+  "export_kind": "live_upstream_dump",
+  "parity_status": "unknown",
+  "is_family_current_run": false,
+  "recommended_uses": [
+    "schema validation examples",
+    "governance state machine reference",
+    "parity comparison against reference arms in summary.json"
+  ],
+  "known_limitations": [
+    "Not a public autograd or differentiable-shield product claim (see docs/DIFFERENTIATION_PUBLIC_STANCE.md).",
+    "Batch throughput is viability-governed only; not universal speedup (see docs/SOLVER_PATHS_AND_BATCHING.md).",
+    "Native Moreau arm may be absent or not parity-endorsed for this bundle."
+  ]
+}

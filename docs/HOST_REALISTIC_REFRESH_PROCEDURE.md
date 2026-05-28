@@ -1,6 +1,6 @@
 # Host-realistic refresh procedure
 
-**Flagship:** `host-realistic-20260525` (`current_run_id`). **Log every cycle:** [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md).
+**Flagship:** `host-realistic-20260525` (`current_run_id`). **Policy:** [`HOST_REALISTIC_CADENCE_POLICY.md`](HOST_REALISTIC_CADENCE_POLICY.md). **Log:** [`REFERENCE_AUTHORITY_LOG.md`](REFERENCE_AUTHORITY_LOG.md).
 
 Licensed **Linux/WSL** host required for native arm, parity, and batch sweep.
 
@@ -11,6 +11,8 @@ make capture-inter-sim-graph
 make refresh-live-upstream-export-live
 make host-realistic-refresh-cycle
 ```
+
+(`host-realistic-refresh-cycle` records the refresh in `REFERENCE_AUTHORITY_LOG` and `EXPORT_PROVENANCE` by default.)
 
 What this does:
 
@@ -32,11 +34,7 @@ Default `run_id`: family `current_run_id` from `CURRENT.json`.
 
 ## Cadence
 
-| Trigger | Action |
-|---------|--------|
-| Monthly / calendar | Run standard cycle; append row to [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md) |
-| `inter-sim-rl` REVISION change | Re-capture graph + full cycle |
-| Solver / native / batch code change | Full cycle + vendor attestation on PR |
+See [`HOST_REALISTIC_CADENCE_POLICY.md`](HOST_REALISTIC_CADENCE_POLICY.md). Monthly workflow: [`.github/workflows/host-realistic-refresh-cadence.yml`](../.github/workflows/host-realistic-refresh-cadence.yml).
 
 ## After each cycle (commit)
 
@@ -45,8 +43,9 @@ Default `run_id`: family `current_run_id` from `CURRENT.json`.
 3. `benchmarks/external_evidence/EXPORT_PROVENANCE.json`
 4. `benchmarks/reports/reference_authority_snapshot.json`
 5. `benchmarks/reports/batch_solve_report.latest.json` (if batch ran)
-6. Row in [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md)
-7. [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md) solver rows from flagship `solver_versions.json`
+6. `python scripts/record_reference_refresh.py` (or use default `--record-refresh` on refresh cycle)
+7. [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md) via `python scripts/update_engineering_status_from_flagship.py`
+8. `python scripts/sync_community_metadata.py`
 
 ## Evidence qualification (do not overstate)
 

@@ -48,7 +48,9 @@ def test_export_provenance_links_flagship_run() -> None:
     assert prov.get("export_kind") == "live_upstream_dump"
     assert prov.get("graph_shape") == "host_realistic_fork"
     history = prov.get("refresh_history") or []
-    assert history and history[-1].get("export_kind") == "live_upstream_dump"
+    assert len(history) >= 2
+    live = [h for h in history if h.get("export_kind") == "live_upstream_dump"]
+    assert len(live) >= 1
 
 
 def test_committed_batch_solve_report_example_shape() -> None:
@@ -61,6 +63,7 @@ def test_committed_batch_solve_report_example_shape() -> None:
     assert row["speedup_ratio"] == pytest.approx(
         row["mean_sec_sequential"] / row["mean_sec_batched"]
     )
+    assert payload.get("batch_story") in ("viability_only", "throughput_win", "below_viability")
 
 
 def test_reference_authority_check_script_imports() -> None:

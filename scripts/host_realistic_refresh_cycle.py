@@ -86,6 +86,17 @@ def main() -> int:
         help="Only refresh parity/finalize on existing benchmarks/runs/<run_id> (no bundle rebuild).",
     )
     p.add_argument("--force", action="store_true")
+    p.add_argument(
+        "--trigger",
+        type=str,
+        default="manual",
+        help="Cadence trigger label for record_reference_refresh (e.g. calendar-cadence).",
+    )
+    p.add_argument(
+        "--record-refresh",
+        action="store_true",
+        help="Append REFERENCE_AUTHORITY_LOG + EXPORT_PROVENANCE.refresh_history after success.",
+    )
     args = p.parse_args()
 
     repo = _repo_root()
@@ -222,8 +233,8 @@ def main() -> int:
         if rc != 0:
             return rc
 
-    # README sync before index/snapshot so --check gates see a stable tree.
     for script in (
+        "scripts/sync_community_metadata.py",
         "scripts/sync_published_run_readmes.py",
         "scripts/refresh_published_run_index.py",
         "scripts/generate_reference_authority_snapshot.py",
@@ -236,9 +247,29 @@ def main() -> int:
     if rc != 0:
         return rc
 
+    _run([sys.executable, str(repo / "scripts" / "update_engineering_status_from_flagship.py")], cwd=repo)
+
+    if args.record_refresh:
+        rc = _run(
+            [
+                sys.executable,
+                str(repo / "scripts" / "record_reference_refresh.py"),
+                "--trigger",
+                args.trigger,
+                "--workflow",
+                "live-export",
+                "--authority-ok",
+                "--notes",
+                f"host-realistic-refresh-cycle {run_id}",
+            ],
+            cwd=repo,
+        )
+        if rc != 0:
+            return rc
+
     print(
         f"\nRefresh cycle complete for {run_id}. "
-        "Commit published_runs/, PUBLISHED_RUN_INDEX.json, reports/.",
+        "Commit published_runs/, PUBLISHED_RUN_INDEX.json, reports/, docs/REFERENCE_AUTHORITY_LOG.md.",
         file=sys.stderr,
     )
     return 0

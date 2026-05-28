@@ -2,6 +2,12 @@
 
 ## Reference system (host-realistic flagship)
 
+### 2026-05-28 — Cadence policy, community bundles, batch story v2
+
+- `HOST_REALISTIC_CADENCE_POLICY.md`, `REFERENCE_AUTHORITY_LOG.md`, monthly `host-realistic-refresh-cadence` workflow.
+- `COMMUNITY_METADATA.json` per published bundle; `PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md`.
+- `batch_solve_report` v2 with `batch_story`; refresh #4 recorded (scheduled export path).
+
 ### 2026-05-28 — Calendar refresh #3 (cadence)
 
 - `make capture-inter-sim-graph` → `refresh-live-upstream-export-live` → `host-realistic-refresh-cycle` on licensed WSL host.

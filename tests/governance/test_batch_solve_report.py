@@ -26,6 +26,8 @@ def test_batch_solve_report_speedup_ratio() -> None:
     payload = mod.build_batch_solve_report_payload(summary=summary, source=Path("in.json"))
     assert payload["summary"]["pairs"] == 1
     assert payload["comparisons"][0]["speedup_ratio"] == 2.0
+    assert payload["batch_story"] == "throughput_win"
+    assert payload["schema_version"] == "conicshield_batch_solve_report/v2"
 
 
 def test_write_batch_solve_report_skips_empty(tmp_path: Path) -> None:

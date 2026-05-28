@@ -31,8 +31,8 @@ Copy from flagship `solver_versions.json` after each licensed refresh or green `
 | Package | Version | Date (UTC) | Source |
 |---------|---------|------------|--------|
 | `moreau` | `0.3.0` | 2026-05-28 | `benchmarks/published_runs/host-realistic-20260525/solver_versions.json` |
-| `cvxpy` | `1.8.2` | 2026-05-28 | same |
-| `cvxpylayers` | `1.0.4` | 2026-05-28 | same |
+| `cvxpy` | `1.8.2` | 2026-05-28 | `benchmarks/published_runs/host-realistic-20260525/solver_versions.json` |
+| `cvxpylayers` | `1.0.4` | 2026-05-28 | `benchmarks/published_runs/host-realistic-20260525/solver_versions.json` |
 
 ```bash
 pip install -e ".[solver,dev]" --extra-index-url "https://<TOKEN>:@pypi.fury.io/optimalintellect/"

@@ -10,14 +10,15 @@ Operational commands: [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md). Flagship
 | `current_run_id` | `host-realistic-20260525` |
 | Tier | `vendor_native`, `real_projector`, green gates |
 | Export | `live_upstream_dump` (fork graph via inter-sim API) |
-| Refresh | Three recorded cycles; see [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md) |
+| Refresh | Governed cadence + [`REFERENCE_AUTHORITY_LOG.md`](REFERENCE_AUTHORITY_LOG.md); monthly workflow |
 
 ## Operations (ongoing)
 
 | Task | Trigger |
 |------|---------|
 | Update [`ENGINEERING_STATUS.md`](ENGINEERING_STATUS.md) | After green `vendor-ci-moreau` or flagship refresh (`solver_versions.json`) |
-| Re-capture export | `third_party/inter-sim-rl/REVISION` sha change, or richer upstream graph |
+| Host-realistic refresh | [`HOST_REALISTIC_CADENCE_POLICY.md`](HOST_REALISTIC_CADENCE_POLICY.md) — monthly + immediate triggers |
+| Re-capture export | `inter-sim-rl` REVISION, export parsers, bank/publish logic |
 | Parity fixture | Promote from S2 bundle only; [`PARITY_AND_FIXTURES.md`](PARITY_AND_FIXTURES.md) |
 
 ## Deferred semantics

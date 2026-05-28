@@ -1,8 +1,10 @@
 {
-  "schema_version": "conicshield_batch_solve_report/v1",
+  "schema_version": "conicshield_batch_solve_report/v2",
   "example_only": true,
   "generated_at_utc": "2026-05-26T00:00:00Z",
   "source": "illustrative — regenerate via scripts/performance_benchmark.py on a licensed host",
+  "batch_story": "viability_only",
+  "batch_story_advisory": "Governed true batch solve path exists; public claims stay at viability unless throughput_advisory tier is met on representative scenarios.",
   "comparisons": [
     {
       "scenario_id": "default",
@@ -11,12 +13,12 @@
       "auto_tune": false,
       "batch_size": 4,
       "mean_sec_sequential": 0.002,
-      "mean_sec_batched": 0.001,
-      "speedup_ratio": 2.0
+      "mean_sec_batched": 0.00198,
+      "speedup_ratio": 1.0101010101010102
     }
   ],
   "summary": {
     "pairs": 1,
-    "max_speedup_ratio": 2.0
+    "max_speedup_ratio": 1.0101010101010102
   }
 }

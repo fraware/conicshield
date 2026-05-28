@@ -12,6 +12,8 @@ Governed benchmark bundle for `conicshield-transition-bank-v1`.
 | Family `current_run_id` | no |
 | Governance `state` | `published` |
 | Committed export `export_kind` | `live_upstream_dump` |
+| Parity status | `n/a` |
+| Machine-readable scope | [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) |
 
 ## What this run proves
 
@@ -31,5 +33,6 @@ Governed benchmark bundle for `conicshield-transition-bank-v1`.
 
 - Refresh procedure: [`docs/HOST_REALISTIC_REFRESH_PROCEDURE.md`](../../docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)
 - Catalog spec: [`docs/PUBLISHED_BUNDLE_CATALOG.md`](../../docs/PUBLISHED_BUNDLE_CATALOG.md)
+- Consume index: [`docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md`](../../docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md)
 - Bundle file profile: `python scripts/validate_published_bundle_profile.py`
 

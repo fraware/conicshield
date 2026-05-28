@@ -13,6 +13,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+_BATCH_STORY_VIABILITY = "viability_only"
+_BATCH_STORY_THROUGHPUT = "throughput_win"
+_BATCH_STORY_BELOW = "below_viability"
+
 
 def _speedup_rows(summary: dict[str, Any]) -> list[dict[str, Any]]:
     rows = summary.get("rows") or []
@@ -54,11 +58,48 @@ def _speedup_rows(summary: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
-def build_batch_solve_report_payload(*, summary: dict[str, Any], source: Path) -> dict[str, Any]:
+def _load_acceptance_policy(root: Path) -> dict[str, Any]:
+    path = root / "benchmarks" / "reports" / "batch_acceptance_policy.json"
+    if not path.is_file():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _interpret_batch_story(*, comparisons: list[dict[str, Any]], policy: dict[str, Any]) -> str:
+    if not comparisons:
+        return _BATCH_STORY_BELOW
+    max_ratio = max(float(c["speedup_ratio"]) for c in comparisons)
+    throughput_min = float((policy.get("throughput_advisory") or {}).get("min_speedup_ratio", 1.05))
+    viability_min = float((policy.get("viability") or {}).get("min_speedup_ratio", 0.98))
+    if max_ratio >= throughput_min:
+        return _BATCH_STORY_THROUGHPUT
+    if max_ratio >= viability_min:
+        return _BATCH_STORY_VIABILITY
+    return _BATCH_STORY_BELOW
+
+
+def build_batch_solve_report_payload(
+    *,
+    summary: dict[str, Any],
+    source: Path,
+    repo_root: Path | None = None,
+) -> dict[str, Any]:
     comparisons = _speedup_rows(summary)
+    root = repo_root if repo_root is not None else Path(__file__).resolve().parents[1]
+    policy = _load_acceptance_policy(root)
+    batch_story = _interpret_batch_story(comparisons=comparisons, policy=policy)
+    advisory = (
+        "Governed true batch solve path exists; public claims stay at viability unless "
+        "throughput_advisory tier is met on representative scenarios."
+        if batch_story != _BATCH_STORY_THROUGHPUT
+        else "Throughput advisory tier met on at least one row; still not a universal speedup claim."
+    )
     return {
+        "schema_version": "conicshield_batch_solve_report/v2",
         "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source": str(source),
+        "batch_story": batch_story,
+        "batch_story_advisory": advisory,
         "comparisons": comparisons,
         "summary": {
             "pairs": len(comparisons),

@@ -28,6 +28,8 @@ jobs:
           python -m pip install -e ".[dev]"
       - name: Expected branch protection list (local audit helper)
         run: python scripts/verify_expected_branch_protection.py
+      - name: Reference refresh cadence (max 35 days)
+        run: python scripts/check_reference_refresh_cadence.py --max-days 35
       - name: verify-reference-system
         run: make verify-reference-system
       - name: Published bundle file profile (all tiers)

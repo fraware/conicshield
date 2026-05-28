@@ -361,6 +361,10 @@ def collect_differentiation_report(
             "Compare FD slopes across proposed/prev corners when changing constraint tightness.",
             "If enabling NativeMoreauCompiledOptions.enable_grad, add autograd vs FD tests in a vendor env.",
         ],
+        "public_product_claim": "none",
+        "layer_f_note": (
+            "Layer F validates local sensitivity and FD consistency; it is not a public autograd guarantee."
+        ),
     }
 
 
@@ -373,6 +377,10 @@ def _write_md(path: Path, data: dict[str, Any]) -> None:
         f"**Status:** {data.get('status')}",
         "",
         str(data.get("message", "")),
+        "",
+        f"**Public product claim:** {data.get('public_product_claim', 'none')}",
+        "",
+        str(data.get("layer_f_note", "")),
         "",
     ]
     ref = data.get("reference")

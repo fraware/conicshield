@@ -7,7 +7,10 @@ Start here after the repository [`README.md`](../README.md).
 | Document | Use when |
 |----------|----------|
 | [REFERENCE_AUTHORITY.md](REFERENCE_AUTHORITY.md) | Flagship `host-realistic-20260525`, gates, closed loop |
-| [REFERENCE_REFRESH_LOG.md](REFERENCE_REFRESH_LOG.md) | Recorded refresh cadence |
+| [HOST_REALISTIC_CADENCE_POLICY.md](HOST_REALISTIC_CADENCE_POLICY.md) | Monthly + immediate refresh triggers |
+| [REFERENCE_AUTHORITY_LOG.md](REFERENCE_AUTHORITY_LOG.md) | Durable refresh log |
+| [REFERENCE_REFRESH_LOG.md](REFERENCE_REFRESH_LOG.md) | Legacy pointer → authority log |
+| [PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md](PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md) | External bundle consumption |
 | [HOST_REALISTIC_REFRESH_PROCEDURE.md](HOST_REALISTIC_REFRESH_PROCEDURE.md) | Maintainer refresh commands |
 | [REFERENCE_EVIDENCE_TIERS.md](REFERENCE_EVIDENCE_TIERS.md) | `evidence_tier` S0–S3 |
 | [CI_MERGE_GATES.md](CI_MERGE_GATES.md) | Required GitHub checks, Policy B |

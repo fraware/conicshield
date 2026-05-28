@@ -72,10 +72,18 @@ def main() -> int:
             "upstream_revision_pin": prov.get("upstream_revision_pin", "third_party/inter-sim-rl/REVISION"),
             "export_kind": "live_upstream_dump",
             "exported_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "source_graph_json": str(args.graph_json),
-            "flagship_run_id": "host-realistic-20260525",
+            "source_graph_json": (
+                str(args.graph_json.relative_to(repo)).replace("\\", "/")
+                if args.graph_json.is_relative_to(repo)
+                else str(args.graph_json).replace("\\", "/")
+            ),
+            "flagship_run_id": prov.get("flagship_run_id", "host-realistic-20260525"),
+            "graph_shape": prov.get("graph_shape", "host_realistic_fork"),
             "notes": args.upstream_notes
-            or "Live upstream dump replaced committed structural export. Re-run make upgrade-host-realistic-vendor.",
+            or (
+                "Refresh: make capture-inter-sim-graph && make refresh-live-upstream-export-live "
+                "&& make host-realistic-refresh-cycle (docs/HOST_REALISTIC_REFRESH_PROCEDURE.md)."
+            ),
         }
     )
     prov_path.write_text(json.dumps(prov, indent=2) + "\n", encoding="utf-8")

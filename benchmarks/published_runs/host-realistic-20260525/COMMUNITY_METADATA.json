@@ -1,0 +1,33 @@
+{
+  "schema_version": "conicshield_community_metadata/v1",
+  "run_id": "host-realistic-20260525",
+  "family_id": "conicshield-transition-bank-v1",
+  "evidence_tier": "vendor_native",
+  "host_realistic_evidence": true,
+  "includes_native_arm": true,
+  "fixture_source_candidate": false,
+  "parity_fixture_gold_for_repo": false,
+  "solver_stack_recorded": true,
+  "solver_stack": {
+    "moreau": "0.3.0",
+    "cvxpy": "1.8.2",
+    "cvxpylayers": "1.0.4"
+  },
+  "projector_mode": "real_projector",
+  "source_export": "benchmarks/external_evidence/offline_graph_export_upstream.json",
+  "export_kind": "live_upstream_dump",
+  "parity_status": "present",
+  "is_family_current_run": true,
+  "recommended_uses": [
+    "schema validation examples",
+    "governance state machine reference",
+    "host-realistic export \u2192 bank \u2192 publish loop reference",
+    "native Moreau arm replay under published gates",
+    "parity comparison against reference arms in summary.json"
+  ],
+  "known_limitations": [
+    "Not a public autograd or differentiable-shield product claim (see docs/DIFFERENTIATION_PUBLIC_STANCE.md).",
+    "Batch throughput is viability-governed only; not universal speedup (see docs/SOLVER_PATHS_AND_BATCHING.md).",
+    "Graph is host-realistic fork topology via inter-sim RLEnvironment, not a Maps/session navigation graph."
+  ]
+}

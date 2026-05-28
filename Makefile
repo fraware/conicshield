@@ -23,7 +23,7 @@ else
   PYTHON ?= python
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile verify-branch-protection-expectations verify-reference-system reference-authority-check reference-authority-snapshot capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-milestone sync-published-readmes
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata check-reference-refresh-cadence verify-branch-protection-expectations verify-reference-system reference-authority-check reference-authority-snapshot capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-milestone sync-published-readmes
 
 test:
 	$(PYTHON) -m pytest -q
@@ -70,7 +70,7 @@ validate-published-bundle-profile:
 	$(PYTHON) scripts/validate_published_bundle_profile.py
 
 host-realistic-refresh-cycle:
-	$(PYTHON) scripts/host_realistic_refresh_cycle.py --run-id host-realistic-20260525 --force
+	$(PYTHON) scripts/host_realistic_refresh_cycle.py --record-refresh --trigger calendar-cadence --run-id host-realistic-20260525 --force
 
 host-realistic-refresh-milestone:
 	$(PYTHON) scripts/host_realistic_refresh_cycle.py --new-milestone --promote-release --force
@@ -114,7 +114,13 @@ refresh-live-upstream-export-live: capture-inter-sim-graph
 verify-branch-protection-expectations:
 	$(PYTHON) scripts/verify_expected_branch_protection.py
 
-verify-reference-system: reference-authority-check validate-published-bundle-profile
+sync-community-metadata:
+	$(PYTHON) scripts/sync_community_metadata.py
+
+check-reference-refresh-cadence:
+	$(PYTHON) scripts/check_reference_refresh_cadence.py --max-days 35
+
+verify-reference-system: reference-authority-check validate-published-bundle-profile sync-community-metadata
 	$(PYTHON) -m pytest \
 		tests/governance/test_published_run_index.py \
 		tests/governance/test_host_realistic_publish_evidence.py \
@@ -125,6 +131,9 @@ verify-reference-system: reference-authority-check validate-published-bundle-pro
 		tests/governance/test_check_batch_acceptance.py \
 		tests/governance/test_validate_published_bundle_profile.py \
 		tests/governance/test_native_arm_publish_evidence.py \
+		tests/governance/test_native_batch_report_contract.py \
+		tests/governance/test_community_metadata.py \
+		tests/governance/test_reference_refresh_cadence.py \
 		tests/governance/test_run_host_realistic_publish.py \
 		tests/governance/test_host_realistic_refresh_cycle.py \
 		tests/governance/test_batch_solve_report.py \
