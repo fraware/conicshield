@@ -5,6 +5,7 @@ Optional JSON reports that illustrate public benchmark evidence shapes. They are
 | File | Purpose |
 |------|---------|
 | [`reference_authority_snapshot.json`](reference_authority_snapshot.json) | Committed flagship release alignment (`current_run_id`, gates, provenance); CI `--check` via `reference_authority_check` |
+| [`reference_system_status.json`](reference_system_status.json) | Auditor summary: cadence, batch_story, refresh counts, claim boundaries |
 | [`batch_solve_report.example.json`](batch_solve_report.example.json) | v2 schema: comparisons + `batch_story` (`viability_only` / `throughput_win`) |
 
 Regenerate snapshot after release or flagship bundle changes:

@@ -49,7 +49,10 @@ jobs:
             --notes "Scheduled CI: capture + upstream export; licensed host must run host-realistic-refresh-cycle for bundle publish"
       - name: Cadence staleness check
         run: python scripts/check_reference_refresh_cadence.py --max-days 35
+      - name: Inter-sim REVISION vs provenance
+        run: python scripts/check_inter_sim_revision_cadence.py
+        continue-on-error: true
       - name: Reminder — full cycle on licensed host
         run: |
-          echo "Next: make host-realistic-refresh-cycle --record-refresh --trigger calendar-cadence on licensed WSL"
+          echo "Next: make host-realistic-refresh-cycle-licensed"
           echo "See docs/HOST_REALISTIC_CADENCE_POLICY.md"

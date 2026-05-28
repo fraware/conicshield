@@ -1,0 +1,25 @@
+name: branch-protection-audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1"
+
+permissions:
+  administration: read
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare main protection to expected spec
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/verify_expected_branch_protection.py
+          python scripts/audit_branch_protection_api.py --warn-only
+      - name: Record audit note
+        run: |
+          echo "Attach Settings screenshot to docs/BRANCH_PROTECTION_RECORD.md when protection changes."

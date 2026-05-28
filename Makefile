@@ -23,7 +23,7 @@ else
   PYTHON ?= python
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata check-reference-refresh-cadence verify-branch-protection-expectations verify-reference-system reference-authority-check reference-authority-snapshot capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata check-reference-refresh-cadence verify-branch-protection-expectations verify-reference-system reference-authority-check reference-authority-snapshot reference-system-status reference-system-status-check capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
 
 test:
 	$(PYTHON) -m pytest -q
@@ -98,6 +98,12 @@ upgrade-host-realistic-vendor:
 reference-authority-check:
 	$(PYTHON) scripts/reference_authority_check.py
 
+reference-system-status:
+	$(PYTHON) scripts/generate_reference_system_status.py
+
+reference-system-status-check:
+	$(PYTHON) scripts/generate_reference_system_status.py --check
+
 reference-authority-snapshot:
 	$(PYTHON) scripts/generate_reference_authority_snapshot.py
 
@@ -123,7 +129,7 @@ sync-community-metadata:
 check-reference-refresh-cadence:
 	$(PYTHON) scripts/check_reference_refresh_cadence.py --max-days 35
 
-verify-reference-system: reference-authority-check validate-published-bundle-profile sync-community-metadata
+verify-reference-system: reference-authority-check reference-system-status-check validate-published-bundle-profile sync-community-metadata
 	$(PYTHON) -m pytest \
 		tests/governance/test_published_run_index.py \
 		tests/governance/test_host_realistic_publish_evidence.py \
@@ -138,6 +144,7 @@ verify-reference-system: reference-authority-check validate-published-bundle-pro
 		tests/governance/test_community_metadata.py \
 		tests/governance/test_reference_refresh_cadence.py \
 		tests/governance/test_record_reference_refresh.py \
+		tests/governance/test_reference_system_status.py \
 		tests/governance/test_run_host_realistic_publish.py \
 		tests/governance/test_host_realistic_refresh_cycle.py \
 		tests/governance/test_batch_solve_report.py \

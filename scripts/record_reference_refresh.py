@@ -60,6 +60,17 @@ def _upsert_log_row(*, log_path: Path, index: int, row: str) -> None:
     log_path.write_text(text, encoding="utf-8")
 
 
+def _inter_sim_revision_sha(repo: Path) -> str | None:
+    rev = repo / "third_party" / "inter-sim-rl" / "REVISION"
+    if not rev.is_file():
+        return None
+    for line in rev.read_text(encoding="utf-8").splitlines():
+        if line.startswith("sha="):
+            return line.split("=", 1)[1].strip()
+    text = rev.read_text(encoding="utf-8").strip()
+    return text if text and "=" not in text else None
+
+
 def _record_entry(
     *,
     prov_path: Path,
@@ -110,6 +121,10 @@ def _record_entry(
 
     prov["refresh_history"] = history
     prov["last_flagship_refresh_at_utc"] = now
+    repo = prov_path.resolve().parents[2]
+    sha = _inter_sim_revision_sha(repo)
+    if sha:
+        prov["inter_sim_revision_sha"] = sha
     prov_path.write_text(json.dumps(prov, indent=2) + "\n", encoding="utf-8")
 
     row = _format_log_row(

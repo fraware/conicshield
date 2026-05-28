@@ -38,7 +38,10 @@ make verify-branch-protection-expectations
 ```bash
 python scripts/print_branch_protection_gh_recipe.py   # gh api PUT recipe
 make verify-branch-protection-expectations            # compare after gh auth login
+python scripts/audit_branch_protection_api.py         # GITHUB_TOKEN / gh with admin read
 ```
+
+Weekly GitHub Action: [`.github/workflows/branch-protection-audit.yml`](../.github/workflows/branch-protection-audit.yml) (`workflow_dispatch` + Mondays 09:00 UTC).
 
 ### Screenshot / export (attach in PR or paste link)
 

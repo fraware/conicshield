@@ -1,6 +1,6 @@
 # Roadmap
 
-Operational commands: [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md). Flagship refresh: [`REFERENCE_REFRESH_LOG.md`](REFERENCE_REFRESH_LOG.md).
+Operational commands: [`MAINTAINER_RUNBOOK.md`](MAINTAINER_RUNBOOK.md). System map: [`REFERENCE_SYSTEM.md`](REFERENCE_SYSTEM.md).
 
 ## Current flagship
 
@@ -36,6 +36,9 @@ Auditable in Git; do not re-open without a new milestone:
 | Native batch API | `NATIVE_MOREAU_BATCH`; viability + throughput-advisory policy |
 | CI merge | `reference-authority`, Policy B attestation, bundle profile validator |
 | inter-sim pin | `third_party/inter-sim-rl/REVISION`; capture via `make capture-inter-sim-graph` |
+| Refresh cadence | `HOST_REALISTIC_CADENCE_POLICY.md`, monthly workflows, `REFERENCE_AUTHORITY_LOG.md` |
+| Community bundles | `COMMUNITY_METADATA.json`, `PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md` |
+| System status | `reference_system_status.json`, `generate_reference_system_status.py` |
 
 ## Open backlog
 

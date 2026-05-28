@@ -32,6 +32,10 @@ jobs:
         run: python scripts/check_reference_refresh_cadence.py --max-days 35
       - name: Flagship refresh trigger paths
         run: python scripts/check_flagship_refresh_triggers.py --base-ref ${{ github.event.pull_request.base.sha || github.event.before || 'origin/main' }}
+      - name: Reference system status artifact
+        run: |
+          python scripts/generate_reference_system_status.py
+          python scripts/generate_reference_system_status.py --check
       - name: verify-reference-system
         run: make verify-reference-system
       - name: Published bundle file profile (all tiers)

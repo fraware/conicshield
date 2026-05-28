@@ -14,3 +14,11 @@ If this PR touches `conicshield/core/moreau*`, `conicshield/parity/`, `benchmark
 - [ ] **Required (Policy B — repository law):** vendor attestation — green [`vendor-ci-moreau`](https://github.com/fraware/conicshield/actions/workflows/solver-ci.yml) run URL, `workflow_dispatch` link, or `make test-vendor-moreau` log excerpt. **Merge blocked without this.**
 - [ ] Reviewer checklist completed: [`docs/REVIEWER_MERGE_CHECKLIST.md`](docs/REVIEWER_MERGE_CHECKLIST.md)
 - [ ] If published bundles changed: `python scripts/refresh_published_run_index.py` was run and committed
+
+## Host-realistic refresh triggers
+
+If this PR changes `third_party/inter-sim-rl/REVISION`, export scripts, transition-bank generation, or release/governance logic:
+
+- [ ] [`HOST_REALISTIC_CADENCE_POLICY.md`](docs/HOST_REALISTIC_CADENCE_POLICY.md) immediate refresh completed or scheduled
+- [ ] `EXPORT_PROVENANCE.json` / [`REFERENCE_AUTHORITY_LOG.md`](docs/REFERENCE_AUTHORITY_LOG.md) updated
+- [ ] `python scripts/generate_reference_system_status.py` committed

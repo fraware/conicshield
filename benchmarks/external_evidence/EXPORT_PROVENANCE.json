@@ -43,5 +43,6 @@
       "notes": "host-realistic-refresh-cycle host-realistic-20260525"
     }
   ],
-  "last_flagship_refresh_at_utc": "2026-05-28T17:00:56Z"
+  "last_flagship_refresh_at_utc": "2026-05-28T17:00:56Z",
+  "inter_sim_revision_sha": "f1f04ee11d064262f5ee2810abfcb01715260182"
 }

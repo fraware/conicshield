@@ -6,6 +6,7 @@ Start here after the repository [`README.md`](../README.md).
 
 | Document | Use when |
 |----------|----------|
+| [REFERENCE_SYSTEM.md](REFERENCE_SYSTEM.md) | Auditor one-page map + status JSON |
 | [REFERENCE_AUTHORITY.md](REFERENCE_AUTHORITY.md) | Flagship `host-realistic-20260525`, gates, closed loop |
 | [HOST_REALISTIC_CADENCE_POLICY.md](HOST_REALISTIC_CADENCE_POLICY.md) | Monthly + immediate refresh triggers |
 | [REFERENCE_AUTHORITY_LOG.md](REFERENCE_AUTHORITY_LOG.md) | Durable refresh log |

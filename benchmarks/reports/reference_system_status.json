@@ -1,0 +1,34 @@
+{
+  "schema_version": "conicshield_reference_system_status/v1",
+  "generated_at_utc": "2026-05-28T17:05:22Z",
+  "flagship_run_id": "host-realistic-20260525",
+  "family_id": "conicshield-transition-bank-v1",
+  "reference_authority_aligned": true,
+  "export_kind": "live_upstream_dump",
+  "graph_shape": "host_realistic_fork",
+  "last_flagship_refresh_at_utc": "2026-05-28T17:00:56Z",
+  "refresh_count": 4,
+  "full_cycle_refresh_count": 1,
+  "cadence_age_days": 0.003079939814814815,
+  "cadence_policy_ok": true,
+  "batch_story": "throughput_win",
+  "inter_sim_revision": "f1f04ee11d064262f5ee2810abfcb01715260182",
+  "expected_required_checks": [
+    "quality",
+    "conic-trusted-shape",
+    "governance-audit",
+    "reference-authority",
+    "solver-touch"
+  ],
+  "public_claims": {
+    "batch": "true batch path exists; viability-governed; not universal speedup",
+    "differentiation": "validation only; not public autograd product",
+    "host_realistic_graph": "fork via inter-sim RLEnvironment; not Maps/session navigation"
+  },
+  "docs": [
+    "docs/REFERENCE_SYSTEM.md",
+    "docs/REFERENCE_AUTHORITY.md",
+    "docs/HOST_REALISTIC_CADENCE_POLICY.md",
+    "docs/PUBLISHED_RUN_INDEX_FOR_CONSUMERS.md"
+  ]
+}
