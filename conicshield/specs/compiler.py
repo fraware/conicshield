@@ -6,6 +6,8 @@ from typing import Any
 import numpy as np
 
 from conicshield.backends.status import normalize_cvxpy_status
+from conicshield.compilation.metrics import LifecycleMetrics
+from conicshield.core.interfaces import ConcurrencyModel
 from conicshield.core.result import ProjectionResult
 from conicshield.core.telemetry import extract_cvxpy_telemetry, telemetry_into_projection_fields
 from conicshield.solver_errors import require_solver_module
@@ -44,11 +46,28 @@ class SolverOptions:
 
 
 class CVXPYMoreauProjector:
-    """Reference projector: CVXPY model solved with ``cp.MOREAU``."""
+    """Reference projector: CVXPY model solved with ``cp.MOREAU``.
 
-    def __init__(self, *, spec: SafetySpec, options: SolverOptions | None = None) -> None:
+    Concurrency model: :attr:`ConcurrencyModel.STATELESS` — no persisted warm starts.
+    ``reset_state`` is a no-op retained for :class:`StatefulProjectorProtocol` uniformity.
+    """
+
+    concurrency_model: ConcurrencyModel = ConcurrencyModel.STATELESS
+
+    def __init__(
+        self,
+        *,
+        spec: SafetySpec,
+        options: SolverOptions | None = None,
+        metrics: LifecycleMetrics | None = None,
+    ) -> None:
         self.spec = spec
         self.options = options or SolverOptions()
+        self.metrics = metrics if metrics is not None else LifecycleMetrics()
+
+    def reset_state(self, *, scope_id: str | None = None) -> None:
+        del scope_id
+        # Stateless reference path: nothing to clear.
 
     def _release_policy(self) -> ReleasePolicy:
         opts = self.options
