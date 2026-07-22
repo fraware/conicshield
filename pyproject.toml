@@ -113,6 +113,8 @@ markers = [
   "vendor_moreau: requires vendor Moreau installation and license",
   "integration: cross-module or external integration tests",
   "requires_moreau: requires installed moreau package and license",
+  "requires_wsl: requires WSL2 / wsl.exe (skip with reason when absent)",
+  "requires_moreau_sidecar: requires WSL worker with importable Moreau (skip with reason when absent)",
   "inter_sim_rl: requires forked inter-sim-rl checkout (INTERSIM_RL_ROOT or submodule path)",
   "slow: long-running subprocess or env setup (optional filter: -m \"not slow\")",
   "reference_correctness: shield-QP or reference-vs-reference correctness checks",

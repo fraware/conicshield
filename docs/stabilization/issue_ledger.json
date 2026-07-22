@@ -148,7 +148,7 @@
     "test_added": "tests/stabilization/test_p0_verify_readonly.py",
     "fix_pr": null,
     "status": "open",
-    "work_package": "S6"
+    "work_package": "S7"
   },
   {
     "issue_id": "CS-SOLVER-101",
@@ -349,18 +349,25 @@
     "severity": "P1",
     "title": "Windows documented as workaround, not qualified operating mode",
     "affected_paths": [
+      "docs/WINDOWS_OPERATING_MODES.md",
       "docs/DEVENV.md",
-      "scripts/bootstrap_moreau.sh",
-      ".github/workflows/ci.yml"
+      "scripts/bootstrap_moreau.ps1",
+      "scripts/start_moreau_sidecar.ps1",
+      ".github/workflows/windows-ci.yml",
+      "conicshield/platform/windows_sidecar_client.py",
+      "conicshield/platform/sidecar_protocol.py",
+      "conicshield/workers/moreau_worker.py",
+      "tests/platform/windows/",
+      "tests/platform/sidecar/"
     ],
     "reproduction": [
       "Bootstrap hard-fails outside Linux; public CI is Ubuntu-only; docs push WSL2 for Moreau."
     ],
-    "expected_behavior": "Qualify distinct Windows public/vendor modes with CI evidence.",
-    "current_behavior": "Windows treated as workaround; S0 captures Windows public-mode status in baseline artifacts.",
-    "test_added": null,
+    "expected_behavior": "Qualify distinct Windows public / WSL-native-repo / Moreau-sidecar modes with CI evidence for public; no native Moreau-on-Windows claim.",
+    "current_behavior": "windows_public required in windows-ci; WSL path + sidecar protocol/client with fail-closed public fallback; docs enumerate three modes.",
+    "test_added": "tests/platform/windows/; tests/platform/sidecar/",
     "fix_pr": null,
-    "status": "open",
-    "work_package": "S8"
+    "status": "fixed",
+    "work_package": "S6"
   }
 ]
