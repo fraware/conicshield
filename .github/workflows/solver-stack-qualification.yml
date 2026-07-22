@@ -1,0 +1,86 @@
+name: solver-stack-qualification
+
+# Scheduled qualification of the current approved stack + quarantined candidates.
+# Candidates never update packaging/constraints/ production defaults (CS-SOLVER-003/S7).
+
+on:
+  workflow_dispatch:
+    inputs:
+      qualify_quarantine:
+        description: "Also exercise packaging/quarantine candidates when present"
+        required: false
+        default: "true"
+  schedule:
+    - cron: "0 7 * * 1"
+
+concurrency:
+  group: solver-stack-qualification-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  approved-public:
+    name: Qualify approved public stack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install approved public constraints
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev,solver-public]" -c packaging/constraints/solver-public.txt
+          python scripts/check_solver_stack_policy.py
+          python scripts/check_schema_compatibility.py
+      - name: Public projector smoke + fallback tests
+        run: |
+          mkdir -p /tmp/stack_qual
+          python -m pytest -q --tb=short \
+            --junitxml=/tmp/stack_qual/public.junit.xml \
+            tests/stabilization/test_p0_backend_boundaries.py \
+            tests/stabilization/test_p0_packaging_provenance.py \
+            tests/verification/test_verification_release.py \
+            tests/platform/sidecar/test_client_fallback.py \
+            tests/platform/sidecar/test_protocol.py
+          python scripts/assert_min_executed_tests.py \
+            --junit /tmp/stack_qual/public.junit.xml \
+            --min-executed 5 \
+            --label approved-public
+      - name: Upload qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stack-qualification-public
+          path: /tmp/stack_qual
+          retention-days: 14
+
+  quarantine-candidates:
+    name: Quarantine candidates (non-promoting)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Inspect quarantine policy (no production mutation)
+        run: |
+          python scripts/check_solver_stack_policy.py
+          python <<'PY'
+          import json
+          from pathlib import Path
+          policy = json.loads(Path("packaging/solver_stack_policy.json").read_text(encoding="utf-8"))
+          cands = (policy.get("quarantine") or {}).get("candidates") or []
+          print(f"quarantine_candidates={len(cands)}")
+          for c in cands:
+              print(json.dumps(c, sort_keys=True))
+          # Explicit non-promotion: refuse if a candidate points at production constraints.
+          for c in cands:
+              path = str(c.get("constraints_file") or "")
+              if path.startswith("packaging/constraints/") and "quarantine" not in path:
+                  raise SystemExit(f"candidate must not target production constraints: {path}")
+          if not cands:
+              print("No quarantine candidates; approved stack remains the production default.")
+          PY
+      - name: Worktree must stay clean
+        run: python scripts/assert_git_clean.py --label quarantine-qualification

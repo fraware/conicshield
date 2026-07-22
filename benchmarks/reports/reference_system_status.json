@@ -32,7 +32,8 @@
     "conic-trusted-shape",
     "governance-audit",
     "reference-authority",
-    "solver-touch"
+    "solver-touch",
+    "windows-ci"
   ],
   "public_claims": {
     "batch": "true batch path exists; viability-governed; not universal speedup",

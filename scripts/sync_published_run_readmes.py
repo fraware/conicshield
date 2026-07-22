@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -167,6 +168,14 @@ def _render_readme(
 
 
 def main() -> int:
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument(
+        "--check",
+        action="store_true",
+        help="Fail if any published-run README.md differs (read-only; no writes).",
+    )
+    args = p.parse_args()
+
     root = _repo_root()
     payload = load_published_run_index(repo_root=root)
     export_prov = _export_provenance(root)
@@ -175,6 +184,7 @@ def main() -> int:
     if current_path.is_file():
         current_run_id = json.loads(current_path.read_text(encoding="utf-8")).get("current_run_id")
 
+    stale: list[str] = []
     for run in payload.get("runs", []):
         rid = str(run["run_id"])
         rel = str(run["repository_relative_path"]).replace("\\", "/")
@@ -190,8 +200,24 @@ def main() -> int:
             export_prov=export_prov,
         )
         dest = run_dir / "README.md"
+        if args.check:
+            if not dest.is_file():
+                stale.append(f"missing {dest}")
+                continue
+            if dest.read_text(encoding="utf-8") != text:
+                stale.append(str(dest))
+            continue
         dest.write_text(text, encoding="utf-8")
         print(dest, file=sys.stderr)
+
+    if args.check:
+        if stale:
+            for row in stale:
+                print(f"stale: {row}", file=sys.stderr)
+            print("Run: python scripts/sync_published_run_readmes.py", file=sys.stderr)
+            return 2
+        print("OK published-run READMEs")
+        return 0
     return 0
 
 

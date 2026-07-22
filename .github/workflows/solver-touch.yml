@@ -1,4 +1,5 @@
-# Extra checks when solver / parity / native bench code changes (no vendor Moreau required).
+# Extra checks when solver / parity / native bench / verification / platform code changes
+# (no vendor Moreau required).
 name: solver-touch
 
 on:
@@ -7,8 +8,14 @@ on:
       - "conicshield/core/moreau*.py"
       - "conicshield/core/moreau_batched.py"
       - "conicshield/core/solver_factory.py"
+      - "conicshield/compilation/**"
+      - "conicshield/verification/**"
+      - "conicshield/backends/**"
+      - "conicshield/platform/**"
+      - "conicshield/workers/**"
       - "benchmarks/external_evidence/**"
       - "conicshield/specs/compiler.py"
+      - "conicshield/specs/native_moreau_builder.py"
       - "conicshield/adapters/inter_sim_rl/shield.py"
       - "conicshield/reference_correctness/conic_suite.py"
       - "conicshield/bench/**"
@@ -17,6 +24,7 @@ on:
       - "benchmarks/PUBLISHED_RUN_INDEX.json"
       - "benchmarks/published_runs/**"
       - "benchmarks/releases/**"
+      - "packaging/**"
       - "scripts/performance_benchmark.py"
       - "scripts/batch_solve_report.py"
       - "scripts/run_host_realistic_publish.py"
@@ -31,18 +39,33 @@ on:
       - "scripts/reference_authority_check.py"
       - "scripts/host_realistic_refresh_cycle.py"
       - "scripts/check_batch_acceptance.py"
+      - "scripts/sync_community_metadata.py"
+      - "scripts/assert_git_clean.py"
+      - "scripts/assert_vendor_ci_evidence.py"
+      - "scripts/vendor_mandatory_native_solves.py"
+      - "scripts/check_schema_compatibility.py"
+      - "scripts/check_solver_stack_policy.py"
       - "benchmarks/reports/**"
       - "tests/fixtures/parity_reference/**"
       - "tests/vendor/**"
       - "tests/parity/**"
+      - "tests/verification/**"
+      - "tests/platform/**"
+      - "tests/stabilization/**"
   push:
     branches: [main]
     paths:
       - "conicshield/core/moreau*.py"
       - "conicshield/core/moreau_batched.py"
       - "conicshield/core/solver_factory.py"
+      - "conicshield/compilation/**"
+      - "conicshield/verification/**"
+      - "conicshield/backends/**"
+      - "conicshield/platform/**"
+      - "conicshield/workers/**"
       - "benchmarks/external_evidence/**"
       - "conicshield/specs/compiler.py"
+      - "conicshield/specs/native_moreau_builder.py"
       - "conicshield/adapters/inter_sim_rl/shield.py"
       - "conicshield/reference_correctness/conic_suite.py"
       - "conicshield/bench/**"
@@ -51,6 +74,7 @@ on:
       - "benchmarks/PUBLISHED_RUN_INDEX.json"
       - "benchmarks/published_runs/**"
       - "benchmarks/releases/**"
+      - "packaging/**"
       - "scripts/performance_benchmark.py"
       - "scripts/batch_solve_report.py"
       - "scripts/run_host_realistic_publish.py"
@@ -65,10 +89,19 @@ on:
       - "scripts/reference_authority_check.py"
       - "scripts/host_realistic_refresh_cycle.py"
       - "scripts/check_batch_acceptance.py"
+      - "scripts/sync_community_metadata.py"
+      - "scripts/assert_git_clean.py"
+      - "scripts/assert_vendor_ci_evidence.py"
+      - "scripts/vendor_mandatory_native_solves.py"
+      - "scripts/check_schema_compatibility.py"
+      - "scripts/check_solver_stack_policy.py"
       - "benchmarks/reports/**"
       - "tests/fixtures/parity_reference/**"
       - "tests/vendor/**"
       - "tests/parity/**"
+      - "tests/verification/**"
+      - "tests/platform/**"
+      - "tests/stabilization/**"
 
 concurrency:
   group: solver-touch-${{ github.workflow }}-${{ github.ref }}
@@ -86,10 +119,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.txt
-          python -m pip install -e ".[dev]"
+          python -m pip install -e ".[dev,solver-public]" -c packaging/constraints/solver-public.txt
       - name: Benchmark path resolution + parity tests
         run: |
+          mkdir -p /tmp/solver_touch
           python scripts/refresh_published_run_index.py --check
+          python scripts/sync_community_metadata.py --check
+          python scripts/check_schema_compatibility.py
+          python scripts/check_solver_stack_policy.py
           python -m pytest \
             tests/governance/test_benchmark_paths_resolution.py \
             tests/governance/test_published_run_index.py \
@@ -101,4 +138,23 @@ jobs:
             tests/governance/test_reference_evidence_tiers.py \
             tests/scripts/test_export_inter_sim_cli.py \
             tests/parity/ \
+            tests/verification/test_verification_release.py \
+            tests/platform/sidecar/test_client_fallback.py \
+            tests/platform/sidecar/test_protocol.py \
+            tests/stabilization/test_p0_verify_readonly.py \
+            tests/stabilization/test_p0_vendor_required_skips.py \
+            --junitxml=/tmp/solver_touch/solver_touch.junit.xml \
             -q --tb=short
+          python scripts/assert_min_executed_tests.py \
+            --junit /tmp/solver_touch/solver_touch.junit.xml \
+            --min-executed 10 \
+            --label solver-touch
+          python scripts/assert_git_clean.py --label solver-touch
+      - name: Upload solver-touch evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: solver-touch-evidence
+          path: /tmp/solver_touch
+          retention-days: 14
+          if-no-files-found: warn

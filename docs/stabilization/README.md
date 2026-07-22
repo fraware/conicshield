@@ -27,11 +27,13 @@ py -3 scripts/smoke_check.py --out-dir docs/stabilization/baseline
 py -3 -m conicshield.published_runs.cli verify host-realistic-20260525
 
 # Optional vendor lane (requires Moreau install + license)
-$env:CONICSHIELD_VENDOR_REQUIRED = "1"   # desired S7 policy; not wired into CI yet
+$env:CONICSHIELD_VENDOR_REQUIRED = "1"   # S7: vendor CI sets this; skips become failures
 py -3 -m pytest tests/ -q -m "solver or requires_moreau"
 ```
 
-Regression tests that encode known P0 defects live under `tests/stabilization/` and use `pytest.mark.xfail(strict=True, reason="CS-SOLVER-00N")` so default CI stays green while still failing loudly if a defect is “fixed” incorrectly without updating the test.
+S7 closed CS-SOLVER-003 (vendor skip false confidence) and CS-SOLVER-007 (read-only verify). See `docs/DEVENV.md` for check meanings and generate vs verify command distinction.
+
+Regression tests that encode known P0 defects live under `tests/stabilization/`. Remaining open ledger items use `pytest.mark.xfail(strict=True)` until their work package lands.
 
 ## Issue IDs
 

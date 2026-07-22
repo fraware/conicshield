@@ -199,6 +199,15 @@ def _write_md(path: Path, data: dict[str, Any]) -> None:
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def _vendor_required() -> bool:
+    return os.environ.get("CONICSHIELD_VENDOR_REQUIRED", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description="Write environment_check artifacts under output/.")
     p.add_argument("--out-dir", type=Path, default=None, help="Default: repo output/")
@@ -209,7 +218,22 @@ def main() -> int:
     (out_dir / "environment_check.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
     _write_md(out_dir / "environment_check.md", data)
     print(out_dir / "environment_check.json")
-    return 0 if data.get("imports_all_ok") else 1
+    if not data.get("imports_all_ok"):
+        return 1
+    if _vendor_required():
+        moreau = data.get("moreau") or {}
+        if not moreau.get("importable"):
+            print("ERROR: CONICSHIELD_VENDOR_REQUIRED=1 but moreau is not importable", file=sys.stderr)
+            return 1
+        check = data.get("moreau_check") or {}
+        if check.get("skipped"):
+            print("ERROR: CONICSHIELD_VENDOR_REQUIRED=1 but moreau check was skipped", file=sys.stderr)
+            return 1
+        rc = check.get("returncode")
+        if not isinstance(rc, int) or rc != 0:
+            print("ERROR: CONICSHIELD_VENDOR_REQUIRED=1 but python -m moreau check failed", file=sys.stderr)
+            return 1
+    return 0
 
 
 if __name__ == "__main__":
