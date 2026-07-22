@@ -61,7 +61,7 @@
     "expected_behavior": "Under CONICSHIELD_VENDOR_REQUIRED=1, license/capability skips are hard failures; vendor CI sets the flag and post-checks executed solves.",
     "current_behavior": "Vendor CI sets CONICSHIELD_VENDOR_REQUIRED=1, runs moreau check + mandatory native/failure-policy solves, emits JUnit, and fails the evidence gate on zero executes / vendor skips / zero native solves.",
     "test_added": "tests/stabilization/test_p0_vendor_required_skips.py",
-    "fix_pr": null,
+    "fix_pr": 8,
     "status": "fixed",
     "work_package": "S7"
   },
@@ -146,7 +146,7 @@
     "expected_behavior": "verify-*/check-* targets are read-only; sync/generate/refresh support --check; CI fails on dirty worktree after verify.",
     "current_behavior": "sync_community_metadata/sync_published_run_readmes support --check; verify-reference-system uses check-community-metadata; reference-authority asserts a clean worktree after verify.",
     "test_added": "tests/stabilization/test_p0_verify_readonly.py",
-    "fix_pr": null,
+    "fix_pr": 8,
     "status": "fixed",
     "work_package": "S7"
   },
