@@ -366,7 +366,7 @@
     "expected_behavior": "Qualify distinct Windows public / WSL-native-repo / Moreau-sidecar modes with CI evidence for public; no native Moreau-on-Windows claim.",
     "current_behavior": "windows_public required in windows-ci; WSL path + sidecar protocol/client with fail-closed public fallback; docs enumerate three modes.",
     "test_added": "tests/platform/windows/; tests/platform/sidecar/",
-    "fix_pr": null,
+    "fix_pr": 7,
     "status": "fixed",
     "work_package": "S6"
   }
