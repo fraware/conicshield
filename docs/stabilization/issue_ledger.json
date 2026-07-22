@@ -127,7 +127,7 @@
     "expected_behavior": "Explicit AUTO/PUBLIC_CLARABEL/PUBLIC_SCS members; AUTO never selects vendor Moreau merely because it imports.",
     "current_behavior": "Backend enum includes AUTO/PUBLIC_*/vendor members; AUTO\u2192PUBLIC_CLARABEL unless CONICSHIELD_PRODUCTION_BACKEND is set; default create_projector remains explicit CVXPY_MOREAU.",
     "test_added": "tests/stabilization/test_p0_backend_boundaries.py",
-    "fix_pr": null,
+    "fix_pr": 6,
     "status": "fixed",
     "work_package": "S5"
   },
@@ -319,7 +319,7 @@
     "expected_behavior": "Split solver-public / moreau-cpu / moreau-cuda / diff-* extras with markers.",
     "current_behavior": "Extras split with platform/Python markers; CUDA only in solver-moreau-cuda; deprecated solver aliases CPU.",
     "test_added": "tests/stabilization/test_p0_packaging_provenance.py",
-    "fix_pr": null,
+    "fix_pr": 6,
     "status": "fixed",
     "work_package": "S5"
   },
@@ -340,7 +340,7 @@
     "expected_behavior": "conicshield solver-doctor --json recording install provenance, devices, license check, commit, settings.",
     "current_behavior": "conicshield solver-doctor --json emits redacted provenance; identity probes reject import-only stubs.",
     "test_added": "tests/stabilization/test_p0_packaging_provenance.py",
-    "fix_pr": null,
+    "fix_pr": 6,
     "status": "fixed",
     "work_package": "S5"
   },
