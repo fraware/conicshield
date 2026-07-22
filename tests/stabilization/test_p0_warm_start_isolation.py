@@ -86,4 +86,8 @@ def test_reset_episode_clears_projector_warm_start_state() -> None:
 
     assert shield._previous_distribution is None
     # Expected after fix: episode reset clears cached warm-start / projector episode state.
-    assert shield._projector_cache == {} or all(getattr(p, "_warm", None) is None for p in shield._projector_cache.values())
+    cache_cleared = shield._projector_cache == {}
+    warm_cleared = all(
+        getattr(p, "_warm", None) is None for p in shield._projector_cache.values()
+    )
+    assert cache_cleared or warm_cleared
