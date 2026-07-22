@@ -39,7 +39,7 @@
     "expected_behavior": "Backend-independent verifier gates release on finite values, residuals, and declared status policy.",
     "current_behavior": "Native and CVXPY paths release only via run_verified_release_pipeline (status + residuals + fallback ladder).",
     "test_added": "tests/stabilization/test_p0_admissibility.py",
-    "fix_pr": null,
+    "fix_pr": 3,
     "status": "fixed",
     "work_package": "S2"
   },
