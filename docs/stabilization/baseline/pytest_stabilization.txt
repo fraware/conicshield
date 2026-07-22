@@ -1,0 +1,5 @@
+xx..xxxx..x..xxxx                                                        [100%]
+============================ slowest 20 durations =============================
+0.16s setup    tests/stabilization/test_p0_admissibility.py::test_native_projector_must_reject_nonfinite_candidate
+
+(19 durations < 0.005s hidden.  Use -vv to show these durations.)

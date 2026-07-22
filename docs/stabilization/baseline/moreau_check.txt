@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 189, in _run_module_as_main
+  File "<frozen runpy>", line 148, in _get_module_details
+  File "<frozen runpy>", line 112, in _get_module_details
+  File "C:\Users\mateo\AppData\Local\Programs\Python\Python312\Lib\site-packages\moreau\__init__.py", line 22, in <module>
+    raise ImportError("\n".join(_messages) + "\n")
+ImportError: 
+The 'moreau' package cannot be installed directly from PyPI.
+Moreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).
+Please visit https://docs.moreau.so for installation instructions.
+

@@ -1,0 +1,78 @@
+........................................................................ [ 22%]
+........................FF.............FF............................... [ 45%]
+.........F.......ss....xx..xxxx..x..xxxx................................ [ 67%]
+...................................F.................................... [ 90%]
+........................ss..s..                                          [100%]
+================================== FAILURES ===================================
+C:\Users\mateo\conicshield\tests\governance\test_published_run_catalog.py:34: AssertionError: assert None == 'wsl-real-20260409-132450'
+C:\Users\mateo\conicshield\tests\governance\test_published_run_index.py:23: AssertionError: expected at least one benchmarks/published_runs/<run_id> in REGENERATION_NOTE.md
+C:\Users\mateo\conicshield\tests\governance\test_reference_system_status.py:26: assert False is True
+C:\Users\mateo\conicshield\tests\governance\test_reference_system_status.py:50: AssertionError: Stale C:\Users\mateo\conicshield\benchmarks\reports\reference_system_status.json; run: python generate_reference_system_status.py
+C:\Users\mateo\conicshield\tests\scripts\test_verify_v1_lock.py:16: AssertionError: index_integrity: OK — exit 0
+C:\Users\mateo\conicshield\tests\test_reference_run_cli.py:73: assert 3 in (0, 1)
+============================== warnings summary ===============================
+tests\vendor\diff\test_inter_sim_shield_projection_fd.py:8
+  C:\Users\mateo\conicshield\tests\vendor\diff\test_inter_sim_shield_projection_fd.py:8: PytestDeprecationWarning: 
+  Module 'moreau' was found, but when imported by pytest it raised:
+      ImportError("\nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n")
+  In pytest 9.1 this warning will become an error by default.
+  You can fix the underlying problem, or alternatively overwrite this behavior and silence this warning by passing exc_type=ImportError explicitly.
+  See https://docs.pytest.org/en/stable/deprecations.html#pytest-importorskip-default-behavior-regarding-importerror
+    pytest.importorskip("moreau")
+
+tests\vendor\diff\test_moreau_torch_grad_optional.py:10
+  C:\Users\mateo\conicshield\tests\vendor\diff\test_moreau_torch_grad_optional.py:10: PytestDeprecationWarning: 
+  Module 'moreau' was found, but when imported by pytest it raised:
+      ImportError("\nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n")
+  In pytest 9.1 this warning will become an error by default.
+  You can fix the underlying problem, or alternatively overwrite this behavior and silence this warning by passing exc_type=ImportError explicitly.
+  See https://docs.pytest.org/en/stable/deprecations.html#pytest-importorskip-default-behavior-regarding-importerror
+    pytest.importorskip("moreau")
+
+tests\vendor\native\test_native_moreau_projector.py:6
+  C:\Users\mateo\conicshield\tests\vendor\native\test_native_moreau_projector.py:6: PytestDeprecationWarning: 
+  Module 'moreau' was found, but when imported by pytest it raised:
+      ImportError("\nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n")
+  In pytest 9.1 this warning will become an error by default.
+  You can fix the underlying problem, or alternatively overwrite this behavior and silence this warning by passing exc_type=ImportError explicitly.
+  See https://docs.pytest.org/en/stable/deprecations.html#pytest-importorskip-default-behavior-regarding-importerror
+    pytest.importorskip("moreau")
+
+tests\vendor\native\test_shield_native_softmax_batch.py:8
+  C:\Users\mateo\conicshield\tests\vendor\native\test_shield_native_softmax_batch.py:8: PytestDeprecationWarning: 
+  Module 'moreau' was found, but when imported by pytest it raised:
+      ImportError("\nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n")
+  In pytest 9.1 this warning will become an error by default.
+  You can fix the underlying problem, or alternatively overwrite this behavior and silence this warning by passing exc_type=ImportError explicitly.
+  See https://docs.pytest.org/en/stable/deprecations.html#pytest-importorskip-default-behavior-regarding-importerror
+    pytest.importorskip("moreau")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================ slowest 20 durations =============================
+15.01s call     tests/scripts/test_verify_v1_lock.py::test_verify_v1_lock_quick_exits_zero
+9.41s call     tests/environment/test_run_live_vendor_tests_smoke.py::test_run_live_vendor_tests_collect_only
+6.28s call     tests/vendor/diff/test_differentiation_check.py::test_differentiation_script_produces_valid_json_public_ci
+3.17s call     tests/scripts/test_capture_inter_sim_offline_graph.py::test_capture_host_realistic_fork_writes_json
+2.07s call     tests/test_replay_banks_hypothesis_optional.py::test_replay_linear_bank_allowed_actions_subset_canonical
+1.48s call     tests/test_reference_run_cli.py::test_produce_reference_bundle_real_projector_preflight_error_without_moreau
+1.41s call     tests/environment/test_import_isolation.py::test_base_import_does_not_load_cvxpy_or_moreau
+1.31s call     tests/smoke/test_solver_smoke_cli_contract.py::test_solver_smoke_cli_native_arm_or_structured_error
+1.13s call     tests/examples/test_public_examples_smoke.py::test_minimal_reference_projection_example
+1.06s call     tests/smoke/test_solver_smoke_cli_contract.py::test_solver_smoke_cli_stdout_is_json_object
+1.05s call     tests/test_reference_run_cli.py::test_produce_reference_bundle_strict_real_projector_rejects_passthrough
+1.02s call     tests/test_reference_run_cli.py::test_reference_run_module_help_exits_zero
+1.02s call     tests/examples/test_public_examples_smoke.py::test_verify_published_run_index_example
+0.98s call     tests/governance/test_governance_integrated_flow.py::test_finalize_release_dry_run_and_strict_audit
+0.91s call     tests/scripts/test_export_inter_sim_cli.py::test_export_inter_sim_rehearsal_fork_cli
+0.79s call     tests/examples/test_public_examples_smoke.py::test_load_published_runs_api_example
+0.77s call     tests/smoke/test_cli_modules_help.py::test_parity_cli_help_exits_zero
+0.76s call     tests/test_inter_sim_rl_e2e.py::test_action_conditioning_changes_transition_destination
+0.71s call     tests/examples/test_public_examples_smoke.py::test_inspect_flagship_bundle_example
+0.70s call     tests/test_replay_no_http.py::test_replay_import_chain_has_no_third_party_http_clients
+=========================== short test summary info ===========================
+FAILED tests/governance/test_published_run_catalog.py::test_parity_fixture_source_is_wsl_real
+FAILED tests/governance/test_published_run_index.py::test_parity_regeneration_note_run_ids_are_indexed
+FAILED tests/governance/test_reference_system_status.py::test_reference_system_status_builds
+FAILED tests/governance/test_reference_system_status.py::test_committed_reference_system_status_check
+FAILED tests/scripts/test_verify_v1_lock.py::test_verify_v1_lock_quick_exits_zero
+FAILED tests/test_reference_run_cli.py::test_produce_reference_bundle_real_projector_preflight_error_without_moreau
