@@ -1,0 +1,48 @@
+name: windows-ci
+
+# Qualify Windows Public mode (CS-SOLVER-111 / S6).
+# Does not install vendor Moreau and does not claim native Moreau-on-Windows.
+
+on:
+  pull_request:
+  push:
+    branches: [main, engineering/stabilization-moreau]
+
+concurrency:
+  group: windows-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-public:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install public solver profile
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,solver-public]" -c packaging/constraints/solver-public.txt
+      - name: Solver doctor (public)
+        shell: pwsh
+        run: python -m conicshield.cli solver-doctor --json
+      - name: Windows public mode tests
+        shell: pwsh
+        run: |
+          python -m pytest -o addopts= -q --tb=short `
+            tests/platform/windows/ `
+            tests/platform/sidecar/test_protocol.py `
+            tests/platform/sidecar/test_client_fallback.py `
+            tests/stabilization/test_p0_backend_boundaries.py `
+            tests/stabilization/test_p0_packaging_provenance.py `
+            -m "not requires_wsl and not requires_moreau_sidecar"
+      - name: Public projector smoke
+        shell: pwsh
+        run: |
+          python -c "from conicshield.backends.base import Backend; from conicshield.core.solver_factory import create_projector; from conicshield.specs.schema import SafetySpec, SimplexConstraint, BoxConstraint; import numpy as np; spec=SafetySpec(spec_id='win-ci', version='0.1.0', action_dim=2, constraints=[SimplexConstraint(total=1.0), BoxConstraint(lower=[0,0], upper=[1,1])]); p=create_projector(spec=spec, backend=Backend.PUBLIC_CLARABEL); r=p.project(np.array([0.7,0.3])); assert r.verification is not None and r.verification.passed; print('windows_public_ok', r.release_decision)"

@@ -38,6 +38,8 @@ if ($Profile -eq "public") {
     & python -m pip install --upgrade pip
     & python -m pip install -e ".[dev,solver-public]" -c packaging/constraints/solver-public.txt
     Write-Host "Public solver profile installed (no CUDA, no vendor Moreau)."
+    Write-Host "Qualified Windows mode: windows_public (see docs/WINDOWS_OPERATING_MODES.md)."
+    Write-Host "Native Moreau-on-Windows is NOT supported; optional WSL sidecar: scripts/start_moreau_sidecar.ps1"
     & python -m conicshield.cli solver-doctor --json | Out-String | ForEach-Object { Write-Redacted $_ }
     Write-Host "Public bootstrap succeeded (idempotent)."
     exit 0
@@ -45,8 +47,8 @@ if ($Profile -eq "public") {
 
 Write-Redacted "Profile '$Profile' requires vendor Moreau on Linux/WSL2."
 Write-Host "Native Windows cannot install solver-moreau-cpu/cuda wheels."
-Write-Host "From WSL2 Ubuntu run:"
-Write-Host "  export CONICSHIELD_BOOTSTRAP_PROFILE=$Profile"
-Write-Host "  # set MOREAU_EXTRA_INDEX_URL and MOREAU_LICENSE_KEY in the environment (not printed here)"
-Write-Host "  bash scripts/bootstrap_moreau.sh"
+Write-Host "Options:"
+Write-Host "  1) WSL-native repo: export CONICSHIELD_BOOTSTRAP_PROFILE=$Profile && bash scripts/bootstrap_moreau.sh"
+Write-Host "  2) Windows app + WSL Moreau sidecar (qualification): pwsh scripts/start_moreau_sidecar.ps1 -SmokePing"
+Write-Host "Do not claim native Moreau-on-Windows support."
 exit 2

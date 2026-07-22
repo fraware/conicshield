@@ -11,12 +11,11 @@
   "cvxpy_import_ok": false,
   "cvxpy_import_error": "No module named 'numpy.lib.array_utils'",
   "public_ci_os": "ubuntu-latest only",
-  "windows_public_mode_qualified": false,
+  "windows_public_mode_qualified": true,
   "public_mode_notes": [
-    "Public CI workflows run on ubuntu-latest only.",
-    "This baseline was captured on Windows host with system Python 3.12.",
-    "Default pytest marker set excludes solver/requires_moreau/inter_sim_rl/slow.",
-    "Vendor Moreau bootstrap scripts target Linux; Windows public-mode is not CI-qualified (CS-SOLVER-111).",
+    "windows-ci workflow qualifies native Windows public mode (PUBLIC_CLARABEL / AUTO).",
+    "Vendor Moreau remains unsupported on native Windows; use WSL-native repo or Moreau sidecar.",
+    "Sidecar is a qualification surface (stdio NDJSON v1) — not a native-Moreau-on-Windows claim.",
     "find_spec(moreau) can be true while import moreau raises on Windows — do not treat find_spec as capability."
   ]
 }

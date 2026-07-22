@@ -9,9 +9,10 @@ Supported Python, default CI, and local test filters. Align with [`.github/workf
 | Package | `>=3.11` (`requires-python`) |
 | Governed builds | **3.11, 3.12** (`packaging/install_matrix.json`) |
 | Default CI | **3.11, 3.12** on Ubuntu |
+| Windows public CI (`windows-ci`) | **3.12** on `windows-latest` |
 | Vendor CI (`vendor-ci-moreau`) | **3.11** with `.[solver-moreau-cpu]` or `.[solver-moreau-cuda]` + Moreau license |
 
-Moreau-backed work: use Linux/WSL2. Green **Vendor CI** or a licensed local run is the oracle for the native stack. Native Windows uses **public** backends only.
+Moreau-backed work: use Linux/WSL2 or the **Windows Moreau sidecar** (qualification; see [WINDOWS_OPERATING_MODES.md](WINDOWS_OPERATING_MODES.md)). Native Windows uses **public** backends only — there is **no** native Moreau-on-Windows support claim.
 
 ## Dependency extras (no surprise CUDA)
 
@@ -81,6 +82,7 @@ Follow [MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md](MOREAU_INSTALL_AND_ENVIRONMENT
 
 ## Related
 
+- Windows modes: [WINDOWS_OPERATING_MODES.md](WINDOWS_OPERATING_MODES.md)
 - Public entry: [COMMUNITY_LAYER.md](COMMUNITY_LAYER.md)
 - Contributing: [CONTRIBUTING.md](../CONTRIBUTING.md)
 - Solver paths: [SOLVER_PATHS_AND_BATCHING.md](SOLVER_PATHS_AND_BATCHING.md)

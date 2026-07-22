@@ -67,6 +67,11 @@ CONICSHIELD_BOOTSTRAP_PROFILE=moreau-cpu bash scripts/bootstrap_moreau.sh
 
 Native Windows Moreau installs are unsupported; the PowerShell script directs vendor profiles to WSL2.
 
+Qualified Windows modes (public / WSL-native repo / Moreau sidecar) are documented in
+[`WINDOWS_OPERATING_MODES.md`](WINDOWS_OPERATING_MODES.md). The sidecar is a qualification
+surface over a persistent WSL worker — it does **not** claim native Moreau-on-Windows or
+production readiness until qualification notes say what passed.
+
 ## Both approved channels during migration
 
 1. Vendor GemFury (or successor) extra-index + license file — primary governed channel.
