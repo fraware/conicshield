@@ -13,11 +13,11 @@ from conicshield.adapters.inter_sim_rl.geometry_prior import (
     infer_geometry_prior,
 )
 from conicshield.core.interfaces import ProjectorProtocol
-from conicshield.core.solver_factory import Backend, create_batch_projector
 from conicshield.core.moreau_compiled import NativeMoreauCompiledOptions
 from conicshield.core.result import ProjectionResult
-from conicshield.core.solver_factory import Backend, create_projector
+from conicshield.core.solver_factory import Backend, create_batch_projector, create_projector
 from conicshield.specs.compiler import SolverOptions
+from conicshield.specs.errors import MissingFailSafePolicyError
 from conicshield.specs.schema import (
     BoxConstraint,
     RateConstraint,
@@ -254,7 +254,11 @@ class InterSimConicShield:
             ACTION_TO_INDEX[action_name] for action_name in CANONICAL_ACTION_SPACE if upper_bounds[action_name] > 1e-12
         ]
         if not allowed_indices:
-            allowed_indices = list(range(len(CANONICAL_ACTION_SPACE)))
+            raise MissingFailSafePolicyError(
+                "no action is admissible in shield context; refusing silent "
+                "'all actions allowed' recovery. Select an explicit fail-safe at the "
+                "call site or ensure at least one action remains admissible."
+            )
 
         upper = [upper_bounds[a] for a in CANONICAL_ACTION_SPACE]
         lower = [0.0] * len(CANONICAL_ACTION_SPACE)

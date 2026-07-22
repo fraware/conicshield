@@ -2,6 +2,16 @@
 
 The same CSR triple ``(P_csr, A_csr, cones)`` is used by ``moreau.Solver`` and, after
 ``setup(P_values, A_values)``, by ``moreau.CompiledSolver`` for the fixed-structure path.
+
+Inequality encoding from canonical ``ShieldQPData`` IR
+-----------------------------------------------------
+For each coordinate ``i`` with finite declared box bounds:
+
+* lower: ``-x_i <= -lower_i``  (i.e. ``x_i >= lower_i``)
+* upper: ``x_i <= upper_i``
+
+There is **no** unconditional nonnegativity row. Nonnegativity appears only when
+``lower_i == 0`` (or another nonnegative declared lower) in the IR.
 """
 
 from __future__ import annotations
@@ -54,23 +64,23 @@ def build_moreau_standard_form(
     b_nn: list[float] = []
 
     for i in range(n):
-        r = np.zeros(n, dtype=np.float64)
-        r[i] = -1.0
-        a_nn.append(r)
-        b_nn.append(0.0)
-
-    for i in range(n):
-        r = np.zeros(n, dtype=np.float64)
-        r[i] = 1.0
-        a_nn.append(r)
-        b_nn.append(float(data.upper[i]))
-
-    for i in range(n):
-        if data.lower[i] > 1e-15:
+        lo = float(data.lower[i])
+        if np.isfinite(lo):
             r = np.zeros(n, dtype=np.float64)
             r[i] = -1.0
             a_nn.append(r)
-            b_nn.append(float(-data.lower[i]))
+            b_nn.append(float(-lo))
+        else:
+            raise ValueError(f"ShieldQPData.lower[{i}] must be finite (got {lo!r})")
+
+        hi = float(data.upper[i])
+        if np.isfinite(hi):
+            r = np.zeros(n, dtype=np.float64)
+            r[i] = 1.0
+            a_nn.append(r)
+            b_nn.append(hi)
+        else:
+            raise ValueError(f"ShieldQPData.upper[{i}] must be finite (got {hi!r})")
 
     if previous is not None:
         pv = np.asarray(previous, dtype=np.float64).reshape(-1)

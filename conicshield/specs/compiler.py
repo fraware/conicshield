@@ -9,7 +9,7 @@ from conicshield.core.result import ProjectionResult
 from conicshield.core.telemetry import extract_cvxpy_telemetry, telemetry_into_projection_fields
 from conicshield.solver_errors import require_solver_module
 from conicshield.specs.schema import SafetySpec
-from conicshield.specs.shield_qp import parse_safety_spec_for_shield
+from conicshield.specs.shield_qp import parse_safety_spec_for_shield, validate_objective_weights
 
 
 @dataclass(slots=True)
@@ -48,8 +48,14 @@ class CVXPYMoreauProjector:
         if moreau_solver is None:
             raise RuntimeError("CVXPY does not expose cp.MOREAU. Install moreau, cvxpy>=1.8.2, and cvxpylayers>=1.0.4.")
 
+        # Both CVXPY and native paths consume the same canonical ShieldQPData IR.
         data = parse_safety_spec_for_shield(self.spec)
         n = data.n
+        pw, rw = validate_objective_weights(
+            policy_weight,
+            reference_weight,
+            reference_present=reference_action is not None,
+        )
         x = cp.Variable(n)
         cons: list = [
             cp.sum(x) == float(data.simplex_total),
@@ -69,8 +75,6 @@ class CVXPYMoreauProjector:
             cons.append(prev - x <= d)
 
         p = np.asarray(proposed_action, dtype=np.float64).reshape(-1)
-        pw = float(policy_weight)
-        rw = float(reference_weight)
         if reference_action is not None and rw > 0.0:
             r = np.asarray(reference_action, dtype=np.float64).reshape(-1)
             if r.shape[0] != n:

@@ -33,10 +33,6 @@ def _effective_box_bounds(a_full: Any, b_full: np.ndarray, n_eq: int, n: int) ->
     return lowers, uppers
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="CS-SOLVER-001: native builder adds unconditional x>=0 and skips negative BoxConstraint.lower",
-)
 def test_native_builder_encodes_negative_lower_bounds_like_cvxpy(monkeypatch: pytest.MonkeyPatch) -> None:
     """Negative lower bounds must compile to x_i >= lower_i, matching CVXPY (not stronger x_i >= 0)."""
     import sys
@@ -72,3 +68,5 @@ def test_native_builder_encodes_negative_lower_bounds_like_cvxpy(monkeypatch: py
     eff_lower, _eff_upper = _effective_box_bounds(a_csr, b, n_eq, data.n)
     assert eff_lower[0] == pytest.approx(-0.2)
     assert eff_lower[2] == pytest.approx(0.05)
+    # Must not strengthen negative lowers to 0.
+    assert eff_lower[0] < 0.0
