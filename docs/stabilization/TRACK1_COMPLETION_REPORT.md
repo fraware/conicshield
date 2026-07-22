@@ -10,7 +10,7 @@ benchmarks.
 |--|-----|-------|
 | **Start (S0 baseline)** | `180bed7411f3146205b65b4258e6711c786c9f6f` (`180bed7`) | `origin/main` tip at track start; see [`starting_commit.json`](starting_commit.json) |
 | **Integration tip after S7** | `d7f1da49b893557dd72e5d55fbc6018d79eb255e` (`d7f1da4`) | Merge of PR #8 (S7) into `engineering/stabilization-moreau` |
-| **S8 branch tip** | `296f49c7e8468e26bbc69d574be35525c70201a0` (`296f49c`) | `engineering/s8-benchmark-qualification-release` |
+| **S8 branch tip** | `34f9904` (PR #9 tip; implement commit `296f49c`) | `engineering/s8-benchmark-qualification-release` |
 
 Long-lived integration branch: `engineering/stabilization-moreau`.
 
