@@ -546,14 +546,14 @@ class NativeMoreauCompiledBatchProjector:
                     warm_flags = [True] * k_batch
                 else:
                     overlapping = [
-                        k
-                        for k in self._warm_by_row
-                        if k != warm_key and any(rid in k.split("|") for rid in ids)
+                        key
+                        for key in self._warm_by_row
+                        if key != warm_key and any(rid in key.split("|") for rid in ids)
                     ]
                     if overlapping:
                         self.metrics.record_warm_start_rejection()
-                        for k in overlapping:
-                            del self._warm_by_row[k]
+                        for key in overlapping:
+                            del self._warm_by_row[key]
 
             t_solve = time.perf_counter()
             try:

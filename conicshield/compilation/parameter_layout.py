@@ -54,7 +54,9 @@ class ParameterLayout:
             )
 
 
-def build_parameter_layout(topology: ConstraintTopology) -> tuple[ParameterLayout, dict[str, object]]:
+def build_parameter_layout(
+    topology: ConstraintTopology,
+) -> tuple[ParameterLayout, dict[str, np.ndarray]]:
     """Build layout and CSR index arrays (indptr/indices) for ``topology``.
 
     Returns ``(layout, csr)`` where ``csr`` has keys

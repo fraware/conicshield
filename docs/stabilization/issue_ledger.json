@@ -112,7 +112,11 @@
     "title": "Public vs vendor backend boundaries unclear",
     "affected_paths": [
       "conicshield/core/solver_factory.py",
+      "conicshield/backends/base.py",
+      "conicshield/backends/public_cvxpy.py",
+      "conicshield/backends/capabilities.py",
       "docs/SOLVER_PATHS_AND_BATCHING.md",
+      "docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md",
       "pyproject.toml"
     ],
     "reproduction": [
@@ -121,10 +125,10 @@
       "Docs describe public/reference operation without credentials."
     ],
     "expected_behavior": "Explicit AUTO/PUBLIC_CLARABEL/PUBLIC_SCS members; AUTO never selects vendor Moreau merely because it imports.",
-    "current_behavior": "No AUTO/public backends; default is CVXPY_MOREAU with unclear public/vendor boundary.",
+    "current_behavior": "Backend enum includes AUTO/PUBLIC_*/vendor members; AUTO\u2192PUBLIC_CLARABEL unless CONICSHIELD_PRODUCTION_BACKEND is set; default create_projector remains explicit CVXPY_MOREAU.",
     "test_added": "tests/stabilization/test_p0_backend_boundaries.py",
-    "fix_pr": null,
-    "status": "open",
+    "fix_pr": 6,
+    "status": "fixed",
     "work_package": "S5"
   },
   {
@@ -245,23 +249,25 @@
     "title": "Active constraints inaccurately reported",
     "affected_paths": [
       "conicshield/core/moreau_compiled.py",
-      "conicshield/specs/compiler.py"
+      "conicshield/specs/compiler.py",
+      "conicshield/verification/active_set.py"
     ],
     "reproduction": [
       "active_constraints appends turn_feasibility whenever any action is prohibited, ignoring solution residuals."
     ],
     "expected_behavior": "Active set from verified residuals and active_tol with stable identifiers.",
-    "current_behavior": "Presence-based turn_feasibility labeling.",
-    "test_added": null,
-    "fix_pr": null,
-    "status": "open",
-    "work_package": "S5"
+    "current_behavior": "active_constraints_from_residuals gates turn_feasibility on residual proximity; release pipeline attaches residual-derived IDs.",
+    "test_added": "tests/stabilization/test_p1_status_active_set.py",
+    "fix_pr": 3,
+    "status": "fixed",
+    "work_package": "S2"
   },
   {
     "issue_id": "CS-SOLVER-107",
     "severity": "P1",
     "title": "Status normalization is heuristic",
     "affected_paths": [
+      "conicshield/backends/status.py",
       "conicshield/core/telemetry.py",
       "tests"
     ],
@@ -269,11 +275,11 @@
       "Telemetry/tests treat values like '1'/'true'/'ok' as success-like."
     ],
     "expected_behavior": "Backend-specific adapters to a canonical status enum; unknown -> UNKNOWN not success.",
-    "current_behavior": "Heuristic success-like mapping.",
-    "test_added": null,
-    "fix_pr": null,
-    "status": "open",
-    "work_package": "S5"
+    "current_behavior": "normalize_solver_status maps only explicit aliases; '1'/'true'/'ok' \u2192 UNKNOWN; vendor tests use canonical comparison.",
+    "test_added": "tests/stabilization/test_p1_status_active_set.py",
+    "fix_pr": 3,
+    "status": "fixed",
+    "work_package": "S2"
   },
   {
     "issue_id": "CS-SOLVER-108",
@@ -301,18 +307,21 @@
     "title": "Installation profiles overly coupled",
     "affected_paths": [
       "pyproject.toml",
+      "packaging/install_matrix.json",
+      "packaging/constraints/",
       ".github/workflows/solver-ci.yml",
-      "scripts/bootstrap_moreau.sh"
+      "scripts/bootstrap_moreau.sh",
+      "scripts/bootstrap_moreau.ps1"
     ],
     "reproduction": [
       "optional-dependencies.solver installs moreau[cuda]; vendor CI pins Python 3.11."
     ],
     "expected_behavior": "Split solver-public / moreau-cpu / moreau-cuda / diff-* extras with markers.",
-    "current_behavior": "Single cuda-coupled solver extra.",
-    "test_added": null,
-    "fix_pr": null,
-    "status": "open",
-    "work_package": "S8"
+    "current_behavior": "Extras split with platform/Python markers; CUDA only in solver-moreau-cuda; deprecated solver aliases CPU.",
+    "test_added": "tests/stabilization/test_p0_packaging_provenance.py",
+    "fix_pr": 6,
+    "status": "fixed",
+    "work_package": "S5"
   },
   {
     "issue_id": "CS-SOLVER-110",
@@ -320,18 +329,20 @@
     "title": "Moreau provenance not sufficiently established",
     "affected_paths": [
       "scripts/bootstrap_moreau.sh",
-      "scripts/environment_check.py",
-      "docs"
+      "conicshield/platform/doctor.py",
+      "conicshield/cli.py",
+      "conicshield/backends/identity.py",
+      "docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md"
     ],
     "reproduction": [
       "Bootstrap/docs assume particular package source and license arrangement without a solver-doctor evidence command."
     ],
     "expected_behavior": "conicshield solver-doctor --json recording install provenance, devices, license check, commit, settings.",
-    "current_behavior": "Partial probes via environment_check / bootstrap assumptions.",
-    "test_added": null,
-    "fix_pr": null,
-    "status": "open",
-    "work_package": "S8"
+    "current_behavior": "conicshield solver-doctor --json emits redacted provenance; identity probes reject import-only stubs.",
+    "test_added": "tests/stabilization/test_p0_packaging_provenance.py",
+    "fix_pr": 6,
+    "status": "fixed",
+    "work_package": "S5"
   },
   {
     "issue_id": "CS-SOLVER-111",

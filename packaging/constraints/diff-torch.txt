@@ -1,0 +1,5 @@
+#
+# Optional torch differentiation profile (CPU wheels by default).
+# Select a CUDA torch build explicitly on GPU hosts; this file does not pull CUDA.
+#
+torch>=2.2.0

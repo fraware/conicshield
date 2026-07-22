@@ -99,6 +99,8 @@ def test_status_normalization_aliases() -> None:
     assert normalize_solver_status("optimal_inaccurate") is CanonicalSolverStatus.OPTIMAL_INACCURATE
     assert normalize_solver_status("max_iters_reached") is CanonicalSolverStatus.ITERATION_LIMIT
     assert normalize_solver_status(None) is CanonicalSolverStatus.UNKNOWN
+    for raw in ("1", "true", "ok"):
+        assert normalize_solver_status(raw) is CanonicalSolverStatus.UNKNOWN
 
 
 def test_injected_numerical_corruption_detected() -> None:
