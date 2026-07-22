@@ -54,7 +54,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.txt
-          python -m pip install -e ".[solver]" \
+          python -m pip install -e ".[solver-moreau-cpu]" \
             --extra-index-url "https://${GEMFURY_TOKEN}:@pypi.fury.io/optimalintellect/"
       - name: "Vendor CI track: write solver_versions.json"
         run: |

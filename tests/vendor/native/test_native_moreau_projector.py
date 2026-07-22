@@ -182,11 +182,14 @@ def _telemetry_present_keys(d: dict) -> frozenset[str]:
 
 
 def _status_success_like(status: str) -> bool:
-    """CVXPY uses strings like 'optimal'; native Moreau may return vendor codes (e.g. '1')."""
-    s = str(status).strip().lower()
-    if s in ("1", "true", "ok"):
-        return True
-    return "optimal" in s or s in ("solved", "success", "converged")
+    """Compare success via canonical status — never treat '1'/'true'/'ok' as success."""
+    from conicshield.backends.status import CanonicalSolverStatus, normalize_solver_status
+
+    canon = normalize_solver_status(status)
+    return canon in {
+        CanonicalSolverStatus.OPTIMAL,
+        CanonicalSolverStatus.OPTIMAL_INACCURATE,
+    }
 
 
 @pytest.mark.requires_moreau

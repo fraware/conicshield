@@ -1,0 +1,11 @@
+#
+# Governed constraints for solver-moreau-cpu (Linux/WSL, no CUDA extra).
+# Install ONLY with the vendor-approved extra-index URL.
+# Pin the exact Moreau version attested by Vendor CI; replace MOREAU_VERSION below
+# after recording `conicshield solver-doctor --json` on the governed host.
+#
+# moreau==MOREAU_VERSION
+cvxpy==1.8.2
+cvxpylayers==1.0.4
+numpy==2.4.4
+scipy==1.17.1

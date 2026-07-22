@@ -1,0 +1,10 @@
+#
+# Governed constraints for solver-moreau-cuda (Linux/WSL + NVIDIA).
+# Do NOT use this profile on CPU-only hosts.
+# Pin exact Moreau+CUDA wheel versions from Vendor CI attestation.
+#
+# moreau[cuda]==MOREAU_VERSION
+cvxpy==1.8.2
+cvxpylayers==1.0.4
+numpy==2.4.4
+scipy==1.17.1

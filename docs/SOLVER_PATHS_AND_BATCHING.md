@@ -1,6 +1,30 @@
 # Solver paths and batching
 
-Three **separate** production solve modes for the same shield QP family. Batch is a first-class API (`Backend.NATIVE_MOREAU_BATCH`), not a benchmark-only shortcut.
+Production solve modes for the same shield QP family. Batch is a first-class API (`Backend.NATIVE_MOREAU_BATCH`), not a benchmark-only shortcut.
+
+## Backend enum
+
+| Backend | Role |
+|---------|------|
+| `AUTO` | Resolves to configured `CONICSHIELD_PRODUCTION_BACKEND` or **`PUBLIC_CLARABEL`**. Never selects vendor Moreau from importability. |
+| `PUBLIC_CLARABEL` | Credential-free CVXPY Clarabel |
+| `PUBLIC_SCS` | Credential-free CVXPY SCS |
+| `CVXPY_MOREAU` | Reference CVXPY + vendor `cp.MOREAU` (default `create_projector`) |
+| `NATIVE_MOREAU` | Native compiled sequential |
+| `NATIVE_MOREAU_BATCH` | Native true batched compiled solve |
+
+See [MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md](MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md) for AUTO policy and packaging.
+
+## Mode 0 — Public Clarabel / SCS / AUTO
+
+```python
+from conicshield.core.solver_factory import Backend, create_projector
+
+projector = create_projector(spec, backend=Backend.AUTO)  # -> PUBLIC_CLARABEL
+# or Backend.PUBLIC_CLARABEL / Backend.PUBLIC_SCS
+```
+
+Works without vendor credentials. Native Windows qualification path.
 
 ## Mode 1 — Reference CVXPY Moreau
 
@@ -38,7 +62,7 @@ Benchmark label: `native_microbatch` (Python loop calling `project` with `batch_
 from conicshield.core.solver_factory import Backend, create_batch_projector
 
 batch = create_batch_projector(spec, backend=Backend.NATIVE_MOREAU_BATCH)
-out = batch.project_batch(proposed_batch, previous_action)  # (K, n)
+out = batch.project_batch(proposed_batch, previous_action)  # BatchProjectionResult
 ```
 
 Benchmark label: `native_compiled_real_batch`.

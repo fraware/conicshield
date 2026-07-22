@@ -1,0 +1,5 @@
+#
+# Optional JAX differentiation profile.
+#
+jax>=0.4.28
+jaxlib>=0.4.28
