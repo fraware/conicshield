@@ -161,7 +161,7 @@
     "expected_behavior": "Heterogeneous batch API with per-row previous/reference/weights under shared structural topology.",
     "current_behavior": "project_batch accepts per-row previous/reference/weights/bounds/rates; BatchProjectionResult with per-row evidence.",
     "test_added": "tests/compilation/test_heterogeneous_batch.py",
-    "fix_pr": null,
+    "fix_pr": 5,
     "status": "fixed",
     "work_package": "S4"
   },
@@ -178,7 +178,7 @@
     "expected_behavior": "Bounded batch-projector cache keyed by structural fingerprint with reuse telemetry.",
     "current_behavior": "BoundedLRUCache batch projector cache with bind_spec reuse and lifecycle metrics.",
     "test_added": "tests/state/test_state_isolation.py",
-    "fix_pr": null,
+    "fix_pr": 5,
     "status": "fixed",
     "work_package": "S4"
   },
@@ -216,7 +216,7 @@
     "expected_behavior": "Fixed-structure CompiledShieldTemplate with parameter fills; skip setup when values fingerprint unchanged.",
     "current_behavior": "CompiledShieldTemplate fills preallocated buffers; setup skipped when setup_values_fingerprint matches.",
     "test_added": "tests/compilation/test_compiled_template.py",
-    "fix_pr": null,
+    "fix_pr": 5,
     "status": "fixed",
     "work_package": "S4"
   },
@@ -235,7 +235,7 @@
     "expected_behavior": "BatchProjectionResult with per-row ProjectionResult and batch-level timing/cache fields.",
     "current_behavior": "BatchProjectionResult.rows carries full per-row verification/release evidence.",
     "test_added": "tests/compilation/test_heterogeneous_batch.py",
-    "fix_pr": null,
+    "fix_pr": 5,
     "status": "fixed",
     "work_package": "S4"
   },
