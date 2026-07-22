@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
 from scipy import sparse  # type: ignore[import-untyped]
 
 from conicshield.backends.status import normalize_moreau_status
+from conicshield.compilation.metrics import LifecycleMetrics
+from conicshield.core.interfaces import ConcurrencyModel
 from conicshield.solver_errors import require_solver_module
 from conicshield.specs.native_moreau_builder import build_moreau_standard_form
 from conicshield.specs.schema import SafetySpec
@@ -24,21 +27,41 @@ from .moreau_compiled import (
 
 
 class NativeMoreauCompiledBatchProjector:
-    """One ``CompiledSolver`` call per batch (``batch_size`` = number of proposals)."""
+    """One ``CompiledSolver`` call per batch (``batch_size`` = number of proposals).
+
+    Warm starts are indexed by a stable trajectory/row identity tuple. When
+    ``trajectory_ids`` are omitted, a single anonymous batch scope is used (only
+    safe when the caller guarantees the same trajectories occupy the same rows).
+    Concurrency model: :attr:`ConcurrencyModel.INSTANCE_CONFINED`.
+    """
+
+    concurrency_model: ConcurrencyModel = ConcurrencyModel.INSTANCE_CONFINED
 
     def __init__(
         self,
         *,
         spec: SafetySpec,
         options: NativeMoreauCompiledOptions | None = None,
+        metrics: LifecycleMetrics | None = None,
     ) -> None:
         self.spec = spec
         self.options = options or NativeMoreauCompiledOptions()
-        self._warm: Any = None
+        self.metrics = metrics if metrics is not None else LifecycleMetrics()
+        self._warm_by_traj: dict[tuple[str, ...], Any] = {}
         self._compiled: Any = None
         self._csr_key: _CSRStructureKey | None = None
         self._batch_k: int | None = None
         self._compiled_settings_key: tuple[Any, ...] | None = None
+        self._last_setup_values_fp: tuple[Any, ...] | None = None
+
+    def reset_state(self, *, scope_id: str | None = None) -> None:
+        """Clear warm starts for all trajectories, or only those containing ``scope_id``."""
+        if scope_id is None:
+            self._warm_by_traj.clear()
+            return
+        drop = [k for k in self._warm_by_traj if scope_id in k]
+        for k in drop:
+            del self._warm_by_traj[k]
 
     def _moreau_settings(self, moreau: Any, *, batch_size: int) -> Any:
         dev = self.options.device
@@ -69,6 +92,23 @@ class NativeMoreauCompiledBatchProjector:
             bool(getattr(s, "enable_grad", False)),
         )
 
+    def _trajectory_key(
+        self,
+        trajectory_ids: Sequence[str] | None,
+        *,
+        batch_size: int,
+    ) -> tuple[str, ...]:
+        if trajectory_ids is None:
+            return ("__anonymous_batch__", str(batch_size))
+        ids = tuple(str(t) for t in trajectory_ids)
+        if len(ids) != batch_size:
+            raise ValueError(
+                f"trajectory_ids length {len(ids)} must match batch size {batch_size}"
+            )
+        if len(set(ids)) != len(ids):
+            raise ValueError("trajectory_ids must be unique within a batch")
+        return ids
+
     def project_batch(
         self,
         proposed_batch: np.ndarray,
@@ -77,6 +117,7 @@ class NativeMoreauCompiledBatchProjector:
         reference_action: np.ndarray | None = None,
         policy_weight: float = 1.0,
         reference_weight: float = 0.0,
+        trajectory_ids: Sequence[str] | None = None,
     ) -> np.ndarray:
         """Return corrected actions with shape ``(K, n)`` from a single batched solve."""
         require_solver_module("moreau", "native Moreau batch projector")
@@ -94,6 +135,8 @@ class NativeMoreauCompiledBatchProjector:
             raise ValueError("batch size must be >= 1")
         if n != data.n:
             raise ValueError(f"proposed_batch action_dim {n} != spec action_dim {data.n}")
+
+        traj_key = self._trajectory_key(trajectory_ids, batch_size=k_batch)
 
         p0: sparse.csr_matrix | None = None
         a0: sparse.csr_matrix | None = None
@@ -131,8 +174,25 @@ class NativeMoreauCompiledBatchProjector:
         q_mat = np.stack(qs, axis=0)
         b_mat = np.tile(np.asarray(b0, dtype=np.float64).reshape(1, -1), (k_batch, 1))
 
-        warm = self._warm if self.options.persist_warm_start else None
+        warm: Any | None = None
+        if self.options.persist_warm_start:
+            warm = self._warm_by_traj.get(traj_key)
+            if warm is not None:
+                self.metrics.record_warm_start_hit()
+            else:
+                # Stale warms for overlapping but non-identical trajectory sets must not leak.
+                overlapping = [
+                    k for k in self._warm_by_traj if set(k) & set(traj_key) and k != traj_key
+                ]
+                if overlapping:
+                    self.metrics.record_warm_start_rejection()
+                    for k in overlapping:
+                        del self._warm_by_traj[k]
+
         fp = self._settings_fingerprint(moreau, batch_size=k_batch)
+        p_data = np.asarray(p0.data, dtype=np.float64)
+        a_data = np.asarray(a0.data, dtype=np.float64)
+        values_fp = (p_data.tobytes(), a_data.tobytes())
         need_build = (
             self._compiled is None
             or self._batch_k != k_batch
@@ -155,23 +215,30 @@ class NativeMoreauCompiledBatchProjector:
             self._csr_key = key
             self._batch_k = k_batch
             self._compiled_settings_key = fp
-            self._warm = None
+            self._last_setup_values_fp = None
+            # Structure change invalidates all warm starts for this projector.
+            self._warm_by_traj.clear()
+            warm = None
+            self.metrics.record_solver_rebuild()
 
         solver = self._compiled
-        solver.setup(np.asarray(p0.data, dtype=np.float64), np.asarray(a0.data, dtype=np.float64))
+        if self._last_setup_values_fp == values_fp:
+            self.metrics.record_setup_reuse()
+        solver.setup(p_data, a_data)
+        self._last_setup_values_fp = values_fp
         try:
             solution = solver.solve(qs=q_mat, bs=b_mat, warm_start=warm)
-        except Exception:
-            self._warm = None
+        except (RuntimeError, ValueError, TypeError, AttributeError, OSError):
+            self._warm_by_traj.pop(traj_key, None)
             raise
 
         if self.options.persist_warm_start and hasattr(solution, "to_warm_start"):
             try:
-                self._warm = solution.to_warm_start()
-            except Exception:
-                self._warm = None
+                self._warm_by_traj[traj_key] = solution.to_warm_start()
+            except (TypeError, ValueError, AttributeError, RuntimeError):
+                self._warm_by_traj.pop(traj_key, None)
         elif not self.options.persist_warm_start:
-            self._warm = None
+            self._warm_by_traj.pop(traj_key, None)
 
         xbat = np.asarray(solution.x, dtype=np.float64)
         if xbat.ndim != 2 or xbat.shape[0] != k_batch:

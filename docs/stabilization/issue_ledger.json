@@ -72,18 +72,20 @@
     "affected_paths": [
       "conicshield/adapters/inter_sim_rl/shield.py",
       "conicshield/core/moreau_compiled.py",
-      "conicshield/core/moreau_batched.py"
+      "conicshield/core/moreau_batched.py",
+      "conicshield/core/interfaces.py",
+      "conicshield/compilation/"
     ],
     "reproduction": [
       "InterSimConicShield.choose_action populates _projector_cache; native projector stores _warm.",
       "reset_episode() only clears _previous_distribution."
     ],
     "expected_behavior": "reset_episode clears previous action and episode/projector warm-start (or equivalent reset_state protocol) so first-solve matches a fresh projector.",
-    "current_behavior": "Cached projectors and persist_warm_start state survive reset_episode.",
+    "current_behavior": "reset_episode clears previous distribution and calls reset_state on cached sequential/batch projectors; StatefulProjectorProtocol declared.",
     "test_added": "tests/stabilization/test_p0_warm_start_isolation.py::test_reset_episode_clears_projector_warm_start_state",
     "fix_pr": null,
-    "status": "open",
-    "work_package": "S2"
+    "status": "fixed",
+    "work_package": "S3"
   },
   {
     "issue_id": "CS-SOLVER-005",
@@ -123,7 +125,7 @@
     "test_added": "tests/stabilization/test_p0_backend_boundaries.py",
     "fix_pr": null,
     "status": "open",
-    "work_package": "S3"
+    "work_package": "S5"
   },
   {
     "issue_id": "CS-SOLVER-007",
@@ -184,17 +186,19 @@
     "severity": "P1",
     "title": "Cache keys mix structure with runtime values",
     "affected_paths": [
-      "conicshield/adapters/inter_sim_rl/shield.py"
+      "conicshield/adapters/inter_sim_rl/shield.py",
+      "conicshield/compilation/structural_keys.py",
+      "conicshield/compilation/bounded_cache.py"
     ],
     "reproduction": [
       "_spec_cache_key hashes full SafetySpec.model_dump() including numeric bounds/rates."
     ],
     "expected_behavior": "Separate structural fingerprint from numerical parameters and trajectory state; bounded LRU.",
-    "current_behavior": "Full JSON hash; unbounded dict cache.",
-    "test_added": null,
+    "current_behavior": "structural_fingerprint + numerical_signature; InterSim uses BoundedLRUCache keyed by structure (S4 still owns full ConstraintTopology compiler).",
+    "test_added": "tests/state/test_state_isolation.py",
     "fix_pr": null,
-    "status": "open",
-    "work_package": "S4"
+    "status": "fixed",
+    "work_package": "S3"
   },
   {
     "issue_id": "CS-SOLVER-104",
@@ -274,17 +278,19 @@
     "title": "Concurrency behavior undefined",
     "affected_paths": [
       "conicshield/core/moreau_compiled.py",
-      "conicshield/adapters/inter_sim_rl/shield.py"
+      "conicshield/adapters/inter_sim_rl/shield.py",
+      "conicshield/compilation/solver_pool.py",
+      "conicshield/core/interfaces.py"
     ],
     "reproduction": [
       "Cached projectors hold mutable warm-start/compiled solver state with no declared concurrency model."
     ],
     "expected_behavior": "Declared model (instance-confined, lock-protected, or pooled exclusive checkout) with tests.",
-    "current_behavior": "Undefined concurrent use of mutable projectors.",
-    "test_added": null,
+    "current_behavior": "ConcurrencyModel declared on projectors/shield; SolverPool exclusive checkout; concurrent episode isolation tests.",
+    "test_added": "tests/concurrency/test_concurrency_isolation.py",
     "fix_pr": null,
-    "status": "open",
-    "work_package": "S2"
+    "status": "fixed",
+    "work_package": "S3"
   },
   {
     "issue_id": "CS-SOLVER-109",
