@@ -17,7 +17,7 @@
     "expected_behavior": "Native cone rows encode each finite declared lower bound (x_i >= lower_i), matching CVXPY; no stronger implicit nonnegativity unless required by the constraint family.",
     "current_behavior": "Native encodes -x_i <= -lower_i and x_i <= upper_i from canonical ShieldQPData; no unconditional nonnegativity.",
     "test_added": "tests/stabilization/test_p0_native_lower_bounds.py::test_native_builder_encodes_negative_lower_bounds_like_cvxpy",
-    "fix_pr": null,
+    "fix_pr": 2,
     "status": "fixed",
     "work_package": "S1"
   },
@@ -98,7 +98,7 @@
     "expected_behavior": "Finite policy_weight >= 0, reference_weight >= 0, and strictly positive sum; otherwise raise a typed error.",
     "current_behavior": "validate_objective_weights / objective_pq raise InvalidObjectiveWeightError; CVXPY path uses the same validator.",
     "test_added": "tests/stabilization/test_p0_invalid_weight_coercion.py",
-    "fix_pr": null,
+    "fix_pr": 2,
     "status": "fixed",
     "work_package": "S1"
   },
