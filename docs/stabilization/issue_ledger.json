@@ -28,18 +28,20 @@
     "affected_paths": [
       "conicshield/core/moreau_compiled.py",
       "conicshield/core/moreau_batched.py",
-      "conicshield/specs/compiler.py"
+      "conicshield/specs/compiler.py",
+      "conicshield/verification/",
+      "conicshield/backends/status.py"
     ],
     "reproduction": [
       "Native: project() assigns corrected_action from solution.x with no residual/finite gate.",
       "CVXPY: only checks x.value is not None; no inaccurate/timeout/iteration-limit release policy."
     ],
     "expected_behavior": "Backend-independent verifier gates release on finite values, residuals, and declared status policy.",
-    "current_behavior": "Native returns solution.x; CVXPY returns x.value when present.",
+    "current_behavior": "Native and CVXPY paths release only via run_verified_release_pipeline (status + residuals + fallback ladder).",
     "test_added": "tests/stabilization/test_p0_admissibility.py",
     "fix_pr": null,
-    "status": "open",
-    "work_package": "S1"
+    "status": "fixed",
+    "work_package": "S2"
   },
   {
     "issue_id": "CS-SOLVER-003",

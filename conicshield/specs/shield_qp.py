@@ -155,10 +155,11 @@ def parse_safety_spec_for_shield(spec: SafetySpec) -> ShieldQPData:
                 "no action is admissible; set SafetySpec.fail_safe_policy explicitly "
                 f"(e.g. FailSafePolicy.{FailSafePolicy.REJECT.name})"
             )
-        if policy is FailSafePolicy.REJECT:
-            raise NoAdmissibleActionError(
-                "no action is admissible under FailSafePolicy.REJECT"
-            )
+        # Empty admissible set cannot be recovered by any fail-safe synthesizer.
+        raise NoAdmissibleActionError(
+            "no action is admissible; fail-safe policies cannot synthesize an "
+            f"action from an empty allowed set (policy={policy!r})"
+        )
 
     return ShieldQPData(
         n=n,
