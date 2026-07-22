@@ -71,10 +71,24 @@ Benchmark label: `native_compiled_real_batch`.
 
 ## Benchmark and reports
 
+Decision-grade Track 1 matrix (preferred for qualification claims):
+
+```bash
+python scripts/decision_grade_benchmark.py --out-dir benchmarks/reports/s8_qualification
+# equivalent:
+python scripts/performance_benchmark.py --decision-grade --out-dir benchmarks/reports/s8_qualification
+```
+
+Unavailable backends are recorded as `NOT_RUN` with reasons — never invent latency.
+
+Smoke / vendor sweep (when Moreau is installed):
+
 ```bash
 python scripts/performance_benchmark.py --out-dir output/perf --repeats 5 --sweep --batch-sizes 4,8,16
 python scripts/batch_solve_report.py --input output/perf/performance_summary.json --out output/perf/batch_solve_report.json
 ```
+
+See [`stabilization/PRODUCTION_QUALIFICATION_REPORT.md`](stabilization/PRODUCTION_QUALIFICATION_REPORT.md).
 
 `batch_solve_report.json` (v2) always includes:
 

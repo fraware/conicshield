@@ -1,0 +1,3710 @@
+{
+  "schema_version": "conicshield_s8_decision_grade/v1",
+  "provenance": {
+    "generated_at_utc": "2026-07-22T23:36:44Z",
+    "host": {
+      "system": "Windows",
+      "release": "11",
+      "machine": "AMD64",
+      "python": "3.12.10",
+      "executable": "C:\\Users\\mateo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "conicshield_commit": "d7f1da49b893557dd72e5d55fbc6018d79eb255e",
+    "solver_doctor_subset": {
+      "os_name": "Windows",
+      "arch": "AMD64",
+      "environment_type": "conda",
+      "moreau": {
+        "identity": {
+          "import_name": "moreau",
+          "distribution_name": "moreau",
+          "version": "0.1.0.2",
+          "location": "C:\\Users\\mateo\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\moreau\\__init__.py",
+          "wheel_or_dist_hash": "sha256-files:79757afccb3e94bad81d2076b07afceb73e6e01bd7b7b89f8e1a22c0587d0623",
+          "installer": "pip",
+          "approved_channel": false,
+          "expected_api_present": false,
+          "missing_api": [
+            "CompiledSolver",
+            "Settings"
+          ],
+          "import_error": "ImportError: \nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n",
+          "notes": [
+            "Native Windows is unsupported for vendor Moreau; use WSL2/Linux for Moreau capability probes and PUBLIC_* backends on Windows."
+          ],
+          "secrets_redacted": true
+        },
+        "license_entitlement_valid": null,
+        "license_check_error": null,
+        "cvxpy_solver_registered": true,
+        "cpu_backend": null,
+        "cuda_backend": null,
+        "native_compiled_api": false,
+        "differentiation_api": false,
+        "migration_warnings": []
+      },
+      "capabilities_evidence_subset": {
+        "public_clarabel": {
+          "package_importable": true,
+          "expected_api_available": true,
+          "cpu_backend": true,
+          "cuda_backend": false,
+          "cvxpy_integration_registered": true,
+          "native_compiled_api": false
+        },
+        "public_scs": {
+          "package_importable": true,
+          "expected_api_available": true,
+          "cpu_backend": true,
+          "cuda_backend": false,
+          "cvxpy_integration_registered": true,
+          "native_compiled_api": false
+        },
+        "cvxpy_moreau": {
+          "package_importable": false,
+          "expected_api_available": false,
+          "cpu_backend": false,
+          "cuda_backend": false,
+          "cvxpy_integration_registered": true,
+          "native_compiled_api": false
+        },
+        "native_moreau": {
+          "package_importable": false,
+          "expected_api_available": false,
+          "cpu_backend": false,
+          "cuda_backend": false,
+          "cvxpy_integration_registered": true,
+          "native_compiled_api": false
+        },
+        "native_moreau_batch": {
+          "package_importable": false,
+          "expected_api_available": false,
+          "cpu_backend": false,
+          "cuda_backend": false,
+          "cvxpy_integration_registered": true,
+          "native_compiled_api": false
+        }
+      },
+      "cuda": {
+        "nvidia_smi": null,
+        "cuda_visible_devices_set": false,
+        "reason": "nvidia-smi_not_found"
+      },
+      "available_devices": {
+        "cpu": true,
+        "cuda": null,
+        "platform": "win32"
+      },
+      "platform_notes": [
+        "Native Windows: vendor Moreau is unsupported; PUBLIC_CLARABEL / PUBLIC_SCS / AUTO remain the qualification path. Use WSL2 for Moreau capability probes."
+      ],
+      "distributions": {}
+    },
+    "memory_rss_mb_start": 124.29296875,
+    "limitations": [
+      "Public-path numbers on this host are decision-grade for PUBLIC_* only.",
+      "Vendor Moreau / CUDA / live sidecar numbers must not be inferred from public microbenchmarks.",
+      "verification_time_sec is estimated as e2e \u2212 solver \u2212 setup \u2212 construction \u2212 ipc when those are present."
+    ],
+    "memory_rss_mb_end": 127.2109375
+  },
+  "config": {
+    "action_dims": [
+      4,
+      8
+    ],
+    "batch_sizes": [
+      1,
+      4,
+      8
+    ],
+    "repeats": 5,
+    "warmup": 1,
+    "include_vendor": false
+  },
+  "backend_availability": {
+    "public_clarabel": {
+      "available": true,
+      "reason": null
+    },
+    "public_scs": {
+      "available": true,
+      "reason": null
+    },
+    "auto": {
+      "available": true,
+      "reason": null
+    },
+    "cvxpy_moreau": {
+      "available": false,
+      "reason": "ImportError: \nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n"
+    },
+    "native_moreau": {
+      "available": false,
+      "reason": "ImportError: \nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n"
+    }
+  },
+  "cells": [
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n4_well_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011309649999020621,
+          "p50": 0.011379399998986628,
+          "p95": 0.013111630000639706,
+          "p99": 0.013214566002134234,
+          "max": 0.013240300002507865,
+          "min": 0.009239499995601363,
+          "stderr_of_mean": 0.0009144706930682716,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.000123575,
+          "p50": 0.0001075,
+          "p95": 0.00017412999999999996,
+          "p99": 0.000182746,
+          "max": 0.0001849,
+          "min": 9.44e-05,
+          "stderr_of_mean": 2.079957431455429e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011186074999020622,
+          "p50": 0.011235999998986628,
+          "p95": 0.013003655000639706,
+          "p99": 0.013117451002134234,
+          "max": 0.013145900002507866,
+          "min": 0.009126399995601364,
+          "stderr_of_mean": 0.0009100141601868359,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 4.01123578797069e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.010376300007919781,
+          "solver_time_sec": 0.0001019,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.01027440000791978,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.013240300002507865,
+          "solver_time_sec": 9.44e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.013145900002507866,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.012382499990053475,
+          "solver_time_sec": 0.0001849,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.012197599990053475,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009239499995601363,
+          "solver_time_sec": 0.0001131,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009126399995601364,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=4",
+        "conditioning=well",
+        "rate_delta=0.9"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n4_well_public_scs",
+      "backend": "public_scs",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.012349700002232566,
+          "p50": 0.010425500004203059,
+          "p95": 0.018661089990200705,
+          "p99": 0.01981469798905891,
+          "max": 0.020103099988773465,
+          "min": 0.008444700011750683,
+          "stderr_of_mean": 0.0026264293064328253,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 3.1725e-05,
+          "p50": 3.15e-05,
+          "p95": 3.751999999999999e-05,
+          "p99": 3.7664e-05,
+          "max": 3.7699999999999995e-05,
+          "min": 2.62e-05,
+          "stderr_of_mean": 3.11351221827269e-06,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00050575,
+          "p50": 6.13e-05,
+          "p95": 0.0015873649999999994,
+          "p99": 0.0018008329999999997,
+          "max": 0.0018542,
+          "min": 4.62e-05,
+          "stderr_of_mean": 0.0004495337593922545,
+          "unit": "sec"
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011812225002232566,
+          "p50": 0.010332700004203058,
+          "p95": 0.017036204990200702,
+          "p99": 0.01797620098905891,
+          "max": 0.018211199988773463,
+          "min": 0.008372300011750683,
+          "stderr_of_mean": 0.002182545137697365,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 7.20348338623111e-07,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.008444700011750683,
+          "solver_time_sec": 2.62e-05,
+          "setup_time_sec": 4.62e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.008372300011750683,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.010361300010117702,
+          "solver_time_sec": 2.65e-05,
+          "setup_time_sec": 4.7300000000000005e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.010287500010117702,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.010489699998288415,
+          "solver_time_sec": 3.65e-05,
+          "setup_time_sec": 7.53e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.010377899998288415,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.020103099988773465,
+          "solver_time_sec": 3.7699999999999995e-05,
+          "setup_time_sec": 0.0018542,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.018211199988773463,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=4",
+        "conditioning=well",
+        "rate_delta=0.9"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n4_well_auto",
+      "backend": "auto",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.012802049997844733,
+          "p50": 0.01306664999719942,
+          "p95": 0.01568647499589133,
+          "p99": 0.01590121499481029,
+          "max": 0.01595489999454003,
+          "min": 0.009120000002440065,
+          "stderr_of_mean": 0.0014734450770937922,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00012992499999999997,
+          "p50": 0.00012989999999999999,
+          "p95": 0.000151985,
+          "p99": 0.000152237,
+          "max": 0.0001523,
+          "min": 0.0001076,
+          "stderr_of_mean": 1.2326216978456932e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.012672124997844734,
+          "p50": 0.012915399997199421,
+          "p95": 0.01557248499589133,
+          "p99": 0.01579233699481029,
+          "max": 0.01584729999454003,
+          "min": 0.009010400002440066,
+          "stderr_of_mean": 0.0014727370143196006,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 4.01123578797069e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.01595489999454003,
+          "solver_time_sec": 0.0001076,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.01584729999454003,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.014165400003548712,
+          "solver_time_sec": 0.0001502,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.014015200003548712,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.011967899990850128,
+          "solver_time_sec": 0.0001523,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011815599990850129,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009120000002440065,
+          "solver_time_sec": 0.0001096,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009010400002440066,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=4",
+        "conditioning=well",
+        "rate_delta=0.9"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n4_ill_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.025141449994407594,
+          "p50": 0.012015249994874466,
+          "p95": 0.05836621499329338,
+          "p99": 0.06480660299246664,
+          "max": 0.06641669999225996,
+          "min": 0.01011859999562148,
+          "stderr_of_mean": 0.013768916890785311,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00011765000000000001,
+          "p50": 9.335e-05,
+          "p95": 0.00017923499999999997,
+          "p99": 0.00019112699999999997,
+          "max": 0.0001941,
+          "min": 8.98e-05,
+          "stderr_of_mean": 2.550596335500125e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.025023799994407594,
+          "p50": 0.011924499994874466,
+          "p95": 0.05827199499329338,
+          "p99": 0.06471175899246664,
+          "max": 0.06632169999225997,
+          "min": 0.009924499995621481,
+          "stderr_of_mean": 0.013777281535659892,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 4.3021142204224803e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.01011859999562148,
+          "solver_time_sec": 0.0001941,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009924499995621481,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.011283699990599416,
+          "solver_time_sec": 9.17e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011191999990599416,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.06641669999225996,
+          "solver_time_sec": 9.5e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.06632169999225997,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.012746799999149516,
+          "solver_time_sec": 8.98e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.012656999999149517,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=4",
+        "conditioning=ill",
+        "rate_delta=0.05"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n4_ill_public_scs",
+      "backend": "public_scs",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.01372195000294596,
+          "p50": 0.01372195000294596,
+          "p95": 0.014244265011802782,
+          "p99": 0.014290693012590054,
+          "max": 0.014302300012786873,
+          "min": 0.013141599993105046,
+          "stderr_of_mean": 0.0005803500098409131,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.00016995,
+          "p50": 0.00016995,
+          "p95": 0.000173955,
+          "p99": 0.00017431100000000002,
+          "max": 0.0001744,
+          "min": 0.0001655,
+          "stderr_of_mean": 4.449999999999999e-06,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 6.67e-05,
+          "p50": 6.67e-05,
+          "p95": 6.759999999999999e-05,
+          "p99": 6.767999999999999e-05,
+          "max": 6.769999999999999e-05,
+          "min": 6.57e-05,
+          "stderr_of_mean": 9.999999999999972e-07,
+          "unit": "sec"
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.013485300002945958,
+          "p50": 0.013485300002945958,
+          "p95": 0.01401252001180278,
+          "p99": 0.014059384012590053,
+          "max": 0.014071100012786872,
+          "min": 0.012899499993105046,
+          "stderr_of_mean": 0.0005858000098409128,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 1.0420442286829256e-12,
+        "max_ineq_residual_p95": 9.226009185792083e-10,
+        "n_ok": 2,
+        "n_fail": 2
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.007937300004414283,
+          "solver_time_sec": null,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": null,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": false,
+          "error": "VerificationReleaseError: no verified action could be released after fallback ladder"
+        },
+        {
+          "e2e_wall_sec": 0.013141599993105046,
+          "solver_time_sec": 0.0001744,
+          "setup_time_sec": 6.769999999999999e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.012899499993105046,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.014302300012786873,
+          "solver_time_sec": 0.0001655,
+          "setup_time_sec": 6.57e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.014071100012786872,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.012602599992533214,
+          "solver_time_sec": null,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": null,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": false,
+          "error": "VerificationReleaseError: no verified action could be released after fallback ladder"
+        }
+      ],
+      "failures": [
+        "VerificationReleaseError: no verified action could be released after fallback ladder",
+        "VerificationReleaseError: no verified action could be released after fallback ladder"
+      ],
+      "notes": [
+        "action_dim=4",
+        "conditioning=ill",
+        "rate_delta=0.05",
+        "partial_failures=2/4 (recorded, not invented)"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n4_ill_auto",
+      "backend": "auto",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011419074995501433,
+          "p50": 0.011620549994404428,
+          "p95": 0.014077380001253914,
+          "p99": 0.014376996002101804,
+          "max": 0.014451900002313778,
+          "min": 0.007983299990883097,
+          "stderr_of_mean": 0.0013325292104616083,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.000114125,
+          "p50": 0.00011515,
+          "p95": 0.00014026,
+          "p99": 0.000140452,
+          "max": 0.0001405,
+          "min": 8.57e-05,
+          "stderr_of_mean": 1.4815103498344743e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011304949995501431,
+          "p50": 0.011504599994404428,
+          "p95": 0.013938240001253913,
+          "p99": 0.014238048002101803,
+          "max": 0.014313000002313777,
+          "min": 0.007897599990883098,
+          "stderr_of_mean": 0.00132067909118208,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 4.3021142204224803e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.011285999993560836,
+          "solver_time_sec": 9.14e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011194599993560836,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.01195509999524802,
+          "solver_time_sec": 0.0001405,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.01181459999524802,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.014451900002313778,
+          "solver_time_sec": 0.0001389,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.014313000002313777,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.007983299990883097,
+          "solver_time_sec": 8.57e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.007897599990883098,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=4",
+        "conditioning=ill",
+        "rate_delta=0.05"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n8_well_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.010558224999840604,
+          "p50": 0.011127700003271457,
+          "p95": 0.011464064991014312,
+          "p99": 0.011475452988670441,
+          "max": 0.011478299988084473,
+          "min": 0.00849920000473503,
+          "stderr_of_mean": 0.0006991358033297815,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00023355,
+          "p50": 0.00015815000000000002,
+          "p95": 0.00045115499999999985,
+          "p99": 0.0004895909999999999,
+          "max": 0.0004992,
+          "min": 0.0001187,
+          "stderr_of_mean": 8.943894099701016e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.010324674999840605,
+          "p50": 0.010818750003271458,
+          "p95": 0.011329469991014312,
+          "p99": 0.011338613988670442,
+          "max": 0.011340899988084473,
+          "min": 0.008320300004735031,
+          "stderr_of_mean": 0.0007033370089862806,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 5.132005931329785e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.011478299988084473,
+          "solver_time_sec": 0.0001374,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011340899988084473,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.00849920000473503,
+          "solver_time_sec": 0.0001789,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.008320300004735031,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.011383400007616729,
+          "solver_time_sec": 0.0001187,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.01126470000761673,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.010871999998926185,
+          "solver_time_sec": 0.0004992,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.010372799998926185,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=8",
+        "conditioning=well",
+        "rate_delta=0.9"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n8_well_public_scs",
+      "backend": "public_scs",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.01135002500450355,
+          "p50": 0.010672650001652073,
+          "p95": 0.01461011000428698,
+          "p99": 0.015084662004810524,
+          "max": 0.015203300004941411,
+          "min": 0.008851500009768642,
+          "stderr_of_mean": 0.0013745210186890833,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 5.6624999999999994e-05,
+          "p50": 5.6649999999999995e-05,
+          "p95": 6.045e-05,
+          "p99": 6.081e-05,
+          "max": 6.09e-05,
+          "min": 5.23e-05,
+          "stderr_of_mean": 1.8281935528457239e-06,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 9.925e-05,
+          "p50": 9.145e-05,
+          "p95": 0.00014314499999999999,
+          "p99": 0.000150309,
+          "max": 0.0001521,
+          "min": 6.2e-05,
+          "stderr_of_mean": 1.8938870962476444e-05,
+          "unit": "sec"
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011194150004503549,
+          "p50": 0.010496250001652073,
+          "p95": 0.014463060004286979,
+          "p99": 0.014937012004810525,
+          "max": 0.015055500004941411,
+          "min": 0.008728600009768642,
+          "stderr_of_mean": 0.0013755736885859974,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 9.768547027944053e-08,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.015203300004941411,
+          "solver_time_sec": 5.54e-05,
+          "setup_time_sec": 9.24e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.015055500004941411,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.011248700000578538,
+          "solver_time_sec": 5.23e-05,
+          "setup_time_sec": 9.049999999999999e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011105900000578537,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.010096600002725609,
+          "solver_time_sec": 5.79e-05,
+          "setup_time_sec": 0.0001521,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009886600002725609,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.008851500009768642,
+          "solver_time_sec": 6.09e-05,
+          "setup_time_sec": 6.2e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.008728600009768642,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=8",
+        "conditioning=well",
+        "rate_delta=0.9"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n8_well_auto",
+      "backend": "auto",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.012009849997411948,
+          "p50": 0.012295649998122826,
+          "p95": 0.013851694996992592,
+          "p99": 0.014011858997691888,
+          "max": 0.014051899997866713,
+          "min": 0.009396199995535426,
+          "stderr_of_mean": 0.0009797919257092712,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.0001846,
+          "p50": 0.000192,
+          "p95": 0.000222425,
+          "p99": 0.00022344499999999999,
+          "max": 0.0002237,
+          "min": 0.0001307,
+          "stderr_of_mean": 2.164104895794101e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011825249997411948,
+          "p50": 0.012103649998122825,
+          "p95": 0.01362926999699259,
+          "p99": 0.013788413997691889,
+          "max": 0.013828199997866712,
+          "min": 0.009265499995535427,
+          "stderr_of_mean": 0.0009590145694290676,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 5.132005931329785e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.012717199992039241,
+          "solver_time_sec": 0.0002152,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.01250199999203924,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.014051899997866713,
+          "solver_time_sec": 0.0002237,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.013828199997866712,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009396199995535426,
+          "solver_time_sec": 0.0001307,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009265499995535427,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.011874100004206412,
+          "solver_time_sec": 0.0001688,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011705300004206411,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=8",
+        "conditioning=well",
+        "rate_delta=0.9"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n8_ill_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.012487150004744763,
+          "p50": 0.011623250007687602,
+          "p95": 0.016609264998260185,
+          "p99": 0.017108812997030327,
+          "max": 0.017233699996722862,
+          "min": 0.009468400006880984,
+          "stderr_of_mean": 0.0017636618342394736,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00016815000000000002,
+          "p50": 0.00014330000000000001,
+          "p95": 0.00023511499999999993,
+          "p99": 0.00024782299999999993,
+          "max": 0.000251,
+          "min": 0.000135,
+          "stderr_of_mean": 2.7695622397772533e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.012319000004744764,
+          "p50": 0.011425200007687602,
+          "p95": 0.016451339998260185,
+          "p99": 0.016964027997030326,
+          "max": 0.017092199996722863,
+          "min": 0.009333400006880984,
+          "stderr_of_mean": 0.0017603224301281919,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 9.436895709313827e-16,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.01017570000840351,
+          "solver_time_sec": 0.0001451,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.01003060000840351,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009468400006880984,
+          "solver_time_sec": 0.000135,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009333400006880984,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.013070800006971695,
+          "solver_time_sec": 0.000251,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.012819800006971695,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.017233699996722862,
+          "solver_time_sec": 0.0001415,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.017092199996722863,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=8",
+        "conditioning=ill",
+        "rate_delta=0.05"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n8_ill_public_scs",
+      "backend": "public_scs",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.009914399997796863,
+          "p50": 0.009914399997796863,
+          "p95": 0.009988830001384485,
+          "p99": 0.009995446001703386,
+          "max": 0.00999710000178311,
+          "min": 0.009831699993810616,
+          "stderr_of_mean": 8.270000398624688e-05,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.00023100000000000003,
+          "p50": 0.00023100000000000003,
+          "p95": 0.00030147,
+          "p99": 0.00030773400000000005,
+          "max": 0.00030930000000000004,
+          "min": 0.0001527,
+          "stderr_of_mean": 7.830000000000002e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 6.02e-05,
+          "p50": 6.02e-05,
+          "p95": 6.047e-05,
+          "p99": 6.0494e-05,
+          "max": 6.05e-05,
+          "min": 5.99e-05,
+          "stderr_of_mean": 3.0000000000000046e-07,
+          "unit": "sec"
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.009623199997796863,
+          "p50": 0.009623199997796863,
+          "p95": 0.009768370001384485,
+          "p99": 0.009781274001703385,
+          "max": 0.00978450000178311,
+          "min": 0.009461899993810616,
+          "stderr_of_mean": 0.00016130000398624673,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 8.513493354733725e-10,
+        "max_ineq_residual_p95": 6.082841150625851e-07,
+        "n_ok": 2,
+        "n_fail": 2
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.009831699993810616,
+          "solver_time_sec": 0.00030930000000000004,
+          "setup_time_sec": 6.05e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009461899993810616,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.00999710000178311,
+          "solver_time_sec": 0.0001527,
+          "setup_time_sec": 5.99e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.00978450000178311,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.01254029999836348,
+          "solver_time_sec": null,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": null,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": false,
+          "error": "VerificationReleaseError: no verified action could be released after fallback ladder"
+        },
+        {
+          "e2e_wall_sec": 0.010431499991682358,
+          "solver_time_sec": null,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": null,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": false,
+          "error": "VerificationReleaseError: no verified action could be released after fallback ladder"
+        }
+      ],
+      "failures": [
+        "VerificationReleaseError: no verified action could be released after fallback ladder",
+        "VerificationReleaseError: no verified action could be released after fallback ladder"
+      ],
+      "notes": [
+        "action_dim=8",
+        "conditioning=ill",
+        "rate_delta=0.05",
+        "partial_failures=2/4 (recorded, not invented)"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n8_ill_auto",
+      "backend": "auto",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011514525001985021,
+          "p50": 0.011002650004229508,
+          "p95": 0.015056395008286925,
+          "p99": 0.015614719009317922,
+          "max": 0.015754300009575672,
+          "min": 0.008298499989905395,
+          "stderr_of_mean": 0.0015508632871103845,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00020182499999999999,
+          "p50": 0.00020175,
+          "p95": 0.0002445,
+          "p99": 0.00024977999999999996,
+          "max": 0.0002511,
+          "min": 0.0001527,
+          "stderr_of_mean": 2.0204264195131347e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011312700001985022,
+          "p50": 0.010822750004229508,
+          "p95": 0.014811895008286925,
+          "p99": 0.01536493900931792,
+          "max": 0.015503200009575672,
+          "min": 0.008102099989905395,
+          "stderr_of_mean": 0.0015372768368084287,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 9.436895709313827e-16,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.015754300009575672,
+          "solver_time_sec": 0.0002511,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.015503200009575672,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.011101600000984035,
+          "solver_time_sec": 0.0002071,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.010894500000984035,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.010903700007474981,
+          "solver_time_sec": 0.0001527,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.01075100000747498,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.008298499989905395,
+          "solver_time_sec": 0.0001964,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.008102099989905395,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=8",
+        "conditioning=ill",
+        "rate_delta=0.05"
+      ]
+    },
+    {
+      "dimension": "constraint_kinds",
+      "cell_id": "constraint_kinds_matrix",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {
+        "kinds": [
+          "simplex",
+          "turn_feasibility",
+          "box",
+          "rate"
+        ]
+      },
+      "samples": [],
+      "failures": [],
+      "notes": [
+        "Exercised: simplex, turn_feasibility, box, rate",
+        "Not productized: progress, clearance (see PUBLIC_CLAIMS)"
+      ]
+    },
+    {
+      "dimension": "warm_sequence",
+      "cell_id": "warm_seq_n4_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.008754399997997098,
+          "p50": 0.008724450002773665,
+          "p95": 0.009736594994319602,
+          "p99": 0.009844678993104025,
+          "max": 0.009871699992800131,
+          "min": 0.0076969999936409295,
+          "stderr_of_mean": 0.00045550538390352484,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.000100925,
+          "p50": 9.15e-05,
+          "p95": 0.000127775,
+          "p99": 0.000132755,
+          "max": 0.000134,
+          "min": 8.67e-05,
+          "stderr_of_mean": 1.1090414404640913e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.008653474997997098,
+          "p50": 0.008614100002773665,
+          "p95": 0.009646664994319602,
+          "p99": 0.009754292993104026,
+          "max": 0.009781199992800131,
+          "min": 0.00760449999364093,
+          "stderr_of_mean": 0.00045836930928511117,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 7.976952431931749e-15,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.0076969999936409295,
+          "solver_time_sec": 9.25e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.00760449999364093,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.008477900002617389,
+          "solver_time_sec": 0.000134,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.008343900002617389,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009871699992800131,
+          "solver_time_sec": 9.05e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009781199992800131,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.00897100000292994,
+          "solver_time_sec": 8.67e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.00888430000292994,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "episode_reset",
+      "cell_id": "episode_reset_n4_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.010060599997814279,
+          "p50": 0.009759499997016974,
+          "p95": 0.012144689999695401,
+          "p99": 0.01245541800133651,
+          "max": 0.012533100001746789,
+          "min": 0.00819029999547638,
+          "stderr_of_mean": 0.0009064794565864963,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00012805,
+          "p50": 0.00011705,
+          "p95": 0.00018167999999999998,
+          "p99": 0.000187536,
+          "max": 0.000189,
+          "min": 8.91e-05,
+          "stderr_of_mean": 2.3355673828857948e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.009932549997814278,
+          "p50": 0.009620449997016974,
+          "p95": 0.0120121549996954,
+          "p99": 0.01231675100133651,
+          "max": 0.012392900001746789,
+          "min": 0.00809639999547638,
+          "stderr_of_mean": 0.0009004274091856139,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 1.3478107518949398e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.012533100001746789,
+          "solver_time_sec": 0.0001402,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.012392900001746789,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009575300005963072,
+          "solver_time_sec": 0.000189,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009386300005963072,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.00819029999547638,
+          "solver_time_sec": 9.39e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.00809639999547638,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009943699988070875,
+          "solver_time_sec": 8.91e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009854599988070875,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "reset_state() between solves when available"
+      ]
+    },
+    {
+      "dimension": "warm_sequence",
+      "cell_id": "warm_seq_n8_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.011532324999279808,
+          "p50": 0.011926049999601673,
+          "p95": 0.012320845002977875,
+          "p99": 0.01234864900339744,
+          "max": 0.012355600003502332,
+          "min": 0.009921599994413555,
+          "stderr_of_mean": 0.0005523091503674857,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00016554999999999999,
+          "p50": 0.0001677,
+          "p95": 0.00019873000000000002,
+          "p99": 0.000198946,
+          "max": 0.000199,
+          "min": 0.0001278,
+          "stderr_of_mean": 1.8915844328675014e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.01136677499927981,
+          "p50": 0.011762649999601672,
+          "p95": 0.012123375002977875,
+          "p99": 0.012151395003397441,
+          "max": 0.012158400003502332,
+          "min": 0.009783399994413555,
+          "stderr_of_mean": 0.0005400486637306843,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 2.5479618415147338e-15,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.01212390000000596,
+          "solver_time_sec": 0.000199,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011924900000005961,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.012355600003502332,
+          "solver_time_sec": 0.0001972,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.012158400003502332,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.011728199999197386,
+          "solver_time_sec": 0.0001278,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011600399999197385,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009921599994413555,
+          "solver_time_sec": 0.0001382,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009783399994413555,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "episode_reset",
+      "cell_id": "episode_reset_n8_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.009594700000889134,
+          "p50": 0.009614850001526065,
+          "p95": 0.010766210004658204,
+          "p99": 0.010836122004402569,
+          "max": 0.01085360000433866,
+          "min": 0.008295499996165745,
+          "stderr_of_mean": 0.0005869857731086095,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00014382499999999999,
+          "p50": 0.00013475,
+          "p95": 0.00017536499999999997,
+          "p99": 0.00018099299999999998,
+          "max": 0.0001824,
+          "min": 0.0001234,
+          "stderr_of_mean": 1.3137248253217514e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.009450875000889133,
+          "p50": 0.009456650001526064,
+          "p95": 0.010623675004658205,
+          "p99": 0.010699215004402568,
+          "max": 0.01071810000433866,
+          "min": 0.008172099996165746,
+          "stderr_of_mean": 0.00058022359489197,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 1.915134717478395e-15,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.010271000006468967,
+          "solver_time_sec": 0.0001824,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.010088600006468967,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.008958699996583164,
+          "solver_time_sec": 0.000134,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.008824699996583163,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.01085360000433866,
+          "solver_time_sec": 0.0001355,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.01071810000433866,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.008295499996165745,
+          "solver_time_sec": 0.0001234,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.008172099996165746,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "reset_state() between solves when available"
+      ]
+    },
+    {
+      "dimension": "batch_size_microbatch",
+      "cell_id": "microbatch_n4_bs1_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 2,
+      "warmup": 0,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.00993035000283271,
+          "p50": 0.00993035000283271,
+          "p95": 0.01026771500473842,
+          "p99": 0.010297703004907817,
+          "max": 0.010305200004950166,
+          "min": 0.009555500000715256,
+          "stderr_of_mean": 0.000374850002117455,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.00011585,
+          "p50": 0.00011585,
+          "p95": 0.000143705,
+          "p99": 0.000146181,
+          "max": 0.0001468,
+          "min": 8.49e-05,
+          "stderr_of_mean": 3.0949999999999987e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.00981450000283271,
+          "p50": 0.00981450000283271,
+          "p95": 0.010124010004738419,
+          "p99": 0.010151522004907815,
+          "max": 0.010158400004950165,
+          "min": 0.009470600000715255,
+          "stderr_of_mean": 0.0003439000021174549,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 5.956346527113965e-15,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 2,
+        "n_fail": 0,
+        "throughput_solves_per_sec": 100.70138511882683
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.009555500000715256,
+          "solver_time_sec": 8.49e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009470600000715255,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.010305200004950166,
+          "solver_time_sec": 0.0001468,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.010158400004950165,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "batch_size=1",
+        "sequential project loop (not compiled batch)"
+      ]
+    },
+    {
+      "dimension": "batch_size_microbatch",
+      "cell_id": "microbatch_n4_bs4_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 2,
+      "warmup": 0,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.04629595000005793,
+          "p50": 0.04629595000005793,
+          "p95": 0.050750544999027626,
+          "p99": 0.051146508998936045,
+          "max": 0.05124549999891315,
+          "min": 0.04134640000120271,
+          "stderr_of_mean": 0.004949549998855217,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.00010834999999999999,
+          "p50": 0.00010834999999999999,
+          "p95": 0.00012882499999999997,
+          "p99": 0.00013064499999999998,
+          "max": 0.0001311,
+          "min": 8.56e-05,
+          "stderr_of_mean": 2.2749999999999994e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.04618760000005793,
+          "p50": 0.04618760000005793,
+          "p95": 0.05062171999902762,
+          "p99": 0.05101586399893604,
+          "max": 0.051114399998913145,
+          "min": 0.04126080000120271,
+          "stderr_of_mean": 0.0049267999988552155,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 4.773959005888173e-15,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 2,
+        "n_fail": 0,
+        "throughput_solves_per_sec": 86.40064627672604
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.05124549999891315,
+          "solver_time_sec": 0.0001311,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.051114399998913145,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.04134640000120271,
+          "solver_time_sec": 8.56e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.04126080000120271,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "batch_size=4",
+        "sequential project loop (not compiled batch)"
+      ]
+    },
+    {
+      "dimension": "batch_size_microbatch",
+      "cell_id": "microbatch_n4_bs8_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 2,
+      "warmup": 0,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.07779645000118762,
+          "p50": 0.07779645000118762,
+          "p95": 0.08417137499345699,
+          "p99": 0.08473803499276983,
+          "max": 0.08487969999259803,
+          "min": 0.07071320000977721,
+          "stderr_of_mean": 0.007083249991410412,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 9.620000000000001e-05,
+          "p50": 9.620000000000001e-05,
+          "p95": 9.818000000000001e-05,
+          "p99": 9.8356e-05,
+          "max": 9.84e-05,
+          "min": 9.4e-05,
+          "stderr_of_mean": 2.200000000000006e-06,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.07770025000118763,
+          "p50": 0.07770025000118763,
+          "p95": 0.084073194993457,
+          "p99": 0.08463967899276983,
+          "max": 0.08478129999259804,
+          "min": 0.07061920000977721,
+          "stderr_of_mean": 0.00708104999141041,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 2.8477220581635264e-15,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 2,
+        "n_fail": 0,
+        "throughput_solves_per_sec": 102.8324557210242
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.08487969999259803,
+          "solver_time_sec": 9.84e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.08478129999259804,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.07071320000977721,
+          "solver_time_sec": 9.4e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.07061920000977721,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "batch_size=8",
+        "sequential project loop (not compiled batch)"
+      ]
+    },
+    {
+      "dimension": "batch_size_microbatch",
+      "cell_id": "microbatch_n8_bs1_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 2,
+      "warmup": 0,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.009793749995878898,
+          "p50": 0.009793749995878898,
+          "p95": 0.010997724995831959,
+          "p99": 0.011104744995827786,
+          "max": 0.011131499995826744,
+          "min": 0.008455999995931052,
+          "stderr_of_mean": 0.001337749999947846,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.00016395,
+          "p50": 0.00016395,
+          "p95": 0.00019477499999999998,
+          "p99": 0.000197515,
+          "max": 0.0001982,
+          "min": 0.0001297,
+          "stderr_of_mean": 3.424999999999999e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.009629799995878898,
+          "p50": 0.009629799995878898,
+          "p95": 0.01086459999583196,
+          "p99": 0.010974359995827786,
+          "max": 0.011001799995826744,
+          "min": 0.00825779999593105,
+          "stderr_of_mean": 0.0013719999999478461,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 2.3542279237176443e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 2,
+        "n_fail": 0,
+        "throughput_solves_per_sec": 102.10593495043155
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.011131499995826744,
+          "solver_time_sec": 0.0001297,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011001799995826744,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.008455999995931052,
+          "solver_time_sec": 0.0001982,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.00825779999593105,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "batch_size=1",
+        "sequential project loop (not compiled batch)"
+      ]
+    },
+    {
+      "dimension": "batch_size_microbatch",
+      "cell_id": "microbatch_n8_bs4_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 2,
+      "warmup": 0,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.04619934999936959,
+          "p50": 0.04619934999936959,
+          "p95": 0.04745300500435405,
+          "p99": 0.04756444100479712,
+          "max": 0.047592300004907884,
+          "min": 0.04480639999383129,
+          "stderr_of_mean": 0.001392950005538296,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.00018449999999999999,
+          "p50": 0.00018449999999999999,
+          "p95": 0.00021447,
+          "p99": 0.000217134,
+          "max": 0.0002178,
+          "min": 0.0001512,
+          "stderr_of_mean": 3.330000000000001e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.04601484999936959,
+          "p50": 0.04601484999936959,
+          "p95": 0.04723853500435406,
+          "p99": 0.04734730700479712,
+          "max": 0.04737450000490789,
+          "min": 0.044655199993831295,
+          "stderr_of_mean": 0.0013596500055382957,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 5.87141446573014e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 2,
+        "n_fail": 0,
+        "throughput_solves_per_sec": 86.58130471650753
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.047592300004907884,
+          "solver_time_sec": 0.0002178,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.04737450000490789,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.04480639999383129,
+          "solver_time_sec": 0.0001512,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.044655199993831295,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "batch_size=4",
+        "sequential project loop (not compiled batch)"
+      ]
+    },
+    {
+      "dimension": "batch_size_microbatch",
+      "cell_id": "microbatch_n8_bs8_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 2,
+      "warmup": 0,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.07605360000161454,
+          "p50": 0.07605360000161454,
+          "p95": 0.0784371599991573,
+          "p99": 0.07864903199893888,
+          "max": 0.07870199999888428,
+          "min": 0.0734052000043448,
+          "stderr_of_mean": 0.0026483999972697343,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.00013955,
+          "p50": 0.00013955,
+          "p95": 0.00014094499999999999,
+          "p99": 0.000141069,
+          "max": 0.0001411,
+          "min": 0.000138,
+          "stderr_of_mean": 1.5499999999999968e-06,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 2,
+          "available": true,
+          "mean": 0.07591405000161454,
+          "p50": 0.07591405000161454,
+          "p95": 0.0782990049991573,
+          "p99": 0.07851100099893889,
+          "max": 0.07856399999888428,
+          "min": 0.0732641000043448,
+          "stderr_of_mean": 0.0026499499972697377,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 2.842170943040401e-15,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 2,
+        "n_fail": 0,
+        "throughput_solves_per_sec": 105.18897198594371
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.0734052000043448,
+          "solver_time_sec": 0.0001411,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.0732641000043448,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.07870199999888428,
+          "solver_time_sec": 0.000138,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.07856399999888428,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "batch_size=8",
+        "sequential project loop (not compiled batch)"
+      ]
+    },
+    {
+      "dimension": "structural_cache",
+      "cell_id": "native_structural_cache_hit_miss",
+      "backend": "native_moreau",
+      "status": "NOT_RUN",
+      "reason": "Native structural fingerprint cache requires Moreau compiled path; not available on this host",
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {},
+      "samples": [],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n4_nominal_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00901720000183559,
+          "p50": 0.008474750000459608,
+          "p95": 0.01087276000107522,
+          "p99": 0.011140072002162923,
+          "max": 0.01120690000243485,
+          "min": 0.007912400003988296,
+          "stderr_of_mean": 0.0007699033774088403,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 9.485e-05,
+          "p50": 9.355e-05,
+          "p95": 0.000104565,
+          "p99": 0.00010587300000000001,
+          "max": 0.0001062,
+          "min": 8.61e-05,
+          "stderr_of_mean": 4.231725416422952e-06,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00892235000183559,
+          "p50": 0.008375750000459608,
+          "p95": 0.01078580500107522,
+          "p99": 0.011053801002162923,
+          "max": 0.01112080000243485,
+          "min": 0.007817100003988296,
+          "stderr_of_mean": 0.0007733088643600358,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 1.6719958750854857e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.007912400003988296,
+          "solver_time_sec": 9.53e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.007817100003988296,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.01120690000243485,
+          "solver_time_sec": 8.61e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.01112080000243485,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.00897929999337066,
+          "solver_time_sec": 9.18e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.00888749999337066,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.007970200007548556,
+          "solver_time_sec": 0.0001062,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.007864000007548555,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=4",
+        "conditioning=nominal",
+        "rate_delta=0.5"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n4_nominal_public_scs",
+      "backend": "public_scs",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.008386125002289191,
+          "p50": 0.008359250001376495,
+          "p95": 0.009665785001561743,
+          "p99": 0.00969075700137182,
+          "max": 0.00969700000132434,
+          "min": 0.007129000005079433,
+          "stderr_of_mean": 0.0006983563622874922,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 2.4125000000000004e-05,
+          "p50": 2.42e-05,
+          "p95": 2.4785e-05,
+          "p99": 2.4797e-05,
+          "max": 2.48e-05,
+          "min": 2.33e-05,
+          "stderr_of_mean": 3.7052890125692845e-07,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 4.3575e-05,
+          "p50": 4.305e-05,
+          "p95": 4.785e-05,
+          "p99": 4.821e-05,
+          "max": 4.83e-05,
+          "min": 3.99e-05,
+          "stderr_of_mean": 1.968660712261003e-06,
+          "unit": "sec"
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00831842500228919,
+          "p50": 0.008290650001376495,
+          "p95": 0.009595320001561743,
+          "p99": 0.00962066400137182,
+          "max": 0.00962700000132434,
+          "min": 0.007065400005079434,
+          "stderr_of_mean": 0.0006961745545582229,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 2.485073799463055e-07,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.007229599999845959,
+          "solver_time_sec": 2.33e-05,
+          "setup_time_sec": 4.08e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.007165499999845959,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.00969700000132434,
+          "solver_time_sec": 2.47e-05,
+          "setup_time_sec": 4.53e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.00962700000132434,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.007129000005079433,
+          "solver_time_sec": 2.37e-05,
+          "setup_time_sec": 3.99e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.007065400005079434,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.00948890000290703,
+          "solver_time_sec": 2.48e-05,
+          "setup_time_sec": 4.83e-05,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.00941580000290703,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=4",
+        "conditioning=nominal",
+        "rate_delta=0.5"
+      ]
+    },
+    {
+      "dimension": "cold_start",
+      "cell_id": "cold_n4_nominal_auto",
+      "backend": "auto",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.009202500001265435,
+          "p50": 0.009346800005005207,
+          "p95": 0.009629344991844846,
+          "p99": 0.00966242899055942,
+          "max": 0.009670699990238063,
+          "min": 0.008445700004813261,
+          "stderr_of_mean": 0.00026429921895469185,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 9.902500000000001e-05,
+          "p50": 9.730000000000001e-05,
+          "p95": 0.00010986,
+          "p99": 0.000111252,
+          "max": 0.0001116,
+          "min": 8.99e-05,
+          "stderr_of_mean": 4.671968714221732e-06,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.009103475001265435,
+          "p50": 0.009249500005005207,
+          "p95": 0.009520294991844846,
+          "p99": 0.00955133899055942,
+          "max": 0.009559099990238063,
+          "min": 0.008355800004813261,
+          "stderr_of_mean": 0.000260518753884248,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 1.6719958750854857e-14,
+        "max_ineq_residual_p95": 0.0,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.009298600009060465,
+          "solver_time_sec": 0.0001,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009198600009060465,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009395000000949949,
+          "solver_time_sec": 9.46e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009300400000949949,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.008445700004813261,
+          "solver_time_sec": 8.99e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.008355800004813261,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.009670699990238063,
+          "solver_time_sec": 0.0001116,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.009559099990238063,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "action_dim=4",
+        "conditioning=nominal",
+        "rate_delta=0.5"
+      ]
+    },
+    {
+      "dimension": "backend_comparison",
+      "cell_id": "compare_cvxpy_moreau",
+      "backend": "cvxpy_moreau",
+      "status": "NOT_RUN",
+      "reason": "ImportError: \nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n",
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {},
+      "samples": [],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "backend_comparison",
+      "cell_id": "compare_native_moreau",
+      "backend": "native_moreau",
+      "status": "NOT_RUN",
+      "reason": "ImportError: \nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n",
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {},
+      "samples": [],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "heterogeneous_batch",
+      "cell_id": "native_heterogeneous_batch",
+      "backend": "native_moreau_batch",
+      "status": "NOT_RUN",
+      "reason": "Native heterogeneous batch requires licensed Moreau; not runnable on native Windows host",
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {},
+      "samples": [],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "cpu_algo_choices",
+      "cell_id": "native_cpu_algo_choices",
+      "backend": "native_moreau",
+      "status": "NOT_RUN",
+      "reason": "Native Moreau CPU algorithm knobs not exposed/available on this host",
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {},
+      "samples": [],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "auto_device",
+      "cell_id": "native_auto_device",
+      "backend": "native_moreau",
+      "status": "NOT_RUN",
+      "reason": "Native auto device selection requires Moreau",
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {},
+      "samples": [],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "cuda",
+      "cell_id": "cuda_native",
+      "backend": "native_moreau",
+      "status": "NOT_RUN",
+      "reason": "CUDA probe failed: \nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n",
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {},
+      "samples": [],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "windows_sidecar_overhead",
+      "cell_id": "sidecar_ipc_overhead",
+      "backend": "windows_moreau_sidecar",
+      "status": "NOT_RUN",
+      "reason": "WSL Moreau sidecar scaffolding present; live licensed Moreau worker not attested on this host (declared qualification: protocol/tests + public CI, not production-ready live Moreau)",
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {},
+      "samples": [],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "worker_restart",
+      "cell_id": "sidecar_worker_restart",
+      "backend": "windows_moreau_sidecar",
+      "status": "NOT_RUN",
+      "reason": "WSL Moreau sidecar scaffolding present; live licensed Moreau worker not attested on this host (declared qualification: protocol/tests + public CI, not production-ready live Moreau)",
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {},
+      "samples": [],
+      "failures": [],
+      "notes": []
+    },
+    {
+      "dimension": "concurrent_callers",
+      "cell_id": "concurrent_n4_w4_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 10,
+      "warmup": 0,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 10,
+          "available": true,
+          "mean": 0.017587510000157635,
+          "p50": 0.016872799998964183,
+          "p95": 0.03125495999556733,
+          "p99": 0.03313891199737554,
+          "max": 0.0336098999978276,
+          "min": 0.008594900005846284,
+          "stderr_of_mean": 0.002650411983703886,
+          "unit": "sec"
+        },
+        "pool_wall_sec": 0.10939260000304785,
+        "workers": 4,
+        "n_ok": 10,
+        "n_fail": 0,
+        "throughput_solves_per_sec": 91.41386162977555
+      },
+      "samples": [],
+      "failures": [],
+      "notes": [
+        "one projector instance per task (instance_confined)"
+      ]
+    },
+    {
+      "dimension": "deadlines_timeouts",
+      "cell_id": "max_iter1_n4_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {
+        "fail_closed_observed": true,
+        "detail": "VerificationReleaseError: no verified action could be released after fallback ladder",
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 0,
+          "available": false
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": null,
+        "max_eq_residual_p95": null,
+        "max_ineq_residual_p95": null,
+        "n_ok": 0,
+        "n_fail": 1
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.0134358999930555,
+          "ok": false,
+          "error": "VerificationReleaseError: no verified action could be released after fallback ladder",
+          "release_decision": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "fail-closed behavior is the expected success criterion for this cell"
+      ]
+    },
+    {
+      "dimension": "infeasible_cases",
+      "cell_id": "infeasible_empty_allowed_n4_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {
+        "fail_closed_observed": true,
+        "detail": "construction rejected empty admissible set: ValidationError: 1 validation error for SafetySpec\n  Value error, no action is admissible; fail-safe policies cannot synthesize an action from an empty allowed set (policy=<FailSafePolicy.REJECT: 'reject'>) [type=value_error, input_value={'spec_id': 's8/infeasibl...=[1.0, 1.0, 1.0, 1.0])]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+      },
+      "samples": [],
+      "failures": [],
+      "notes": [
+        "fail-closed behavior is the expected success criterion for this cell"
+      ]
+    },
+    {
+      "dimension": "conditioning",
+      "cell_id": "ill_conditioned_n4_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 5,
+      "warmup": 1,
+      "metrics": {
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.010488775002158945,
+          "p50": 0.009783400004380383,
+          "p95": 0.014476980007020756,
+          "p99": 0.0149513160076458,
+          "max": 0.015069900007802062,
+          "min": 0.007318399992072955,
+          "stderr_of_mean": 0.0017221740902938934,
+          "unit": "sec"
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.00011734999999999999,
+          "p50": 0.0001127,
+          "p95": 0.00015267999999999998,
+          "p99": 0.000155416,
+          "max": 0.0001561,
+          "min": 8.79e-05,
+          "stderr_of_mean": 1.6484411828552854e-05,
+          "unit": "sec"
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 4,
+          "available": true,
+          "mean": 0.010371425002158947,
+          "p50": 0.009670700004380382,
+          "p95": 0.014330480007020755,
+          "p99": 0.0147971360076458,
+          "max": 0.014913800007802062,
+          "min": 0.007230499992072955,
+          "stderr_of_mean": 0.001711453296329805,
+          "unit": "sec"
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": 0.0,
+        "max_eq_residual_p95": 1.162403506782539e-13,
+        "max_ineq_residual_p95": 7.171252564756696e-12,
+        "n_ok": 4,
+        "n_fail": 0
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.007318399992072955,
+          "solver_time_sec": 8.79e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.007230499992072955,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.015069900007802062,
+          "solver_time_sec": 0.0001561,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.014913800007802062,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.01111710000259336,
+          "solver_time_sec": 9.21e-05,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.011025000002593361,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        },
+        {
+          "e2e_wall_sec": 0.008449700006167404,
+          "solver_time_sec": 0.0001333,
+          "setup_time_sec": null,
+          "construction_time_sec": null,
+          "verification_time_sec": 0.008316400006167405,
+          "ipc_time_sec": null,
+          "iterations": null,
+          "fallback_count": 0,
+          "ok": true,
+          "error": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "rate_delta=0.0001",
+        "corner proposal"
+      ]
+    },
+    {
+      "dimension": "numerical_failure_injection",
+      "cell_id": "nan_proposal_public_clarabel",
+      "backend": "public_clarabel",
+      "status": "ok",
+      "reason": null,
+      "repeats": 0,
+      "warmup": 0,
+      "metrics": {
+        "fail_closed_observed": true,
+        "detail": "VerificationReleaseError: no verified action could be released after fallback ladder",
+        "e2e_wall": {
+          "name": "e2e_wall_sec",
+          "n": 0,
+          "available": false
+        },
+        "solver_time": {
+          "name": "solver_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "setup_time": {
+          "name": "setup_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "construction_time": {
+          "name": "construction_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "verification_time": {
+          "name": "verification_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "ipc_time": {
+          "name": "ipc_time_sec",
+          "n": 0,
+          "available": false
+        },
+        "iterations_mean": null,
+        "fallback_frequency": null,
+        "max_eq_residual_p95": null,
+        "max_ineq_residual_p95": null,
+        "n_ok": 0,
+        "n_fail": 1
+      },
+      "samples": [
+        {
+          "e2e_wall_sec": 0.009252899995772168,
+          "ok": false,
+          "error": "VerificationReleaseError: no verified action could be released after fallback ladder",
+          "release_decision": null
+        }
+      ],
+      "failures": [],
+      "notes": [
+        "fail-closed behavior is the expected success criterion for this cell"
+      ]
+    }
+  ],
+  "comparisons": [
+    {
+      "label": "public_reference",
+      "status": "ok",
+      "representative_cell": "warm_seq_n4_public_clarabel",
+      "e2e_p50_sec": 0.008724450002773665,
+      "e2e_p95_sec": 0.009736594994319602,
+      "e2e_p99_sec": 0.009844678993104025,
+      "e2e_max_sec": 0.009871699992800131,
+      "solver_p50_sec": 9.15e-05
+    },
+    {
+      "label": "public_scs",
+      "status": "ok",
+      "representative_cell": "cold_n4_nominal_public_scs",
+      "e2e_p50_sec": 0.008359250001376495,
+      "e2e_p95_sec": 0.009665785001561743,
+      "e2e_p99_sec": 0.00969075700137182,
+      "e2e_max_sec": 0.00969700000132434,
+      "solver_p50_sec": 2.42e-05
+    },
+    {
+      "label": "moreau_cvxpy",
+      "status": "NOT_RUN",
+      "reason": "ImportError: \nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n"
+    },
+    {
+      "label": "moreau_native",
+      "status": "NOT_RUN",
+      "reason": "ImportError: \nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n"
+    },
+    {
+      "label": "heterogeneous_batch",
+      "status": "NOT_RUN",
+      "reason": "Native heterogeneous batch requires licensed Moreau; not runnable on native Windows host"
+    },
+    {
+      "label": "windows_sidecar",
+      "status": "NOT_RUN",
+      "reason": "WSL Moreau sidecar scaffolding present; live licensed Moreau worker not attested on this host (declared qualification: protocol/tests + public CI, not production-ready live Moreau)"
+    }
+  ],
+  "counts": {
+    "cells_total": 40,
+    "ok": 31,
+    "fail": 0,
+    "not_run": 9
+  },
+  "claim_guardrails": [
+    "Do not publish vendor Moreau latency from this report unless status=ok on moreau_* comparisons.",
+    "Do not claim native Windows Moreau support.",
+    "Public Clarabel/SCS numbers are host-specific; label environment provenance when citing.",
+    "Sidecar remains qualification scaffolding until live Moreau worker attestation exists."
+  ]
+}

@@ -1,8 +1,9 @@
-# Track 1 stabilization (S0 baseline)
+# Track 1 stabilization
 
 Long-lived integration branch: `engineering/stabilization-moreau`.
 
-This directory holds the **reproducible baseline** for production stabilization work packages (S0+). It does not change solver behavior.
+This directory holds the reproducible baseline (S0), issue ledger, and Track 1
+completion / qualification reports (S8).
 
 ## Artifacts
 
@@ -10,7 +11,11 @@ This directory holds the **reproducible baseline** for production stabilization 
 |------|---------|
 | [`starting_commit.json`](starting_commit.json) | Exact SHA / describe / date for the S0 starting tip |
 | [`issue_ledger.json`](issue_ledger.json) | Machine-readable P0/P1 issue ledger |
+| [`TRACK1_COMPLETION_REPORT.md`](TRACK1_COMPLETION_REPORT.md) | 15-section Track 1 completion report |
+| [`PRODUCTION_QUALIFICATION_REPORT.md`](PRODUCTION_QUALIFICATION_REPORT.md) | S8 runtime qualification (separate from v1 bundles) |
+| [`RELEASE_GATE_EVALUATION.md`](RELEASE_GATE_EVALUATION.md) | Honest main-merge gate evaluation |
 | [`baseline/`](baseline/) | Environment, freeze, check outcomes, parity/published-run status |
+| [`../MIGRATION_STABILIZATION_TRACK1.md`](../MIGRATION_STABILIZATION_TRACK1.md) | Consumer migration guide |
 
 ## Reproduce baseline (clean checkout)
 

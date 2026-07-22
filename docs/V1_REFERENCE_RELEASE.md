@@ -23,6 +23,8 @@ Public name for the governed **host-realistic flagship** reference system shippe
 
 Aligned with [PUBLIC_CLAIMS.md](PUBLIC_CLAIMS.md): no production autograd product, no Maps/session navigation graph, no second-family authority; public batch narrative is **viability_only** (does not claim throughput wins). `progress` / `clearance` constraint kinds are not implemented.
 
+Track 1 **runtime qualification** (S8) is a separate artifact from this v1 bundle authority. See [`stabilization/PRODUCTION_QUALIFICATION_REPORT.md`](stabilization/PRODUCTION_QUALIFICATION_REPORT.md) and [`benchmarks/reports/s8_qualification/`](../benchmarks/reports/s8_qualification/). Do not conflate host runtime benches with published-run integrity.
+
 ## How to consume (start here)
 
 ```bash

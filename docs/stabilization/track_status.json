@@ -1,0 +1,18 @@
+{
+  "track": "Track 1 — Production Stabilization",
+  "integration_branch": "engineering/stabilization-moreau",
+  "s7_merge_sha": "d7f1da49b893557dd72e5d55fbc6018d79eb255e",
+  "p0_status": "all_fixed",
+  "p1_status": "all_fixed",
+  "s8_status": "artifacts_ready_pr_to_integration",
+  "main_merge_gate": "fail",
+  "main_merge_blockers": [
+    "vendor_ci_real_solve_attestation",
+    "heterogeneous_batch_parity_vendor_host",
+    "verify_v1_lock_cadence_risk"
+  ],
+  "completion_report": "docs/stabilization/TRACK1_COMPLETION_REPORT.md",
+  "qualification_report": "docs/stabilization/PRODUCTION_QUALIFICATION_REPORT.md",
+  "gate_evaluation": "docs/stabilization/RELEASE_GATE_EVALUATION.md",
+  "benchmark_reports": "benchmarks/reports/s8_qualification/"
+}
