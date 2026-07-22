@@ -45,7 +45,8 @@ def main() -> int:
 
     section("project_batch")
     try:
-        corrected = batch.project_batch(proposals, prev)
+        batch_result = batch.project_batch(proposals, prev)
+        corrected = batch_result.corrected_actions
     except RuntimeError as exc:
         if "license" in str(exc).lower():
             return skip("Moreau license not available", detail=exc)
@@ -53,6 +54,9 @@ def main() -> int:
 
     print("input shape:", proposals.shape)
     print("output shape:", corrected.shape)
+    print("per-row evidence count:", len(batch_result.rows))
+    print("cache_status:", batch_result.cache_status)
+    print("structural_fingerprint:", batch_result.structural_fingerprint)
     if corrected.shape != proposals.shape:
         print("unexpected output shape")
         return 1

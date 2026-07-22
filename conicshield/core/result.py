@@ -93,3 +93,34 @@ class ProjectionResult:
         if self.fallback_history:
             payload["fallback_history"] = [h.as_dict() for h in self.fallback_history]
         return payload
+
+
+@dataclass(frozen=True, slots=True)
+class BatchProjectionResult:
+    """Complete per-row evidence for a heterogeneous compiled batch solve."""
+
+    rows: tuple[ProjectionResult, ...]
+    batch_size: int
+    setup_time_sec: float | None
+    solve_time_sec: float | None
+    device: str | None
+    cache_status: str
+    structural_fingerprint: str
+
+    @property
+    def corrected_actions(self) -> np.ndarray:
+        """Stack corrected actions as ``(K, n)`` without discarding per-row evidence."""
+        if not self.rows:
+            return np.zeros((0, 0), dtype=np.float64)
+        return np.stack([np.asarray(r.corrected_action, dtype=np.float64) for r in self.rows], axis=0)
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "batch_size": int(self.batch_size),
+            "setup_time_sec": self.setup_time_sec,
+            "solve_time_sec": self.solve_time_sec,
+            "device": self.device,
+            "cache_status": self.cache_status,
+            "structural_fingerprint": self.structural_fingerprint,
+            "rows": [r.as_dict() for r in self.rows],
+        }
