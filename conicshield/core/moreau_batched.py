@@ -7,10 +7,14 @@ from typing import Any
 import numpy as np
 from scipy import sparse  # type: ignore[import-untyped]
 
+from conicshield.backends.status import normalize_moreau_status
 from conicshield.solver_errors import require_solver_module
 from conicshield.specs.native_moreau_builder import build_moreau_standard_form
 from conicshield.specs.schema import SafetySpec
 from conicshield.specs.shield_qp import parse_safety_spec_for_shield
+from conicshield.verification.feasibility import require_verified_release
+from conicshield.verification.release_policy import ReleasePolicy
+from conicshield.verification.residuals import ResidualTolerances
 
 from .moreau_compiled import (
     NativeMoreauCompiledOptions,
@@ -172,4 +176,39 @@ class NativeMoreauCompiledBatchProjector:
         xbat = np.asarray(solution.x, dtype=np.float64)
         if xbat.ndim != 2 or xbat.shape[0] != k_batch:
             raise RuntimeError(f"unexpected batched solution shape: {getattr(xbat, 'shape', None)}")
+
+        # No unverified batch row may be released.
+        info = getattr(solver, "info", None)
+        raw_status = getattr(info, "status", None) if info is not None else None
+        if isinstance(raw_status, list | tuple):
+            statuses: list[Any] = list(raw_status)
+        else:
+            statuses = [raw_status] * k_batch
+        release_policy = ReleasePolicy(
+            accept_optimal_inaccurate=bool(self.options.accept_optimal_inaccurate),
+            accept_iteration_limit=bool(self.options.accept_iteration_limit),
+            accept_time_limit=bool(self.options.accept_time_limit),
+            tolerances=ResidualTolerances(
+                abs_tol=float(self.options.abs_tol),
+                rel_tol=float(self.options.rel_tol),
+                active_tol=float(self.options.active_tol),
+            ),
+            intervention_abs_tol=float(self.options.intervention_abs_tol),
+            intervention_rel_tol=float(self.options.intervention_rel_tol),
+        )
+        for k in range(k_batch):
+            st = statuses[k] if k < len(statuses) else raw_status
+            require_verified_release(
+                xbat[k],
+                data,
+                raw_status=st,
+                previous_action=previous_action,
+                proposed_action=pb[k],
+                reference_action=reference_action,
+                policy_weight=policy_weight,
+                reference_weight=reference_weight,
+                policy=release_policy,
+                attempt_kind="primary",
+                status_normalizer=normalize_moreau_status,
+            )
         return xbat

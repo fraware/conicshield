@@ -41,14 +41,19 @@ class ConstraintKind(StrEnum):
 
 
 class FailSafePolicy(StrEnum):
-    """Caller-selected policy when the admissible action set is empty.
+    """Caller-selected fail-safe when the admissible set is empty or release fails.
 
-    S1 wires the API requirement only. ``REJECT`` fails closed at construction /
-    IR parse time. Additional recovery policies belong to later work packages
-    (full release/verifier policy is S2).
+    * ``REJECT`` — fail closed (construction-time for empty admissible sets;
+      runtime release pipeline raises rather than synthesizing an action).
+    * ``UNIFORM_ADMISSIBLE`` — synthesize a uniform-mass action on allowed
+      coordinates (still must pass residual verification before release).
+    * ``CLAMPED_PROPOSED`` — clamp/repair the proposed action onto the
+      admissible set (still must pass residual verification before release).
     """
 
     REJECT = "reject"
+    UNIFORM_ADMISSIBLE = "uniform_admissible"
+    CLAMPED_PROPOSED = "clamped_proposed"
 
 
 # Singleton constraint kinds: at most one of each may appear in a SafetySpec.
@@ -265,7 +270,8 @@ class SafetySpec(BaseModel):
                 "set SafetySpec.fail_safe_policy explicitly "
                 f"(e.g. FailSafePolicy.{FailSafePolicy.REJECT.name})"
             )
-        if self.fail_safe_policy is FailSafePolicy.REJECT:
-            raise NoAdmissibleActionError(
-                "no action is admissible under FailSafePolicy.REJECT"
-            )
+        # Empty admissible set cannot be recovered by any fail-safe synthesizer.
+        raise NoAdmissibleActionError(
+            "no action is admissible; fail-safe policies cannot synthesize an "
+            f"action from an empty allowed set (policy={self.fail_safe_policy!r})"
+        )
