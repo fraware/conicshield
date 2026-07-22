@@ -1,7 +1,8 @@
 name: windows-ci
 
 # Qualify Windows Public mode (CS-SOLVER-111 / S6).
-# Does not install vendor Moreau and does not claim native Moreau-on-Windows.
+# Required public check for Windows; does not install vendor Moreau and does
+# not claim native Moreau-on-Windows.
 
 on:
   pull_request:
@@ -29,20 +30,34 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev,solver-public]" -c packaging/constraints/solver-public.txt
+          python scripts/check_solver_stack_policy.py
       - name: Solver doctor (public)
         shell: pwsh
         run: python -m conicshield.cli solver-doctor --json
       - name: Windows public mode tests
         shell: pwsh
         run: |
+          New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\win_evidence" | Out-Null
           python -m pytest -o addopts= -q --tb=short `
+            --junitxml="$env:RUNNER_TEMP\win_evidence\windows_public.junit.xml" `
             tests/platform/windows/ `
             tests/platform/sidecar/test_protocol.py `
             tests/platform/sidecar/test_client_fallback.py `
             tests/stabilization/test_p0_backend_boundaries.py `
             tests/stabilization/test_p0_packaging_provenance.py `
             -m "not requires_wsl and not requires_moreau_sidecar"
+          python scripts/assert_min_executed_tests.py `
+            --junit "$env:RUNNER_TEMP\win_evidence\windows_public.junit.xml" `
+            --min-executed 5 `
+            --label windows-public
       - name: Public projector smoke
         shell: pwsh
         run: |
           python -c "from conicshield.backends.base import Backend; from conicshield.core.solver_factory import create_projector; from conicshield.specs.schema import SafetySpec, SimplexConstraint, BoxConstraint; import numpy as np; spec=SafetySpec(spec_id='win-ci', version='0.1.0', action_dim=2, constraints=[SimplexConstraint(total=1.0), BoxConstraint(lower=[0,0], upper=[1,1])]); p=create_projector(spec=spec, backend=Backend.PUBLIC_CLARABEL); r=p.project(np.array([0.7,0.3])); assert r.verification is not None and r.verification.passed; print('windows_public_ok', r.release_decision)"
+      - name: Upload Windows test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-public-evidence-${{ matrix.python-version }}
+          path: ${{ runner.temp }}/win_evidence/
+          if-no-files-found: warn

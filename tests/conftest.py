@@ -5,6 +5,9 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+# CS-SOLVER-003: convert vendor skips into failures when CONICSHIELD_VENDOR_REQUIRED=1.
+pytest_plugins = ["tests.stabilization.vendor_required"]
+
 
 def _maybe_load_dotenv() -> None:
     """When ``CONICSHIELD_LOAD_DOTENV=1``, load repo ``.env`` without overriding existing variables."""

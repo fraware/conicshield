@@ -1,0 +1,30 @@
+{
+  "schema_version": "conicshield_solver_stack_policy/v1",
+  "description": "Governed solver stacks. Production defaults update only via explicit promotion; candidates stay quarantined.",
+  "production_defaults": {
+    "solver-public": {
+      "constraints_file": "packaging/constraints/solver-public.txt",
+      "extra": "solver-public",
+      "qualification_workflow": "windows-ci / ci quality"
+    },
+    "solver-moreau-cpu": {
+      "constraints_file": "packaging/constraints/solver-moreau-cpu.txt",
+      "extra": "solver-moreau-cpu",
+      "qualification_workflow": "vendor-ci-moreau"
+    },
+    "solver-moreau-cuda": {
+      "constraints_file": "packaging/constraints/solver-moreau-cuda.txt",
+      "extra": "solver-moreau-cuda",
+      "qualification_workflow": "vendor-ci-moreau (cuda hosts only)"
+    }
+  },
+  "quarantine": {
+    "description": "Candidate upgrades may be exercised by scheduled qualification without changing production defaults.",
+    "candidates": []
+  },
+  "promotion_rules": [
+    "Never edit production constraints from a candidate qualification job.",
+    "Candidate stacks live under packaging/quarantine/ or quarantine.candidates[].",
+    "Promotion requires a maintainer PR that updates packaging/constraints/ and this policy file together."
+  ]
+}

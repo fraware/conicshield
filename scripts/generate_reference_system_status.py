@@ -107,6 +107,7 @@ def build_reference_system_status(*, repo_root: Path) -> dict[str, Any]:
             "governance-audit",
             "reference-authority",
             "solver-touch",
+            "windows-ci",
         ],
         "public_claims": {
             "batch": "true batch path exists; viability-governed; not universal speedup",
@@ -144,8 +145,10 @@ def main() -> int:
 
     def _key(text: str) -> str:
         data = json.loads(text)
+        # Cadence age is enforced by dedicated check_*_cadence scripts, not this drift gate.
         data.pop("generated_at_utc", None)
         data.pop("cadence_age_days", None)
+        data.pop("cadence_policy_ok", None)
         data.pop("full_refresh_cadence_ok", None)
         return json.dumps(data, sort_keys=True)
 

@@ -36,14 +36,20 @@ jobs:
         run: |
           python scripts/generate_reference_system_status.py
           python scripts/generate_reference_system_status.py --check
-      - name: verify-reference-system
+      - name: verify-reference-system (read-only)
         run: make verify-reference-system
+      - name: Worktree clean after verify-reference-system
+        run: python scripts/assert_git_clean.py --label verify-reference-system
       - name: Community dataset smoke (API, CLI, flagship example)
         run: make community-verify
       - name: v1 lock quick (auditor entrypoint)
         run: make verify-v1-lock-quick
+      - name: Worktree clean after verify-v1-lock-quick
+        run: python scripts/assert_git_clean.py --label verify-v1-lock-quick
       - name: Published bundle file profile (all tiers)
         run: python scripts/validate_published_bundle_profile.py
+      - name: Schema compatibility
+        run: python scripts/check_schema_compatibility.py
       - name: Committed batch acceptance report (viability — required)
         run: |
           python scripts/check_batch_acceptance.py \
