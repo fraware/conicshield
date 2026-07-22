@@ -150,7 +150,13 @@ def test_batched_compiled_matches_sequential_native() -> None:
             pytest.skip(f"Moreau license not available: {exc}")
         raise
 
-    np.testing.assert_allclose(batched, stacked, rtol=1e-4, atol=1e-5)
+    np.testing.assert_allclose(batched.corrected_actions, stacked, rtol=1e-4, atol=1e-5)
+    assert batched.batch_size == proposals.shape[0]
+    assert len(batched.rows) == proposals.shape[0]
+    for row in batched.rows:
+        assert row.verification is not None
+        assert row.release_decision is not None
+        assert "row_id" in row.metadata
 
 
 _TELEMETRY_KEYS = frozenset(

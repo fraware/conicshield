@@ -327,7 +327,7 @@ class InterSimConicShield:
             policy_weight=float(policy_weight),
             reference_weight=float(geometry_weight),
             trajectory_ids=ids,
-        )
+        ).corrected_actions
 
     def _get_or_create_projector(self, spec: SafetySpec, cache_key: str) -> ProjectorProtocol:
         num = numerical_signature(spec)
@@ -367,15 +367,15 @@ class InterSimConicShield:
     ) -> NativeMoreauCompiledBatchProjector:
         cached = self._batch_projector_cache.get(cache_key)
         if cached is not None:
-            num = numerical_signature(spec)
-            # Batch projector holds ``spec`` for numeric fills; refresh when params change.
-            if numerical_signature(cached.spec).digest != num.digest:
-                cached.spec = spec
+            self._metrics.record_cache_hit()
+            cached.bind_spec(spec)
             return cached
+        self._metrics.record_cache_miss()
         batch = create_batch_projector(
             spec=spec,
             backend=Backend.NATIVE_MOREAU_BATCH,
             native_options=self.native_options,
+            metrics=self._metrics,
         )
         self._batch_projector_cache.put(cache_key, batch)
         return batch

@@ -152,16 +152,17 @@
     "title": "Batch semantics artificially restricted (shared P/A/b only)",
     "affected_paths": [
       "conicshield/core/moreau_batched.py",
-      "conicshield/adapters/inter_sim_rl/shield.py"
+      "conicshield/adapters/inter_sim_rl/shield.py",
+      "conicshield/compilation/"
     ],
     "reproduction": [
       "NativeMoreauCompiledBatchProjector.project_batch uses one previous_action and shared A/b numeric values across rows."
     ],
     "expected_behavior": "Heterogeneous batch API with per-row previous/reference/weights under shared structural topology.",
-    "current_behavior": "Only q varies across rows; shared previous/reference configuration.",
-    "test_added": null,
+    "current_behavior": "project_batch accepts per-row previous/reference/weights/bounds/rates; BatchProjectionResult with per-row evidence.",
+    "test_added": "tests/compilation/test_heterogeneous_batch.py",
     "fix_pr": null,
-    "status": "open",
+    "status": "fixed",
     "work_package": "S4"
   },
   {
@@ -175,10 +176,10 @@
       "project_softmax_batch calls create_batch_projector on every invocation."
     ],
     "expected_behavior": "Bounded batch-projector cache keyed by structural fingerprint with reuse telemetry.",
-    "current_behavior": "New batch projector each call.",
-    "test_added": null,
+    "current_behavior": "BoundedLRUCache batch projector cache with bind_spec reuse and lifecycle metrics.",
+    "test_added": "tests/state/test_state_isolation.py",
     "fix_pr": null,
-    "status": "open",
+    "status": "fixed",
     "work_package": "S4"
   },
   {
@@ -206,17 +207,18 @@
     "title": "Sparse problem construction repeated unnecessarily",
     "affected_paths": [
       "conicshield/specs/native_moreau_builder.py",
-      "conicshield/core/moreau_compiled.py"
+      "conicshield/core/moreau_compiled.py",
+      "conicshield/compilation/compiled_template.py"
     ],
     "reproduction": [
       "Each project rebuilds dense rows, stacks, converts to CSR; CompiledSolver.setup each solve."
     ],
     "expected_behavior": "Fixed-structure CompiledShieldTemplate with parameter fills; skip setup when values fingerprint unchanged.",
-    "current_behavior": "Dense rebuild + setup per solve.",
-    "test_added": null,
+    "current_behavior": "CompiledShieldTemplate fills preallocated buffers; setup skipped when setup_values_fingerprint matches.",
+    "test_added": "tests/compilation/test_compiled_template.py",
     "fix_pr": null,
-    "status": "open",
-    "work_package": "S5"
+    "status": "fixed",
+    "work_package": "S4"
   },
   {
     "issue_id": "CS-SOLVER-105",
@@ -224,17 +226,18 @@
     "title": "Batch telemetry incomplete",
     "affected_paths": [
       "conicshield/core/moreau_compiled.py",
-      "conicshield/core/moreau_batched.py"
+      "conicshield/core/moreau_batched.py",
+      "conicshield/core/result.py"
     ],
     "reproduction": [
       "Sequential compiled path reduces batched metadata to first row; batch path returns only ndarray."
     ],
     "expected_behavior": "BatchProjectionResult with per-row ProjectionResult and batch-level timing/cache fields.",
-    "current_behavior": "First-row reduction / actions-only batch return.",
-    "test_added": null,
+    "current_behavior": "BatchProjectionResult.rows carries full per-row verification/release evidence.",
+    "test_added": "tests/compilation/test_heterogeneous_batch.py",
     "fix_pr": null,
-    "status": "open",
-    "work_package": "S5"
+    "status": "fixed",
+    "work_package": "S4"
   },
   {
     "issue_id": "CS-SOLVER-106",
