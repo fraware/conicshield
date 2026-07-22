@@ -83,7 +83,7 @@
     "expected_behavior": "reset_episode clears previous action and episode/projector warm-start (or equivalent reset_state protocol) so first-solve matches a fresh projector.",
     "current_behavior": "reset_episode clears previous distribution and calls reset_state on cached sequential/batch projectors; StatefulProjectorProtocol declared.",
     "test_added": "tests/stabilization/test_p0_warm_start_isolation.py::test_reset_episode_clears_projector_warm_start_state",
-    "fix_pr": null,
+    "fix_pr": 4,
     "status": "fixed",
     "work_package": "S3"
   },
@@ -196,7 +196,7 @@
     "expected_behavior": "Separate structural fingerprint from numerical parameters and trajectory state; bounded LRU.",
     "current_behavior": "structural_fingerprint + numerical_signature; InterSim uses BoundedLRUCache keyed by structure (S4 still owns full ConstraintTopology compiler).",
     "test_added": "tests/state/test_state_isolation.py",
-    "fix_pr": null,
+    "fix_pr": 4,
     "status": "fixed",
     "work_package": "S3"
   },
@@ -288,7 +288,7 @@
     "expected_behavior": "Declared model (instance-confined, lock-protected, or pooled exclusive checkout) with tests.",
     "current_behavior": "ConcurrencyModel declared on projectors/shield; SolverPool exclusive checkout; concurrent episode isolation tests.",
     "test_added": "tests/concurrency/test_concurrency_isolation.py",
-    "fix_pr": null,
+    "fix_pr": 4,
     "status": "fixed",
     "work_package": "S3"
   },
