@@ -1,0 +1,23 @@
+{
+  "generated_at_utc": "2026-07-22T22:01:31Z",
+  "conic_rows": [],
+  "conic_errors": [
+    "cvxpy import: No module named 'numpy.lib.array_utils'"
+  ],
+  "shield_qp_minimal": {
+    "scope": "shield_qp_minimal",
+    "reference": null,
+    "native": null,
+    "deltas": null,
+    "status": "skipped",
+    "errors": [
+      {
+        "arm": "cvxpy_moreau",
+        "error": "Optional dependency 'cvxpy' is required for CVXPY-based reference projector. Install solver extras, for example: pip install -e \".[solver,dev]\" --extra-index-url \"https://<GEMFURY_TOKEN>:@pypi.fury.io/optimalintellect/\". Place your Moreau license in ~/.moreau/key (or set MOREAU_LICENSE_KEY). See https://docs.moreau.so/installation.html"
+      }
+    ]
+  },
+  "suite_profile": "standard",
+  "strict_mode": false,
+  "summary_status": "fail"
+}

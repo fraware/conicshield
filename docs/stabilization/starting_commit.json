@@ -1,0 +1,16 @@
+{
+  "full_sha": "180bed7411f3146205b65b4258e6711c786c9f6f",
+  "short_sha": "180bed7",
+  "branch_at_capture": "main",
+  "git_describe": "180bed7",
+  "commit_date": "2026-05-28 12:33:38 -0700",
+  "subject": "Prepare public launch: community README, slim docs, polished examples",
+  "captured_at_utc": "2026-07-22T21:55:59.494656+00:00",
+  "capture_host": {
+    "system": "Windows",
+    "release": "11",
+    "machine": "AMD64",
+    "python": "3.12.10"
+  },
+  "notes": "S0 baseline starting point for engineering/stabilization-moreau (branched from origin/main tip)."
+}

@@ -1,0 +1,147 @@
+﻿{
+  "captured_at_utc": "2026-07-22T22:05:00+00:00",
+  "starting_commit": "180bed7411f3146205b65b4258e6711c786c9f6f",
+  "branch": "engineering/s0-reproducible-baseline",
+  "host": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "executable": "C:\\Users\\mateo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+  },
+  "blockers": [
+    "Moreau vendor package is not supported on native Windows (upstream ImportError; WSL required).",
+    "cvxpy import fails on this host: No module named 'numpy.lib.array_utils' (numpy/cvxpy skew).",
+    "CONICSHIELD_VENDOR_REQUIRED is not set in vendor CI yet (CS-SOLVER-003 / S7).",
+    "Concurrent Track-2 untracked research/ files were present during capture; Track-1 public re-run used --ignore=tests/research."
+  ],
+  "production_behavior_changed": false,
+  "checks": [
+    {
+      "name": "environment_check",
+      "command": "py -3 scripts/environment_check.py --out-dir docs/stabilization/baseline",
+      "outcome": "fail",
+      "exit_code": 1,
+      "reason": "imports_all_ok=false: cvxpy/cvxpylayers fail with No module named 'numpy.lib.array_utils'; moreau find_spec true but import raises Windows-unsupported ImportError",
+      "artifacts": ["environment_check.json", "environment_check.md", "environment_check.txt"]
+    },
+    {
+      "name": "pip_freeze_filtered",
+      "command": "pip freeze | filter solver-relevant",
+      "outcome": "pass",
+      "exit_code": 0,
+      "artifacts": ["pip_freeze_filtered.txt", "pip_freeze_full.txt"]
+    },
+    {
+      "name": "pytest_public_default",
+      "command": "py -3 -m pytest tests/ -q",
+      "outcome": "fail",
+      "exit_code": 1,
+      "reason": "Contaminated by concurrent untracked Track-2 tests/research; see pytest_public.txt. Re-run excluding research recorded separately.",
+      "artifacts": ["pytest_public.txt"]
+    },
+    {
+      "name": "pytest_public_track1",
+      "command": "py -3 -m pytest tests/ -q --ignore=tests/research",
+      "outcome": "fail",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/governance/test_published_run_catalog.py::test_parity_fixture_source_is_wsl_real",
+        "tests/governance/test_published_run_index.py::test_parity_regeneration_note_run_ids_are_indexed",
+        "tests/governance/test_reference_system_status.py::test_reference_system_status_builds",
+        "tests/governance/test_reference_system_status.py::test_committed_reference_system_status_check",
+        "tests/scripts/test_verify_v1_lock.py::test_verify_v1_lock_quick_exits_zero",
+        "tests/test_reference_run_cli.py::test_produce_reference_bundle_real_projector_preflight_error_without_moreau"
+      ],
+      "notes": "Failures observed on Windows host at S0 capture; S0 did not change production behavior. Excerpts in pytest_public_failure_excerpts.txt",
+      "artifacts": ["pytest_public_track1.txt", "pytest_public_failure_excerpts.txt"]
+    },
+    {
+      "name": "pytest_stabilization",
+      "command": "py -3 -m pytest tests/stabilization/ -q --override-ini addopts=-q",
+      "outcome": "pass",
+      "exit_code": 0,
+      "notes": "P0 regressions present as xfail(strict=True); evidence fixtures pass."
+    },
+    {
+      "name": "smoke_check",
+      "command": "py -3 scripts/smoke_check.py --out-dir docs/stabilization/baseline",
+      "outcome": "fail",
+      "exit_code": 1,
+      "reason": "public_cvxpy_qp fails: No module named 'numpy.lib.array_utils'",
+      "artifacts": ["smoke_check.json", "smoke_check.txt"]
+    },
+    {
+      "name": "differentiation_check",
+      "command": "py -3 scripts/differentiation_check.py --out-dir docs/stabilization/baseline",
+      "outcome": "pass",
+      "exit_code": 0
+    },
+    {
+      "name": "published_run_verify",
+      "command": "py -3 -m conicshield.published_runs.cli verify host-realistic-20260525",
+      "outcome": "pass",
+      "exit_code": 0,
+      "artifacts": ["published_run_verify.txt"]
+    },
+    {
+      "name": "community_verify_pytest",
+      "command": "pytest published_runs + public examples smoke",
+      "outcome": "pass",
+      "exit_code": 0
+    },
+    {
+      "name": "pytest_vendor_capable",
+      "command": "py -3 -m pytest tests/ -q -m 'solver or requires_moreau'",
+      "outcome": "pass_with_skips",
+      "exit_code": 0,
+      "summary": "4 skipped, 1 passed (ssss.) — Moreau importorskip on Windows; skips allowed (CS-SOLVER-003)",
+      "artifacts": ["pytest_vendor_capable.txt", "pytest_vendor_capable_detail.txt"]
+    },
+    {
+      "name": "solver_smoke_cli",
+      "command": "py -3 -m conicshield.core.solver_smoke_cli",
+      "outcome": "fail",
+      "exit_code": 1,
+      "reason": "cvxpy/moreau unavailable on this Windows host",
+      "artifacts": ["solver_smoke_cli.txt"]
+    },
+    {
+      "name": "parity_native",
+      "command": "py -3 -m conicshield.parity.cli ... --out-dir docs/stabilization/baseline/parity",
+      "outcome": "not_runnable",
+      "exit_code": 1,
+      "reason": "Native Moreau not supported on Windows (import raises). Parity requires vendor native arm.",
+      "artifacts": ["parity_native.txt"]
+    },
+    {
+      "name": "performance_benchmark",
+      "command": "py -3 scripts/performance_benchmark.py --out-dir docs/stabilization/baseline/perf",
+      "outcome": "not_runnable",
+      "exit_code": 1,
+      "reason": "Requires runnable Moreau/native path; unavailable on Windows host.",
+      "artifacts": ["performance_benchmark.txt"]
+    },
+    {
+      "name": "reference_correctness",
+      "command": "py -3 scripts/reference_correctness_summary.py --out-dir docs/stabilization/baseline",
+      "outcome": "not_runnable",
+      "exit_code": 1,
+      "reason": "Depends on MOREAU/cvxpy stack; cvxpy broken via numpy.lib.array_utils on this host.",
+      "artifacts": ["reference_correctness.txt"]
+    },
+    {
+      "name": "moreau_check",
+      "command": "py -3 -m moreau check",
+      "outcome": "fail",
+      "exit_code": 1,
+      "reason": "Moreau not supported on Windows (upstream ImportError).",
+      "artifacts": ["moreau_check.txt"]
+    },
+    {
+      "name": "windows_public_mode_status",
+      "command": "probe script",
+      "outcome": "pass",
+      "exit_code": 0,
+      "artifacts": ["windows_public_mode_status.json"]
+    }
+  ]
+}

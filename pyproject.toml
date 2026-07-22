@@ -96,6 +96,8 @@ markers = [
   "reference_correctness: shield-QP or reference-vs-reference correctness checks",
   "performance_benchmark: timing / scaling tests (optional vendor hardware)",
   "live_vendor: selected in scripts/run_live_vendor_tests.py (Moreau / inter-sim-rl / solver-marked tests)",
+  "stabilization_regression: Track-1 S0+ defect regressions (often xfail(strict=True) until fixed)",
+  "research: Track 2 research suite (experimental; see research/solver-assurance-and-gradients/)",
 ]
 filterwarnings = [
   "ignore::pytest.PytestDeprecationWarning:pytest_asyncio.*",
@@ -120,8 +122,13 @@ ignore_missing_imports = true
 module = "moreau"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "conicshield.experimental.*"
+disallow_untyped_defs = true
+
 [tool.coverage.run]
 source = ["conicshield"]
+omit = ["conicshield/experimental/*"]
 
 [tool.coverage.report]
 fail_under = 58

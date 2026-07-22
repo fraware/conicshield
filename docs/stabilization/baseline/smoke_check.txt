@@ -1,0 +1,1 @@
+docs\stabilization\baseline\smoke_check.json

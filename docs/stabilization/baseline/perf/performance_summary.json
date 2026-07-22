@@ -1,0 +1,22 @@
+{
+  "generated_at_utc": "2026-07-22T22:01:29Z",
+  "repeats_config": 5,
+  "warmup": 1,
+  "measure_iters": 4,
+  "sweep_mode": false,
+  "shield_action_dims": [
+    4
+  ],
+  "batch_sizes": [
+    4
+  ],
+  "batch_size_default": 4,
+  "sweep_auto_tune": false,
+  "rows": [],
+  "errors": [
+    "cvxpy: Optional dependency 'cvxpy' is required for CVXPY-based reference projector. Install solver extras, for example: pip install -e \".[solver,dev]\" --extra-index-url \"https://<GEMFURY_TOKEN>:@pypi.fury.io/optimalintellect/\". Place your Moreau license in ~/.moreau/key (or set MOREAU_LICENSE_KEY). See https://docs.moreau.so/installation.html",
+    "native_cpu: Optional dependency 'moreau' is required for native Moreau projector. Install solver extras, for example: pip install -e \".[solver,dev]\" --extra-index-url \"https://<GEMFURY_TOKEN>:@pypi.fury.io/optimalintellect/\". Place your Moreau license in ~/.moreau/key (or set MOREAU_LICENSE_KEY). See https://docs.moreau.so/installation.html",
+    "native batch paths (cpu) bs=4: Optional dependency 'moreau' is required for native Moreau projector. Install solver extras, for example: pip install -e \".[solver,dev]\" --extra-index-url \"https://<GEMFURY_TOKEN>:@pypi.fury.io/optimalintellect/\". Place your Moreau license in ~/.moreau/key (or set MOREAU_LICENSE_KEY). See https://docs.moreau.so/installation.html"
+  ],
+  "cuda_claim_note": "CUDA rows only when device_available(cuda) and solve succeeds; see docs/SOLVER_PATHS_AND_BATCHING.md (batch viability policy)"
+}

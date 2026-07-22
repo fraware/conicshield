@@ -1,0 +1,16 @@
+...............                                                          [100%]
+============================ slowest 15 durations =============================
+1.19s call     tests/examples/test_public_examples_smoke.py::test_minimal_reference_projection_example
+0.93s call     tests/examples/test_public_examples_smoke.py::test_verify_published_run_index_example
+0.73s call     tests/examples/test_public_examples_smoke.py::test_compare_reference_vs_native_metrics_example
+0.68s call     tests/examples/test_public_examples_smoke.py::test_load_published_runs_api_example
+0.67s call     tests/examples/test_public_examples_smoke.py::test_inspect_flagship_bundle_example
+0.65s call     tests/examples/test_public_examples_smoke.py::test_load_flagship_run_example
+0.37s call     tests/test_published_runs_cli.py::test_cli_verify_and_show_flagship
+0.35s call     tests/test_published_runs_cli.py::test_cli_summary_and_provenance_flagship
+0.18s call     tests/test_published_runs_cli.py::test_cli_list_includes_flagship
+0.18s call     tests/test_published_runs_cli.py::test_cli_current_family
+0.12s setup    tests/test_published_runs_api.py::test_list_and_load_flagship
+0.01s call     tests/test_published_runs_api.py::test_verify_flagship
+
+(3 durations < 0.005s hidden.  Use -vv to show these durations.)

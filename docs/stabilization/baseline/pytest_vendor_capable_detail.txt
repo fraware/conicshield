@@ -1,0 +1,39 @@
+ssss.                                                                    [100%]
+============================== warnings summary ===============================
+tests\vendor\diff\test_inter_sim_shield_projection_fd.py:8
+  C:\Users\mateo\conicshield\tests\vendor\diff\test_inter_sim_shield_projection_fd.py:8: PytestDeprecationWarning: 
+  Module 'moreau' was found, but when imported by pytest it raised:
+      ImportError("\nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n")
+  In pytest 9.1 this warning will become an error by default.
+  You can fix the underlying problem, or alternatively overwrite this behavior and silence this warning by passing exc_type=ImportError explicitly.
+  See https://docs.pytest.org/en/stable/deprecations.html#pytest-importorskip-default-behavior-regarding-importerror
+    pytest.importorskip("moreau")
+
+tests\vendor\diff\test_moreau_torch_grad_optional.py:10
+  C:\Users\mateo\conicshield\tests\vendor\diff\test_moreau_torch_grad_optional.py:10: PytestDeprecationWarning: 
+  Module 'moreau' was found, but when imported by pytest it raised:
+      ImportError("\nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n")
+  In pytest 9.1 this warning will become an error by default.
+  You can fix the underlying problem, or alternatively overwrite this behavior and silence this warning by passing exc_type=ImportError explicitly.
+  See https://docs.pytest.org/en/stable/deprecations.html#pytest-importorskip-default-behavior-regarding-importerror
+    pytest.importorskip("moreau")
+
+tests\vendor\native\test_native_moreau_projector.py:6
+  C:\Users\mateo\conicshield\tests\vendor\native\test_native_moreau_projector.py:6: PytestDeprecationWarning: 
+  Module 'moreau' was found, but when imported by pytest it raised:
+      ImportError("\nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n")
+  In pytest 9.1 this warning will become an error by default.
+  You can fix the underlying problem, or alternatively overwrite this behavior and silence this warning by passing exc_type=ImportError explicitly.
+  See https://docs.pytest.org/en/stable/deprecations.html#pytest-importorskip-default-behavior-regarding-importerror
+    pytest.importorskip("moreau")
+
+tests\vendor\native\test_shield_native_softmax_batch.py:8
+  C:\Users\mateo\conicshield\tests\vendor\native\test_shield_native_softmax_batch.py:8: PytestDeprecationWarning: 
+  Module 'moreau' was found, but when imported by pytest it raised:
+      ImportError("\nThe 'moreau' package cannot be installed directly from PyPI.\nMoreau is not supported on Windows. Please use WSL (Windows Subsystem for Linux).\nPlease visit https://docs.moreau.so for installation instructions.\n")
+  In pytest 9.1 this warning will become an error by default.
+  You can fix the underlying problem, or alternatively overwrite this behavior and silence this warning by passing exc_type=ImportError explicitly.
+  See https://docs.pytest.org/en/stable/deprecations.html#pytest-importorskip-default-behavior-regarding-importerror
+    pytest.importorskip("moreau")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
