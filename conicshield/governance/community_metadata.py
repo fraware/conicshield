@@ -12,7 +12,10 @@ from conicshield.published_run_index import build_run_catalog_metadata, classify
 def _load_json(path: Path) -> dict[str, Any]:
     if not path.is_file():
         return {}
-    return json.loads(path.read_text(encoding="utf-8"))
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise TypeError(f"expected JSON object in {path}")
+    return payload
 
 
 def _recommended_uses(*, tier: str, host_realistic: bool, includes_native: bool) -> list[str]:
@@ -62,7 +65,6 @@ def build_community_metadata(
 
     host = bool(prov.get("host_realistic_evidence"))
     includes_native = bool(catalog.get("includes_native_arm"))
-    fixture_rid = catalog.get("parity_fixture_source")
     parity_status = "unknown"
     if (run_dir / "parity_out" / "parity_summary.json").is_file():
         ps = _load_json(run_dir / "parity_out" / "parity_summary.json")
@@ -80,15 +82,9 @@ def build_community_metadata(
         "is_family_current_run": bool(current_run_id) and rid == current_run_id,
         "parity_fixture_source": parity_fixture_source,
         "export_kind": export_kind or None,
-        "source_export": (
-            "benchmarks/external_evidence/offline_graph_export_upstream.json" if host else None
-        ),
+        "source_export": ("benchmarks/external_evidence/offline_graph_export_upstream.json" if host else None),
         "parity_status": parity_status,
         "solver_stack": solver_stack,
-        "recommended_uses": _recommended_uses(
-            tier=tier, host_realistic=host, includes_native=includes_native
-        ),
-        "known_limitations": _known_limitations(
-            tier=tier, host_realistic=host, export_kind=export_kind or "n/a"
-        ),
+        "recommended_uses": _recommended_uses(tier=tier, host_realistic=host, includes_native=includes_native),
+        "known_limitations": _known_limitations(tier=tier, host_realistic=host, export_kind=export_kind or "n/a"),
     }

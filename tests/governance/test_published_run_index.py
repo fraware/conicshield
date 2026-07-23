@@ -9,7 +9,6 @@ from conicshield.published_run_index import (
     assert_index_covers_present_optional_files,
     assert_index_includes_required_hashes,
     assert_parity_note_run_ids_indexed,
-    classify_evidence_tier,
     load_published_run_index,
     run_ids_from_parity_regeneration_note,
     verify_index_integrity,
