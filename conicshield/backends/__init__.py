@@ -1,4 +1,12 @@
-"""Backend adapters, status normalization, public projectors, and capability discovery."""
+"""Backend adapters, status normalization, public projectors, and capability discovery.
+
+Public CVXPY projectors are imported lazily so leaf modules (``status``, ``base``)
+can be used from verification/core without circular imports.
+"""
+
+from __future__ import annotations
+
+from typing import Any
 
 from conicshield.backends.base import (
     AUTO_PRODUCTION_ENV,
@@ -10,18 +18,6 @@ from conicshield.backends.base import (
     is_vendor_backend,
     parse_backend,
     resolve_backend,
-)
-from conicshield.backends.capabilities import (
-    BackendCapabilities,
-    CapabilityFlag,
-    discover_all_capabilities,
-    evidence_subset,
-)
-from conicshield.backends.public_cvxpy import (
-    CVXPYClarabelProjector,
-    CVXPYSCSProjector,
-    PublicClarabelProjector,
-    PublicSCSProjector,
 )
 from conicshield.backends.status import (
     CanonicalSolverStatus,
@@ -53,3 +49,32 @@ __all__ = [
     "parse_backend",
     "resolve_backend",
 ]
+
+_LAZY_PUBLIC = {
+    "CVXPYClarabelProjector",
+    "CVXPYSCSProjector",
+    "PublicClarabelProjector",
+    "PublicSCSProjector",
+}
+_LAZY_CAPS = {
+    "BackendCapabilities",
+    "CapabilityFlag",
+    "discover_all_capabilities",
+    "evidence_subset",
+}
+
+
+def __getattr__(name: str) -> Any:
+    if name in _LAZY_PUBLIC:
+        from conicshield.backends import public_cvxpy as _public
+
+        return getattr(_public, name)
+    if name in _LAZY_CAPS:
+        from conicshield.backends import capabilities as _caps
+
+        return getattr(_caps, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__() -> list[str]:
+    return sorted(__all__)
