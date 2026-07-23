@@ -107,6 +107,81 @@ def normalize_cvxpy_status(raw: Any) -> CanonicalSolverStatus:
     return normalize_solver_status(raw, backend="cvxpy")
 
 
+# Moreau ``SolverStatus`` integer codes (moreau>=0.3). Keep explicit — never
+# invent success from unrecognized integers.
+_MOREAU_INT_STATUS: dict[int, CanonicalSolverStatus] = {
+    0: CanonicalSolverStatus.UNKNOWN,  # Unsolved
+    1: CanonicalSolverStatus.OPTIMAL,  # Solved
+    2: CanonicalSolverStatus.INFEASIBLE,  # PrimalInfeasible
+    3: CanonicalSolverStatus.UNBOUNDED,  # DualInfeasible (primal unbounded)
+    4: CanonicalSolverStatus.OPTIMAL_INACCURATE,  # AlmostSolved
+    5: CanonicalSolverStatus.INFEASIBLE,  # AlmostPrimalInfeasible
+    6: CanonicalSolverStatus.UNBOUNDED,  # AlmostDualInfeasible
+    7: CanonicalSolverStatus.ITERATION_LIMIT,  # MaxIterations
+    8: CanonicalSolverStatus.TIME_LIMIT,  # MaxTime
+    9: CanonicalSolverStatus.NUMERICAL_ERROR,  # NumericalError
+    10: CanonicalSolverStatus.NUMERICAL_ERROR,  # InsufficientProgress
+    11: CanonicalSolverStatus.BACKEND_ERROR,  # CallbackTerminated
+}
+
+_MOREAU_NAME_STATUS: dict[str, CanonicalSolverStatus] = {
+    "unsolved": CanonicalSolverStatus.UNKNOWN,
+    "solved": CanonicalSolverStatus.OPTIMAL,
+    "primalinfeasible": CanonicalSolverStatus.INFEASIBLE,
+    "dualinfeasible": CanonicalSolverStatus.UNBOUNDED,
+    "almostsolved": CanonicalSolverStatus.OPTIMAL_INACCURATE,
+    "almostprimalinfeasible": CanonicalSolverStatus.INFEASIBLE,
+    "almostdualinfeasible": CanonicalSolverStatus.UNBOUNDED,
+    "maxiterations": CanonicalSolverStatus.ITERATION_LIMIT,
+    "maxtime": CanonicalSolverStatus.TIME_LIMIT,
+    "numericalerror": CanonicalSolverStatus.NUMERICAL_ERROR,
+    "insufficientprogress": CanonicalSolverStatus.NUMERICAL_ERROR,
+    "callbackterminated": CanonicalSolverStatus.BACKEND_ERROR,
+}
+
+
 def normalize_moreau_status(raw: Any) -> CanonicalSolverStatus:
-    """Adapter for Moreau ``SolveInfo.status`` / telemetry fields."""
+    """Adapter for Moreau ``SolverStatus`` ints, enum members, and name tokens.
+
+    Telemetry often stringifies integer codes (``\"1\"`` for Solved). Map those
+    explicitly; unrecognized values remain ``UNKNOWN`` (fail-closed).
+    """
+    if raw is None:
+        return CanonicalSolverStatus.UNKNOWN
+
+    # Enum member (moreau.SolverStatus.Solved, etc.).
+    name = getattr(raw, "name", None)
+    if isinstance(name, str) and name:
+        named = _MOREAU_NAME_STATUS.get(_as_token(name).replace("_", ""))
+        if named is not None:
+            return named
+        # Fall through to value when name is unfamiliar.
+    value = getattr(raw, "value", None)
+    if isinstance(value, int) and not isinstance(raw, bool):
+        mapped = _MOREAU_INT_STATUS.get(value)
+        if mapped is not None:
+            return mapped
+
+    if isinstance(raw, bool):
+        return CanonicalSolverStatus.UNKNOWN
+    if isinstance(raw, int):
+        mapped = _MOREAU_INT_STATUS.get(raw)
+        return mapped if mapped is not None else CanonicalSolverStatus.UNKNOWN
+
+    token = _as_token(raw)
+    if token.isdigit() or (token.startswith("-") and token[1:].isdigit()):
+        mapped = _MOREAU_INT_STATUS.get(int(token))
+        return mapped if mapped is not None else CanonicalSolverStatus.UNKNOWN
+
+    compact = token.replace("_", "")
+    if compact in _MOREAU_NAME_STATUS:
+        return _MOREAU_NAME_STATUS[compact]
+
+    # e.g. "SolverStatus.Solved"
+    if "." in token:
+        tail = token.rsplit(".", 1)[-1]
+        compact_tail = tail.replace("_", "")
+        if compact_tail in _MOREAU_NAME_STATUS:
+            return _MOREAU_NAME_STATUS[compact_tail]
+
     return normalize_solver_status(raw, backend="moreau")
