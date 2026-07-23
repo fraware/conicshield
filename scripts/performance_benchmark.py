@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import sys
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -128,6 +129,8 @@ def _bench_cvxpy(
         "mean_sec": float(arr.mean()),
         "p50_sec": float(np.percentile(arr, 50)),
         "p95_sec": float(np.percentile(arr, 95)),
+        "p99_sec": float(np.percentile(arr, 99)),
+        "max_sec": float(arr.max()),
         "action_dim": spec.action_dim,
         "auto_tune": False,
     }
@@ -168,6 +171,8 @@ def _bench_native_cold(
         "mean_sec": float(arr.mean()),
         "p50_sec": float(np.percentile(arr, 50)),
         "p95_sec": float(np.percentile(arr, 95)),
+        "p99_sec": float(np.percentile(arr, 99)),
+        "max_sec": float(arr.max()),
         "auto_tune": auto_tune,
         "action_dim": spec.action_dim,
     }
@@ -391,9 +396,33 @@ def main() -> int:
     p.add_argument(
         "--sweep-auto-tune",
         action="store_true",
-        help="Add native cold rows with auto_tune=True alongside the default False.",
+        help="In --sweep mode, also measure native cold solves with auto_tune enabled.",
+    )
+    p.add_argument(
+        "--decision-grade",
+        action="store_true",
+        help="Delegate to scripts/decision_grade_benchmark.py (S8 workload matrix).",
     )
     args = p.parse_args()
+    if args.decision_grade:
+        import subprocess
+
+        out = args.out_dir or (Path(__file__).resolve().parents[1] / "benchmarks" / "reports" / "s8_qualification")
+        cmd = [
+            sys.executable,
+            str(Path(__file__).resolve().parents[1] / "scripts" / "decision_grade_benchmark.py"),
+            "--out-dir",
+            str(out),
+            "--repeats",
+            str(max(2, int(args.repeats))),
+            "--warmup",
+            str(int(args.warmup)),
+        ]
+        if args.shield_action_dims.strip():
+            cmd.extend(["--action-dims", args.shield_action_dims.strip()])
+        if args.batch_sizes.strip():
+            cmd.extend(["--batch-sizes", args.batch_sizes.strip()])
+        return int(subprocess.call(cmd))
     repeats = int(args.warmup) + int(args.measure_iters)
     if repeats < 1:
         raise SystemExit("warmup + measure-iters must be >= 1")

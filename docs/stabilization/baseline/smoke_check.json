@@ -1,0 +1,30 @@
+{
+  "generated_at_utc": "2026-07-22T22:01:03Z",
+  "status": "fail",
+  "public_ok": false,
+  "vendor_ok": null,
+  "vendor_included": false,
+  "steps": [
+    {
+      "name": "public_cvxpy_qp",
+      "result": {
+        "ok": false,
+        "error": "No module named 'numpy.lib.array_utils'"
+      }
+    },
+    {
+      "name": "artifact_bundle_parity_reference",
+      "result": {
+        "path": "C:\\Users\\mateo\\conicshield\\tests\\fixtures\\parity_reference",
+        "ok": true
+      }
+    },
+    {
+      "name": "governance_audit_strict",
+      "result": {
+        "ok": true,
+        "returncode": 0
+      }
+    }
+  ]
+}

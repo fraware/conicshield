@@ -1,0 +1,25 @@
+{
+  "schema_version": "conicshield_local_vendor_attestation/v1",
+  "generated_at_utc": "2026-07-23T07:02:46Z",
+  "status": "PASS",
+  "exit_codes": {
+    "mandatory_native_solves": 0,
+    "pytest_vendor": 0,
+    "assert_vendor_ci_evidence": 0
+  },
+  "artifacts": {
+    "mandatory_native_solves": "docs/stabilization/vendor_attestation_local/mandatory_native_solves.json",
+    "junit": "docs/stabilization/vendor_attestation_local/vendor_pytest.junit.xml",
+    "checklist": "docs/stabilization/vendor_attestation_local/CHECKLIST.md"
+  },
+  "preflight": {
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "executable": "/mnt/c/Users/mateo/conicshield/.venv-wsl-moreau/bin/python",
+    "moreau_ok": true,
+    "compiled_solver": true,
+    "cvxpy_moreau": true
+  },
+  "skip_pytest": false,
+  "gate_claim": "Vendor CI real-solve attestation PASS (local)"
+}

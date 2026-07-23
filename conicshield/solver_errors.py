@@ -6,10 +6,14 @@ from types import ModuleType
 from conicshield._optional import OptionalDependencyError
 
 SOLVER_INSTALL_HINT = (
-    'Install solver extras, for example: pip install -e ".[solver,dev]" '
-    '--extra-index-url "https://<GEMFURY_TOKEN>:@pypi.fury.io/optimalintellect/". '
+    'Install a profile from packaging/install_matrix.json, for example: '
+    'pip install -e ".[solver-public]" -c packaging/constraints/solver-public.txt '
+    '(credential-free), or pip install -e ".[solver-moreau-cpu]" '
+    '--extra-index-url "<vendor-index>" for Linux/WSL Moreau. '
     "Place your Moreau license in ~/.moreau/key (or set MOREAU_LICENSE_KEY). "
-    "See https://docs.moreau.so/installation.html"
+    "Do not assume default-index pip install moreau is the governed package. "
+    "See docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md and "
+    "https://docs.moreau.so/installation.html"
 )
 
 

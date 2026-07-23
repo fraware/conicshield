@@ -1,0 +1,373 @@
+[
+  {
+    "issue_id": "CS-SOLVER-001",
+    "severity": "P0",
+    "title": "Native lower-bound semantics incorrect",
+    "affected_paths": [
+      "conicshield/specs/native_moreau_builder.py",
+      "conicshield/specs/compiler.py",
+      "conicshield/specs/schema.py",
+      "conicshield/specs/shield_qp.py"
+    ],
+    "reproduction": [
+      "Construct SafetySpec with BoxConstraint.lower containing a negative entry (schema-legal).",
+      "Build CVXPY constraints (x >= lower) vs native build_moreau_standard_form.",
+      "Observe native unconditional x_i >= 0 and missing lower row when lower_i <= 0."
+    ],
+    "expected_behavior": "Native cone rows encode each finite declared lower bound (x_i >= lower_i), matching CVXPY; no stronger implicit nonnegativity unless required by the constraint family.",
+    "current_behavior": "Native encodes -x_i <= -lower_i and x_i <= upper_i from canonical ShieldQPData; no unconditional nonnegativity.",
+    "test_added": "tests/stabilization/test_p0_native_lower_bounds.py::test_native_builder_encodes_negative_lower_bounds_like_cvxpy",
+    "fix_pr": 2,
+    "status": "fixed",
+    "work_package": "S1"
+  },
+  {
+    "issue_id": "CS-SOLVER-002",
+    "severity": "P0",
+    "title": "Solver output released without independent admissibility verification",
+    "affected_paths": [
+      "conicshield/core/moreau_compiled.py",
+      "conicshield/core/moreau_batched.py",
+      "conicshield/specs/compiler.py",
+      "conicshield/verification/",
+      "conicshield/backends/status.py"
+    ],
+    "reproduction": [
+      "Native: project() assigns corrected_action from solution.x with no residual/finite gate.",
+      "CVXPY: only checks x.value is not None; no inaccurate/timeout/iteration-limit release policy."
+    ],
+    "expected_behavior": "Backend-independent verifier gates release on finite values, residuals, and declared status policy.",
+    "current_behavior": "Native and CVXPY paths release only via run_verified_release_pipeline (status + residuals + fallback ladder).",
+    "test_added": "tests/stabilization/test_p0_admissibility.py",
+    "fix_pr": 3,
+    "status": "fixed",
+    "work_package": "S2"
+  },
+  {
+    "issue_id": "CS-SOLVER-003",
+    "severity": "P0",
+    "title": "Vendor CI false confidence via skips",
+    "affected_paths": [
+      ".github/workflows/solver-ci.yml",
+      "tests/conftest.py",
+      "tests/vendor/native/test_native_moreau_projector.py",
+      "tests/test_cvxpy_moreau_projector.py",
+      "tests/stabilization/vendor_required.py"
+    ],
+    "reproduction": [
+      "Run vendor-marked tests without license: many tests pytest.skip.",
+      "solver-ci.yml does not set CONICSHIELD_VENDOR_REQUIRED=1."
+    ],
+    "expected_behavior": "Under CONICSHIELD_VENDOR_REQUIRED=1, license/capability skips are hard failures; vendor CI sets the flag and post-checks executed solves.",
+    "current_behavior": "Vendor CI sets CONICSHIELD_VENDOR_REQUIRED=1, runs moreau check + mandatory native/failure-policy solves, emits JUnit, and fails the evidence gate on zero executes / vendor skips / zero native solves.",
+    "test_added": "tests/stabilization/test_p0_vendor_required_skips.py",
+    "fix_pr": 8,
+    "status": "fixed",
+    "work_package": "S7"
+  },
+  {
+    "issue_id": "CS-SOLVER-004",
+    "severity": "P0",
+    "title": "Warm-start state not isolated across episodes",
+    "affected_paths": [
+      "conicshield/adapters/inter_sim_rl/shield.py",
+      "conicshield/core/moreau_compiled.py",
+      "conicshield/core/moreau_batched.py",
+      "conicshield/core/interfaces.py",
+      "conicshield/compilation/"
+    ],
+    "reproduction": [
+      "InterSimConicShield.choose_action populates _projector_cache; native projector stores _warm.",
+      "reset_episode() only clears _previous_distribution."
+    ],
+    "expected_behavior": "reset_episode clears previous action and episode/projector warm-start (or equivalent reset_state protocol) so first-solve matches a fresh projector.",
+    "current_behavior": "reset_episode clears previous distribution and calls reset_state on cached sequential/batch projectors; StatefulProjectorProtocol declared.",
+    "test_added": "tests/stabilization/test_p0_warm_start_isolation.py::test_reset_episode_clears_projector_warm_start_state",
+    "fix_pr": 4,
+    "status": "fixed",
+    "work_package": "S3"
+  },
+  {
+    "issue_id": "CS-SOLVER-005",
+    "severity": "P0",
+    "title": "Invalid objective weights silently coerced",
+    "affected_paths": [
+      "conicshield/specs/shield_qp.py",
+      "conicshield/specs/compiler.py"
+    ],
+    "reproduction": [
+      "objective_pq(..., reference_weight=-1) clips rw to 0.",
+      "objective_pq(..., policy_weight=0, reference_weight=0) replaces scale with 1e-12."
+    ],
+    "expected_behavior": "Finite policy_weight >= 0, reference_weight >= 0, and strictly positive sum; otherwise raise a typed error.",
+    "current_behavior": "validate_objective_weights / objective_pq raise InvalidObjectiveWeightError; CVXPY path uses the same validator.",
+    "test_added": "tests/stabilization/test_p0_invalid_weight_coercion.py",
+    "fix_pr": 2,
+    "status": "fixed",
+    "work_package": "S1"
+  },
+  {
+    "issue_id": "CS-SOLVER-006",
+    "severity": "P0",
+    "title": "Public vs vendor backend boundaries unclear",
+    "affected_paths": [
+      "conicshield/core/solver_factory.py",
+      "conicshield/backends/base.py",
+      "conicshield/backends/public_cvxpy.py",
+      "conicshield/backends/capabilities.py",
+      "docs/SOLVER_PATHS_AND_BATCHING.md",
+      "docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md",
+      "pyproject.toml"
+    ],
+    "reproduction": [
+      "Backend enum exposes only CVXPY_MOREAU / NATIVE_MOREAU / NATIVE_MOREAU_BATCH.",
+      "Default create_projector uses CVXPY_MOREAU which still requires vendor Moreau registration.",
+      "Docs describe public/reference operation without credentials."
+    ],
+    "expected_behavior": "Explicit AUTO/PUBLIC_CLARABEL/PUBLIC_SCS members; AUTO never selects vendor Moreau merely because it imports.",
+    "current_behavior": "Backend enum includes AUTO/PUBLIC_*/vendor members; AUTO\u2192PUBLIC_CLARABEL unless CONICSHIELD_PRODUCTION_BACKEND is set; default create_projector remains explicit CVXPY_MOREAU.",
+    "test_added": "tests/stabilization/test_p0_backend_boundaries.py",
+    "fix_pr": 6,
+    "status": "fixed",
+    "work_package": "S5"
+  },
+  {
+    "issue_id": "CS-SOLVER-007",
+    "severity": "P0",
+    "title": "Verification commands may mutate repository state",
+    "affected_paths": [
+      "Makefile",
+      "scripts/sync_community_metadata.py"
+    ],
+    "reproduction": [
+      "make verify-reference-system depends on sync-community-metadata.",
+      "scripts/sync_community_metadata.py writes COMMUNITY_METADATA.json with no --check mode."
+    ],
+    "expected_behavior": "verify-*/check-* targets are read-only; sync/generate/refresh support --check; CI fails on dirty worktree after verify.",
+    "current_behavior": "sync_community_metadata/sync_published_run_readmes support --check; verify-reference-system uses check-community-metadata; reference-authority asserts a clean worktree after verify.",
+    "test_added": "tests/stabilization/test_p0_verify_readonly.py",
+    "fix_pr": 8,
+    "status": "fixed",
+    "work_package": "S7"
+  },
+  {
+    "issue_id": "CS-SOLVER-101",
+    "severity": "P1",
+    "title": "Batch semantics artificially restricted (shared P/A/b only)",
+    "affected_paths": [
+      "conicshield/core/moreau_batched.py",
+      "conicshield/adapters/inter_sim_rl/shield.py",
+      "conicshield/compilation/"
+    ],
+    "reproduction": [
+      "NativeMoreauCompiledBatchProjector.project_batch uses one previous_action and shared A/b numeric values across rows."
+    ],
+    "expected_behavior": "Heterogeneous batch API with per-row previous/reference/weights under shared structural topology.",
+    "current_behavior": "project_batch accepts per-row previous/reference/weights/bounds/rates; BatchProjectionResult with per-row evidence.",
+    "test_added": "tests/compilation/test_heterogeneous_batch.py",
+    "fix_pr": 5,
+    "status": "fixed",
+    "work_package": "S4"
+  },
+  {
+    "issue_id": "CS-SOLVER-102",
+    "severity": "P1",
+    "title": "Batch compilation discarded by InterSim adapter",
+    "affected_paths": [
+      "conicshield/adapters/inter_sim_rl/shield.py"
+    ],
+    "reproduction": [
+      "project_softmax_batch calls create_batch_projector on every invocation."
+    ],
+    "expected_behavior": "Bounded batch-projector cache keyed by structural fingerprint with reuse telemetry.",
+    "current_behavior": "BoundedLRUCache batch projector cache with bind_spec reuse and lifecycle metrics.",
+    "test_added": "tests/state/test_state_isolation.py",
+    "fix_pr": 5,
+    "status": "fixed",
+    "work_package": "S4"
+  },
+  {
+    "issue_id": "CS-SOLVER-103",
+    "severity": "P1",
+    "title": "Cache keys mix structure with runtime values",
+    "affected_paths": [
+      "conicshield/adapters/inter_sim_rl/shield.py",
+      "conicshield/compilation/structural_keys.py",
+      "conicshield/compilation/bounded_cache.py"
+    ],
+    "reproduction": [
+      "_spec_cache_key hashes full SafetySpec.model_dump() including numeric bounds/rates."
+    ],
+    "expected_behavior": "Separate structural fingerprint from numerical parameters and trajectory state; bounded LRU.",
+    "current_behavior": "structural_fingerprint + numerical_signature; InterSim uses BoundedLRUCache keyed by structure (S4 still owns full ConstraintTopology compiler).",
+    "test_added": "tests/state/test_state_isolation.py",
+    "fix_pr": 4,
+    "status": "fixed",
+    "work_package": "S3"
+  },
+  {
+    "issue_id": "CS-SOLVER-104",
+    "severity": "P1",
+    "title": "Sparse problem construction repeated unnecessarily",
+    "affected_paths": [
+      "conicshield/specs/native_moreau_builder.py",
+      "conicshield/core/moreau_compiled.py",
+      "conicshield/compilation/compiled_template.py"
+    ],
+    "reproduction": [
+      "Each project rebuilds dense rows, stacks, converts to CSR; CompiledSolver.setup each solve."
+    ],
+    "expected_behavior": "Fixed-structure CompiledShieldTemplate with parameter fills; skip setup when values fingerprint unchanged.",
+    "current_behavior": "CompiledShieldTemplate fills preallocated buffers; setup skipped when setup_values_fingerprint matches.",
+    "test_added": "tests/compilation/test_compiled_template.py",
+    "fix_pr": 5,
+    "status": "fixed",
+    "work_package": "S4"
+  },
+  {
+    "issue_id": "CS-SOLVER-105",
+    "severity": "P1",
+    "title": "Batch telemetry incomplete",
+    "affected_paths": [
+      "conicshield/core/moreau_compiled.py",
+      "conicshield/core/moreau_batched.py",
+      "conicshield/core/result.py"
+    ],
+    "reproduction": [
+      "Sequential compiled path reduces batched metadata to first row; batch path returns only ndarray."
+    ],
+    "expected_behavior": "BatchProjectionResult with per-row ProjectionResult and batch-level timing/cache fields.",
+    "current_behavior": "BatchProjectionResult.rows carries full per-row verification/release evidence.",
+    "test_added": "tests/compilation/test_heterogeneous_batch.py",
+    "fix_pr": 5,
+    "status": "fixed",
+    "work_package": "S4"
+  },
+  {
+    "issue_id": "CS-SOLVER-106",
+    "severity": "P1",
+    "title": "Active constraints inaccurately reported",
+    "affected_paths": [
+      "conicshield/core/moreau_compiled.py",
+      "conicshield/specs/compiler.py",
+      "conicshield/verification/active_set.py"
+    ],
+    "reproduction": [
+      "active_constraints appends turn_feasibility whenever any action is prohibited, ignoring solution residuals."
+    ],
+    "expected_behavior": "Active set from verified residuals and active_tol with stable identifiers.",
+    "current_behavior": "active_constraints_from_residuals gates turn_feasibility on residual proximity; release pipeline attaches residual-derived IDs.",
+    "test_added": "tests/stabilization/test_p1_status_active_set.py",
+    "fix_pr": 3,
+    "status": "fixed",
+    "work_package": "S2"
+  },
+  {
+    "issue_id": "CS-SOLVER-107",
+    "severity": "P1",
+    "title": "Status normalization is heuristic",
+    "affected_paths": [
+      "conicshield/backends/status.py",
+      "conicshield/core/telemetry.py",
+      "tests"
+    ],
+    "reproduction": [
+      "Telemetry/tests treat values like '1'/'true'/'ok' as success-like."
+    ],
+    "expected_behavior": "Backend-specific adapters to a canonical status enum; unknown -> UNKNOWN not success.",
+    "current_behavior": "normalize_solver_status maps only explicit aliases; '1'/'true'/'ok' \u2192 UNKNOWN; vendor tests use canonical comparison.",
+    "test_added": "tests/stabilization/test_p1_status_active_set.py",
+    "fix_pr": 3,
+    "status": "fixed",
+    "work_package": "S2"
+  },
+  {
+    "issue_id": "CS-SOLVER-108",
+    "severity": "P1",
+    "title": "Concurrency behavior undefined",
+    "affected_paths": [
+      "conicshield/core/moreau_compiled.py",
+      "conicshield/adapters/inter_sim_rl/shield.py",
+      "conicshield/compilation/solver_pool.py",
+      "conicshield/core/interfaces.py"
+    ],
+    "reproduction": [
+      "Cached projectors hold mutable warm-start/compiled solver state with no declared concurrency model."
+    ],
+    "expected_behavior": "Declared model (instance-confined, lock-protected, or pooled exclusive checkout) with tests.",
+    "current_behavior": "ConcurrencyModel declared on projectors/shield; SolverPool exclusive checkout; concurrent episode isolation tests.",
+    "test_added": "tests/concurrency/test_concurrency_isolation.py",
+    "fix_pr": 4,
+    "status": "fixed",
+    "work_package": "S3"
+  },
+  {
+    "issue_id": "CS-SOLVER-109",
+    "severity": "P1",
+    "title": "Installation profiles overly coupled",
+    "affected_paths": [
+      "pyproject.toml",
+      "packaging/install_matrix.json",
+      "packaging/constraints/",
+      ".github/workflows/solver-ci.yml",
+      "scripts/bootstrap_moreau.sh",
+      "scripts/bootstrap_moreau.ps1"
+    ],
+    "reproduction": [
+      "optional-dependencies.solver installs moreau[cuda]; vendor CI pins Python 3.11."
+    ],
+    "expected_behavior": "Split solver-public / moreau-cpu / moreau-cuda / diff-* extras with markers.",
+    "current_behavior": "Extras split with platform/Python markers; CUDA only in solver-moreau-cuda; deprecated solver aliases CPU.",
+    "test_added": "tests/stabilization/test_p0_packaging_provenance.py",
+    "fix_pr": 6,
+    "status": "fixed",
+    "work_package": "S5"
+  },
+  {
+    "issue_id": "CS-SOLVER-110",
+    "severity": "P1",
+    "title": "Moreau provenance not sufficiently established",
+    "affected_paths": [
+      "scripts/bootstrap_moreau.sh",
+      "conicshield/platform/doctor.py",
+      "conicshield/cli.py",
+      "conicshield/backends/identity.py",
+      "docs/MOREAU_INSTALL_AND_ENVIRONMENT_POLICY.md"
+    ],
+    "reproduction": [
+      "Bootstrap/docs assume particular package source and license arrangement without a solver-doctor evidence command."
+    ],
+    "expected_behavior": "conicshield solver-doctor --json recording install provenance, devices, license check, commit, settings.",
+    "current_behavior": "conicshield solver-doctor --json emits redacted provenance; identity probes reject import-only stubs.",
+    "test_added": "tests/stabilization/test_p0_packaging_provenance.py",
+    "fix_pr": 6,
+    "status": "fixed",
+    "work_package": "S5"
+  },
+  {
+    "issue_id": "CS-SOLVER-111",
+    "severity": "P1",
+    "title": "Windows documented as workaround, not qualified operating mode",
+    "affected_paths": [
+      "docs/WINDOWS_OPERATING_MODES.md",
+      "docs/DEVENV.md",
+      "scripts/bootstrap_moreau.ps1",
+      "scripts/start_moreau_sidecar.ps1",
+      ".github/workflows/windows-ci.yml",
+      "conicshield/platform/windows_sidecar_client.py",
+      "conicshield/platform/sidecar_protocol.py",
+      "conicshield/workers/moreau_worker.py",
+      "tests/platform/windows/",
+      "tests/platform/sidecar/"
+    ],
+    "reproduction": [
+      "Bootstrap hard-fails outside Linux; public CI is Ubuntu-only; docs push WSL2 for Moreau."
+    ],
+    "expected_behavior": "Qualify distinct Windows public / WSL-native-repo / Moreau-sidecar modes with CI evidence for public; no native Moreau-on-Windows claim.",
+    "current_behavior": "windows_public required in windows-ci; WSL path + sidecar protocol/client with fail-closed public fallback; docs enumerate three modes.",
+    "test_added": "tests/platform/windows/; tests/platform/sidecar/",
+    "fix_pr": 7,
+    "status": "fixed",
+    "work_package": "S6"
+  }
+]

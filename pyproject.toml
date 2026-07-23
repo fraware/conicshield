@@ -31,6 +31,7 @@ dependencies = [
 ]
 
 [project.scripts]
+conicshield = "conicshield.cli:main"
 conicshield-published-runs = "conicshield.published_runs.cli:main"
 
 [project.urls]
@@ -40,10 +41,26 @@ Documentation = "https://github.com/fraware/conicshield/blob/main/docs/COMMUNITY
 Issues = "https://github.com/fraware/conicshield/issues"
 
 [project.optional-dependencies]
-solver = [
-  # Vendor dependency: install only through the vendor-approved package source.
-  # Do not assume default-index "pip install moreau" provides the required solver backend.
-  "moreau[cuda]",
+# Public / reference solvers only — never pulls CUDA or vendor Moreau.
+solver-public = [
+  "clarabel==0.11.1; python_version >= '3.11' and python_version < '3.13'",
+  "scs==3.2.11; python_version >= '3.11' and python_version < '3.13'",
+]
+# Vendor Moreau CPU wheels (Linux/WSL). Requires vendor extra-index; see docs.
+# Exact governed pins live in packaging/constraints/ — do not rely on lower bounds alone.
+solver-moreau-cpu = [
+  "moreau; python_version >= '3.11' and python_version < '3.13' and sys_platform == 'linux'",
+]
+# Vendor Moreau with CUDA extras (Linux/WSL). Do not use on CPU-only hosts.
+solver-moreau-cuda = [
+  "moreau[cuda]; python_version >= '3.11' and python_version < '3.13' and sys_platform == 'linux'",
+]
+diff-torch = [
+  "torch>=2.2.0; python_version >= '3.11' and python_version < '3.13'",
+]
+diff-jax = [
+  "jax>=0.4.28; python_version >= '3.11' and python_version < '3.13'",
+  "jaxlib>=0.4.28; python_version >= '3.11' and python_version < '3.13'",
 ]
 dev = [
   "pytest>=8.2",
@@ -55,6 +72,11 @@ dev = [
   "hypothesis>=6.100",
   "matplotlib>=3.8",
   "types-jsonschema>=4.23",
+]
+# Deprecated alias: historically installed moreau[cuda]. Now maps to CPU-only
+# vendor extra to avoid surprise CUDA pulls. Prefer solver-moreau-cpu / cuda.
+solver = [
+  "moreau; python_version >= '3.11' and python_version < '3.13' and sys_platform == 'linux'",
 ]
 
 [tool.setuptools]
@@ -91,11 +113,15 @@ markers = [
   "vendor_moreau: requires vendor Moreau installation and license",
   "integration: cross-module or external integration tests",
   "requires_moreau: requires installed moreau package and license",
+  "requires_wsl: requires WSL2 / wsl.exe (skip with reason when absent)",
+  "requires_moreau_sidecar: requires WSL worker with importable Moreau (skip with reason when absent)",
   "inter_sim_rl: requires forked inter-sim-rl checkout (INTERSIM_RL_ROOT or submodule path)",
   "slow: long-running subprocess or env setup (optional filter: -m \"not slow\")",
   "reference_correctness: shield-QP or reference-vs-reference correctness checks",
   "performance_benchmark: timing / scaling tests (optional vendor hardware)",
   "live_vendor: selected in scripts/run_live_vendor_tests.py (Moreau / inter-sim-rl / solver-marked tests)",
+  "stabilization_regression: Track-1 S0+ defect regressions (often xfail(strict=True) until fixed)",
+  "research: Track 2 research suite (experimental; see research/solver-assurance-and-gradients/)",
 ]
 filterwarnings = [
   "ignore::pytest.PytestDeprecationWarning:pytest_asyncio.*",
@@ -120,8 +146,13 @@ ignore_missing_imports = true
 module = "moreau"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "conicshield.experimental.*"
+disallow_untyped_defs = true
+
 [tool.coverage.run]
 source = ["conicshield"]
+omit = ["conicshield/experimental/*"]
 
 [tool.coverage.report]
 fail_under = 58

@@ -10,6 +10,8 @@ output/
 .env
 .venv/
 .venv-wsl/
+.venv-wsl-moreau/
+.venv-win-public/
 .hypothesis/
 .coverage
 htmlcov/

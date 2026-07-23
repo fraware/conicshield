@@ -18,9 +18,9 @@ Read [`COMMUNITY_METADATA.json`](COMMUNITY_METADATA.json) before `summary.json`.
 
 ## Solver stack
 
-- `cvxpy`: `1.8.2`
-- `cvxpylayers`: `1.0.4`
-- `moreau`: `0.3.0`
+- `cvxpy`: `1.9.2`
+- `cvxpylayers`: `1.2.0`
+- `moreau`: `0.3.3`
 
 ## What this run proves
 

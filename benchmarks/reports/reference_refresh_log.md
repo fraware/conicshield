@@ -9,6 +9,7 @@ Machine source: `benchmarks/external_evidence/EXPORT_PROVENANCE.json` (`refresh_
 | 2 | 2026-05-26T06:05:21Z | event-driven-live-export | live-export | live_upstream_dump | `381004e` | yes | capture + full cycle |
 | 3 | 2026-05-28T16:28:58Z | calendar-cadence | live-export | live_upstream_dump | `5485dfb` | yes | monthly maintainer cycle |
 | 4 | 2026-05-28T17:00:56Z | calendar-cadence | live-export-full | live_upstream_dump | `2777cc6` | yes | host-realistic-refresh-cycle host-realistic-20260525 |
+| 5 | 2026-07-23T07:14:18Z | calendar-cadence | live-export-full | live_upstream_dump | `6e7f7d8` | yes | host-realistic-refresh-cycle host-realistic-20260525 (Track1 gate clearance; WSL Moreau CPU) |
 
 <!-- Append rows via: python scripts/record_reference_refresh.py -->
 

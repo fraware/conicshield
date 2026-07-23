@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "title": "ConicShield governed installation matrix",
+  "requires_python": ">=3.11,<3.13",
+  "supported_platforms": {
+    "solver-public": ["linux", "darwin", "win32"],
+    "solver-moreau-cpu": ["linux"],
+    "solver-moreau-cuda": ["linux"],
+    "diff-torch": ["linux", "darwin", "win32"],
+    "diff-jax": ["linux", "darwin", "win32"],
+    "dev": ["linux", "darwin", "win32"]
+  },
+  "profiles": {
+    "solver-public": {
+      "extra": "solver-public",
+      "constraints_file": "packaging/constraints/solver-public.txt",
+      "includes_cuda": false,
+      "requires_vendor_credentials": false,
+      "notes": "Clarabel + SCS via CVXPY. Safe for CPU-only and Windows public qualification."
+    },
+    "solver-moreau-cpu": {
+      "extra": "solver-moreau-cpu",
+      "constraints_file": "packaging/constraints/solver-moreau-cpu.txt",
+      "includes_cuda": false,
+      "requires_vendor_credentials": true,
+      "notes": "Vendor Moreau CPU. Linux/WSL only. Never install on native Windows."
+    },
+    "solver-moreau-cuda": {
+      "extra": "solver-moreau-cuda",
+      "constraints_file": "packaging/constraints/solver-moreau-cuda.txt",
+      "includes_cuda": true,
+      "requires_vendor_credentials": true,
+      "notes": "Vendor Moreau + CUDA. Linux/WSL with NVIDIA stack only."
+    },
+    "diff-torch": {
+      "extra": "diff-torch",
+      "constraints_file": "packaging/constraints/diff-torch.txt",
+      "includes_cuda": false,
+      "requires_vendor_credentials": false,
+      "notes": "Optional torch differentiation stack; pin torch build separately for CUDA hosts."
+    },
+    "diff-jax": {
+      "extra": "diff-jax",
+      "constraints_file": "packaging/constraints/diff-jax.txt",
+      "includes_cuda": false,
+      "requires_vendor_credentials": false,
+      "notes": "Optional JAX differentiation stack."
+    },
+    "dev": {
+      "extra": "dev",
+      "constraints_file": "requirements-dev.txt",
+      "includes_cuda": false,
+      "requires_vendor_credentials": false,
+      "notes": "Test/lint tooling. Does not install vendor Moreau or CUDA."
+    }
+  },
+  "deprecated_extras": {
+    "solver": {
+      "replacement": "solver-moreau-cpu",
+      "warning": "The 'solver' extra historically pulled moreau[cuda]. It now aliases CPU-only Moreau; prefer solver-moreau-cpu or solver-moreau-cuda explicitly."
+    }
+  },
+  "auto_backend_policy": {
+    "default": "public_clarabel",
+    "env_override": "CONICSHIELD_PRODUCTION_BACKEND",
+    "never_select_vendor_from_import": true,
+    "silent_production_switch_forbidden": true
+  }
+}

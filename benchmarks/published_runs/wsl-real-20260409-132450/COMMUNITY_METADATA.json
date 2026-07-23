@@ -7,7 +7,7 @@
   "includes_native_arm": false,
   "projector_mode": "real_projector",
   "is_family_current_run": false,
-  "parity_fixture_source": false,
+  "parity_fixture_source": true,
   "export_kind": "live_upstream_dump",
   "source_export": null,
   "parity_status": "unknown",

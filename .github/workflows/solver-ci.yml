@@ -5,6 +5,8 @@ name: vendor-ci-moreau
 #   MOREAU_LICENSE_KEY   — Moreau license string
 #
 # Forks do not inherit secrets; this workflow is for the canonical repo only.
+# CS-SOLVER-003: CONICSHIELD_VENDOR_REQUIRED=1 + post-test evidence gate.
+# Empty suites / all-skips / zero native solves cannot pass.
 
 on:
   workflow_dispatch:
@@ -16,22 +18,39 @@ on:
       - "conicshield/core/moreau_batched.py"
       - "conicshield/core/solver_factory.py"
       - "conicshield/specs/compiler.py"
+      - "conicshield/specs/native_moreau_builder.py"
       - "conicshield/adapters/inter_sim_rl/shield.py"
       - "conicshield/parity/**"
+      - "conicshield/compilation/**"
+      - "conicshield/verification/**"
+      - "conicshield/backends/**"
+      - "conicshield/platform/**"
+      - "conicshield/workers/**"
       - "conicshield/published_run_index.py"
       - "benchmarks/PUBLISHED_RUN_INDEX.json"
       - "benchmarks/published_runs/**"
       - "benchmarks/external_evidence/**"
       - "benchmarks/releases/**"
+      - "packaging/constraints/**"
+      - "packaging/solver_stack_policy.json"
       - "scripts/performance_benchmark.py"
       - "scripts/batch_solve_report.py"
       - "scripts/run_host_realistic_publish.py"
       - "scripts/regenerate_parity_fixture.py"
       - "scripts/governed_local_promotion.py"
       - "scripts/refresh_published_run_index.py"
+      - "scripts/vendor_mandatory_native_solves.py"
+      - "scripts/assert_vendor_ci_evidence.py"
+      - "scripts/environment_check.py"
       - "tests/fixtures/parity_reference/**"
       - "tests/vendor/**"
       - "tests/parity/**"
+      - "tests/verification/**"
+      - "tests/stabilization/**"
+      - ".github/workflows/solver-ci.yml"
+
+env:
+  CONICSHIELD_VENDOR_REQUIRED: "1"
 
 jobs:
   solver:
@@ -48,14 +67,18 @@ jobs:
         run: |
           mkdir -p "$HOME/.moreau"
           echo -n "$MOREAU_LICENSE_KEY" > "$HOME/.moreau/key"
-      - name: "Vendor CI track: install vendor solver stack"
+      - name: "Vendor CI track: install governed vendor solver stack"
         env:
           GEMFURY_TOKEN: ${{ secrets.GEMFURY_TOKEN }}
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.txt
-          python -m pip install -e ".[solver]" \
+          python -m pip install -e ".[solver-moreau-cpu]" \
+            -c packaging/constraints/solver-moreau-cpu.txt \
             --extra-index-url "https://${GEMFURY_TOKEN}:@pypi.fury.io/optimalintellect/"
+          python scripts/check_solver_stack_policy.py
+      - name: "Vendor CI track: python -m moreau check"
+        run: python -m moreau check
       - name: "Vendor CI track: write solver_versions.json"
         run: |
           python <<'PY'
@@ -82,8 +105,24 @@ jobs:
               json.dump(pkgs, f, indent=2, sort_keys=True)
           print(open("/tmp/solver_versions.json", encoding="utf-8").read())
           PY
-      - name: "Vendor CI track: solver-marked tests"
-        run: python -m pytest tests/ -q -m "solver or requires_moreau"
+      - name: "Vendor CI track: mandatory known-feasible + failure-policy"
+        run: |
+          mkdir -p /tmp/vendor_evidence
+          python scripts/vendor_mandatory_native_solves.py \
+            --out /tmp/vendor_evidence/mandatory_native_solves.json
+      - name: "Vendor CI track: solver-marked tests (JUnit)"
+        run: |
+          mkdir -p /tmp/vendor_evidence
+          python -m pytest tests/ -q -m "solver or requires_moreau" \
+            --junitxml=/tmp/vendor_evidence/vendor_pytest.junit.xml \
+            --tb=short
+      - name: "Vendor CI track: evidence gate (no skips / native solves)"
+        if: always()
+        run: |
+          python scripts/assert_vendor_ci_evidence.py \
+            --junit /tmp/vendor_evidence/vendor_pytest.junit.xml \
+            --native-evidence /tmp/vendor_evidence/mandatory_native_solves.json \
+            --min-executed 1
       - name: "Vendor CI track: solver smoke CLI"
         run: python -m conicshield.core.solver_smoke_cli
       - name: "Vendor CI track: optional reference bundle (real projector)"
@@ -126,6 +165,14 @@ jobs:
           path: /tmp/vendor_verification
           retention-days: 14
           if-no-files-found: warn
+      - name: "Vendor CI track: upload solver evidence (JUnit + mandatory solves)"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendor_solver_evidence
+          path: /tmp/vendor_evidence
+          retention-days: 14
+          if-no-files-found: warn
       - name: "Vendor CI track: upload solver_versions.json"
         if: always()
         uses: actions/upload-artifact@v4
@@ -135,11 +182,15 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
       - name: "Vendor CI track: record solver stack summary"
+        if: always()
         run: |
           echo "## Vendor CI track (Moreau): solver stack" >> "$GITHUB_STEP_SUMMARY"
           python -m pip freeze | grep -iE 'moreau|cvxpy|cvxpylayers' >> "$GITHUB_STEP_SUMMARY" || true
           echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "CONICSHIELD_VENDOR_REQUIRED=${CONICSHIELD_VENDOR_REQUIRED}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "Artifacts:" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`vendor_solver_versions\` -> \`solver_versions.json\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`vendor_solver_evidence\` -> JUnit + mandatory native solves" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`ref_bundle_ci\` -> validated reference bundle (real projector)" >> "$GITHUB_STEP_SUMMARY"
           echo "- \`vendor_verification_bundle\` -> env/smoke/ref-correctness/perf plots + parity + trust_dashboard" >> "$GITHUB_STEP_SUMMARY"

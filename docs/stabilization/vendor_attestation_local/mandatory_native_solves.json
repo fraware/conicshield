@@ -1,0 +1,19 @@
+{
+  "schema_version": "conicshield_vendor_mandatory_solves/v1",
+  "generated_at_utc": "2026-07-23T07:00:50Z",
+  "known_feasible_ok": true,
+  "known_infeasible_or_failure_policy_ok": true,
+  "native_solve_count": 1,
+  "known_feasible": {
+    "ok": true,
+    "solver_status": "optimal",
+    "release_decision": "accepted_primary",
+    "sum_corrected": 1.0000000000000002,
+    "native_solve_count": 1
+  },
+  "failure_policy": {
+    "ok": true,
+    "mode": "fail_safe_pipeline",
+    "release_decision": "accepted_fail_safe"
+  }
+}

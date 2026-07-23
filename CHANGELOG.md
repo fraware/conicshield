@@ -1,5 +1,26 @@
 # Changelog
 
+## Track 1 — Production stabilization (S0–S8)
+
+### 2026-07-22 — S8 decision-grade benchmarks and qualification (not merged to main)
+
+- Decision-grade workload matrix: `scripts/decision_grade_benchmark.py` (also `--decision-grade` on `performance_benchmark.py`).
+- Committed reports: `benchmarks/reports/s8_qualification/`; timing split e2e / solver / setup / verification / IPC; NOT_RUN for unavailable vendor/CUDA/sidecar arms.
+- Completion report: [`docs/stabilization/TRACK1_COMPLETION_REPORT.md`](docs/stabilization/TRACK1_COMPLETION_REPORT.md) (15 sections).
+- Production qualification + honest release-gate evaluation (main merge **blocked** pending vendor attestation / v1-lock cadence).
+- Migration guide: [`docs/MIGRATION_STABILIZATION_TRACK1.md`](docs/MIGRATION_STABILIZATION_TRACK1.md).
+- Public claims updated to measured evidence only; v1 bundles preserved separately from runtime qualification.
+
+### 2026-07-22 — S7 CI and governance hardening
+
+- Vendor evidence gates (`CONICSHIELD_VENDOR_REQUIRED=1`, JUnit, mandatory native solves).
+- Read-only verify paths; dirty-worktree fail; solver-stack policy workflow.
+
+### 2026-07-22 — S0–S6 (summary)
+
+- S0 baseline + issue ledger; S1 semantics; S2 verification/release; S3 isolation/concurrency; S4 structural compiler/batching; S5 packaging/provenance; S6 Windows public + sidecar scaffolding.
+- Integration branch: `engineering/stabilization-moreau` (see completion report for SHAs).
+
 ## Reference system (host-realistic flagship)
 
 ### 2026-05-28 — v1 release note, onboard target, and CI lock quick gate

@@ -1,0 +1,15 @@
+{
+  "generated_at_utc": "2026-07-22T22:01:04Z",
+  "status": "deferred",
+  "message": "cvxpy not installed",
+  "reference": null,
+  "native": null,
+  "extras": {},
+  "errors": [],
+  "public_product_claim": "none",
+  "layer_f_note": "Layer F validates local sensitivity and FD consistency; it is not a public autograd guarantee.",
+  "recommended_next_steps": [
+    "Install solver extras on a licensed host (see README / MAINTAINER_RUNBOOK).",
+    "Re-run this script; optional --include-native for native FD smoke."
+  ]
+}

@@ -1,17 +1,32 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from threading import RLock
 from typing import Any
 
 import numpy as np
 from scipy import sparse  # type: ignore[import-untyped]
 
+from conicshield.backends.status import normalize_moreau_status
+from conicshield.compilation.compiled_template import CompiledShieldTemplate
+from conicshield.compilation.metrics import LifecycleMetrics
+from conicshield.compilation.solver_pool import SolverPool
+from conicshield.compilation.structural_fingerprint import setup_values_fingerprint
+from conicshield.core.interfaces import ConcurrencyModel
 from conicshield.core.result import ProjectionResult
 from conicshield.core.telemetry import normalize_moreau_info, telemetry_into_projection_fields
 from conicshield.solver_errors import require_solver_module
 from conicshield.specs.native_moreau_builder import build_moreau_standard_form
 from conicshield.specs.schema import SafetySpec
-from conicshield.specs.shield_qp import parse_safety_spec_for_shield
+from conicshield.specs.shield_qp import parse_safety_spec_for_shield, validate_objective_weights
+from conicshield.verification.fallback import (
+    FallbackConfig,
+    SolveAttemptResult,
+    run_verified_release_pipeline,
+)
+from conicshield.verification.release import build_verified_projection_result, provenance_for_backend
+from conicshield.verification.release_policy import ReleasePolicy
+from conicshield.verification.residuals import ResidualTolerances
 
 
 @dataclass(frozen=True, slots=True)
@@ -91,6 +106,16 @@ class NativeMoreauCompiledOptions:
     time_limit: float = float("inf")
     verbose: bool = False
     active_tol: float = 1e-6
+    abs_tol: float = 1e-6
+    rel_tol: float = 1e-6
+    intervention_abs_tol: float = 1e-8
+    intervention_rel_tol: float = 1e-8
+    accept_optimal_inaccurate: bool = False
+    accept_iteration_limit: bool = False
+    accept_time_limit: bool = False
+    enable_cold_retry: bool = True
+    deadline_sec: float | None = None
+    max_release_attempts: int = 4
     persist_warm_start: bool = True
     policy_weight: float = 1.0
     reference_weight: float = 0.0
@@ -99,20 +124,43 @@ class NativeMoreauCompiledOptions:
 
 
 class NativeMoreauCompiledProjector:
-    """Shield projector via Moreau ``CompiledSolver`` (batch size 1) when available; else ``Solver``."""
+    """Shield projector via Moreau ``CompiledSolver`` (batch size 1) when available; else ``Solver``.
+
+    Concurrency: default :attr:`ConcurrencyModel.INSTANCE_CONFINED`. Pass
+    ``concurrency_model=LOCK_PROTECTED`` to serialize ``project`` / ``reset_state``,
+    or ``POOLED_EXCLUSIVE_CHECKOUT`` with a :class:`SolverPool` for production caches.
+    """
 
     def __init__(
         self,
         *,
         spec: SafetySpec,
         options: NativeMoreauCompiledOptions | None = None,
+        concurrency_model: ConcurrencyModel = ConcurrencyModel.INSTANCE_CONFINED,
+        solver_pool: SolverPool[Any] | None = None,
+        metrics: LifecycleMetrics | None = None,
     ) -> None:
         self.spec = spec
         self.options = options or NativeMoreauCompiledOptions()
+        if solver_pool is not None and concurrency_model is ConcurrencyModel.INSTANCE_CONFINED:
+            concurrency_model = ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT
+        self.concurrency_model = ConcurrencyModel(concurrency_model)
+        self.metrics = metrics if metrics is not None else LifecycleMetrics()
+        self._solver_pool = solver_pool
+        if (
+            self.concurrency_model is ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT
+            and self._solver_pool is None
+        ):
+            self._solver_pool = SolverPool(max_per_key=1, max_keys=32, metrics=self.metrics)
         self._warm: Any = None
         self._compiled: Any = None
         self._csr_key: _CSRStructureKey | None = None
         self._compiled_settings_key: tuple[Any, ...] | None = None
+        self._lock = RLock()
+        self._last_setup_values_fp: str | None = None
+        self._template = CompiledShieldTemplate.compile(parse_safety_spec_for_shield(spec))
+        self._buffers = self._template.allocate_buffers()
+        self._a_constants_loaded = False
 
     def _moreau_settings(self, moreau: Any) -> Any:
         dev = self.options.device
@@ -141,7 +189,139 @@ class NativeMoreauCompiledProjector:
             bool(getattr(s, "auto_tune", False)),
             bool(getattr(s, "enable_grad", False)),
             int(getattr(s, "batch_size", 1)),
+            self._template.structural_fingerprint,
         )
+
+    def _sync_template_from_spec(self) -> None:
+        """Recompile when ``spec`` topology changes (numeric-only changes reuse structure)."""
+        data = parse_safety_spec_for_shield(self.spec)
+        new_template = CompiledShieldTemplate.compile(data)
+        if new_template.structural_fingerprint != self._template.structural_fingerprint:
+            self._template = new_template
+            self._buffers = self._template.allocate_buffers()
+            self._compiled = None
+            self._csr_key = None
+            self._compiled_settings_key = None
+            self._last_setup_values_fp = None
+            self._a_constants_loaded = False
+            self._warm = None
+            self.metrics.record_solver_rebuild()
+        else:
+            self._template = new_template
+
+    def reset_state(self, *, scope_id: str | None = None) -> None:
+        """Clear warm-start state. Sequential projectors ignore ``scope_id`` (single episode scope)."""
+        del scope_id
+        if self.concurrency_model is ConcurrencyModel.LOCK_PROTECTED:
+            with self._lock:
+                self._warm = None
+            return
+        self._warm = None
+
+    def _pool_key(self, key: _CSRStructureKey, settings_fp: tuple[Any, ...]) -> str:
+        return (
+            f"n={key.n}|m={key.m}|P={key.p_indptr.tobytes().hex()[:16]}:"
+            f"{key.p_indices.tobytes().hex()[:16]}|"
+            f"A={key.a_indptr.tobytes().hex()[:16]}:{key.a_indices.tobytes().hex()[:16]}|"
+            f"s={settings_fp!r}"
+        )
+
+    def _solve_with_compiled_template(
+        self,
+        moreau: Any,
+        *,
+        warm: Any | None,
+    ) -> tuple[np.ndarray, Any, Any, float | None, bool]:
+        settings = self._moreau_settings(moreau)
+        fp = self._compiled_settings_fingerprint(moreau)
+        setup_fp = setup_values_fingerprint(self._buffers.p_values, self._buffers.a_values)
+
+        if self._solver_pool is not None and self.concurrency_model is (
+            ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT
+        ):
+            return self._solve_compiled_pooled_template(
+                moreau,
+                settings=settings,
+                settings_fp=fp,
+                setup_fp=str(setup_fp),
+                warm=warm,
+            )
+
+        need_build = self._compiled is None or self._compiled_settings_key != fp
+        if need_build:
+            cones = self._template.moreau_cones(moreau)
+            self._compiled = moreau.CompiledSolver(
+                n=self._template.layout.n,
+                m=self._template.layout.m,
+                P_row_offsets=self._template.p_indptr,
+                P_col_indices=self._template.p_indices,
+                A_row_offsets=self._template.a_indptr,
+                A_col_indices=self._template.a_indices,
+                cones=cones,
+                settings=settings,
+            )
+            self._compiled_settings_key = fp
+            self._warm = None
+            self._last_setup_values_fp = None
+            self.metrics.record_solver_rebuild()
+
+        solver = self._compiled
+        if self._last_setup_values_fp == setup_fp:
+            self.metrics.record_setup_reuse()
+        else:
+            solver.setup(self._buffers.p_values, self._buffers.a_values)
+            self._last_setup_values_fp = str(setup_fp)
+        q2 = self._buffers.q.reshape(1, -1)
+        b2 = self._buffers.b.reshape(1, -1)
+        solution = solver.solve(qs=q2, bs=b2, warm_start=warm)
+        xbat = np.asarray(solution.x, dtype=np.float64)
+        xv = xbat[0].reshape(-1) if xbat.ndim == 2 and xbat.shape[0] >= 1 else xbat.reshape(-1)
+        obj = _batched_first_objective(solution)
+        warm_started = warm is not None
+        return xv, solver, solution, obj, warm_started
+
+    def _solve_compiled_pooled_template(
+        self,
+        moreau: Any,
+        *,
+        settings: Any,
+        settings_fp: tuple[Any, ...],
+        setup_fp: str,
+        warm: Any | None,
+    ) -> tuple[np.ndarray, Any, Any, float | None, bool]:
+        assert self._solver_pool is not None
+        template = self._template
+
+        def _factory() -> Any:
+            return moreau.CompiledSolver(
+                n=template.layout.n,
+                m=template.layout.m,
+                P_row_offsets=template.p_indptr,
+                P_col_indices=template.p_indices,
+                A_row_offsets=template.a_indptr,
+                A_col_indices=template.a_indices,
+                cones=template.moreau_cones(moreau),
+                settings=settings,
+            )
+
+        checkout = self._solver_pool.checkout(
+            f"tmpl={template.structural_fingerprint}|s={settings_fp!r}",
+            _factory,
+        )
+        solver = checkout.solver
+        try:
+            # Pooled solvers do not share projector setup fingerprint state across owners.
+            solver.setup(self._buffers.p_values, self._buffers.a_values)
+            q2 = self._buffers.q.reshape(1, -1)
+            b2 = self._buffers.b.reshape(1, -1)
+            solution = solver.solve(qs=q2, bs=b2, warm_start=warm)
+            xbat = np.asarray(solution.x, dtype=np.float64)
+            xv = xbat[0].reshape(-1) if xbat.ndim == 2 and xbat.shape[0] >= 1 else xbat.reshape(-1)
+            obj = _batched_first_objective(solution)
+            warm_started = warm is not None
+            return xv, solver, solution, obj, warm_started
+        finally:
+            checkout.return_to_pool()
 
     def _solve_with_compiled(
         self,
@@ -154,9 +334,33 @@ class NativeMoreauCompiledProjector:
         *,
         warm: Any | None,
     ) -> tuple[np.ndarray, Any, Any, float | None, bool]:
+        """Legacy CSR entrypoint retained for pooled/tests; prefer template path."""
         settings = self._moreau_settings(moreau)
         fp = self._compiled_settings_fingerprint(moreau)
         key = _CSRStructureKey.from_pair(p_csr, a_csr)
+        p_data = np.asarray(p_csr.data, dtype=np.float64)
+        a_data = np.asarray(a_csr.data, dtype=np.float64)
+        values_fp = str(setup_values_fingerprint(p_data, a_data))
+
+        if self._solver_pool is not None and self.concurrency_model is (
+            ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT
+        ):
+            return self._solve_compiled_pooled(
+                moreau,
+                p_csr,
+                q,
+                a_csr,
+                b_full,
+                cones,
+                settings=settings,
+                settings_fp=fp,
+                key=key,
+                p_data=p_data,
+                a_data=a_data,
+                values_fp=values_fp,
+                warm=warm,
+            )
+
         need_build = (
             self._compiled is None
             or self._compiled_settings_key != fp
@@ -177,9 +381,15 @@ class NativeMoreauCompiledProjector:
             self._csr_key = key
             self._compiled_settings_key = fp
             self._warm = None
+            self._last_setup_values_fp = None
+            self.metrics.record_solver_rebuild()
 
         solver = self._compiled
-        solver.setup(np.asarray(p_csr.data, dtype=np.float64), np.asarray(a_csr.data, dtype=np.float64))
+        if self._last_setup_values_fp == values_fp:
+            self.metrics.record_setup_reuse()
+        else:
+            solver.setup(p_data, a_data)
+            self._last_setup_values_fp = values_fp
         q2 = np.asarray(q, dtype=np.float64).reshape(1, -1)
         b2 = np.asarray(b_full, dtype=np.float64).reshape(1, -1)
         solution = solver.solve(qs=q2, bs=b2, warm_start=warm)
@@ -188,6 +398,58 @@ class NativeMoreauCompiledProjector:
         obj = _batched_first_objective(solution)
         warm_started = warm is not None
         return xv, solver, solution, obj, warm_started
+
+    def _solve_compiled_pooled(
+        self,
+        moreau: Any,
+        p_csr: sparse.csr_matrix,
+        q: np.ndarray,
+        a_csr: sparse.csr_matrix,
+        b_full: np.ndarray,
+        cones: Any,
+        *,
+        settings: Any,
+        settings_fp: tuple[Any, ...],
+        key: _CSRStructureKey,
+        p_data: np.ndarray,
+        a_data: np.ndarray,
+        values_fp: str,
+        warm: Any | None,
+    ) -> tuple[np.ndarray, Any, Any, float | None, bool]:
+        assert self._solver_pool is not None
+
+        def _factory() -> Any:
+            return moreau.CompiledSolver(
+                n=key.n,
+                m=key.m,
+                P_row_offsets=p_csr.indptr,
+                P_col_indices=p_csr.indices,
+                A_row_offsets=a_csr.indptr,
+                A_col_indices=a_csr.indices,
+                cones=cones,
+                settings=settings,
+            )
+
+        checkout = self._solver_pool.checkout(self._pool_key(key, settings_fp), _factory)
+        solver = checkout.solver
+        try:
+            # Track structure on the projector for diagnostics; ownership is the pool handle.
+            if self._csr_key is None or not _csr_structure_matches(self._csr_key, p_csr, a_csr):
+                self._csr_key = key
+                self._compiled_settings_key = settings_fp
+            solver.setup(p_data, a_data)
+            del values_fp  # pooled instances always setup; fingerprint is caller-local
+            q2 = np.asarray(q, dtype=np.float64).reshape(1, -1)
+            b2 = np.asarray(b_full, dtype=np.float64).reshape(1, -1)
+            solution = solver.solve(qs=q2, bs=b2, warm_start=warm)
+            xbat = np.asarray(solution.x, dtype=np.float64)
+            xv = xbat[0].reshape(-1) if xbat.ndim == 2 and xbat.shape[0] >= 1 else xbat.reshape(-1)
+            obj = _batched_first_objective(solution)
+            warm_started = warm is not None
+            return xv, solver, solution, obj, warm_started
+        finally:
+            # Do not retain trajectory warm starts on pooled instances across owners.
+            checkout.return_to_pool()
 
     def _solve_with_legacy_solver(
         self,
@@ -213,7 +475,51 @@ class NativeMoreauCompiledProjector:
                 obj = None
         return xv, solver, solution, obj, warm_started
 
+    def _release_policy(self) -> ReleasePolicy:
+        opts = self.options
+        return ReleasePolicy(
+            accept_optimal_inaccurate=bool(opts.accept_optimal_inaccurate),
+            accept_iteration_limit=bool(opts.accept_iteration_limit),
+            accept_time_limit=bool(opts.accept_time_limit),
+            tolerances=ResidualTolerances(
+                abs_tol=float(opts.abs_tol),
+                rel_tol=float(opts.rel_tol),
+                active_tol=float(opts.active_tol),
+            ),
+            intervention_abs_tol=float(opts.intervention_abs_tol),
+            intervention_rel_tol=float(opts.intervention_rel_tol),
+        )
+
     def project(
+        self,
+        proposed_action: np.ndarray,
+        previous_action: np.ndarray | None = None,
+        *,
+        reference_action: np.ndarray | None = None,
+        policy_weight: float = 1.0,
+        reference_weight: float = 0.0,
+        metadata: dict[str, Any] | None = None,
+    ) -> ProjectionResult:
+        if self.concurrency_model is ConcurrencyModel.LOCK_PROTECTED:
+            with self._lock:
+                return self._project_unlocked(
+                    proposed_action,
+                    previous_action,
+                    reference_action=reference_action,
+                    policy_weight=policy_weight,
+                    reference_weight=reference_weight,
+                    metadata=metadata,
+                )
+        return self._project_unlocked(
+            proposed_action,
+            previous_action,
+            reference_action=reference_action,
+            policy_weight=policy_weight,
+            reference_weight=reference_weight,
+            metadata=metadata,
+        )
+
+    def _project_unlocked(
         self,
         proposed_action: np.ndarray,
         previous_action: np.ndarray | None = None,
@@ -227,76 +533,167 @@ class NativeMoreauCompiledProjector:
         import moreau
 
         data = parse_safety_spec_for_shield(self.spec)
-        p_csr, q, a_csr, b_full, cones = build_moreau_standard_form(
-            data,
-            proposed_action,
-            previous_action,
-            reference_action,
-            policy_weight=policy_weight,
-            reference_weight=reference_weight,
+        self._sync_template_from_spec()
+        pw, rw = validate_objective_weights(
+            policy_weight,
+            reference_weight,
+            reference_present=reference_action is not None,
+        )
+        release_policy = self._release_policy()
+        last_telemetry: dict[str, Any] = {"solver_status": "unknown", "warm_started": False}
+        cold_retry_seen = False
+
+        def _clear_warm() -> None:
+            self._warm = None
+
+        def _primary_solve(*, warm_start: bool) -> SolveAttemptResult:
+            nonlocal cold_retry_seen
+            want_warm = bool(warm_start and self.options.persist_warm_start)
+            if self.concurrency_model is ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT:
+                # Pooled exclusive checkout must not carry trajectory warm starts across owners.
+                if want_warm and self._warm is not None:
+                    self.metrics.record_warm_start_rejection()
+                warm = None
+            elif want_warm and self._warm is not None:
+                warm = self._warm
+                self.metrics.record_warm_start_hit()
+            else:
+                warm = None
+                if (not warm_start) and self._warm is not None:
+                    self.metrics.record_warm_start_rejection()
+            if not warm_start:
+                cold_retry_seen = True
+                self.metrics.record_cold_retry()
+
+            use_compiled = bool(self.options.use_compiled_solver) and hasattr(
+                moreau, "CompiledSolver"
+            )
+            try:
+                if use_compiled:
+                    self._template.fill(
+                        self._buffers,
+                        data,
+                        proposed_action,
+                        previous_action,
+                        reference_action,
+                        policy_weight=pw,
+                        reference_weight=rw,
+                        copy_a_constants=not self._a_constants_loaded,
+                    )
+                    self._a_constants_loaded = True
+                    xv, solver, solution, obj, warm_started = self._solve_with_compiled_template(
+                        moreau, warm=warm
+                    )
+                else:
+                    p_csr, q, a_csr, b_full, cones = build_moreau_standard_form(
+                        data,
+                        proposed_action,
+                        previous_action,
+                        reference_action,
+                        policy_weight=pw,
+                        reference_weight=rw,
+                    )
+                    self._compiled = None
+                    self._csr_key = None
+                    self._compiled_settings_key = None
+                    self._last_setup_values_fp = None
+                    xv, solver, solution, obj, warm_started = self._solve_with_legacy_solver(
+                        moreau, p_csr, q, a_csr, b_full, cones, warm=warm
+                    )
+            except (RuntimeError, ValueError, TypeError, AttributeError, OSError) as exc:
+                self._warm = None
+                last_telemetry.clear()
+                last_telemetry.update({"solver_status": "backend_error", "warm_started": False})
+                return SolveAttemptResult(
+                    candidate=None,
+                    raw_status="backend_error",
+                    objective=None,
+                    error=exc,
+                    warm_started=warm is not None,
+                    kind="primary",
+                )
+
+            if (
+                self.options.persist_warm_start
+                and self.concurrency_model is not ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT
+                and hasattr(solution, "to_warm_start")
+            ):
+                try:
+                    self._warm = solution.to_warm_start()
+                except (TypeError, ValueError, AttributeError, RuntimeError):
+                    self._warm = None
+            elif not self.options.persist_warm_start:
+                self._warm = None
+
+            info = getattr(solver, "info", None)
+            if use_compiled and info is not None:
+                info_view = {
+                    "status": _batched_info_status_for_unbatch(info),
+                    "objective": _batched_first_objective(solution),
+                    "obj_val": _batched_first_objective(solution),
+                    "solve_time": getattr(info, "solve_time", None),
+                    "solve_time_sec": getattr(info, "solve_time", None),
+                    "setup_time": getattr(info, "setup_time", None),
+                    "setup_time_sec": getattr(info, "setup_time", None),
+                    "construction_time": getattr(info, "construction_time", None),
+                    "construction_time_sec": getattr(info, "construction_time", None),
+                    "iterations": _batched_info_iterations_for_unbatch(info),
+                    "device": getattr(info, "device", None),
+                }
+                tel = normalize_moreau_info(info_view, warm_started=warm_started, objective_value=obj)
+            else:
+                tel = normalize_moreau_info(info, warm_started=warm_started, objective_value=obj)
+            last_telemetry.clear()
+            last_telemetry.update(tel)
+            raw_status = tel.get("solver_status")
+            if raw_status is None:
+                raw_status = getattr(solution, "status", None)
+            if raw_status is None and info is not None:
+                raw_status = getattr(info, "status", None)
+            return SolveAttemptResult(
+                candidate=xv,
+                raw_status=raw_status,
+                objective=tel.get("objective_value"),
+                warm_started=warm_started,
+                kind="cold_retry" if cold_retry_seen and not warm_start else "primary",
+            )
+
+        outcome = run_verified_release_pipeline(
+            data=data,
+            proposed_action=np.asarray(proposed_action, dtype=np.float64),
+            previous_action=previous_action,
+            reference_action=reference_action,
+            policy_weight=pw,
+            reference_weight=rw,
+            primary_solve=_primary_solve,
+            config=FallbackConfig(
+                enable_cold_retry=bool(self.options.enable_cold_retry),
+                max_attempts=int(self.options.max_release_attempts),
+                deadline_sec=self.options.deadline_sec,
+                release_policy=release_policy,
+                fail_safe_policy=data.fail_safe_policy,
+            ),
+            clear_warm_start=_clear_warm,
+            status_normalizer=normalize_moreau_status,
         )
 
-        warm = self._warm if self.options.persist_warm_start else None
-        use_compiled = bool(self.options.use_compiled_solver) and hasattr(moreau, "CompiledSolver")
-
-        try:
-            if use_compiled:
-                xv, solver, solution, obj, warm_started = self._solve_with_compiled(
-                    moreau, p_csr, q, a_csr, b_full, cones, warm=warm
-                )
-            else:
-                self._compiled = None
-                self._csr_key = None
-                self._compiled_settings_key = None
-                xv, solver, solution, obj, warm_started = self._solve_with_legacy_solver(
-                    moreau, p_csr, q, a_csr, b_full, cones, warm=warm
-                )
-        except Exception:
-            self._warm = None
-            raise
-
-        if self.options.persist_warm_start and hasattr(solution, "to_warm_start"):
-            try:
-                self._warm = solution.to_warm_start()
-            except Exception:
-                self._warm = None
-        elif not self.options.persist_warm_start:
-            self._warm = None
-
-        proposed = np.asarray(proposed_action, dtype=np.float64).reshape(-1)
-        diff = float(np.linalg.norm(xv - proposed))
-        intervened = diff > 1e-8
-
-        info = getattr(solver, "info", None)
-        if use_compiled and info is not None:
-            info_view = {
-                "status": _batched_info_status_for_unbatch(info),
-                "objective": _batched_first_objective(solution),
-                "obj_val": _batched_first_objective(solution),
-                "solve_time": getattr(info, "solve_time", None),
-                "solve_time_sec": getattr(info, "solve_time", None),
-                "setup_time": getattr(info, "setup_time", None),
-                "setup_time_sec": getattr(info, "setup_time", None),
-                "construction_time": getattr(info, "construction_time", None),
-                "construction_time_sec": getattr(info, "construction_time", None),
-                "iterations": _batched_info_iterations_for_unbatch(info),
-                "device": getattr(info, "device", None),
-            }
-            tel = normalize_moreau_info(info_view, warm_started=warm_started, objective_value=obj)
-        else:
-            tel = normalize_moreau_info(info, warm_started=warm_started, objective_value=obj)
-        tel_fields = telemetry_into_projection_fields(tel)
-
-        active: list[str] = []
-        if np.any(~data.allowed_mask):
-            active.append("turn_feasibility")
-
-        return ProjectionResult(
-            proposed_action=proposed,
-            corrected_action=xv,
-            intervened=intervened,
-            intervention_norm=diff,
-            active_constraints=active,
-            metadata=dict(metadata or {}),
-            **tel_fields,
+        tel_fields = telemetry_into_projection_fields(last_telemetry)
+        return build_verified_projection_result(
+            proposed_action=np.asarray(proposed_action, dtype=np.float64),
+            outcome=outcome,
+            telemetry=tel_fields,
+            provenance=provenance_for_backend(
+                backend_id="native_moreau",
+                solver_name="moreau",
+                device=self.options.device,
+                package_distribution="moreau",
+                settings={
+                    "max_iter": self.options.max_iter,
+                    "time_limit": self.options.time_limit,
+                    "use_compiled_solver": self.options.use_compiled_solver,
+                },
+                warm_start_policy="persist" if self.options.persist_warm_start else "off",
+            ),
+            metadata=metadata,
+            release_policy=release_policy,
         )

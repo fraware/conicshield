@@ -1,0 +1,21 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "system": "Windows",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "executable": "C:\\Users\\mateo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "cwd": "C:\\Users\\mateo\\conicshield",
+  "moreau_find_spec": true,
+  "moreau_import_ok": false,
+  "moreau_import_error": "Moreau is not supported on Windows. Please use WSL.",
+  "cvxpy_find_spec": true,
+  "cvxpy_import_ok": false,
+  "cvxpy_import_error": "No module named 'numpy.lib.array_utils'",
+  "public_ci_os": "ubuntu-latest only",
+  "windows_public_mode_qualified": true,
+  "public_mode_notes": [
+    "windows-ci workflow qualifies native Windows public mode (PUBLIC_CLARABEL / AUTO).",
+    "Vendor Moreau remains unsupported on native Windows; use WSL-native repo or Moreau sidecar.",
+    "Sidecar is a qualification surface (stdio NDJSON v1) — not a native-Moreau-on-Windows claim.",
+    "find_spec(moreau) can be true while import moreau raises on Windows — do not treat find_spec as capability."
+  ]
+}

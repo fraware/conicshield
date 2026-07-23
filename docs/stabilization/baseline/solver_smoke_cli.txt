@@ -1,0 +1,19 @@
+{
+  "reference": null,
+  "native": null,
+  "native_warm_sequence": null,
+  "errors": [
+    {
+      "arm": "reference",
+      "error": "Optional dependency 'cvxpy' is required for CVXPY-based reference projector. Install solver extras, for example: pip install -e \".[solver,dev]\" --extra-index-url \"https://<GEMFURY_TOKEN>:@pypi.fury.io/optimalintellect/\". Place your Moreau license in ~/.moreau/key (or set MOREAU_LICENSE_KEY). See https://docs.moreau.so/installation.html"
+    },
+    {
+      "arm": "native",
+      "error": "Optional dependency 'moreau' is required for native Moreau projector. Install solver extras, for example: pip install -e \".[solver,dev]\" --extra-index-url \"https://<GEMFURY_TOKEN>:@pypi.fury.io/optimalintellect/\". Place your Moreau license in ~/.moreau/key (or set MOREAU_LICENSE_KEY). See https://docs.moreau.so/installation.html"
+    },
+    {
+      "arm": "native_warm_sequence",
+      "error": "Optional dependency 'moreau' is required for native Moreau projector. Install solver extras, for example: pip install -e \".[solver,dev]\" --extra-index-url \"https://<GEMFURY_TOKEN>:@pypi.fury.io/optimalintellect/\". Place your Moreau license in ~/.moreau/key (or set MOREAU_LICENSE_KEY). See https://docs.moreau.so/installation.html"
+    }
+  ]
+}
