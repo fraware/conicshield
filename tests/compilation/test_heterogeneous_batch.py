@@ -97,6 +97,8 @@ def test_heterogeneous_batch_matches_sequential_per_row() -> None:
     if not hasattr(moreau, "CompiledSolver"):
         pytest.skip("moreau.CompiledSolver not available")
 
+    from conicshield.core.moreau_compiled import NativeMoreauCompiledProjector
+
     spec = _spec()
     opts = NativeMoreauCompiledOptions(
         device="cpu",
@@ -110,6 +112,7 @@ def test_heterogeneous_batch_matches_sequential_per_row() -> None:
             [0.85, 0.05, 0.05, 0.05],
             [0.2, 0.3, 0.25, 0.25],
             [0.4, 0.35, 0.15, 0.1],
+            [0.1, 0.1, 0.1, 0.7],
         ],
         dtype=np.float64,
     )
@@ -118,6 +121,7 @@ def test_heterogeneous_batch_matches_sequential_per_row() -> None:
             [0.25, 0.25, 0.25, 0.25],
             [0.1, 0.2, 0.3, 0.4],
             [0.4, 0.2, 0.2, 0.2],
+            [0.3, 0.3, 0.2, 0.2],
         ],
         dtype=np.float64,
     )
@@ -126,20 +130,15 @@ def test_heterogeneous_batch_matches_sequential_per_row() -> None:
             [1.0, 1.0, 1.0, 1.0],
             [0.7, 1.0, 1.0, 1.0],
             [1.0, 0.6, 1.0, 1.0],
+            [1.0, 1.0, 0.5, 1.0],
         ],
         dtype=np.float64,
     )
-    seq = __import__(
-        "conicshield.core.moreau_compiled", fromlist=["NativeMoreauCompiledProjector"]
-    ).NativeMoreauCompiledProjector(spec=spec, options=opts)
+    row_ids = ["a", "b", "c", "d"]
+    seq = NativeMoreauCompiledProjector(spec=spec, options=opts)
     bat = NativeMoreauCompiledBatchProjector(spec=spec, options=opts)
 
     try:
-        from dataclasses import replace
-
-        from conicshield.specs.shield_qp import parse_safety_spec_for_shield
-
-        base = parse_safety_spec_for_shield(spec)
         seq_out = []
         for i in range(proposals.shape[0]):
             # Sequential path uses projector.spec numeric IR; override via temporary spec
@@ -155,13 +154,15 @@ def test_heterogeneous_batch_matches_sequential_per_row() -> None:
                 ],
             )
             seq.spec = row_spec
-            seq_out.append(seq.project(proposals[i], previous[i]).corrected_action)
+            row = seq.project(proposals[i], previous[i])
+            assert row.verification is not None and row.verification.passed
+            seq_out.append(row.corrected_action)
 
         batch_result = bat.project_batch(
             proposals,
             previous,
             uppers=uppers,
-            row_ids=["a", "b", "c"],
+            row_ids=row_ids,
         )
     except RuntimeError as exc:
         if "license" in str(exc).lower() or "key" in str(exc).lower():
@@ -170,8 +171,9 @@ def test_heterogeneous_batch_matches_sequential_per_row() -> None:
 
     stacked = np.stack(seq_out, axis=0)
     np.testing.assert_allclose(batch_result.corrected_actions, stacked, rtol=1e-4, atol=1e-5)
-    assert len(batch_result.rows) == 3
+    assert len(batch_result.rows) == proposals.shape[0]
     for row in batch_result.rows:
         assert row.verification is not None
-        assert row.metadata.get("row_id") in {"a", "b", "c"}
-    del replace, base
+        assert row.verification.passed
+        assert row.release_decision is not None
+        assert row.metadata.get("row_id") in set(row_ids)
