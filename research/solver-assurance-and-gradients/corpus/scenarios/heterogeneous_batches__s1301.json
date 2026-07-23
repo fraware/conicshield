@@ -1,0 +1,99 @@
+{
+  "corpus_family_id": "research.solver_assurance.r0",
+  "corpus_version": "r0-v0.3.0",
+  "expected_regime": "heterogeneous_batch_member",
+  "extras": {
+    "batch_peers": [
+      {
+        "proposed_action": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "spec_variant": "default"
+      },
+      {
+        "proposed_action": [
+          0.9,
+          0.05,
+          0.05,
+          0.0
+        ],
+        "spec_variant": "tight_box"
+      }
+    ]
+  },
+  "family": "heterogeneous_batches",
+  "generation_commit": "bbd3dcffd9af8bfa",
+  "notes": "Member of a heterogeneous batch; batching via research adapter until Track 1 S4.",
+  "previous_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "proposed_action": [
+    0.4,
+    0.3,
+    0.2,
+    0.1
+  ],
+  "reference_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "scenario_id": "heterogeneous_batches/s1301",
+  "seed": 1301,
+  "spec": {
+    "action_dim": 4,
+    "constraints": [
+      {
+        "kind": "simplex",
+        "total": 1.0
+      },
+      {
+        "allowed_actions": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "kind": "turn_feasibility"
+      },
+      {
+        "kind": "box",
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "upper": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "kind": "rate",
+        "max_delta": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "slack_weight": 10.0,
+    "spec_id": "research/heterogeneous_batches",
+    "version": "0.1.0"
+  },
+  "weights": {
+    "policy_weight": 1.0,
+    "reference_weight": 0.0
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "corpus_family_id": "research.solver_assurance.r0",
+  "corpus_version": "r0-v0.3.0",
+  "expected_regime": "active_set_transition_neighborhood",
+  "extras": {
+    "bound_param": 0.495,
+    "constraint_family": "box",
+    "disagreement_regime": "bound_neighborhood",
+    "pre_transition": true,
+    "side": "below",
+    "trajectory_id": "box_upper0"
+  },
+  "family": "active_set_transition_neighborhoods",
+  "generation_commit": "bbd3dcffd9af8bfa",
+  "notes": "Box-bound trajectory; upper0=0.495.",
+  "previous_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "proposed_action": [
+    0.55,
+    0.15,
+    0.15,
+    0.15
+  ],
+  "reference_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "scenario_id": "active_set_transition_neighborhoods/s1005",
+  "seed": 1005,
+  "spec": {
+    "action_dim": 4,
+    "constraints": [
+      {
+        "kind": "simplex",
+        "total": 1.0
+      },
+      {
+        "allowed_actions": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "kind": "turn_feasibility"
+      },
+      {
+        "kind": "box",
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "upper": [
+          0.495,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "kind": "rate",
+        "max_delta": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "slack_weight": 10.0,
+    "spec_id": "research/active_set_transition_neighborhoods/box",
+    "version": "0.1.0"
+  },
+  "weights": {
+    "policy_weight": 1.0,
+    "reference_weight": 0.0
+  }
+}

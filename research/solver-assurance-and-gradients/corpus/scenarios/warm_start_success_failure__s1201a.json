@@ -1,0 +1,80 @@
+{
+  "corpus_family_id": "research.solver_assurance.r0",
+  "corpus_version": "r0-v0.3.0",
+  "expected_regime": "warm_start_candidate_success",
+  "extras": {
+    "warm_start_hint": "reuse_previous"
+  },
+  "family": "warm_start_success_failure",
+  "generation_commit": "bbd3dcffd9af8bfa",
+  "notes": "Nearby previous action \u2014 warm start likely helpful.",
+  "previous_action": [
+    0.28,
+    0.28,
+    0.22,
+    0.22
+  ],
+  "proposed_action": [
+    0.3,
+    0.3,
+    0.2,
+    0.2
+  ],
+  "reference_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "scenario_id": "warm_start_success_failure/s1201a",
+  "seed": 1201,
+  "spec": {
+    "action_dim": 4,
+    "constraints": [
+      {
+        "kind": "simplex",
+        "total": 1.0
+      },
+      {
+        "allowed_actions": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "kind": "turn_feasibility"
+      },
+      {
+        "kind": "box",
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "upper": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "kind": "rate",
+        "max_delta": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "slack_weight": 10.0,
+    "spec_id": "research/warm_start_success_failure",
+    "version": "0.1.0"
+  },
+  "weights": {
+    "policy_weight": 1.0,
+    "reference_weight": 0.0
+  }
+}

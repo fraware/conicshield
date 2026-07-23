@@ -1,0 +1,79 @@
+{
+  "corpus_family_id": "research.solver_assurance.r0",
+  "corpus_version": "r0-v0.3.0",
+  "families": {
+    "active_set_transition_neighborhoods": [
+      "active_set_transition_neighborhoods/s1001",
+      "active_set_transition_neighborhoods/s1002",
+      "active_set_transition_neighborhoods/s1003",
+      "active_set_transition_neighborhoods/s1004",
+      "active_set_transition_neighborhoods/s1005",
+      "active_set_transition_neighborhoods/s1006",
+      "active_set_transition_neighborhoods/s1007",
+      "active_set_transition_neighborhoods/s1008",
+      "active_set_transition_neighborhoods/s1009",
+      "active_set_transition_neighborhoods/s1010",
+      "active_set_transition_neighborhoods/s1100",
+      "active_set_transition_neighborhoods/s1101",
+      "active_set_transition_neighborhoods/s1102",
+      "active_set_transition_neighborhoods/s1103",
+      "active_set_transition_neighborhoods/s1104",
+      "active_set_transition_neighborhoods/s1105",
+      "active_set_transition_neighborhoods/s1106",
+      "active_set_transition_neighborhoods/s1107",
+      "active_set_transition_neighborhoods/s1108",
+      "active_set_transition_neighborhoods/s1109",
+      "active_set_transition_neighborhoods/s1200",
+      "active_set_transition_neighborhoods/s1201",
+      "active_set_transition_neighborhoods/s1202",
+      "active_set_transition_neighborhoods/s1203"
+    ],
+    "backend_version_changes": [
+      "backend_version_changes/s1501"
+    ],
+    "changing_admissibility_masks": [
+      "changing_admissibility_masks/s0601"
+    ],
+    "heterogeneous_batches": [
+      "heterogeneous_batches/s1301"
+    ],
+    "infeasible": [
+      "infeasible/s0801"
+    ],
+    "interior_feasible": [
+      "interior_feasible/s0101"
+    ],
+    "multiple_active_bounds": [
+      "multiple_active_bounds/s0301"
+    ],
+    "near_infeasible": [
+      "near_infeasible/s0701"
+    ],
+    "poorly_conditioned_objectives": [
+      "poorly_conditioned_objectives/s0901"
+    ],
+    "rate_limited_transitions": [
+      "rate_limited_transitions/s0501"
+    ],
+    "sidecar_interruption": [
+      "sidecar_interruption/s1401"
+    ],
+    "simplex_corner": [
+      "simplex_corner/s0401"
+    ],
+    "single_active_bound": [
+      "single_active_bound/s0201"
+    ],
+    "solver_timeout_iteration_limit": [
+      "solver_timeout_iteration_limit/s1101"
+    ],
+    "warm_start_success_failure": [
+      "warm_start_success_failure/s1201a",
+      "warm_start_success_failure/s1201b"
+    ]
+  },
+  "generation_commit": "bbd3dcffd9af8bfa",
+  "notes": "Versioned R0 research corpus. Seeds and generation code reproduce every case. Includes failure and disagreement regimes.",
+  "scenario_count": 39,
+  "schema": "research/solver-assurance-and-gradients/schemas/scenario.schema.json"
+}
