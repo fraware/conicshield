@@ -13,9 +13,7 @@ from conicshield.specs.schema import BoxConstraint, RateConstraint, SafetySpec, 
 from conicshield.specs.shield_qp import parse_safety_spec_for_shield
 
 
-def _effective_box_bounds(
-    a_full: Any, b_full: np.ndarray, n_eq: int, n: int
-) -> tuple[np.ndarray, np.ndarray]:
+def _effective_box_bounds(a_full: Any, b_full: np.ndarray, n_eq: int, n: int) -> tuple[np.ndarray, np.ndarray]:
     """Interpret native inequality block ``A x <= b`` for unit-vector box rows."""
     a_nn = np.asarray(a_full.toarray()[n_eq:], dtype=np.float64)
     b_nn = np.asarray(b_full[n_eq:], dtype=np.float64)
@@ -96,9 +94,7 @@ def test_native_does_not_add_extra_nonnegativity_beyond_declared_lower(
         ],
     )
     data = parse_safety_spec_for_shield(spec)
-    _p, _q, a_csr, b, cones = _build_with_stub_moreau(
-        monkeypatch, data, np.full(4, 0.25, dtype=np.float64)
-    )
+    _p, _q, a_csr, b, cones = _build_with_stub_moreau(monkeypatch, data, np.full(4, 0.25, dtype=np.float64))
     n_eq = int(cones.num_zero_cones)
     eff_lower, _ = _effective_box_bounds(a_csr, b, n_eq, data.n)
     assert eff_lower[0] == pytest.approx(-0.3)

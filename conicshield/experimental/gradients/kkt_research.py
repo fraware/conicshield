@@ -137,10 +137,7 @@ def _classify_active_bounds(
             if up > _ACTIVE_TOL or dn > _ACTIVE_TOL:
                 return [], [], "infeasible_rate_violation"
             near_rate = abs(float(x[i] - prev[i])) > float(max_delta[i]) - _WEAK_BAND
-            if (
-                (_ACTIVE_TOL < abs(up) < _WEAK_BAND or _ACTIVE_TOL < abs(dn) < _WEAK_BAND)
-                and near_rate
-            ):
+            if (_ACTIVE_TOL < abs(up) < _WEAK_BAND or _ACTIVE_TOL < abs(dn) < _WEAK_BAND) and near_rate:
                 return [], [], f"degenerate_weakly_active_rate[{i}]"
             if abs(up) <= _ACTIVE_TOL:
                 e = np.zeros(n, dtype=np.float64)

@@ -158,9 +158,7 @@ def run_candidate_stack_promotion(
     dist = summarize_disagreements(disagreements)
     family = summarize_by_family(cases)
     affected = [
-        f.family
-        for f in family
-        if f.distribution.consequential_rate > 0 or f.distribution.status_disagreement_rate > 0
+        f.family for f in family if f.distribution.consequential_rate > 0 or f.distribution.status_disagreement_rate > 0
     ]
 
     # Performance proxy: iteration ratio when available
@@ -170,9 +168,7 @@ def run_candidate_stack_promotion(
         "note": "Proxy only; wall-clock not claimed as production SLA.",
     }
 
-    per_family_rates = {
-        f.family: float(f.distribution.consequential_rate) for f in family
-    }
+    per_family_rates = {f.family: float(f.distribution.consequential_rate) for f in family}
     results = {
         "corpus_version": summary.get("corpus_version"),
         "protocol_version": PROMOTION_PROTOCOL_VERSION,
@@ -193,9 +189,7 @@ def run_candidate_stack_promotion(
         "taxonomy_counts": dist.taxonomy_counts,
         "per_family_consequential_rates": per_family_rates,
         "backend_capabilities": summary.get("backend_capabilities"),
-        "negative_results": [
-            f.notes for f in family if f.notes.startswith("negative_result")
-        ],
+        "negative_results": [f.notes for f in family if f.notes.startswith("negative_result")],
         "retained_artifact_paths": [],
     }
 
@@ -230,9 +224,7 @@ def run_candidate_stack_promotion(
         ]
         protocol.results["retained_artifact_paths"] = retained
         out_path.write_text(json.dumps(protocol.as_dict(), indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        provenance = finalize_experiment_provenance(
-            provenance, artifact_paths=[out_path, family_path, tax_path]
-        )
+        provenance = finalize_experiment_provenance(provenance, artifact_paths=[out_path, family_path, tax_path])
         provenance.to_json(output_dir / "provenance.json")
         protocol.results["provenance"] = provenance.as_dict()
         protocol.results["retained_artifact_paths"] = retained

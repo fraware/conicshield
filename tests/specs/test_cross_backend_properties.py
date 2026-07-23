@@ -27,9 +27,7 @@ from conicshield.specs.shield_qp import parse_safety_spec_for_shield
 from tests.stabilization.vendor_required import skip_or_fail_vendor
 
 
-def _effective_box_bounds(
-    a_full: Any, b_full: np.ndarray, n_eq: int, n: int
-) -> tuple[np.ndarray, np.ndarray]:
+def _effective_box_bounds(a_full: Any, b_full: np.ndarray, n_eq: int, n: int) -> tuple[np.ndarray, np.ndarray]:
     a_nn = np.asarray(a_full.toarray()[n_eq:], dtype=np.float64)
     b_nn = np.asarray(b_full[n_eq:], dtype=np.float64)
     lowers = np.full(n, -np.inf, dtype=np.float64)

@@ -259,9 +259,7 @@ def smoothed_research_projection_jacobian(
             )
             return np.asarray(r.corrected_action, dtype=np.float64)
 
-        hard_fd = central_finite_difference_jacobian(
-            hard_forward, p, h=fd_h, parameter_name="proposed_action"
-        )
+        hard_fd = central_finite_difference_jacobian(hard_forward, p, h=fd_h, parameter_name="proposed_action")
         extra_solves += 2 * n
         if hard_fd.failure_status is None and hard_fd.jacobian.shape == jac.shape:
             agree_hard = fd_agreement_metric(jac, hard_fd.jacobian)

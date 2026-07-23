@@ -47,8 +47,7 @@ def load_research_safety_spec(
                 "soft_load": True,
                 "validation_error": str(exc),
                 "note": (
-                    "Intentionally contradictory research scenario soft-loaded; "
-                    "not a production SafetySpec acceptance."
+                    "Intentionally contradictory research scenario soft-loaded; not a production SafetySpec acceptance."
                 ),
             }
         )

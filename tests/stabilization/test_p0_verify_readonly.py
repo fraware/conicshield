@@ -44,7 +44,6 @@ def test_verify_reference_system_is_read_only_makefile_target() -> None:
     assert "sync-community-metadata" not in body
 
 
-
 def test_check_vs_generate_makefile_distinction() -> None:
     text = Path("Makefile").read_text(encoding="utf-8")
     assert "check-community-metadata:" in text

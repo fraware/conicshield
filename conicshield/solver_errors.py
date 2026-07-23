@@ -6,7 +6,7 @@ from types import ModuleType
 from conicshield._optional import OptionalDependencyError
 
 SOLVER_INSTALL_HINT = (
-    'Install a profile from packaging/install_matrix.json, for example: '
+    "Install a profile from packaging/install_matrix.json, for example: "
     'pip install -e ".[solver-public]" -c packaging/constraints/solver-public.txt '
     '(credential-free), or pip install -e ".[solver-moreau-cpu]" '
     '--extra-index-url "<vendor-index>" for Linux/WSL Moreau. '

@@ -73,6 +73,4 @@ def pytest_make_collect_report(collector: pytest.Collector) -> Any:
     if not _is_vendor_nodeid(nodeid):
         return
     report.outcome = "failed"
-    report.longrepr = (
-        f"CONICSHIELD_VENDOR_REQUIRED=1: vendor collection must not skip ({nodeid}: {report.longrepr})"
-    )
+    report.longrepr = f"CONICSHIELD_VENDOR_REQUIRED=1: vendor collection must not skip ({nodeid}: {report.longrepr})"

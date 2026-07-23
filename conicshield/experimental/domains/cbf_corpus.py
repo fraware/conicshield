@@ -347,9 +347,7 @@ def probe_cbf_filter_bank(*, root: Path | None = None) -> list[Any]:
         agent, obs = case.to_agent_obstacle()
         probes.append(apply_cbf_filter(agent, obs, alpha=case.alpha, u_max=case.u_max))
         if case.regime in {"held_out_nominal", "near_boundary"}:
-            probes.append(
-                apply_cbf_filter_soc_robust(agent, obs, alpha=case.alpha, u_max=case.u_max, epsilon=0.05)
-            )
+            probes.append(apply_cbf_filter_soc_robust(agent, obs, alpha=case.alpha, u_max=case.u_max, epsilon=0.05))
     return probes
 
 
@@ -362,8 +360,7 @@ def main() -> None:
     args = parser.parse_args()
     manifest = generate_cbf_corpus(root=args.root, seed=args.seed)
     print(
-        f"cbf corpus {manifest['corpus_version']} cases={manifest['case_count']} "
-        f"regimes={sorted(manifest['regimes'])}"
+        f"cbf corpus {manifest['corpus_version']} cases={manifest['case_count']} regimes={sorted(manifest['regimes'])}"
     )
 
 

@@ -115,9 +115,7 @@ def remaining_r4_blockers(*, n_real_hosts: int, digest_mismatches: list[str]) ->
             "(synthetic fixtures do not count toward the R4 multi-host gate).",
         )
     if digest_mismatches:
-        blockers.append(
-            "Investigate unexplained sealed-digest mismatches before governed promotion."
-        )
+        blockers.append("Investigate unexplained sealed-digest mismatches before governed promotion.")
     return blockers
 
 
@@ -160,9 +158,7 @@ def run_multi_host_soak_simulation(
         artifact_hashes=dict(plat.get("artifact_hashes") or {}),
         sealed_corrected_action_digest=plat.get("sealed_corrected_action_digest"),
         dirty_worktree=bool(plat.get("dirty_worktree")),
-        peer_sealed_digests=[
-            str((secondary.get("platform") or {}).get("sealed_corrected_action_digest") or "")
-        ],
+        peer_sealed_digests=[str((secondary.get("platform") or {}).get("sealed_corrected_action_digest") or "")],
         policy=default_governed_hash_policy(),
     )
 

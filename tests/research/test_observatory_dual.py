@@ -60,9 +60,7 @@ def test_dual_pressure_correlation_caveat() -> None:
 
 
 def test_observatory_active_set_family() -> None:
-    scenarios = [
-        s for s in load_all_scenarios() if s["family"] == "active_set_transition_neighborhoods"
-    ]
+    scenarios = [s for s in load_all_scenarios() if s["family"] == "active_set_transition_neighborhoods"]
     assert len(scenarios) >= 10
     scenario = scenarios[0]
     spec = SafetySpec.model_validate(scenario["spec"])

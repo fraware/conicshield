@@ -38,20 +38,12 @@ class ParameterLayout:
     def __post_init__(self) -> None:
         object.__setattr__(self, "p_diag_index", np.asarray(self.p_diag_index, dtype=np.int64))
         object.__setattr__(self, "a_const_values", np.asarray(self.a_const_values, dtype=np.float64))
-        object.__setattr__(
-            self, "b_box_lower_index", np.asarray(self.b_box_lower_index, dtype=np.int64)
-        )
-        object.__setattr__(
-            self, "b_box_upper_index", np.asarray(self.b_box_upper_index, dtype=np.int64)
-        )
+        object.__setattr__(self, "b_box_lower_index", np.asarray(self.b_box_lower_index, dtype=np.int64))
+        object.__setattr__(self, "b_box_upper_index", np.asarray(self.b_box_upper_index, dtype=np.int64))
         if self.b_rate_pos_index is not None:
-            object.__setattr__(
-                self, "b_rate_pos_index", np.asarray(self.b_rate_pos_index, dtype=np.int64)
-            )
+            object.__setattr__(self, "b_rate_pos_index", np.asarray(self.b_rate_pos_index, dtype=np.int64))
         if self.b_rate_neg_index is not None:
-            object.__setattr__(
-                self, "b_rate_neg_index", np.asarray(self.b_rate_neg_index, dtype=np.int64)
-            )
+            object.__setattr__(self, "b_rate_neg_index", np.asarray(self.b_rate_neg_index, dtype=np.int64))
 
 
 def build_parameter_layout(

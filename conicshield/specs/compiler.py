@@ -99,10 +99,7 @@ class CVXPYMoreauProjector:
 
         moreau_solver = getattr(cp, "MOREAU", None)
         if moreau_solver is None:
-            raise RuntimeError(
-                "CVXPY does not expose cp.MOREAU. Install moreau, cvxpy>=1.8.2, "
-                "and cvxpylayers>=1.0.4."
-            )
+            raise RuntimeError("CVXPY does not expose cp.MOREAU. Install moreau, cvxpy>=1.8.2, and cvxpylayers>=1.0.4.")
 
         # Both CVXPY and native paths consume the same canonical ShieldQPData IR.
         data = parse_safety_spec_for_shield(self.spec)
@@ -127,11 +124,7 @@ class CVXPYMoreauProjector:
                 if not data.allowed_mask[i]:
                     cons.append(x[i] == 0)
 
-            prev = (
-                np.asarray(previous_action, dtype=np.float64).reshape(-1)
-                if previous_action is not None
-                else None
-            )
+            prev = np.asarray(previous_action, dtype=np.float64).reshape(-1) if previous_action is not None else None
             if prev is not None and prev.shape[0] != n:
                 raise ValueError("previous_action length mismatch")
             if prev is not None:
@@ -144,9 +137,7 @@ class CVXPYMoreauProjector:
                 r = np.asarray(reference_action, dtype=np.float64).reshape(-1)
                 if r.shape[0] != n:
                     raise ValueError("reference_action length mismatch")
-                objective = cp.Minimize(
-                    pw * cp.sum_squares(x - p) + rw * cp.sum_squares(x - r)
-                )
+                objective = cp.Minimize(pw * cp.sum_squares(x - p) + rw * cp.sum_squares(x - r))
             else:
                 objective = cp.Minimize(pw * cp.sum_squares(x - p))
 
@@ -186,9 +177,7 @@ class CVXPYMoreauProjector:
                     candidate=None,
                     raw_status=getattr(problem, "status", "unknown"),
                     objective=tel.get("objective_value"),
-                    error=RuntimeError(
-                        f"CVXPY/Moreau solve failed: status={problem.status!r}"
-                    ),
+                    error=RuntimeError(f"CVXPY/Moreau solve failed: status={problem.status!r}"),
                     warm_started=False,
                     kind="primary",
                 )

@@ -189,8 +189,7 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
                 "conicshield.experimental.gradients.agreement_study",
             ),
             acceptance_criterion=(
-                "Adversarial / known-failure probes do not show metric gaming of verifier "
-                "or gradient weaknesses."
+                "Adversarial / known-failure probes do not show metric gaming of verifier or gradient weaknesses."
             ),
         ),
         RequiredEvidenceItem(
@@ -200,9 +199,7 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
             status="missing",
             scientific_role="required",
             depends_on_gates=("R6",),
-            evidence_pointers=(
-                "conicshield.experimental.training.intervention_aware_stub",
-            ),
+            evidence_pointers=("conicshield.experimental.training.intervention_aware_stub",),
             acceptance_criterion=(
                 "All listed baselines present with identical metrics and seed control; "
                 "exact/smoothed baseline entries require live native backend availability "
@@ -234,12 +231,9 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
             status="partial",
             scientific_role="negative_retention",
             depends_on_gates=("R6",),
-            evidence_pointers=(
-                "conicshield.experimental.training.r6_decision_scaffold",
-            ),
+            evidence_pointers=("conicshield.experimental.training.r6_decision_scaffold",),
             acceptance_criterion=(
-                "Artifact store includes failed runs with hashes; omission of negatives "
-                "is a gate failure."
+                "Artifact store includes failed runs with hashes; omission of negatives is a gate failure."
             ),
             blocking_for_execution=True,
         ),
@@ -257,8 +251,7 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
             "IF native exact/smoothed gradients are unavailable on the training host "
             "THEN do not claim native differentiable training success "
             "(research adapters are distinct evidence).",
-            "Stage-4 CBF experimental RH availability does not satisfy R2 or R4 and does "
-            "not unblock R6.",
+            "Stage-4 CBF experimental RH availability does not satisfy R2 or R4 and does not unblock R6.",
         ],
         non_claims=[
             "No claim of learning safer policies.",
@@ -313,10 +306,7 @@ def _render_markdown(report: R6DecisionReportScaffold) -> str:
     lines.append("| -- | ------ | ---- | -------- | -------------------- |")
     for e in report.required_evidence:
         acc = e.acceptance_criterion.replace("|", "\\|")
-        lines.append(
-            f"| `{e.evidence_id}` | {e.status} | {e.scientific_role} | "
-            f"{e.blocking_for_execution} | {acc} |"
-        )
+        lines.append(f"| `{e.evidence_id}` | {e.status} | {e.scientific_role} | {e.blocking_for_execution} | {acc} |")
     lines.extend(["", "### Evidence details", ""])
     for e in report.required_evidence:
         ptr = f" pointers={list(e.evidence_pointers)}" if e.evidence_pointers else ""

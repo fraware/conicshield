@@ -147,10 +147,7 @@ class NativeMoreauCompiledProjector:
         self.concurrency_model = ConcurrencyModel(concurrency_model)
         self.metrics = metrics if metrics is not None else LifecycleMetrics()
         self._solver_pool = solver_pool
-        if (
-            self.concurrency_model is ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT
-            and self._solver_pool is None
-        ):
+        if self.concurrency_model is ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT and self._solver_pool is None:
             self._solver_pool = SolverPool(max_per_key=1, max_keys=32, metrics=self.metrics)
         self._warm: Any = None
         self._compiled: Any = None
@@ -236,9 +233,7 @@ class NativeMoreauCompiledProjector:
         fp = self._compiled_settings_fingerprint(moreau)
         setup_fp = setup_values_fingerprint(self._buffers.p_values, self._buffers.a_values)
 
-        if self._solver_pool is not None and self.concurrency_model is (
-            ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT
-        ):
+        if self._solver_pool is not None and self.concurrency_model is (ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT):
             return self._solve_compiled_pooled_template(
                 moreau,
                 settings=settings,
@@ -342,9 +337,7 @@ class NativeMoreauCompiledProjector:
         a_data = np.asarray(a_csr.data, dtype=np.float64)
         values_fp = str(setup_values_fingerprint(p_data, a_data))
 
-        if self._solver_pool is not None and self.concurrency_model is (
-            ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT
-        ):
+        if self._solver_pool is not None and self.concurrency_model is (ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT):
             return self._solve_compiled_pooled(
                 moreau,
                 p_csr,
@@ -565,9 +558,7 @@ class NativeMoreauCompiledProjector:
                 cold_retry_seen = True
                 self.metrics.record_cold_retry()
 
-            use_compiled = bool(self.options.use_compiled_solver) and hasattr(
-                moreau, "CompiledSolver"
-            )
+            use_compiled = bool(self.options.use_compiled_solver) and hasattr(moreau, "CompiledSolver")
             try:
                 if use_compiled:
                     self._template.fill(
@@ -581,9 +572,7 @@ class NativeMoreauCompiledProjector:
                         copy_a_constants=not self._a_constants_loaded,
                     )
                     self._a_constants_loaded = True
-                    xv, solver, solution, obj, warm_started = self._solve_with_compiled_template(
-                        moreau, warm=warm
-                    )
+                    xv, solver, solution, obj, warm_started = self._solve_with_compiled_template(moreau, warm=warm)
                 else:
                     p_csr, q, a_csr, b_full, cones = build_moreau_standard_form(
                         data,

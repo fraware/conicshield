@@ -121,6 +121,11 @@ def test_parity_gate_lists_all_violations_at_once() -> None:
     assert "p95_corrected_linf" in body
 
 
+def _reference_fixture_active_constraints() -> list[str]:
+    ep = json.loads(Path("tests/fixtures/parity_reference/episodes.jsonl").read_text(encoding="utf-8").splitlines()[2])
+    return list(ep["steps"][0]["active_constraints"])
+
+
 class _MatchingFixtureShield:
     def reset_episode(self) -> None:
         pass
@@ -140,7 +145,7 @@ class _MatchingFixtureShield:
                 intervention_norm=float(np.linalg.norm(corrected - proposed)),
                 solver_status="optimal",
                 objective_value=0.0,
-                active_constraints=["turn_feasibility"],
+                active_constraints=_reference_fixture_active_constraints(),
             )
 
         return Decision

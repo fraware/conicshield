@@ -45,8 +45,7 @@ RH_LIMITATIONS: tuple[str, ...] = (
     "with terminal ingredients or recursive feasibility certificates.",
     "No autonomous-driving / general AD stack.",
     "Native Moreau filter baseline remains unavailable on the public research path.",
-    "Stage-3 robust mode uses the declared SOC sufficient condition, not a "
-    "tight robust MPC tube.",
+    "Stage-3 robust mode uses the declared SOC sufficient condition, not a tight robust MPC tube.",
 )
 
 
@@ -305,9 +304,7 @@ def _solve_step(
             )
         primary.metadata["shadow"] = shadow_res.as_dict()
         if np.all(np.isfinite(primary.u_safe)) and np.all(np.isfinite(shadow_res.u_safe)):
-            primary.metadata["shadow_disagreement_l2"] = float(
-                np.linalg.norm(primary.u_safe - shadow_res.u_safe)
-            )
+            primary.metadata["shadow_disagreement_l2"] = float(np.linalg.norm(primary.u_safe - shadow_res.u_safe))
         primary.baseline = CBFBaseline.PRIMARY_PLUS_SHADOW.value
     return primary
 
@@ -429,9 +426,7 @@ def _run_trajectory(
         )
         if not feasible:
             # Fail closed for remaining horizon after infeasibility
-            negatives.notes.append(
-                f"infeasible_at_step_{t}: remaining horizon truncated (negative retention)"
-            )
+            negatives.notes.append(f"infeasible_at_step_{t}: remaining horizon truncated (negative retention)")
             break
         pos = pos_next
 
@@ -473,11 +468,7 @@ def run_receding_horizon_filter(
     if dt <= 0.0:
         raise ValueError("dt must be > 0")
 
-    mode = (
-        constraint_mode
-        if isinstance(constraint_mode, RHConstraintMode)
-        else RHConstraintMode(str(constraint_mode))
-    )
+    mode = constraint_mode if isinstance(constraint_mode, RHConstraintMode) else RHConstraintMode(str(constraint_mode))
     baseline_s = str(baseline)
     reproducibility = {
         "schema_id": RH_SCHEMA_ID,
@@ -511,9 +502,7 @@ def run_receding_horizon_filter(
         else:
             raise TypeError("gate_evaluation must provide as_dict() or be a mapping")
         gate_status = str(gate_d.get("stage4_status", "unknown"))
-        unblock = bool(gate_d.get("unblock_allowed", False)) and bool(
-            gate_d.get("all_required_passed", False)
-        )
+        unblock = bool(gate_d.get("unblock_allowed", False)) and bool(gate_d.get("all_required_passed", False))
         reproducibility["stage4_gate"] = {
             "stage4_status": gate_status,
             "unblock_allowed": unblock,
@@ -688,9 +677,7 @@ def main() -> None:
             obs,
             horizon=min(args.horizon, MAX_ALLOWED_HORIZON),
             constraint_mode=(
-                RHConstraintMode.SOC_ROBUST_STAGE3
-                if args.soc_robust
-                else RHConstraintMode.NOMINAL_STAGE1
+                RHConstraintMode.SOC_ROBUST_STAGE3 if args.soc_robust else RHConstraintMode.NOMINAL_STAGE1
             ),
             require_stage4_checklist_green=not args.bypass_gate,
         )

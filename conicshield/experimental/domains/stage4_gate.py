@@ -124,9 +124,7 @@ def evaluate_stage4_gate(
     # --- stage1 ---
     cid = "stage1_nominal_cbf_qp_feasible_on_demo_corpus"
     if cid in pending_force:
-        criteria.append(
-            CriterionResult(cid, CriterionStatus.PENDING, detail="forced pending", evidence_pointers=[])
-        )
+        criteria.append(CriterionResult(cid, CriterionStatus.PENDING, detail="forced pending", evidence_pointers=[]))
     else:
         s1 = demo_stage1_scenario()
         ok = np.all(np.isfinite(s1.u_safe)) and s1.solver_status in {"optimal", "optimal_inaccurate"}
@@ -198,9 +196,7 @@ def evaluate_stage4_gate(
             CriterionResult(
                 cid,
                 CriterionStatus.PASS if ok else CriterionStatus.FAIL,
-                evidence_pointers=[
-                    "conicshield.experimental.domains.cbf_2d.stage3_disagreement_under_perturbation"
-                ],
+                evidence_pointers=["conicshield.experimental.domains.cbf_2d.stage3_disagreement_under_perturbation"],
                 detail=f"nominal_vs_robust_u_l2={l2}",
                 numeric={"nominal_vs_robust_u_l2": l2},
             )
@@ -238,20 +234,14 @@ def evaluate_stage4_gate(
             infeas = int(held_eval["infeasible_count"])
             if n_held < MIN_HELD_OUT_NOMINAL:
                 status = CriterionStatus.PENDING
-                detail = (
-                    f"held_out_n={n_held} < {MIN_HELD_OUT_NOMINAL}; "
-                    f"corpus={CBF_CORPUS_VERSION} incomplete"
-                )
+                detail = f"held_out_n={n_held} < {MIN_HELD_OUT_NOMINAL}; corpus={CBF_CORPUS_VERSION} incomplete"
                 notes.append("held-out criterion pending: corpus below minimum nominal count")
             elif min_m >= -1e-4 and infeas == 0:
                 status = CriterionStatus.PASS
                 detail = f"held_out_n={n_held} min_margin={min_m} corpus={CBF_CORPUS_VERSION}"
             else:
                 status = CriterionStatus.FAIL
-                detail = (
-                    f"held_out_n={n_held} min_margin={min_m} infeas={infeas} "
-                    f"corpus={CBF_CORPUS_VERSION}"
-                )
+                detail = f"held_out_n={n_held} min_margin={min_m} infeas={infeas} corpus={CBF_CORPUS_VERSION}"
             criteria.append(
                 CriterionResult(
                     cid,
@@ -300,9 +290,7 @@ def evaluate_stage4_gate(
             for case in held_cases:
                 agent, obs = case.to_agent_obstacle()
                 r = apply_cbf_filter(agent, obs, alpha=case.alpha, u_max=case.u_max)
-                if r.solver_status not in {"optimal", "optimal_inaccurate"} or not np.all(
-                    np.isfinite(r.u_safe)
-                ):
+                if r.solver_status not in {"optimal", "optimal_inaccurate"} or not np.all(np.isfinite(r.u_safe)):
                     held_bad += 1
             held_rate = float(held_bad / max(len(held_cases), 1))
             unexplained = float(audit.unexplained_rate)

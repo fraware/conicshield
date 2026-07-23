@@ -145,8 +145,7 @@ def require_verified_release(
     if not report.passed:
         decision = report.classification.decision
         raise VerificationReleaseError(
-            f"candidate rejected by release policy: {decision.value} "
-            f"({', '.join(report.classification.reasons)})",
+            f"candidate rejected by release policy: {decision.value} ({', '.join(report.classification.reasons)})",
             report=report,
             evidence={"verification": report.as_dict()},
         )

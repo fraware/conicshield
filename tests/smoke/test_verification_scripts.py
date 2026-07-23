@@ -82,7 +82,6 @@ def test_first_governance_publish_script_help_exits_zero() -> None:
     assert r.returncode == 0, r.stderr
 
 
-
 def test_execute_real_publish_chain_script_help_exits_zero() -> None:
     r = subprocess.run(
         [

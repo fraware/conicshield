@@ -45,9 +45,7 @@ class _ScopedWarmProjector:
         del previous_action, reference_action, policy_weight, reference_weight, metadata
         if self._warm_owner is not None and self._warm_owner != self.owner_token:
             self.shared_log.append((self.owner_token, self._warm_owner))
-            raise AssertionError(
-                f"warm-start leak: episode {self.owner_token!r} saw warm from {self._warm_owner!r}"
-            )
+            raise AssertionError(f"warm-start leak: episode {self.owner_token!r} saw warm from {self._warm_owner!r}")
         self._warm_owner = self.owner_token
         x = np.asarray(proposed_action, dtype=np.float64).reshape(-1)
         return ProjectionResult(

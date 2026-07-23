@@ -197,8 +197,7 @@ class SafetySpec(BaseModel):
             if isinstance(c, BoxConstraint):
                 if len(c.lower) != n or len(c.upper) != n:
                     raise DimensionMismatchError(
-                        f"BoxConstraint lengths (lower={len(c.lower)}, upper={len(c.upper)}) "
-                        f"must equal action_dim={n}"
+                        f"BoxConstraint lengths (lower={len(c.lower)}, upper={len(c.upper)}) must equal action_dim={n}"
                     )
                 box = c
             elif isinstance(c, RateConstraint):
@@ -212,9 +211,7 @@ class SafetySpec(BaseModel):
             elif isinstance(c, TurnFeasibilityConstraint):
                 for idx in c.allowed_actions:
                     if idx >= n:
-                        raise DimensionMismatchError(
-                            f"allowed_actions index {idx} is out of range for action_dim={n}"
-                        )
+                        raise DimensionMismatchError(f"allowed_actions index {idx} is out of range for action_dim={n}")
                 turn = c
 
         # Empty admissible set requires an explicit fail-safe; REJECT fails closed.
@@ -250,13 +247,11 @@ class SafetySpec(BaseModel):
             total = float(simplex.total)
             if sum_lower > total + 1e-12:
                 raise ContradictoryConstraintError(
-                    f"sum of lower bounds on admissible actions ({sum_lower}) exceeds "
-                    f"simplex total ({total})"
+                    f"sum of lower bounds on admissible actions ({sum_lower}) exceeds simplex total ({total})"
                 )
             if sum_upper < total - 1e-12:
                 raise ContradictoryConstraintError(
-                    f"sum of upper bounds on admissible actions ({sum_upper}) is below "
-                    f"simplex total ({total})"
+                    f"sum of upper bounds on admissible actions ({sum_upper}) is below simplex total ({total})"
                 )
 
         # Rate is retained for IR; no static contradiction beyond dimension checks.

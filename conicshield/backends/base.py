@@ -57,10 +57,7 @@ def parse_backend(raw: str | Backend) -> Backend:
     try:
         return Backend[text.upper()]
     except KeyError as exc:
-        raise ValueError(
-            f"Unknown backend {raw!r}. Expected one of: "
-            + ", ".join(m.name for m in Backend)
-        ) from exc
+        raise ValueError(f"Unknown backend {raw!r}. Expected one of: " + ", ".join(m.name for m in Backend)) from exc
 
 
 def configured_production_backend() -> Backend | None:
@@ -75,8 +72,7 @@ def configured_production_backend() -> Backend | None:
     backend = parse_backend(raw)
     if backend is Backend.AUTO:
         raise ValueError(
-            f"{AUTO_PRODUCTION_ENV} cannot be AUTO; set an explicit backend "
-            f"(e.g. PUBLIC_CLARABEL or CVXPY_MOREAU)."
+            f"{AUTO_PRODUCTION_ENV} cannot be AUTO; set an explicit backend (e.g. PUBLIC_CLARABEL or CVXPY_MOREAU)."
         )
     return backend
 

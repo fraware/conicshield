@@ -333,12 +333,8 @@ def render_observatory_report_markdown(
     mean_norm = float(np.mean(jac_norms)) if jac_norms else float("nan")
     mean_agree = float(np.mean(agrees)) if agrees else float("nan")
     mean_kkt_fd = float(np.mean(kkt_fd_agrees)) if kkt_fd_agrees else float("nan")
-    exact_status_summary = (
-        ",".join(sorted(set(exact_backend_statuses))) if exact_backend_statuses else "n/a"
-    )
-    smoothed_status_summary = (
-        ",".join(sorted(set(smoothed_backend_statuses))) if smoothed_backend_statuses else "n/a"
-    )
+    exact_status_summary = ",".join(sorted(set(exact_backend_statuses))) if exact_backend_statuses else "n/a"
+    smoothed_status_summary = ",".join(sorted(set(smoothed_backend_statuses))) if smoothed_backend_statuses else "n/a"
 
     template = ""
     if template_path is not None and template_path.is_file():

@@ -117,13 +117,9 @@ class SolverPool(Generic[T]):
                     return SolverCheckout(key=key, solver=entry.solver, _pool=self, _entry_id=entry_id)
 
                 if not block:
-                    raise SolverPoolCheckoutError(
-                        f"all {self.max_per_key} solvers busy for key={key!r}"
-                    )
+                    raise SolverPoolCheckoutError(f"all {self.max_per_key} solvers busy for key={key!r}")
                 if deadline_remaining is not None and deadline_remaining <= 0.0:
-                    raise SolverPoolCheckoutError(
-                        f"timeout waiting for solver checkout key={key!r}"
-                    )
+                    raise SolverPoolCheckoutError(f"timeout waiting for solver checkout key={key!r}")
                 if deadline_remaining is None:
                     self._cv.wait()
                 else:

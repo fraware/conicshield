@@ -71,9 +71,7 @@ class LocalGlobalConsistencyResult:
     consistency_rate: float | None = None
     active_set_change_rate: float | None = None
     flag_counts: dict[str, int] = field(default_factory=dict)
-    publication_grade_watermark: str = (
-        "NOT_PUBLICATION_GRADE: local-global analysis used research sequential batching."
-    )
+    publication_grade_watermark: str = "NOT_PUBLICATION_GRADE: local-global analysis used research sequential batching."
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -185,9 +183,7 @@ def run_local_global_consistency(
         else:
             flag = "ok"
             regime = "locally_consistent"
-        abs_err = (
-            float(np.linalg.norm(predicted - actual)) if np.isfinite(actual_norm) else float("nan")
-        )
+        abs_err = float(np.linalg.norm(predicted - actual)) if np.isfinite(actual_norm) else float("nan")
         flags.append(
             LocalGlobalFlag(
                 parameter_name=",".join(sorted(neigh.keys())),
@@ -210,9 +206,7 @@ def run_local_global_consistency(
     flag_counts: dict[str, int] = {}
     for f in flags:
         flag_counts[f.flag] = flag_counts.get(f.flag, 0) + 1
-    consistency_rate = (
-        float(flag_counts.get("ok", 0) / max(len(flags), 1)) if flags else None
-    )
+    consistency_rate = float(flag_counts.get("ok", 0) / max(len(flags), 1)) if flags else None
     active_set_change_rate = (
         float(sum(1 for f in flags if f.active_set_changed) / max(len(flags), 1)) if flags else None
     )

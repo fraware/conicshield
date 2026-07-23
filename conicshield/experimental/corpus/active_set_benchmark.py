@@ -78,9 +78,7 @@ def validate_active_set_benchmark_integrity(bench: ActiveSetTransitionBenchmark)
     """Machine checks for suite completeness (research integrity, not production gate)."""
 
     regimes_joined = " ".join(bench.expected_regimes).lower()
-    has_regime_coverage = all(s in regimes_joined for s in REQUIRED_REGIME_SUBSTRINGS) or bool(
-        bench.expected_regimes
-    )
+    has_regime_coverage = all(s in regimes_joined for s in REQUIRED_REGIME_SUBSTRINGS) or bool(bench.expected_regimes)
     return {
         "non_empty": len(bench.cases) > 0,
         "corpus_version_present": bool(bench.corpus_version),

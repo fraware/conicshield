@@ -25,9 +25,7 @@ def active_constraints_from_residuals(
     if not report.finite or not report.action_dim_ok:
         return []
 
-    tol = float(active_tol) if active_tol is not None else float(
-        (tolerances or ResidualTolerances()).active_tol
-    )
+    tol = float(active_tol) if active_tol is not None else float((tolerances or ResidualTolerances()).active_tol)
     x = np.asarray(candidate, dtype=np.float64).reshape(-1)
     n = int(data.n)
     if x.shape[0] != n:
