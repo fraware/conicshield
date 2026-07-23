@@ -394,6 +394,11 @@ def main() -> int:
         help="Comma-separated microbatch sizes for native throughput rows in sweep mode (uses scenario s0).",
     )
     p.add_argument(
+        "--sweep-auto-tune",
+        action="store_true",
+        help="In --sweep mode, also measure native cold solves with auto_tune enabled.",
+    )
+    p.add_argument(
         "--decision-grade",
         action="store_true",
         help="Delegate to scripts/decision_grade_benchmark.py (S8 workload matrix).",
