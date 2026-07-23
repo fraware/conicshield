@@ -1,0 +1,484 @@
+{
+  "baseline_budget_fraction": 1.0,
+  "baseline_policy": "random",
+  "consequential_l2_threshold": 0.01,
+  "corpus_version": "r0-v0.2.0",
+  "family_summaries_baseline": [
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 18,
+        "mean_l2": 2.9796506900067298e-06,
+        "mean_linf": 2.57732654163094e-06,
+        "median_l2": 2.4507106779162258e-08,
+        "negative_result_count": 0,
+        "p95_l2": 2.0624442220532922e-05,
+        "residual_dominance_counts": {
+          "tie": 18
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "action_diff_small": 2,
+          "active_set_mismatch": 9,
+          "none": 7,
+          "objective_gap": 6
+        }
+      },
+      "family": "active_set_transition_neighborhoods",
+      "n_cases": 18,
+      "n_shadowed": 18,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 2.721399394757457e-08,
+        "mean_linf": 1.37493068042005e-08,
+        "median_l2": 2.721399394757457e-08,
+        "negative_result_count": 0,
+        "p95_l2": 2.721399394757457e-08,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "active_set_mismatch": 1,
+          "objective_gap": 1
+        }
+      },
+      "family": "backend_version_changes",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 3.2299285597608166e-08,
+        "mean_linf": 1.746161915061606e-08,
+        "median_l2": 3.2299285597608166e-08,
+        "negative_result_count": 0,
+        "p95_l2": 3.2299285597608166e-08,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "active_set_mismatch": 1
+        }
+      },
+      "family": "changing_admissibility_masks",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 3.024087226951763e-08,
+        "mean_linf": 2.4915200763642176e-08,
+        "median_l2": 3.024087226951763e-08,
+        "negative_result_count": 0,
+        "p95_l2": 3.024087226951763e-08,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "active_set_mismatch": 1,
+          "objective_gap": 1
+        }
+      },
+      "family": "heterogeneous_batches",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": NaN,
+        "mean_linf": NaN,
+        "median_l2": NaN,
+        "negative_result_count": 1,
+        "p95_l2": NaN,
+        "residual_dominance_counts": {},
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "none": 1
+        }
+      },
+      "family": "infeasible",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 2.7498470718286834e-08,
+        "mean_linf": 1.3970570339472133e-08,
+        "median_l2": 2.7498470718286834e-08,
+        "negative_result_count": 0,
+        "p95_l2": 2.7498470718286834e-08,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "active_set_mismatch": 1,
+          "objective_gap": 1
+        }
+      },
+      "family": "interior_feasible",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 2.908846635133134e-10,
+        "mean_linf": 1.467239107988405e-10,
+        "median_l2": 2.908846635133134e-10,
+        "negative_result_count": 0,
+        "p95_l2": 2.908846635133134e-10,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "none": 1
+        }
+      },
+      "family": "multiple_active_bounds",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 2.6590324000409782e-05,
+        "mean_linf": 1.3295162000222238e-05,
+        "median_l2": 2.6590324000409782e-05,
+        "negative_result_count": 0,
+        "p95_l2": 2.6590324000409782e-05,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "action_diff_small": 1
+        }
+      },
+      "family": "near_infeasible",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 1.0,
+        "count": 1,
+        "mean_l2": NaN,
+        "mean_linf": NaN,
+        "median_l2": NaN,
+        "negative_result_count": 1,
+        "p95_l2": NaN,
+        "residual_dominance_counts": {},
+        "status_disagreement_rate": 1.0,
+        "taxonomy_counts": {
+          "status_only": 1
+        }
+      },
+      "family": "poorly_conditioned_objectives",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": ""
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 4.504687058361352e-09,
+        "mean_linf": 3.900833933645487e-09,
+        "median_l2": 4.504687058361352e-09,
+        "negative_result_count": 0,
+        "p95_l2": 4.504687058361352e-09,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "none": 1
+        }
+      },
+      "family": "rate_limited_transitions",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 2.7331199182178912e-08,
+        "mean_linf": 1.4896397448893595e-08,
+        "median_l2": 2.7331199182178912e-08,
+        "negative_result_count": 0,
+        "p95_l2": 2.7331199182178912e-08,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "active_set_mismatch": 1,
+          "objective_gap": 1
+        }
+      },
+      "family": "sidecar_interruption",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 2.7149419180655314e-09,
+        "mean_linf": 2.256110846247666e-09,
+        "median_l2": 2.7149419180655314e-09,
+        "negative_result_count": 0,
+        "p95_l2": 2.7149419180655314e-09,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "none": 1
+        }
+      },
+      "family": "simplex_corner",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 1,
+        "mean_l2": 8.872281919814201e-07,
+        "mean_linf": 7.682691583466017e-07,
+        "median_l2": 8.872281919814201e-07,
+        "negative_result_count": 0,
+        "p95_l2": 8.872281919814201e-07,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "none": 1
+        }
+      },
+      "family": "single_active_bound",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 1.0,
+        "count": 1,
+        "mean_l2": NaN,
+        "mean_linf": NaN,
+        "median_l2": NaN,
+        "negative_result_count": 1,
+        "p95_l2": NaN,
+        "residual_dominance_counts": {
+          "tie": 1
+        },
+        "status_disagreement_rate": 1.0,
+        "taxonomy_counts": {
+          "active_set_mismatch": 1,
+          "compound": 1,
+          "failure_asymmetry": 1,
+          "timeout_asymmetry": 1
+        }
+      },
+      "family": "solver_timeout_iteration_limit",
+      "n_cases": 1,
+      "n_shadowed": 1,
+      "notes": ""
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.0,
+        "count": 2,
+        "mean_l2": 3.4732622197826897e-08,
+        "mean_linf": 2.151054100463929e-08,
+        "median_l2": 3.4732622197826897e-08,
+        "negative_result_count": 0,
+        "p95_l2": 4.142907069901817e-08,
+        "residual_dominance_counts": {
+          "tie": 2
+        },
+        "status_disagreement_rate": 0.0,
+        "taxonomy_counts": {
+          "active_set_mismatch": 2,
+          "objective_gap": 2
+        }
+      },
+      "family": "warm_start_success_failure",
+      "n_cases": 2,
+      "n_shadowed": 2,
+      "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    }
+  ],
+  "negative_results": [
+    "policy=active_set_change budget=0.5: detection_rate=0.000 (below 0.5 vs 100% shadow consequential set)",
+    "policy=residual budget=0.5: detection_rate=0.000 (below 0.5 vs 100% shadow consequential set)"
+  ],
+  "primary_backend": "cvxpy_clarabel",
+  "promotion_gate": "Advanced sampling may enter production only when mandatory verification remains complete and sampling affects only the optional secondary solve.",
+  "provenance": {
+    "algorithm": null,
+    "backend": "cvxpy_clarabel|cvxpy_scs",
+    "batch_size": 1,
+    "completion_time_utc": "2026-07-23T06:22:34.480954+00:00",
+    "cpu_info": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "cuda_driver": null,
+    "cuda_runtime": null,
+    "dirty_worktree": true,
+    "exact_command": "python experiments/research_wave2/run_sampling_study.py",
+    "extra": {},
+    "fallback_policy": "record_only",
+    "gpu_info": null,
+    "operating_system": "Windows 11",
+    "output_artifact_hashes": {
+      "C:\\Users\\mateo\\conicshield\\output\\research\\wave2\\sampling_study\\sampling_study_ci_small.json": "0d86b78f4e6abe6d434275f9f4f558197d34dba0b5221474439bd60b7532dca0"
+    },
+    "package_hash": null,
+    "package_source": null,
+    "python_version": "3.13.11",
+    "random_seeds": {
+      "sampling_study": 0
+    },
+    "repository_commit": "6e7f7d87db7754a4e7bda588c794babf3fadaa66",
+    "scenario_corpus_version": "r0-v0.2.0",
+    "solver_distribution": "cvxpy",
+    "solver_settings": {
+      "budget_fractions": [
+        0.5,
+        1.0
+      ],
+      "ci_small": true,
+      "policies": [
+        "residual",
+        "random",
+        "active_set_change"
+      ]
+    },
+    "solver_version": "1.8.2",
+    "start_time_utc": "2026-07-23T06:22:17.262776+00:00",
+    "tolerances": {
+      "action_l2_consequential": 0.01
+    },
+    "warm_start_policy": "cold"
+  },
+  "results": [
+    {
+      "budget_fraction": 0.5,
+      "consequential_baseline": 2,
+      "consequential_detected": 0,
+      "detection_rate": 0.0,
+      "false_skip_rate": 1.0,
+      "mean_l2_when_shadowed": 7.430035617572281e-08,
+      "notes": "",
+      "policy": "residual",
+      "scenario_count": 33,
+      "shadow_cost_relative": 0.48484848484848486,
+      "shadowed_count": 16,
+      "status_disagreement_count": 0
+    },
+    {
+      "budget_fraction": 1.0,
+      "consequential_baseline": 2,
+      "consequential_detected": 2,
+      "detection_rate": 1.0,
+      "false_skip_rate": 0.0,
+      "mean_l2_when_shadowed": 2.7110941397421036e-06,
+      "notes": "",
+      "policy": "residual",
+      "scenario_count": 33,
+      "shadow_cost_relative": 1.0,
+      "shadowed_count": 33,
+      "status_disagreement_count": 2
+    },
+    {
+      "budget_fraction": 0.5,
+      "consequential_baseline": 2,
+      "consequential_detected": 1,
+      "detection_rate": 0.5,
+      "false_skip_rate": 0.5,
+      "mean_l2_when_shadowed": 4.1412458518256825e-06,
+      "notes": "",
+      "policy": "random",
+      "scenario_count": 33,
+      "shadow_cost_relative": 0.48484848484848486,
+      "shadowed_count": 16,
+      "status_disagreement_count": 1
+    },
+    {
+      "budget_fraction": 1.0,
+      "consequential_baseline": 2,
+      "consequential_detected": 2,
+      "detection_rate": 1.0,
+      "false_skip_rate": 0.0,
+      "mean_l2_when_shadowed": 2.7110941397421036e-06,
+      "notes": "",
+      "policy": "random",
+      "scenario_count": 33,
+      "shadow_cost_relative": 1.0,
+      "shadowed_count": 33,
+      "status_disagreement_count": 2
+    },
+    {
+      "budget_fraction": 0.5,
+      "consequential_baseline": 2,
+      "consequential_detected": 0,
+      "detection_rate": 0.0,
+      "false_skip_rate": 1.0,
+      "mean_l2_when_shadowed": 3.347845434031887e-06,
+      "notes": "",
+      "policy": "active_set_change",
+      "scenario_count": 33,
+      "shadow_cost_relative": 0.48484848484848486,
+      "shadowed_count": 16,
+      "status_disagreement_count": 0
+    },
+    {
+      "budget_fraction": 1.0,
+      "consequential_baseline": 2,
+      "consequential_detected": 2,
+      "detection_rate": 1.0,
+      "false_skip_rate": 0.0,
+      "mean_l2_when_shadowed": 2.7110941397421036e-06,
+      "notes": "",
+      "policy": "active_set_change",
+      "scenario_count": 33,
+      "shadow_cost_relative": 1.0,
+      "shadowed_count": 33,
+      "status_disagreement_count": 2
+    }
+  ],
+  "schema_id": "research.sampling_study.v0",
+  "shadow_backend": "cvxpy_scs"
+}

@@ -1,0 +1,67 @@
+{
+  "schema_id": "research.cbf_rh_ci_small_fixture.v0",
+  "experiment_version": "rh-v0.1.0",
+  "horizon": 3,
+  "dt": 0.1,
+  "alpha": 1.0,
+  "u_max": 1.0,
+  "epsilon": 0.05,
+  "constraint_modes": [
+    "nominal_stage1_cbf",
+    "soc_robust_stage3_cbf"
+  ],
+  "agent": {
+    "agent_id": "rh_a0",
+    "position": [0.0, 0.0],
+    "u_desired": [1.0, 0.0]
+  },
+  "obstacle": {
+    "obstacle_id": "rh_o0",
+    "center": [1.2, 0.0],
+    "radius": 0.5
+  },
+  "require_stage4_checklist_green": true,
+  "baselines": [
+    "no_filter",
+    "public_solver_filter",
+    "primary_plus_shadow_assurance"
+  ],
+  "metrics": [
+    "feasibility_rate",
+    "intervention_frequency",
+    "minimum_safety_margin",
+    "minimum_robust_margin",
+    "active_set_chatter_rate",
+    "mean_solve_time_sec",
+    "stage3_robust_margin_interaction",
+    "infeasible_horizon_flag"
+  ],
+  "negative_retention": [
+    "infeasible_steps",
+    "active_set_chatter_steps",
+    "barrier_violations"
+  ],
+  "limitations": [
+    "experimental_only",
+    "single_agent",
+    "not_full_mpc",
+    "not_multi_robot",
+    "not_production_qualified"
+  ],
+  "reproducibility_fields": [
+    "schema_id",
+    "experiment_version",
+    "horizon",
+    "dt",
+    "alpha",
+    "u_max",
+    "epsilon",
+    "constraint_mode",
+    "baseline",
+    "solver",
+    "shadow",
+    "agent",
+    "obstacle",
+    "stage4_gate"
+  ]
+}
