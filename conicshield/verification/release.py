@@ -37,7 +37,13 @@ def build_verified_projection_result(
     )
     intervened = diff > thr
 
-    solver_status = str(telemetry.get("solver_status") or outcome.report.canonical_status.value)
+    # Prefer the verified canonical status for the public solver_status field.
+    # Vendor telemetry may still carry raw integer codes (e.g. Moreau ``1``).
+    raw_tel = telemetry.get("solver_status")
+    solver_status = str(outcome.report.canonical_status.value)
+    meta = dict(metadata or {})
+    if raw_tel is not None and str(raw_tel) != solver_status:
+        meta.setdefault("raw_solver_status", str(raw_tel))
     return ProjectionResult(
         proposed_action=proposed,
         corrected_action=corrected,
@@ -52,7 +58,7 @@ def build_verified_projection_result(
         iterations=telemetry.get("iterations"),
         construction_time_sec=telemetry.get("construction_time_sec"),
         device=telemetry.get("device"),
-        metadata=sanitize_metadata(metadata),
+        metadata=sanitize_metadata(meta),
         canonical_status=outcome.report.canonical_status,
         release_decision=outcome.release_decision,
         verification=outcome.report,
