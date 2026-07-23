@@ -1,0 +1,205 @@
+{
+  "blocked_until": [
+    "R2_promotion_gate",
+    "R4_promotion_gate"
+  ],
+  "blocking_evidence_incomplete": [
+    "r2_native_or_validated_gradients",
+    "r4_assurance_reproduction",
+    "track1_s4_hetero_batch_attestation",
+    "independent_safety_metrics_under_shift",
+    "robustness_to_solver_and_smoothing",
+    "no_verifier_or_gradient_exploitation",
+    "comparison_battery",
+    "decision_report_with_negative_results",
+    "negative_retention_protocol"
+  ],
+  "charter_question_id": "Q8",
+  "corpus_version_context": "r0-v0.3.0",
+  "decision_logic": [
+    "IF R2 and R4 promotion gates are not passed THEN decision_status remains BLOCKED and no training execution is authorized.",
+    "IF independent held-out safety metrics do not improve under shift THEN do not claim scientifically justified intervention-aware training.",
+    "IF only intervention rate decreases without safety-metric gains THEN treat as negative / inconclusive result.",
+    "IF native exact/smoothed gradients remain stubbed THEN do not claim native differentiable training success (research adapters are distinct evidence).",
+    "Stage-4 CBF experimental RH availability does not satisfy R2 or R4 and does not unblock R6."
+  ],
+  "decision_status": "BLOCKED",
+  "document_type": "scientific_decision_evidence_matrix",
+  "document_version": "r6-decision-v0.2.0",
+  "non_claims": [
+    "No claim of learning safer policies.",
+    "No training results are present in this scaffold.",
+    "Research KKT / smoothed adapters are not native Moreau gradients.",
+    "Intervention-rate reduction alone is insufficient evidence of safety.",
+    "Checklist completeness here does not unblock R6 training execution.",
+    "Stage-4 CBF checklist green / experimental RH does not imply R2/R4 promotion gates passed.",
+    "Track 1 S4/S5 scaffolding without vendor attestation does not clear publication-grade frontiers."
+  ],
+  "note": "Scientific decision document / evidence matrix only. No training loops executed. No claim that safer policies were learned. Fill results only after R2+R4 gates pass and independent safety metrics improve under distribution shift. Checklist completeness here does not unblock R6.",
+  "question": "Is intervention-aware training scientifically justified for ConicShield?",
+  "required_evidence": [
+    {
+      "acceptance_criterion": "Claimed differentiation path has documented exact-vs-FD agreement on active-set coverage corpus; native stubs must not be silently aliased.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "R2"
+      ],
+      "description": "R2 gate: corpus-validated gradients with active-set coverage and exact-vs-FD agreement for the claimed differentiation path (native stubs currently fail-closed). Research KKT/smoothed adapters are distinct evidence kinds and do not satisfy the native exact-vs-FD promotion gate.",
+      "evidence_id": "r2_native_or_validated_gradients",
+      "evidence_pointers": [
+        "research/solver-assurance-and-gradients/PROMOTION_GATES.md#r2",
+        "conicshield.experimental.gradients.agreement_study",
+        "conicshield.experimental.gradients.exact_stub",
+        "conicshield.experimental.gradients.smoothed_stub"
+      ],
+      "scientific_role": "required",
+      "status": "partial"
+    },
+    {
+      "acceptance_criterion": ">=2 distinct real hosts reproduce assurance artifacts; synthetic second-host fixtures do not count; production governed-hash wiring present.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "R4"
+      ],
+      "description": "R4 gate: multi-host clean-env soak on >=2 real hosts, schema/replay/corruption tests, and governed hash policy integrated with production release tooling (research adapter exists; production wiring absent).",
+      "evidence_id": "r4_assurance_reproduction",
+      "evidence_pointers": [
+        "research/solver-assurance-and-gradients/PROMOTION_GATES.md#r4",
+        "conicshield.experimental.assurance.platform_soak",
+        "conicshield.experimental.assurance.multi_host_soak_sim",
+        "conicshield.experimental.assurance.governed_hash_policy"
+      ],
+      "scientific_role": "required",
+      "status": "partial"
+    },
+    {
+      "acceptance_criterion": "probe_track1_research_readiness().reduce_watermarks is True with S4 research_attested=True on the reporting host.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "Track1_S4",
+        "R3"
+      ],
+      "description": "Track 1 S4 heterogeneous batch interface attested; frontiers no longer watermarked sequential_adapter for publication-grade claims.",
+      "evidence_id": "track1_s4_hetero_batch_attestation",
+      "evidence_pointers": [
+        "conicshield.experimental.adapters.track1_probe.probe_track1_research_readiness",
+        "conicshield.experimental.frontiers.sweeps.probe_track1_hetero_batch_attestation"
+      ],
+      "scientific_role": "required",
+      "status": "missing"
+    },
+    {
+      "acceptance_criterion": "Pre-registered held-out safety metrics improve under shift vs baselines; intervention-rate reduction alone is insufficient.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "R2",
+        "R4",
+        "R6"
+      ],
+      "description": "Held-out safety margin / robustness improvements under distribution shift (not intervention-rate alone). Must include failure cases.",
+      "evidence_id": "independent_safety_metrics_under_shift",
+      "evidence_pointers": [
+        "research/solver-assurance-and-gradients/CHARTER.md",
+        "conicshield.experimental.domains.cbf_corpus"
+      ],
+      "scientific_role": "required",
+      "status": "missing"
+    },
+    {
+      "acceptance_criterion": "Sign of safety conclusions unchanged across declared solver/smoothing sensitivity grid; negatives retained.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "R6"
+      ],
+      "description": "Results stable across solver backends and smoothing choices; failure cases included.",
+      "evidence_id": "robustness_to_solver_and_smoothing",
+      "evidence_pointers": [],
+      "scientific_role": "required",
+      "status": "missing"
+    },
+    {
+      "acceptance_criterion": "Adversarial / known-failure probes do not show metric gaming of verifier or gradient weaknesses.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "R6"
+      ],
+      "description": "Training does not exploit known verifier or gradient weaknesses; adversarial checks against documented failure modes from R1/R2 corpora.",
+      "evidence_id": "no_verifier_or_gradient_exploitation",
+      "evidence_pointers": [
+        "conicshield.experimental.solver_assurance.disagreement_corpus",
+        "conicshield.experimental.gradients.agreement_study"
+      ],
+      "scientific_role": "required",
+      "status": "missing"
+    },
+    {
+      "acceptance_criterion": "All listed baselines present with identical metrics and seed control; exact/smoothed entries remain fail-closed stubs until native grads exist.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "R6"
+      ],
+      "description": "Documented comparisons vs unshielded / inference-only shield / exact / smoothed / penalty-only / dual-pressure baselines with pre-registered metrics.",
+      "evidence_id": "comparison_battery",
+      "evidence_pointers": [
+        "conicshield.experimental.training.intervention_aware_stub"
+      ],
+      "scientific_role": "required",
+      "status": "missing"
+    },
+    {
+      "acceptance_criterion": "Final report includes negatives and an explicit go/no-go under the acceptance criteria above; this scaffold alone is insufficient.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "R6"
+      ],
+      "description": "Written decision report answering CHARTER Q8 with negative results retained; no claim of learning safer policies without independent safety-metric gains.",
+      "evidence_id": "decision_report_with_negative_results",
+      "evidence_pointers": [
+        "research/solver-assurance-and-gradients/CHARTER.md",
+        "conicshield.experimental.training.r6_decision_scaffold",
+        "research/solver-assurance-and-gradients/reports/R6_DECISION_REPORT_SCAFFOLD.md"
+      ],
+      "scientific_role": "required",
+      "status": "partial"
+    },
+    {
+      "acceptance_criterion": "Artifact store includes failed runs with hashes; omission of negatives is a gate failure.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "R6"
+      ],
+      "description": "Protocol for retaining failed seeds, infeasible episodes, and non-improving shift splits \u2014 required before any positive R6 claim.",
+      "evidence_id": "negative_retention_protocol",
+      "evidence_pointers": [
+        "conicshield.experimental.training.r6_decision_scaffold"
+      ],
+      "scientific_role": "negative_retention",
+      "status": "partial"
+    }
+  ],
+  "results": null,
+  "schema_id": "research.r6_decision_report_scaffold.v1",
+  "training_plan": {
+    "blocked_until": "R2 and R4 promotion gates pass",
+    "comparisons": [
+      "unshielded_policy",
+      "trained_without_shield_shielded_at_inference",
+      "trained_through_exact_differentiation",
+      "trained_through_smoothed_differentiation",
+      "trained_with_intervention_penalties_no_shield_gradient",
+      "trained_with_dual_pressure_regularization_if_justified"
+    ],
+    "critical_rule": "A decrease in intervention rate is not sufficient evidence of improved safety. The policy must improve independently measured safety margin or robustness under held-out conditions.",
+    "implementation": "stub_only_wave1",
+    "objective_components": [
+      "task_loss",
+      "intervention_distance_penalty",
+      "safety_margin_penalty",
+      "dual_pressure_penalty",
+      "sensitivity_penalty",
+      "active_set_instability_penalty"
+    ],
+    "promotion_gate": "No claim of learning safer policies unless: the unshielded policy improves on independent safety metrics; results hold under distribution shift; results are robust to solver and smoothing choices; failure cases are included; training does not exploit known verifier or gradient weaknesses.",
+    "status": "BLOCKED"
+  }
+}
