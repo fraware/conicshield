@@ -1,0 +1,29 @@
+{
+  "agent": {
+    "agent_id": "cbf_held_nominal_008",
+    "position": [
+      -0.011154192560432763,
+      1.3000171053732943
+    ],
+    "u_desired": [
+      -0.14456482433816759,
+      0.2897219968625416
+    ]
+  },
+  "alpha": 1.0,
+  "case_id": "cbf_held_nominal_008",
+  "corpus_family_id": "research.cbf_2d.held_out",
+  "corpus_version": "cbf-v0.1.0",
+  "notes": "held-out nominal; expected nonnegative CBF margin when solvable",
+  "obstacle": {
+    "center": [
+      0.4421131105064978,
+      -0.13488983175517144
+    ],
+    "obstacle_id": "obs_cbf_held_nominal_008",
+    "radius": 0.2899030887936427
+  },
+  "regime": "held_out_nominal",
+  "seed": 8,
+  "u_max": 1.0
+}

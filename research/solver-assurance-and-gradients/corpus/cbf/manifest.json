@@ -1,0 +1,45 @@
+{
+  "case_count": 22,
+  "corpus_family_id": "research.cbf_2d.held_out",
+  "corpus_version": "cbf-v0.1.0",
+  "generation_commit": "9e97ddbac97c2664",
+  "min_held_out_nominal": 12,
+  "notes": [
+    "Separate from R0 solver-assurance corpus (r0-v0.3.0 unchanged).",
+    "Seeds and generator reproduce every case.",
+    "Used by stage-4 gate held-out and infeasibility taxonomy probes."
+  ],
+  "regimes": {
+    "declared_infeasible_geometry": [
+      "cbf_declared_infeas_000",
+      "cbf_declared_infeas_001",
+      "cbf_declared_infeas_002"
+    ],
+    "held_out_nominal": [
+      "cbf_held_nominal_000",
+      "cbf_held_nominal_001",
+      "cbf_held_nominal_002",
+      "cbf_held_nominal_003",
+      "cbf_held_nominal_004",
+      "cbf_held_nominal_005",
+      "cbf_held_nominal_006",
+      "cbf_held_nominal_007",
+      "cbf_held_nominal_008",
+      "cbf_held_nominal_009",
+      "cbf_held_nominal_010",
+      "cbf_held_nominal_011"
+    ],
+    "near_boundary": [
+      "cbf_near_boundary_000",
+      "cbf_near_boundary_001",
+      "cbf_near_boundary_002",
+      "cbf_near_boundary_003"
+    ],
+    "stress_tight_u_max": [
+      "cbf_tight_umax_000",
+      "cbf_tight_umax_001",
+      "cbf_tight_umax_002"
+    ]
+  },
+  "schema_id": "research.cbf_held_out_corpus.v0"
+}

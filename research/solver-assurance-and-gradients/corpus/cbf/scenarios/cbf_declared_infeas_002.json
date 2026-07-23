@@ -1,0 +1,29 @@
+{
+  "agent": {
+    "agent_id": "cbf_declared_infeas_002",
+    "position": [
+      0.1,
+      0.0
+    ],
+    "u_desired": [
+      1.0,
+      0.0
+    ]
+  },
+  "alpha": 1.0,
+  "case_id": "cbf_declared_infeas_002",
+  "corpus_family_id": "research.cbf_2d.held_out",
+  "corpus_version": "cbf-v0.1.0",
+  "notes": "agent inside obstacle + tiny u_max; expect infeasible or fallback",
+  "obstacle": {
+    "center": [
+      0.0,
+      0.0
+    ],
+    "obstacle_id": "obs_cbf_declared_infeas_002",
+    "radius": 0.5
+  },
+  "regime": "declared_infeasible_geometry",
+  "seed": 302,
+  "u_max": 0.05
+}

@@ -1,0 +1,29 @@
+{
+  "agent": {
+    "agent_id": "cbf_near_boundary_003",
+    "position": [
+      0.22400582452858903,
+      -0.45817179155559873
+    ],
+    "u_desired": [
+      -0.3513816855350416,
+      0.7187008494989784
+    ]
+  },
+  "alpha": 1.0,
+  "case_id": "cbf_near_boundary_003",
+  "corpus_family_id": "research.cbf_2d.held_out",
+  "corpus_version": "cbf-v0.1.0",
+  "notes": "near-boundary stress; intervention expected",
+  "obstacle": {
+    "center": [
+      0.0,
+      0.0
+    ],
+    "obstacle_id": "obs_cbf_near_boundary_003",
+    "radius": 0.4
+  },
+  "regime": "near_boundary",
+  "seed": 103,
+  "u_max": 1.0
+}
