@@ -164,6 +164,11 @@ def main() -> int:
         problems.append(
             f"{len(skipped_vendor)} required vendor test(s) skipped under CONICSHIELD_VENDOR_REQUIRED"
         )
+    if failed > 0 or errors > 0:
+        problems.append(
+            f"vendor suite reported failures/errors (failed={failed}, errors={errors}); "
+            "evidence gate must not pass a red pytest run"
+        )
     if native_solves <= 0 or not feasible_ok:
         problems.append(
             f"expected native solve count is zero or known-feasible failed "
