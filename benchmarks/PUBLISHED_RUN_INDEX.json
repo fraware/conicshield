@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at_utc": "2026-05-28T19:22:13Z",
+  "generated_at_utc": "2026-07-23T07:25:52Z",
   "published_root": "benchmarks/published_runs",
   "governed_run_ids": [
     "host-realistic-20260525",
@@ -13,19 +13,19 @@
       "repository_relative_path": "benchmarks/published_runs/host-realistic-20260525",
       "integrity": {
         "config.json": {
-          "sha256": "1502ff06e4cc110e4c8608fca8b71417535c3d77c9ef3dfe7ac6658b08becd06"
+          "sha256": "76d9fbec03f2881951c26c17e6ea1e7821e7da04620d08fb982c852ad11a140d"
         },
         "config.schema.json": {
           "sha256": "dc0d0af539739180848d298d3a8e112fda79dbec96091ed42dce7bcae58005bd"
         },
         "summary.json": {
-          "sha256": "01f2845c2d67d9f55b70bf7c9b472c27e0cb9d9584ae71226d7920c646403753"
+          "sha256": "920be60f6a62c3721ec2385d034a49e63a0a8ed150cba2c414d57903aa317e8c"
         },
         "summary.schema.json": {
           "sha256": "c54f6deb392afcefae57e7822bd00c1191c47263655e3f76cfeb432576310fa6"
         },
         "episodes.jsonl": {
-          "sha256": "9be9455dcc563f05aa85d5c17c7613df1c6c94d95456d33e3cf0f86b554a8985"
+          "sha256": "91928e767dace611067cc10927294cd61bc5d57cbf8494681394cce103386195"
         },
         "episodes.schema.json": {
           "sha256": "94819ce8fddc8fd4ab880d219bc1c65654158a7a0a2884de644a70e4a3dfdff2"
@@ -46,13 +46,13 @@
           "sha256": "3acae9b15626813f0af3bfd47484c65dc9b34012eb98b98518caf9e176739ccd"
         },
         "solver_versions.json": {
-          "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
+          "sha256": "6cbbde4649b0eb13b0f1bdc2f36d4c7e987a36a373844c14ed7d7c4897daa375"
         },
         "README.md": {
-          "sha256": "32e47b71cb352f5e178c73e24d3504838d37c44b602602ee034404fb5760f41c"
+          "sha256": "0df70ef8ed62c5117e1b778a07bdc9b423f4ea887b80edac5237e6943ecd7545"
         },
         "COMMUNITY_METADATA.json": {
-          "sha256": "7f90be26414fc37cbf4264a2eb249e96fbd812cb5816440e6a96f9d9e9f55797"
+          "sha256": "21be7eccdd3b62b43bf458339fd259d19972369f4193c05b07989229959be6e4"
         }
       },
       "catalog": {
@@ -105,10 +105,10 @@
           "sha256": "8ff93f876bc47fb202e445daafd9bbaec4f958ca739afad95b48057b22b03d4c"
         },
         "README.md": {
-          "sha256": "9e3e2613072c2cbeec940d6dbcf7dfad852be82087683cf30fc99fbb602332d4"
+          "sha256": "1cce2690ed46b6f8601484090e31311bc2afc4863f44e0db395f67e632e07f28"
         },
         "COMMUNITY_METADATA.json": {
-          "sha256": "9ec9905740af298888ad444cd0bb6b95c665752a92ff3992f856543feca3371d"
+          "sha256": "328107482cf2cb3f04a9e251e875d1bf0e17e61010824d8f087f83b195fe1038"
         }
       },
       "catalog": {
@@ -164,10 +164,10 @@
           "sha256": "1db4e6dda92c509858f66dc377689bff9501829fab500f7b883207ed29d21afc"
         },
         "README.md": {
-          "sha256": "2b235ce6dbb4267a392f8f67029e2253c242a76d4730137d9f809f519c2922ab"
+          "sha256": "70f2107b6589359e0f0432648f62351ce74fa9064af98f3825dd0f04ccbe5743"
         },
         "COMMUNITY_METADATA.json": {
-          "sha256": "691a4a83cce96d469f1fba304126922170e8d294dd62afae279902ee8d795002"
+          "sha256": "ebaf5ce6fea130281296dd01df3f410ba224fe001831e7fadf35f4f190f93af4"
         }
       },
       "catalog": {
@@ -175,7 +175,7 @@
         "evidence_tier": "vendor_reference",
         "host_realistic": false,
         "includes_native_arm": false,
-        "parity_fixture_source": false,
+        "parity_fixture_source": true,
         "has_solver_versions": true,
         "projector_mode": "real_projector",
         "governance_state": "review-locked",

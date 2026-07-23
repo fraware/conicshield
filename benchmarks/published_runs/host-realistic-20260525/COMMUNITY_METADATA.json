@@ -12,9 +12,9 @@
   "source_export": "benchmarks/external_evidence/offline_graph_export_upstream.json",
   "parity_status": "present",
   "solver_stack": {
-    "moreau": "0.3.0",
-    "cvxpy": "1.8.2",
-    "cvxpylayers": "1.0.4"
+    "moreau": "0.3.3",
+    "cvxpy": "1.9.2",
+    "cvxpylayers": "1.2.0"
   },
   "recommended_uses": [
     "schema validation examples",

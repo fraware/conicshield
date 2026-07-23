@@ -6,8 +6,8 @@
   "export_kind": "live_upstream_dump",
   "graph_shape": "host_realistic_fork",
   "flagship_run_id": "host-realistic-20260525",
-  "notes": "Refresh: make host-realistic-refresh-cycle-licensed.",
-  "exported_at_utc": "2026-05-28T17:00:16Z",
+  "notes": "Refresh: make capture-inter-sim-graph && make refresh-live-upstream-export-live && make host-realistic-refresh-cycle-licensed.",
+  "exported_at_utc": "2026-07-23T07:12:02Z",
   "source_graph_json": "benchmarks/external_evidence/live_dumps/offline_transition_graph_host_realistic.json",
   "refresh_history": [
     {
@@ -41,8 +41,18 @@
       "git_ref": "2777cc6",
       "authority_ok": true,
       "notes": "host-realistic-refresh-cycle host-realistic-20260525"
+    },
+    {
+      "refresh_index": 5,
+      "completed_at_utc": "2026-07-23T07:14:18Z",
+      "trigger": "calendar-cadence",
+      "workflow": "live-export-full",
+      "export_kind": "live_upstream_dump",
+      "git_ref": "6e7f7d8",
+      "authority_ok": true,
+      "notes": "host-realistic-refresh-cycle host-realistic-20260525 (Track1 gate clearance; WSL Moreau CPU)"
     }
   ],
-  "last_flagship_refresh_at_utc": "2026-05-28T17:00:56Z",
+  "last_flagship_refresh_at_utc": "2026-07-23T07:14:18Z",
   "inter_sim_revision_sha": "f1f04ee11d064262f5ee2810abfcb01715260182"
 }
