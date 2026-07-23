@@ -26,7 +26,7 @@ else
   endif
 endif
 
-.PHONY: test test-reference test-slow test-solver test-vendor-moreau smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata check-community-metadata sync-published-run-readmes check-published-run-readmes check-published-run-index sync-published-readmes finalize-community-dataset community-verify check-reference-refresh-cadence check-flagship-full-refresh-cadence check-schema-compatibility check-solver-stack-policy assert-git-clean verify-v1-lock verify-v1-lock-quick v1-status onboard verify-reference-system reference-authority-check reference-authority-snapshot reference-system-status reference-system-status-check capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
+.PHONY: test test-reference test-slow test-solver test-vendor-moreau local-vendor-attestation heterogeneous-batch-parity smoke-solver smoke-check env-check reference-correctness perf-benchmark diff-check trust-dashboard parity-native-licensed artifact-validation-report parity-report audit dashboard validate-fixture lint typecheck format format-check cov cov-gates compile-deps verify-extended bootstrap-moreau upgrade-host-realistic-vendor host-realistic-rehearsal export-upstream-rehearsal batch-solve-report check-batch-acceptance check-batch-throughput-advisory validate-published-bundle-profile sync-community-metadata check-community-metadata sync-published-run-readmes check-published-run-readmes check-published-run-index sync-published-readmes finalize-community-dataset community-verify check-reference-refresh-cadence check-flagship-full-refresh-cadence check-schema-compatibility check-solver-stack-policy assert-git-clean verify-v1-lock verify-v1-lock-quick v1-status onboard verify-reference-system reference-authority-check reference-authority-snapshot reference-system-status reference-system-status-check capture-inter-sim-graph refresh-live-upstream-export refresh-live-upstream-export-live host-realistic-refresh-cycle host-realistic-refresh-cycle-licensed host-realistic-refresh-milestone sync-published-readmes
 
 test:
 	$(PYTHON) -m pytest -q
@@ -42,6 +42,12 @@ test-solver:
 
 test-vendor-moreau:
 	$(PYTHON) -m pytest tests/ -q -m "vendor_moreau or requires_moreau"
+
+local-vendor-attestation:
+	$(PYTHON) scripts/run_local_vendor_attestation.py --out-dir docs/stabilization/vendor_attestation_local --write-moreau-key
+
+heterogeneous-batch-parity:
+	$(PYTHON) scripts/run_heterogeneous_batch_parity.py --out docs/stabilization/heterogeneous_batch_parity.json
 
 smoke-solver:
 	$(PYTHON) -m conicshield.core.solver_smoke_cli
@@ -76,7 +82,7 @@ host-realistic-refresh-cycle:
 	$(PYTHON) scripts/host_realistic_refresh_cycle.py --record-refresh --trigger calendar-cadence
 
 host-realistic-refresh-cycle-licensed: capture-inter-sim-graph refresh-live-upstream-export-live
-	$(PYTHON) scripts/host_realistic_refresh_cycle.py --record-refresh --amend-last-refresh --trigger calendar-cadence --run-id host-realistic-20260525 --force
+	$(PYTHON) scripts/host_realistic_refresh_cycle.py --record-refresh --trigger calendar-cadence --run-id host-realistic-20260525 --force
 
 host-realistic-refresh-milestone:
 	$(PYTHON) scripts/host_realistic_refresh_cycle.py --new-milestone --promote-release --force
