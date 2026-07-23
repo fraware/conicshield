@@ -146,7 +146,7 @@ def evaluate_residuals(
 
     objective_residual: float | None = None
     if reported_objective is not None and proposed_action is not None:
-        from conicshield.specs.shield_qp import validate_objective_weights
+        from conicshield.specs.shield_qp import objective_pq, validate_objective_weights
 
         p = np.asarray(proposed_action, dtype=np.float64).reshape(-1)
         if p.shape[0] == n and _finite_vector(p) and np.isfinite(reported_objective):
@@ -155,12 +155,24 @@ def evaluate_residuals(
                 reference_weight,
                 reference_present=reference_action is not None,
             )
-            expected = float(pw * np.sum((x - p) ** 2))
+            # Two legitimate conventions appear in the wild:
+            # 1) Moreau standard-form value ``0.5 x'Px + q'x`` from ``objective_pq``
+            # 2) Weighted squared distance ``pw||x-p||^2 (+ rw||x-r||^2)`` (CVXPY layer)
+            p_mat, q_vec = objective_pq(
+                p,
+                reference_action,
+                policy_weight=pw,
+                reference_weight=rw,
+                n=n,
+            )
+            expected_qp = float(0.5 * float(x @ p_mat @ x) + float(q_vec @ x))
+            expected_sumsq = float(pw * np.sum((x - p) ** 2))
             if reference_action is not None and rw > 0.0:
                 r = np.asarray(reference_action, dtype=np.float64).reshape(-1)
                 if r.shape[0] == n and _finite_vector(r):
-                    expected += float(rw * np.sum((x - r) ** 2))
-            objective_residual = abs(float(reported_objective) - expected)
+                    expected_sumsq += float(rw * np.sum((x - r) ** 2))
+            reported = float(reported_objective)
+            objective_residual = min(abs(reported - expected_qp), abs(reported - expected_sumsq))
 
     details = {
         "simplex_residual": simplex_residual,
