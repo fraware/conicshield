@@ -65,6 +65,7 @@ def test_infeasibility_audit_unexplained_rate(tmp_path: Path) -> None:
     path = write_infeasibility_audit(tmp_path / "audit.json", report)
     assert path.is_file()
 
+
 def test_stage4_checklist_green_experimental_rh_available(tmp_path: Path) -> None:
     ev = evaluate_stage4_gate(evidence_dir=tmp_path)
     d = ev.as_dict()

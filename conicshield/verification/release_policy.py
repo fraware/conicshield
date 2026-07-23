@@ -118,18 +118,14 @@ def classify_release(
             reasons.append("unknown_status_never_success")
         return ReleaseClassification(ReleaseDecision.REJECTED_STATUS, tuple(reasons))
 
-    if not residuals_within_tolerance(
-        residual_report, policy.tolerances, scale=residual_scale
-    ):
+    if not residuals_within_tolerance(residual_report, policy.tolerances, scale=residual_scale):
         reasons.append(
             "residual_violation:"
             f"eq={residual_report.max_equality_residual:.3e},"
             f"ineq={residual_report.max_inequality_residual:.3e}"
         )
         if residual_report.objective_residual is not None:
-            reasons.append(
-                f"objective_residual={residual_report.objective_residual:.3e}"
-            )
+            reasons.append(f"objective_residual={residual_report.objective_residual:.3e}")
         return ReleaseClassification(ReleaseDecision.REJECTED_RESIDUAL, tuple(reasons))
 
     kind = (attempt_kind or "primary").lower()

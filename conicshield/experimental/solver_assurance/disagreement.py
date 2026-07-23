@@ -141,9 +141,7 @@ def compare_projections(
 ) -> SolverDisagreement:
     """Compute SolverDisagreement between primary and shadow results."""
 
-    timeouts = timeout_statuses or frozenset(
-        {"time_limit", "iteration_limit", "TIME_LIMIT", "ITERATION_LIMIT"}
-    )
+    timeouts = timeout_statuses or frozenset({"time_limit", "iteration_limit", "TIME_LIMIT", "ITERATION_LIMIT"})
     p = np.asarray(primary.corrected_action, dtype=np.float64).reshape(-1)
     s = np.asarray(shadow.corrected_action, dtype=np.float64).reshape(-1)
     if p.shape != s.shape:

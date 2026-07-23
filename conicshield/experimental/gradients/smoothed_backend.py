@@ -76,9 +76,7 @@ def _softplus_penalty(residual: np.ndarray, epsilon: float) -> np.ndarray:
     return float(epsilon) * _softplus(residual / float(epsilon))
 
 
-def _softplus_grad_hess_diag(
-    residual: np.ndarray, epsilon: float
-) -> tuple[np.ndarray, np.ndarray]:
+def _softplus_grad_hess_diag(residual: np.ndarray, epsilon: float) -> tuple[np.ndarray, np.ndarray]:
     """Gradient and Hessian diagonal of Σ ε softplus(r_i/ε) w.r.t. residual."""
 
     eps = float(epsilon)
@@ -116,9 +114,7 @@ class SmoothedBackendGradientResult:
             "reason": self.reason,
             "jacobian": None if self.jacobian is None else self.jacobian.tolist(),
             "smoothing_parameter": self.smoothing_parameter,
-            "smoothed_action": None
-            if self.smoothed_action is None
-            else self.smoothed_action.tolist(),
+            "smoothed_action": None if self.smoothed_action is None else self.smoothed_action.tolist(),
             "agreement_vs_smoothed_central_fd": self.agreement_vs_smoothed_central_fd,
             "agreement_vs_exact_backend": self.agreement_vs_exact_backend,
             "runtime_sec": self.runtime_sec,
@@ -323,8 +319,7 @@ def smoothed_backend_gradient(
 
     if caps.get("windows_native_unsupported"):
         return _fail(
-            "Moreau unsupported on native Windows; use WSL/Linux for "
-            "smoothed_backend_gradient.",
+            "Moreau unsupported on native Windows; use WSL/Linux for smoothed_backend_gradient.",
             epsilon=eps,
             extras={
                 **caps,
@@ -361,9 +356,7 @@ def smoothed_backend_gradient(
                     "Research smoothed_research_projection is a public-solver adapter; "
                     "native smoothed_backend_gradient softens the Moreau shield QP."
                 ),
-                "missing_evidence": [
-                    "live smoothed jacobian sample with SafetySpec + actions"
-                ],
+                "missing_evidence": ["live smoothed jacobian sample with SafetySpec + actions"],
             },
         )
 
@@ -389,9 +382,7 @@ def smoothed_backend_gradient(
                 runtime_sec=time.perf_counter() - t0,
             )
 
-        _moreau, _solver, x_hard = solve_moreau_compiled(
-            qp, enable_grad=False, max_iter=max_iter
-        )
+        _moreau, _solver, x_hard = solve_moreau_compiled(qp, enable_grad=False, max_iter=max_iter)
         if not np.all(np.isfinite(x_hard)):
             return _fail(
                 "moreau_hard_warmstart_non_finite",
@@ -469,9 +460,7 @@ def smoothed_backend_gradient(
                 )
                 # cheap warm-start: previous soft solution shifted / hard solve
                 try:
-                    _m, _s, xh = solve_moreau_compiled(
-                        qp2, enable_grad=False, max_iter=max_iter
-                    )
+                    _m, _s, xh = solve_moreau_compiled(qp2, enable_grad=False, max_iter=max_iter)
                 except Exception:  # noqa: BLE001
                     xh = x_soft
                 xs, _meta = _solve_softplus_smoothed(
@@ -580,4 +569,3 @@ def smoothed_backend_gradient(
             extras=caps,
             runtime_sec=time.perf_counter() - t0,
         )
-

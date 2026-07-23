@@ -96,9 +96,7 @@ def test_reset_episode_clears_projector_warm_start_state() -> None:
     shield.reset_episode()
 
     assert shield._previous_distribution is None
-    warm_cleared = all(
-        getattr(c.projector, "_warm", None) is None for c in shield._projector_cache.values()
-    )
+    warm_cleared = all(getattr(c.projector, "_warm", None) is None for c in shield._projector_cache.values())
     assert warm_cleared
 
 

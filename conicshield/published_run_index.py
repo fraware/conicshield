@@ -247,8 +247,7 @@ def assert_canonical_evidence_tiers(*, repo_root: Path | None = None) -> None:
         got = classify_evidence_tier(run_dir=run_dir)
         if got != want:
             raise AssertionError(
-                f"run {run_id}: evidence_tier {got!r} != expected {want!r}; "
-                f"update RUN_PROVENANCE or governance tests"
+                f"run {run_id}: evidence_tier {got!r} != expected {want!r}; update RUN_PROVENANCE or governance tests"
             )
 
 

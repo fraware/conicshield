@@ -11,6 +11,7 @@ from conicshield.bench.passthrough_projector import PassthroughProjector
 from conicshield.core.moreau_compiled import NativeMoreauCompiledOptions
 from conicshield.core.solver_factory import Backend
 from conicshield.specs.compiler import SolverOptions
+from conicshield.specs.errors import MissingFailSafePolicyError
 from conicshield.specs.schema import SafetySpec
 
 
@@ -59,15 +60,6 @@ def _ctx(
                 hazard=0.99,
             ),
         ),
-        (
-            "empty_allowed_all_blocked_fallback",
-            _ctx(
-                allowed=[],
-                blocked=["turn_left", "turn_right", "go_straight", "turn_back"],
-                hazard=0.2,
-                bounds=dict.fromkeys(CANONICAL_ACTION_SPACE, 0.0),
-            ),
-        ),
     ],
 )
 def test_shield_passthrough_choose_action_finite(label: str, payload: dict[str, Any]) -> None:
@@ -86,3 +78,26 @@ def test_shield_passthrough_choose_action_finite(label: str, payload: dict[str, 
     assert decision.action_name in CANONICAL_ACTION_SPACE
     assert np.all(np.isfinite(decision.proposed_distribution))
     assert np.all(np.isfinite(decision.corrected_distribution))
+
+
+def test_shield_passthrough_empty_allowed_all_blocked_raises() -> None:
+    """Empty admissible set must fail closed (no silent all-actions recovery)."""
+    payload = _ctx(
+        allowed=[],
+        blocked=["turn_left", "turn_right", "go_straight", "turn_back"],
+        hazard=0.2,
+        bounds=dict.fromkeys(CANONICAL_ACTION_SPACE, 0.0),
+    )
+    validate_shield_context_dict(payload)
+    shield = InterSimConicShield(
+        backend=Backend.CVXPY_MOREAU,
+        use_geometry_prior=False,
+        projector_factory=_passthrough_factory,
+    )
+    q = np.array([0.5, 1.0, 0.25, -0.25], dtype=float)
+    with pytest.raises(MissingFailSafePolicyError, match="no action is admissible"):
+        shield.choose_action(
+            q_values=q,
+            action_space=list(CANONICAL_ACTION_SPACE),
+            context=payload,
+        )

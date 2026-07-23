@@ -118,9 +118,7 @@ class InterSimConicShield:
     _previous_distribution: np.ndarray | None = field(default=None, init=False)
     _metrics: LifecycleMetrics = field(init=False, repr=False)
     _projector_cache: BoundedLRUCache[str, _CachedProjector] = field(init=False, repr=False)
-    _batch_projector_cache: BoundedLRUCache[str, NativeMoreauCompiledBatchProjector] = field(
-        init=False, repr=False
-    )
+    _batch_projector_cache: BoundedLRUCache[str, NativeMoreauCompiledBatchProjector] = field(init=False, repr=False)
     _lock: RLock = field(default_factory=RLock, init=False, repr=False)
     _episode_scope_id: str = field(default="episode", init=False, repr=False)
 
@@ -199,9 +197,7 @@ class InterSimConicShield:
         if set(action_space) != set(CANONICAL_ACTION_SPACE):
             raise ValueError(f"action_space must contain exactly: {list(CANONICAL_ACTION_SPACE)}")
         if q_values.shape != (len(action_space),):
-            raise ValueError(
-                f"q_values shape {q_values.shape} does not match action_space length {len(action_space)}"
-            )
+            raise ValueError(f"q_values shape {q_values.shape} does not match action_space length {len(action_space)}")
 
         q_values_canonical = self._reorder_to_canonical(
             values=q_values,
@@ -427,9 +423,7 @@ class InterSimConicShield:
         )
 
         allowed_indices = [
-            ACTION_TO_INDEX[action_name]
-            for action_name in CANONICAL_ACTION_SPACE
-            if upper_bounds[action_name] > 1e-12
+            ACTION_TO_INDEX[action_name] for action_name in CANONICAL_ACTION_SPACE if upper_bounds[action_name] > 1e-12
         ]
         if not allowed_indices:
             raise MissingFailSafePolicyError(

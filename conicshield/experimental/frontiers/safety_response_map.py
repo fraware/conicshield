@@ -214,9 +214,7 @@ def export_safety_response_map(
     )
     response.r3_completeness = assess_r3_completeness(response)
     if not all(response.r3_completeness.values()):
-        response.notes.append(
-            f"r3_completeness gaps: {[k for k, v in response.r3_completeness.items() if not v]}"
-        )
+        response.notes.append(f"r3_completeness gaps: {[k for k, v in response.r3_completeness.items() if not v]}")
     return response
 
 

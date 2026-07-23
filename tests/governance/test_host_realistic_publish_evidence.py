@@ -28,11 +28,6 @@ def test_host_realistic_published_run_provenance_not_minimal_fixture() -> None:
         assert gov.get("promotion_gate") == "green"
         assert "shielded-native-moreau" in (gov.get("publishable_arms") or [])
         parity_summary = (
-            root
-            / "benchmarks"
-            / "published_runs"
-            / _HOST_REALISTIC_RUN_ID
-            / "parity_out"
-            / "parity_summary.json"
+            root / "benchmarks" / "published_runs" / _HOST_REALISTIC_RUN_ID / "parity_out" / "parity_summary.json"
         )
         assert parity_summary.is_file(), f"missing {parity_summary}"

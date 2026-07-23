@@ -127,9 +127,7 @@ def check_governed_hashes(
     if dirty_blocked:
         blockers.append("dirty worktree not allowed by research governed hash policy")
     if not pol.production_release_integrated:
-        blockers.append(
-            "production release tooling not integrated (research adapter only; expected)"
-        )
+        blockers.append("production release tooling not integrated (research adapter only; expected)")
 
     # Research adapter "passed" means local schema checks OK excluding the
     # intentional production-integration blocker.

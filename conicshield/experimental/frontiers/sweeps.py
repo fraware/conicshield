@@ -82,17 +82,9 @@ def probe_track1_hetero_batch_attestation() -> BatchAttestation:
                     "missing_evidence": list(s4.missing_evidence),
                     "live_sample": dict((s4.extras or {}).get("live_sample") or {}),
                     "surfaces_present": dict((s4.extras or {}).get("surfaces_present") or {}),
-                    "solver_version": ((s4.extras or {}).get("live_sample") or {}).get(
-                        "solver_version"
-                    ),
-                    "capability_flags": ((s4.extras or {}).get("live_sample") or {}).get(
-                        "capability_flags"
-                    )
-                    or {},
-                    "sample_hashes": ((s4.extras or {}).get("live_sample") or {}).get(
-                        "sample_hashes"
-                    )
-                    or {},
+                    "solver_version": ((s4.extras or {}).get("live_sample") or {}).get("solver_version"),
+                    "capability_flags": ((s4.extras or {}).get("live_sample") or {}).get("capability_flags") or {},
+                    "sample_hashes": ((s4.extras or {}).get("live_sample") or {}).get("sample_hashes") or {},
                 }
             )
         if s4 is not None and s4.research_attested and report.reduce_watermarks:
@@ -103,11 +95,7 @@ def probe_track1_hetero_batch_attestation() -> BatchAttestation:
                 publication_grade=True,
                 attestation_record=record,
             )
-        note = (
-            s4.detail
-            if s4 is not None
-            else "Track 1 S4 hetero-batch not live-attested on this host."
-        )
+        note = s4.detail if s4 is not None else "Track 1 S4 hetero-batch not live-attested on this host."
         return BatchAttestation(
             batch_emulation=BATCH_EMULATION_SEQUENTIAL,
             track1_s4_attested=False,
@@ -119,10 +107,7 @@ def probe_track1_hetero_batch_attestation() -> BatchAttestation:
         return BatchAttestation(
             batch_emulation=BATCH_EMULATION_SEQUENTIAL,
             track1_s4_attested=False,
-            attestation_note=(
-                f"Track 1 S4 probe failed closed ({type(exc).__name__}). "
-                + PUBLICATION_GRADE_WATERMARK
-            ),
+            attestation_note=(f"Track 1 S4 probe failed closed ({type(exc).__name__}). " + PUBLICATION_GRADE_WATERMARK),
             publication_grade=False,
             attestation_record={"probe_exception": f"{type(exc).__name__}: {exc}"},
         )

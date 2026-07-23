@@ -96,9 +96,7 @@ class ResearchBatchProjectionResult:
             "results": [r.as_dict() for r in self.results],
             "not_publication_grade_watermark": None
             if self.publication_grade
-            else (
-                "NOT_PUBLICATION_GRADE: sequential_adapter batching is a research emulation."
-            ),
+            else ("NOT_PUBLICATION_GRADE: sequential_adapter batching is a research emulation."),
         }
 
 

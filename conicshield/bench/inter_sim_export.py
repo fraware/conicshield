@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from conicshield.bench.offline_graph_export import validate_offline_graph_export
 
@@ -62,7 +63,7 @@ def fork_graph_for_rehearsal() -> dict[str, list[dict[str, Any]]]:
 
 def transition_graph_to_export_payload(
     *,
-    transition_graph: Mapping[str, list[Mapping[str, Any]]],
+    transition_graph: Mapping[str, list[dict[str, Any]]],
     root_address: str = "Root",
     max_depth: int | None = None,
     max_nodes: int | None = None,
@@ -112,7 +113,7 @@ def transition_graph_to_export_payload(
 
 def export_from_intersim_env_graph(
     *,
-    transition_graph: Mapping[str, list[Mapping[str, Any]]],
+    transition_graph: Mapping[str, list[dict[str, Any]]],
     root_address: str = "Root",
 ) -> dict[str, Any]:
     """Public entry: serialize a patched-host ``offline_transition_graph`` dict."""

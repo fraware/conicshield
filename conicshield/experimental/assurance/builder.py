@@ -128,10 +128,7 @@ def build_assurance_bundle(
     shadow_ev: ShadowEvidence | None = None
     if shadow is not None and disagreement is not None:
         problem_digest = hashlib.sha256(
-            (
-                spec_digest
-                + array_digest(np.asarray(primary.proposed_action, dtype=np.float64))
-            ).encode("utf-8")
+            (spec_digest + array_digest(np.asarray(primary.proposed_action, dtype=np.float64))).encode("utf-8")
         ).hexdigest()[:16]
         shadow_ev = ShadowEvidence(
             primary_backend=provenance.backend_id,

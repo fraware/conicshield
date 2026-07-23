@@ -76,11 +76,7 @@ def _override_data(
 ) -> ShieldQPData:
     lower = base.lower if lower_row is None else np.asarray(lower_row, dtype=np.float64).reshape(-1)
     upper = base.upper if upper_row is None else np.asarray(upper_row, dtype=np.float64).reshape(-1)
-    max_delta = (
-        base.max_delta
-        if max_delta_row is None
-        else np.asarray(max_delta_row, dtype=np.float64).reshape(-1)
-    )
+    max_delta = base.max_delta if max_delta_row is None else np.asarray(max_delta_row, dtype=np.float64).reshape(-1)
     if lower is base.lower and upper is base.upper and max_delta is base.max_delta:
         return base
     return replace(
@@ -158,9 +154,7 @@ class NativeMoreauCompiledBatchProjector:
         self.metrics = metrics if metrics is not None else LifecycleMetrics()
         self.capabilities = resolve_capabilities(capabilities)
         if self.capabilities.enable_direct_variable_cones:
-            raise ValueError(
-                "enable_direct_variable_cones is gated off until parity/benchmark gates pass"
-            )
+            raise ValueError("enable_direct_variable_cones is gated off until parity/benchmark gates pass")
         self._solver_pool = solver_pool
         if solver_pool is not None:
             self.concurrency_model = ConcurrencyModel.POOLED_EXCLUSIVE_CHECKOUT
@@ -301,11 +295,7 @@ class NativeMoreauCompiledBatchProjector:
 
     def _ensure_batch_solver(self, moreau: Any, *, batch_size: int) -> tuple[Any, str]:
         fp = self._settings_fingerprint(moreau, batch_size=batch_size)
-        if (
-            self._compiled_batch is not None
-            and self._batch_k == batch_size
-            and self._batch_settings_key == fp
-        ):
+        if self._compiled_batch is not None and self._batch_k == batch_size and self._batch_settings_key == fp:
             return self._compiled_batch, "hit"
         self._compiled_batch = self._build_compiled(moreau, batch_size=batch_size)
         self._batch_k = batch_size
@@ -463,9 +453,7 @@ class NativeMoreauCompiledBatchProjector:
         if k_batch < 1:
             raise ValueError("batch size must be >= 1")
         if n != self._template.layout.n:
-            raise ValueError(
-                f"proposed_actions action_dim {n} != template n {self._template.layout.n}"
-            )
+            raise ValueError(f"proposed_actions action_dim {n} != template n {self._template.layout.n}")
 
         prev = _as_batch_matrix(previous_actions, batch_size=k_batch, n=n, name="previous_actions")
         refs = _as_batch_matrix(reference_actions, batch_size=k_batch, n=n, name="reference_actions")
@@ -528,9 +516,7 @@ class NativeMoreauCompiledBatchProjector:
             solver, cache_status = self._ensure_batch_solver(moreau, batch_size=k_batch)
             self._buffers.p_values[:] = p_snapshots[0]
             self._buffers.a_values[:] = a_snapshots[0]
-            setup_dt, reused = self._setup(
-                solver, setup_fp=setup_fps[0], buffers=self._buffers, mode="batch"
-            )
+            setup_dt, reused = self._setup(solver, setup_fp=setup_fps[0], buffers=self._buffers, mode="batch")
             if reused and cache_status == "hit":
                 cache_status = "setup_reuse"
 
@@ -623,9 +609,7 @@ class NativeMoreauCompiledBatchProjector:
             self._buffers.a_values[:] = a_snapshots[k]
             self._buffers.q[:] = q_rows[k]
             self._buffers.b[:] = b_rows[k]
-            setup_dt, reused = self._setup(
-                solver, setup_fp=setup_fps[k], buffers=self._buffers, mode="single"
-            )
+            setup_dt, reused = self._setup(solver, setup_fp=setup_fps[k], buffers=self._buffers, mode="single")
             if setup_dt is not None:
                 setup_time_total += setup_dt
                 setup_seen = True

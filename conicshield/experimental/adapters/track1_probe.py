@@ -104,9 +104,7 @@ def _inventory_s4_surfaces() -> dict[str, Any]:
         from conicshield.core.moreau_batched import NativeMoreauCompiledBatchProjector
 
         surfaces["NativeMoreauCompiledBatchProjector"] = True
-        surfaces["project_batch_method"] = callable(
-            getattr(NativeMoreauCompiledBatchProjector, "project_batch", None)
-        )
+        surfaces["project_batch_method"] = callable(getattr(NativeMoreauCompiledBatchProjector, "project_batch", None))
     except Exception as exc:  # noqa: BLE001
         surfaces["NativeMoreauCompiledBatchProjector_error"] = f"{type(exc).__name__}: {exc}"
 
@@ -114,9 +112,7 @@ def _inventory_s4_surfaces() -> dict[str, Any]:
         import conicshield.compilation.compiled_template as _cst
 
         surfaces["CompiledShieldTemplate"] = hasattr(_cst, "CompiledShieldTemplate")
-        surfaces["CompiledShieldTemplate_module"] = (
-            "conicshield.compilation.compiled_template.CompiledShieldTemplate"
-        )
+        surfaces["CompiledShieldTemplate_module"] = "conicshield.compilation.compiled_template.CompiledShieldTemplate"
     except Exception as exc:  # noqa: BLE001
         surfaces["CompiledShieldTemplate_error"] = f"{type(exc).__name__}: {exc}"
 
@@ -324,9 +320,7 @@ def _probe_wsl_moreau_hint() -> dict[str, Any]:
             "true",
             "yes",
         }:
-            hint["skipped_full_import"] = (
-                "set CONICSHIELD_RESEARCH_PROBE_WSL_MOREAU=1 for WSL moreau import probe"
-            )
+            hint["skipped_full_import"] = "set CONICSHIELD_RESEARCH_PROBE_WSL_MOREAU=1 for WSL moreau import probe"
             return hint
         import subprocess
 
@@ -440,16 +434,13 @@ def _probe_s5_sidecar() -> Track1CapabilityProbe:
         missing.append("windows_sidecar_client import")
 
     extras["wsl_moreau_hint"] = _probe_wsl_moreau_hint()
-    if extras["wsl_moreau_hint"].get("full_probe") and not extras["wsl_moreau_hint"].get(
-        "moreau_importable"
-    ):
+    if extras["wsl_moreau_hint"].get("full_probe") and not extras["wsl_moreau_hint"].get("moreau_importable"):
         missing.append("WSL Moreau importable worker environment")
     elif not extras["wsl_moreau_hint"].get("wsl_available") and sys.platform == "win32":
         missing.append("WSL available for Moreau sidecar worker")
     else:
         missing.append(
-            "live Moreau sidecar worker (optional WSL import probe via "
-            "CONICSHIELD_RESEARCH_PROBE_WSL_MOREAU=1)"
+            "live Moreau sidecar worker (optional WSL import probe via CONICSHIELD_RESEARCH_PROBE_WSL_MOREAU=1)"
         )
     live = _attempt_live_sidecar_hello()
     extras["live_sidecar_hello"] = live
@@ -525,9 +516,7 @@ def _probe_s6_native_grads() -> Track1CapabilityProbe:
             "smoothed_research_projection",
         ],
         "gap_vs_research_kkt": {
-            "research_kkt_covers": (
-                "Public QP KKT linearization / smoothed projection adapters on Clarabel/SCS"
-            ),
+            "research_kkt_covers": ("Public QP KKT linearization / smoothed projection adapters on Clarabel/SCS"),
             "native_exact_smoothed_covers": (
                 "Vendor Moreau exact via CompiledSolver.backward+enable_grad; "
                 "experimental softplus smoothed_backend_gradient on the Moreau shield QP "
@@ -552,15 +541,9 @@ def _probe_s6_native_grads() -> Track1CapabilityProbe:
         extras.update(
             {
                 "differentiation_api": bool(vendor.get("differentiation_api")),
-                "identity_differentiation_api": bool(
-                    vendor.get("identity_differentiation_api")
-                ),
-                "vendor_compiled_backward_api": bool(
-                    vendor.get("vendor_compiled_backward_api")
-                ),
-                "research_differentiation_surface": bool(
-                    vendor.get("research_differentiation_surface")
-                ),
+                "identity_differentiation_api": bool(vendor.get("identity_differentiation_api")),
+                "vendor_compiled_backward_api": bool(vendor.get("vendor_compiled_backward_api")),
+                "research_differentiation_surface": bool(vendor.get("research_differentiation_surface")),
                 "package_importable": bool(vendor.get("package_importable")),
                 "moreau_version": vendor.get("moreau_version"),
                 "symbols_searched": vendor.get("symbols_searched"),
@@ -569,10 +552,7 @@ def _probe_s6_native_grads() -> Track1CapabilityProbe:
         )
         if vendor.get("windows_native_unsupported"):
             extras["windows_native_unsupported"] = True
-            missing.append(
-                "vendor Moreau CompiledSolver.backward executable on this host "
-                "(Windows unsupported)"
-            )
+            missing.append("vendor Moreau CompiledSolver.backward executable on this host (Windows unsupported)")
         elif not vendor.get("vendor_compiled_backward_api"):
             missing.append("CompiledSolver.backward + Settings(enable_grad=True)")
         exact = exact_backend_gradient()
@@ -583,12 +563,10 @@ def _probe_s6_native_grads() -> Track1CapabilityProbe:
         extras["smoothed_available"] = bool(smoothed.available)
         # Probe-without-data correctly reports UNAVAILABLE; surface readiness is
         # vendor_compiled_backward_api + smoothed implementation present.
-        extras["experimental_exact_surface_ready"] = bool(
-            vendor.get("vendor_compiled_backward_api")
+        extras["experimental_exact_surface_ready"] = bool(vendor.get("vendor_compiled_backward_api"))
+        extras["experimental_smoothed_surface_ready"] = bool(vendor.get("vendor_compiled_backward_api")) and not bool(
+            vendor.get("windows_native_unsupported")
         )
-        extras["experimental_smoothed_surface_ready"] = bool(
-            vendor.get("vendor_compiled_backward_api")
-        ) and not bool(vendor.get("windows_native_unsupported"))
         if (
             extras["differentiation_api"]
             and extras["experimental_exact_surface_ready"]
@@ -607,11 +585,7 @@ def _probe_s6_native_grads() -> Track1CapabilityProbe:
         if not extras["differentiation_api"]:
             missing.insert(0, "BackendCapabilities.differentiation_api == True")
         # Drop stale "smoothed unwired" once experimental surface is implemented.
-        missing = [
-            m
-            for m in missing
-            if "smoothed_backend_gradient live jacobian" not in m
-        ]
+        missing = [m for m in missing if "smoothed_backend_gradient live jacobian" not in m]
     except Exception as exc:  # noqa: BLE001
         return Track1CapabilityProbe(
             capability_id="S6_native_exact_smoothed_gradients",
@@ -659,8 +633,7 @@ def probe_track1_research_readiness() -> Track1ProbeReport:
     ]
     if not reduce:
         notes.append(
-            "S4 unattested on this host → frontiers retain sequential_adapter / "
-            "NOT_PUBLICATION_GRADE watermark."
+            "S4 unattested on this host → frontiers retain sequential_adapter / NOT_PUBLICATION_GRADE watermark."
         )
     for p in probes:
         if p.missing_evidence:

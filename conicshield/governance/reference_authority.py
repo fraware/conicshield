@@ -12,7 +12,10 @@ _FAMILY_ID = "conicshield-transition-bank-v1"
 
 
 def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise TypeError(f"expected JSON object in {path}")
+    return payload
 
 
 def build_reference_authority_snapshot(*, repo_root: Path | None = None) -> dict[str, Any]:

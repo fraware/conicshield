@@ -16,15 +16,12 @@ See ``PUBLISHED_RUNS_API_VERSION`` and ``docs/PUBLISHED_RUNS_API.md``.
 
 from __future__ import annotations
 
-PUBLISHED_RUNS_API_VERSION = "v1"
-
 import json
 from pathlib import Path
 from typing import Any
 
 from conicshield.governance.community_metadata import build_community_metadata
 from conicshield.published_run_index import (
-    classify_evidence_tier,
     load_published_run_index,
     published_run_index_path,
 )
@@ -37,6 +34,8 @@ from conicshield.published_runs.models import (
     SummaryRow,
 )
 
+PUBLISHED_RUNS_API_VERSION = "v1"
+
 
 def _repo_root(repo_root: Path | None) -> Path:
     return repo_root if repo_root is not None else Path.cwd()
@@ -44,9 +43,7 @@ def _repo_root(repo_root: Path | None) -> Path:
 
 def _parse_community(data: dict[str, Any]) -> CommunityMetadata:
     host = bool(data.get("host_realistic", data.get("host_realistic_evidence", False)))
-    fixture = bool(
-        data.get("parity_fixture_source", data.get("parity_fixture_gold_for_repo", False))
-    )
+    fixture = bool(data.get("parity_fixture_source", data.get("parity_fixture_gold_for_repo", False)))
     tier = data.get("evidence_tier", "contract_fixture")
     return CommunityMetadata(
         schema_version=str(data.get("schema_version", "")),
@@ -118,12 +115,8 @@ def load_run(run_id: str, *, repo_root: Path | None = None) -> PublishedRunBundl
                 path=run_dir,
                 index_entry=entry,
                 community=community,
-                governance_status=(
-                    json.loads(gov_path.read_text(encoding="utf-8")) if gov_path.is_file() else None
-                ),
-                run_provenance=(
-                    json.loads(prov_path.read_text(encoding="utf-8")) if prov_path.is_file() else None
-                ),
+                governance_status=(json.loads(gov_path.read_text(encoding="utf-8")) if gov_path.is_file() else None),
+                run_provenance=(json.loads(prov_path.read_text(encoding="utf-8")) if prov_path.is_file() else None),
             )
     raise KeyError(f"run_id not in PUBLISHED_RUN_INDEX: {run_id!r}")
 
@@ -188,10 +181,18 @@ def load_provenance(run_id: str, *, repo_root: Path | None = None) -> RunProvena
         evidence_tier=raw.get("evidence_tier") if raw.get("evidence_tier") is not None else None,
         projector_mode=raw.get("projector_mode") if raw.get("projector_mode") is not None else None,
         host_realistic_evidence=bool(raw.get("host_realistic_evidence", False)),
-        export_source=(
-            str(raw["export_source"]) if raw.get("export_source") is not None else None
-        ),
-        extra={k: v for k, v in raw.items() if k not in ("evidence_tier", "projector_mode", "host_realistic_evidence", "export_source")},
+        export_source=(str(raw["export_source"]) if raw.get("export_source") is not None else None),
+        extra={
+            k: v
+            for k, v in raw.items()
+            if k
+            not in (
+                "evidence_tier",
+                "projector_mode",
+                "host_realistic_evidence",
+                "export_source",
+            )
+        },
     )
 
 

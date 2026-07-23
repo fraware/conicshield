@@ -202,8 +202,7 @@ def default_hypothesis_catalog() -> list[HypothesisEvaluation]:
         HypothesisEvaluation(
             hypothesis_id="R2.H2",
             statement=(
-                "Dual magnitude alone is a weak predictor of causal sensitivity without "
-                "normalization and validation."
+                "Dual magnitude alone is a weak predictor of causal sensitivity without normalization and validation."
             ),
             track="R2",
             verdict=HypothesisVerdict.NOT_EVALUATED,
@@ -221,8 +220,7 @@ def default_hypothesis_catalog() -> list[HypothesisEvaluation]:
         HypothesisEvaluation(
             hypothesis_id="R3.H1",
             statement=(
-                "Local gradient predictions of nearby frontier movement fail precisely "
-                "where active sets change."
+                "Local gradient predictions of nearby frontier movement fail precisely where active sets change."
             ),
             track="R3",
             verdict=HypothesisVerdict.NOT_EVALUATED,
@@ -230,8 +228,7 @@ def default_hypothesis_catalog() -> list[HypothesisEvaluation]:
         HypothesisEvaluation(
             hypothesis_id="R3.H2",
             statement=(
-                "Pareto-efficient safety-parameter choices are concentrated in a small "
-                "number of conditioning regimes."
+                "Pareto-efficient safety-parameter choices are concentrated in a small number of conditioning regimes."
             ),
             track="R3",
             verdict=HypothesisVerdict.NOT_EVALUATED,
@@ -239,8 +236,7 @@ def default_hypothesis_catalog() -> list[HypothesisEvaluation]:
         HypothesisEvaluation(
             hypothesis_id="R4.H1",
             statement=(
-                "Evidence levels L0–L4 communicate assurance strength without implying "
-                "universal safety guarantees."
+                "Evidence levels L0–L4 communicate assurance strength without implying universal safety guarantees."
             ),
             track="R4",
             verdict=HypothesisVerdict.NOT_EVALUATED,
@@ -403,8 +399,7 @@ def evaluate_r1_h2_from_sampling_study(study: dict[str, Any]) -> HypothesisEvalu
             verdict=HypothesisVerdict.PASS,
             evidence_pointers=pointers,
             rationale=(
-                f"residual det={res_det:.3f} cost={res_cost:.3f} "
-                f"vs random det={rand_det:.3f} cost={rand_cost:.3f}"
+                f"residual det={res_det:.3f} cost={res_cost:.3f} vs random det={rand_det:.3f} cost={rand_cost:.3f}"
             ),
             protocol=proto,
             statistics=stats,

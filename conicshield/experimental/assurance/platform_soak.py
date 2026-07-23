@@ -165,9 +165,7 @@ def run_platform_soak(
 
     manifest = load_manifest()
     if manifest.get("corpus_version") != CORPUS_VERSION:
-        raise RuntimeError(
-            f"corpus version mismatch: manifest={manifest.get('corpus_version')} code={CORPUS_VERSION}"
-        )
+        raise RuntimeError(f"corpus version mismatch: manifest={manifest.get('corpus_version')} code={CORPUS_VERSION}")
 
     summary = run_shadow_harness(
         budget_fraction=1.0,
@@ -223,11 +221,7 @@ def run_platform_soak(
         "schema_id": "research.assurance_bundle.v0_legacy",
         "action": bundle.as_dict()["corrected_action"],
         "level": str(bundle.evidence_level),
-        **{
-            k: v
-            for k, v in bundle.as_dict().items()
-            if k not in {"corrected_action", "evidence_level", "schema_id"}
-        },
+        **{k: v for k, v in bundle.as_dict().items() if k not in {"corrected_action", "evidence_level", "schema_id"}},
     }
     migrated = normalize_bundle_dict(legacy)
     migrated_bundle = bundle_from_dict(migrated)
@@ -373,9 +367,7 @@ def aggregate_platform_soaks(
             f"(n_real_hosts={n_real}, n_synthetic_hosts={n_synth}).",
         )
     if n_synth > 0:
-        blockers.append(
-            "Aggregate includes synthetic host(s); synthetic ≠ real multi-host evidence."
-        )
+        blockers.append("Aggregate includes synthetic host(s); synthetic ≠ real multi-host evidence.")
     if sealed_mismatches:
         blockers.append(
             "Sealed corrected-action digest mismatch across real hosts must be "
@@ -474,6 +466,7 @@ def main() -> None:
         f"host={report.platform.host_id if report.platform else None} "
         f"host_kind={report.platform.host_kind if report.platform else None}"
     )
+
 
 if __name__ == "__main__":
     main()

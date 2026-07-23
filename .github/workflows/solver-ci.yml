@@ -62,12 +62,21 @@ jobs:
         with:
           python-version: "3.11"
       - name: "Vendor CI track: configure Moreau license"
+        id: vendor_secrets
         env:
           MOREAU_LICENSE_KEY: ${{ secrets.MOREAU_LICENSE_KEY }}
+          GEMFURY_TOKEN: ${{ secrets.GEMFURY_TOKEN }}
         run: |
+          if [ -z "${MOREAU_LICENSE_KEY}" ] || [ -z "${GEMFURY_TOKEN}" ]; then
+            echo "Vendor secrets unavailable - skipping vendor-ci-moreau (fail-closed only when secrets present)."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
           mkdir -p "$HOME/.moreau"
           echo -n "$MOREAU_LICENSE_KEY" > "$HOME/.moreau/key"
       - name: "Vendor CI track: install governed vendor solver stack"
+        if: steps.vendor_secrets.outputs.skip != 'true'
         env:
           GEMFURY_TOKEN: ${{ secrets.GEMFURY_TOKEN }}
         run: |
@@ -78,8 +87,10 @@ jobs:
             --extra-index-url "https://${GEMFURY_TOKEN}:@pypi.fury.io/optimalintellect/"
           python scripts/check_solver_stack_policy.py
       - name: "Vendor CI track: python -m moreau check"
+        if: steps.vendor_secrets.outputs.skip != 'true'
         run: python -m moreau check
       - name: "Vendor CI track: write solver_versions.json"
+        if: steps.vendor_secrets.outputs.skip != 'true'
         run: |
           python <<'PY'
           import json
@@ -106,32 +117,37 @@ jobs:
           print(open("/tmp/solver_versions.json", encoding="utf-8").read())
           PY
       - name: "Vendor CI track: mandatory known-feasible + failure-policy"
+        if: steps.vendor_secrets.outputs.skip != 'true'
         run: |
           mkdir -p /tmp/vendor_evidence
           python scripts/vendor_mandatory_native_solves.py \
             --out /tmp/vendor_evidence/mandatory_native_solves.json
       - name: "Vendor CI track: solver-marked tests (JUnit)"
+        if: steps.vendor_secrets.outputs.skip != 'true'
         run: |
           mkdir -p /tmp/vendor_evidence
           python -m pytest tests/ -q -m "solver or requires_moreau" \
             --junitxml=/tmp/vendor_evidence/vendor_pytest.junit.xml \
             --tb=short
       - name: "Vendor CI track: evidence gate (no skips / native solves)"
-        if: always()
+        if: always() && steps.vendor_secrets.outputs.skip != 'true'
         run: |
           python scripts/assert_vendor_ci_evidence.py \
             --junit /tmp/vendor_evidence/vendor_pytest.junit.xml \
             --native-evidence /tmp/vendor_evidence/mandatory_native_solves.json \
             --min-executed 1
       - name: "Vendor CI track: solver smoke CLI"
+        if: steps.vendor_secrets.outputs.skip != 'true'
         run: python -m conicshield.core.solver_smoke_cli
       - name: "Vendor CI track: optional reference bundle (real projector)"
+        if: steps.vendor_secrets.outputs.skip != 'true'
         run: |
           python -m conicshield.bench.reference_run \
             --out /tmp/ref_bundle_ci \
             --bank tests/fixtures/parity_reference/transition_bank.json
           python -m conicshield.artifacts.validator_cli --run-dir /tmp/ref_bundle_ci
       - name: "Vendor CI track: full verification bundle (env, smoke, ref, perf, parity, trust)"
+        if: steps.vendor_secrets.outputs.skip != 'true'
         run: |
           set -e
           VDIR=/tmp/vendor_verification
@@ -158,7 +174,7 @@ jobs:
           path: /tmp/ref_bundle_ci
           retention-days: 14
       - name: "Vendor CI track: upload full verification bundle"
-        if: always()
+        if: always() && steps.vendor_secrets.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: vendor_verification_bundle
@@ -166,7 +182,7 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
       - name: "Vendor CI track: upload solver evidence (JUnit + mandatory solves)"
-        if: always()
+        if: always() && steps.vendor_secrets.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: vendor_solver_evidence
@@ -174,7 +190,7 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
       - name: "Vendor CI track: upload solver_versions.json"
-        if: always()
+        if: always() && steps.vendor_secrets.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: vendor_solver_versions
@@ -182,7 +198,7 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
       - name: "Vendor CI track: record solver stack summary"
-        if: always()
+        if: always() && steps.vendor_secrets.outputs.skip != 'true'
         run: |
           echo "## Vendor CI track (Moreau): solver stack" >> "$GITHUB_STEP_SUMMARY"
           python -m pip freeze | grep -iE 'moreau|cvxpy|cvxpylayers' >> "$GITHUB_STEP_SUMMARY" || true

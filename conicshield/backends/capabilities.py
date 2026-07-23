@@ -143,9 +143,7 @@ def discover_moreau_family(
             CapabilityFlag("expected_api_available", api_ok and not windows_unsupported, reason),
             CapabilityFlag(
                 "license_entitlement_valid",
-                bool(result.license_entitlement_valid)
-                if result.license_entitlement_valid is not None
-                else False,
+                bool(result.license_entitlement_valid) if result.license_entitlement_valid is not None else False,
                 result.license_check_error,
             ),
             CapabilityFlag("cpu_backend", bool(result.cpu_backend), reason),

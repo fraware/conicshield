@@ -83,9 +83,7 @@ def validate_objective_weights(
     if pw < 0.0:
         raise InvalidObjectiveWeightError(f"policy_weight must be >= 0 (got {pw})")
     if not math.isfinite(rw_declared):
-        raise InvalidObjectiveWeightError(
-            f"reference_weight must be finite (got {reference_weight!r})"
-        )
+        raise InvalidObjectiveWeightError(f"reference_weight must be finite (got {reference_weight!r})")
     if rw_declared < 0.0:
         raise InvalidObjectiveWeightError(f"reference_weight must be >= 0 (got {rw_declared})")
 

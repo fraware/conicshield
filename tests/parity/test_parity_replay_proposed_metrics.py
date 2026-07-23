@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -7,6 +8,11 @@ import numpy as np
 from conicshield.core.result import ProjectionResult
 from conicshield.parity.gates import enforce_default_parity_gates
 from conicshield.parity.replay import compare_against_reference
+
+
+def _reference_fixture_active_constraints() -> list[str]:
+    ep = json.loads(Path("tests/fixtures/parity_reference/episodes.jsonl").read_text(encoding="utf-8").splitlines()[2])
+    return list(ep["steps"][0]["active_constraints"])
 
 
 class _MatchingCorrectedMismatchedProposedShield:
@@ -30,7 +36,7 @@ class _MatchingCorrectedMismatchedProposedShield:
                 intervention_norm=float(np.linalg.norm(corrected - proposed)),
                 solver_status="optimal",
                 objective_value=0.0,
-                active_constraints=["turn_feasibility"],
+                active_constraints=_reference_fixture_active_constraints(),
             )
 
         return Decision

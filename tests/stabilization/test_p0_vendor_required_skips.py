@@ -53,8 +53,7 @@ def test_vendor_evidence_gate_rejects_zero_executed(tmp_path: Path) -> None:
     )
     evidence = tmp_path / "mandatory.json"
     evidence.write_text(
-        '{"native_solve_count": 0, "known_feasible_ok": false, '
-        '"known_infeasible_or_failure_policy_ok": false}\n',
+        '{"native_solve_count": 0, "known_feasible_ok": false, "known_infeasible_or_failure_policy_ok": false}\n',
         encoding="utf-8",
     )
     proc = subprocess.run(

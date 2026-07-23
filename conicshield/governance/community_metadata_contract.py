@@ -23,9 +23,7 @@ REQUIRED_KEYS: tuple[str, ...] = (
     "known_limitations",
 )
 
-VALID_EVIDENCE_TIERS = frozenset(
-    {"contract_fixture", "structural_export", "vendor_reference", "vendor_native"}
-)
+VALID_EVIDENCE_TIERS = frozenset({"contract_fixture", "structural_export", "vendor_reference", "vendor_native"})
 
 
 def validate_community_metadata(
@@ -60,9 +58,7 @@ def validate_community_metadata(
 
     for list_key in ("recommended_uses", "known_limitations"):
         raw = payload.get(list_key)
-        if raw is not None and (
-            not isinstance(raw, list) or not raw or not all(isinstance(x, str) for x in raw)
-        ):
+        if raw is not None and (not isinstance(raw, list) or not raw or not all(isinstance(x, str) for x in raw)):
             failures.append(f"{list_key} must be a non-empty list of strings")
 
     solver = payload.get("solver_stack")

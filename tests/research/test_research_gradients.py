@@ -73,9 +73,7 @@ def test_smoothed_research_records_epsilon() -> None:
 
 
 def test_observatory_keeps_mode_separation() -> None:
-    scenario = next(
-        s for s in load_all_scenarios() if s["family"] == "active_set_transition_neighborhoods"
-    )
+    scenario = next(s for s in load_all_scenarios() if s["family"] == "active_set_transition_neighborhoods")
     spec = SafetySpec.model_validate(scenario["spec"])
     report = observe_proposed_action_fd(
         spec=spec,

@@ -64,15 +64,11 @@ def normalize_bundle_dict(
     if schema in MIGRATION_RULES:
         migrated = MIGRATION_RULES[schema](out)
         if str(migrated.get("schema_id")) != target_schema:
-            raise AssuranceMigrationError(
-                f"migration from {schema!r} did not reach {target_schema!r}"
-            )
+            raise AssuranceMigrationError(f"migration from {schema!r} did not reach {target_schema!r}")
         return _ensure_v0_fields(migrated)
 
     if schema not in SUPPORTED_SCHEMA_IDS:
-        raise AssuranceMigrationError(
-            f"unsupported assurance schema {schema!r}; supported={SUPPORTED_SCHEMA_IDS}"
-        )
+        raise AssuranceMigrationError(f"unsupported assurance schema {schema!r}; supported={SUPPORTED_SCHEMA_IDS}")
 
     if schema != target_schema:
         raise AssuranceMigrationError(f"cannot migrate {schema!r} -> {target_schema!r}")

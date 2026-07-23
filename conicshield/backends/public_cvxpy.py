@@ -109,11 +109,7 @@ class _PublicCvxpyProjectorBase:
                 if not data.allowed_mask[i]:
                     cons.append(x[i] == 0)
 
-            prev = (
-                np.asarray(previous_action, dtype=np.float64).reshape(-1)
-                if previous_action is not None
-                else None
-            )
+            prev = np.asarray(previous_action, dtype=np.float64).reshape(-1) if previous_action is not None else None
             if prev is not None and prev.shape[0] != n:
                 raise ValueError("previous_action length mismatch")
             if prev is not None:
@@ -126,9 +122,7 @@ class _PublicCvxpyProjectorBase:
                 r = np.asarray(reference_action, dtype=np.float64).reshape(-1)
                 if r.shape[0] != n:
                     raise ValueError("reference_action length mismatch")
-                objective = cp.Minimize(
-                    pw * cp.sum_squares(x - p) + rw * cp.sum_squares(x - r)
-                )
+                objective = cp.Minimize(pw * cp.sum_squares(x - p) + rw * cp.sum_squares(x - r))
             else:
                 objective = cp.Minimize(pw * cp.sum_squares(x - p))
 
@@ -167,9 +161,7 @@ class _PublicCvxpyProjectorBase:
                     candidate=None,
                     raw_status=getattr(problem, "status", "unknown"),
                     objective=tel.get("objective_value"),
-                    error=RuntimeError(
-                        f"CVXPY/{solver_name} solve failed: status={problem.status!r}"
-                    ),
+                    error=RuntimeError(f"CVXPY/{solver_name} solve failed: status={problem.status!r}"),
                     warm_started=False,
                     kind="primary",
                 )

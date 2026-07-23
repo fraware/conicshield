@@ -74,9 +74,7 @@ def test_check_batch_report_any_row_meets_passes() -> None:
 
 def test_throughput_advisory_tier_policy_shape() -> None:
     root = Path(__file__).resolve().parents[2]
-    policy = json.loads(
-        (root / "benchmarks" / "reports" / "batch_acceptance_policy.json").read_text(encoding="utf-8")
-    )
+    policy = json.loads((root / "benchmarks" / "reports" / "batch_acceptance_policy.json").read_text(encoding="utf-8"))
     assert policy["viability"]["enforcement"] == "required"
     assert policy["throughput_advisory"]["enforcement"] == "advisory"
     assert float(policy["throughput_advisory"]["min_speedup_ratio"]) == 1.05

@@ -72,9 +72,7 @@ def topology_from_shield_qp(
     max_delta = np.asarray(data.max_delta, dtype=np.float64).reshape(-1)
     if max_delta.shape[0] != n:
         raise ValueError("max_delta length mismatch against action_dim")
-    rate_indices = tuple(
-        int(i) for i in range(n) if np.isfinite(max_delta[i]) and float(max_delta[i]) >= 0.0
-    )
+    rate_indices = tuple(int(i) for i in range(n) if np.isfinite(max_delta[i]) and float(max_delta[i]) >= 0.0)
     has_finite_rate = len(rate_indices) > 0
     use_rates = has_finite_rate if include_rate_rows is None else bool(include_rate_rows)
     if use_rates and not rate_indices:

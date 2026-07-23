@@ -83,8 +83,7 @@ def _probe_vendor_compiled_backward() -> dict[str, Any]:
     }
     if sys.platform == "win32":
         out["missing_evidence"] = [
-            "vendor Moreau executable on native Windows "
-            "(use WSL/Linux for CompiledSolver.backward)"
+            "vendor Moreau executable on native Windows (use WSL/Linux for CompiledSolver.backward)"
         ]
         return out
 
@@ -98,15 +97,11 @@ def _probe_vendor_compiled_backward() -> dict[str, Any]:
     out["package_importable"] = True
     out["moreau_version"] = getattr(moreau, "__version__", None)
     out["identity_differentiation_api"] = bool(
-        hasattr(moreau, "differentiate")
-        or hasattr(moreau, "DiffSettings")
-        or hasattr(moreau, "cvxpylayers")
+        hasattr(moreau, "differentiate") or hasattr(moreau, "DiffSettings") or hasattr(moreau, "cvxpylayers")
     )
     cs = getattr(moreau, "CompiledSolver", None)
     out["native_compiled_api"] = cs is not None
-    out["compiled_solver_backward"] = bool(
-        cs is not None and callable(getattr(cs, "backward", None))
-    )
+    out["compiled_solver_backward"] = bool(cs is not None and callable(getattr(cs, "backward", None)))
     settings_cls = getattr(moreau, "Settings", None)
     enable_grad = False
     if settings_cls is not None:
@@ -116,9 +111,7 @@ def _probe_vendor_compiled_backward() -> dict[str, Any]:
         except Exception as exc:  # noqa: BLE001
             out["settings_enable_grad_error"] = f"{type(exc).__name__}: {exc}"
     out["settings_enable_grad"] = enable_grad
-    out["vendor_compiled_backward_api"] = bool(
-        out["compiled_solver_backward"] and out["settings_enable_grad"]
-    )
+    out["vendor_compiled_backward_api"] = bool(out["compiled_solver_backward"] and out["settings_enable_grad"])
     # Research surface: backward+enable_grad is the live API on Moreau 0.3.x.
     out["research_differentiation_surface"] = bool(out["vendor_compiled_backward_api"])
     # Production identity flag name stays honest and separate.
@@ -232,9 +225,7 @@ def build_moreau_shield_qp(
     n = int(tmpl.layout.n)
     m = int(tmpl.layout.m)
     n_eq = int(tmpl.topology.num_zero_cones)
-    a_dense = _csr_to_dense_rows(
-        tmpl.a_indptr, tmpl.a_indices, buf.a_values, m=m, n=n
-    )
+    a_dense = _csr_to_dense_rows(tmpl.a_indptr, tmpl.a_indices, buf.a_values, m=m, n=n)
     return {
         "data": data,
         "tmpl": tmpl,
@@ -328,21 +319,14 @@ def exact_backend_gradient(
                 ),
                 extras={
                     **caps,
-                    "gap_vs_exact_research_kkt": (
-                        "Capability alone is not a live native gradient."
-                    ),
-                    "missing_evidence": [
-                        "live native exact jacobian sample with SafetySpec + actions"
-                    ],
+                    "gap_vs_exact_research_kkt": ("Capability alone is not a live native gradient."),
+                    "missing_evidence": ["live native exact jacobian sample with SafetySpec + actions"],
                 },
             )
         return ExactBackendGradientResult(
             available=False,
             status=CapabilityStatus.UNAVAILABLE,
-            reason=(
-                "exact_backend_gradient requires Moreau CompiledSolver.backward; "
-                "unavailable on this host."
-            ),
+            reason=("exact_backend_gradient requires Moreau CompiledSolver.backward; unavailable on this host."),
             extras={
                 **caps,
                 "gap_vs_exact_research_kkt": (
@@ -355,13 +339,9 @@ def exact_backend_gradient(
 
     if not caps.get("vendor_compiled_backward_api"):
         reason = (
-            "Moreau unsupported on native Windows; use WSL/Linux for "
-            "CompiledSolver.backward."
+            "Moreau unsupported on native Windows; use WSL/Linux for CompiledSolver.backward."
             if caps.get("windows_native_unsupported")
-            else (
-                "vendor CompiledSolver.backward / Settings(enable_grad=True) unavailable "
-                "on this host; fail closed."
-            )
+            else ("vendor CompiledSolver.backward / Settings(enable_grad=True) unavailable on this host; fail closed.")
         )
         return _fail(
             reason,
@@ -448,9 +428,7 @@ def exact_backend_gradient(
                 s2 = solver.solve([b2.q.copy()], [b2.b.copy()])
                 return np.asarray(s2.x, dtype=np.float64).reshape(-1)
 
-            fd = central_finite_difference_jacobian(
-                forward, u, h=float(fd_h), parameter_name="proposed_action"
-            )
+            fd = central_finite_difference_jacobian(forward, u, h=float(fd_h), parameter_name="proposed_action")
             fd_extras = {
                 "fd_failure_status": fd.failure_status,
                 "fd_active_set_changed": fd.active_set_changed,
@@ -516,4 +494,3 @@ def exact_backend_gradient(
             extras=caps,
             runtime_sec=time.perf_counter() - t0,
         )
-

@@ -51,15 +51,11 @@ class ResidualReport:
             "upper_residuals": np.asarray(self.upper_residuals, dtype=np.float64).tolist(),
             "prohibited_residuals": np.asarray(self.prohibited_residuals, dtype=np.float64).tolist(),
             "rate_residuals": (
-                None
-                if self.rate_residuals is None
-                else np.asarray(self.rate_residuals, dtype=np.float64).tolist()
+                None if self.rate_residuals is None else np.asarray(self.rate_residuals, dtype=np.float64).tolist()
             ),
             "max_equality_residual": float(self.max_equality_residual),
             "max_inequality_residual": float(self.max_inequality_residual),
-            "objective_residual": (
-                None if self.objective_residual is None else float(self.objective_residual)
-            ),
+            "objective_residual": (None if self.objective_residual is None else float(self.objective_residual)),
             "details": dict(self.details),
         }
 

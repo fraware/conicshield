@@ -238,8 +238,7 @@ def probe_moreau_package(*, run_license_check: bool = False) -> PackageProbeResu
     approved = bool(dist_name and dist_name.lower() in _APPROVED_MOREAU_DIST_NAMES)
     if mod is not None and missing:
         notes.append(
-            "import succeeded but expected Moreau API is incomplete "
-            "(possible wrong PyPI package or truncated install)"
+            "import succeeded but expected Moreau API is incomplete (possible wrong PyPI package or truncated install)"
         )
         migration.append(
             "Uninstall the stub: python -m pip uninstall -y moreau; "
@@ -314,11 +313,7 @@ def probe_moreau_package(*, run_license_check: bool = False) -> PackageProbeResu
     native = bool(mod is not None and hasattr(mod, "CompiledSolver"))
     diff_api = bool(
         mod is not None
-        and (
-            hasattr(mod, "differentiate")
-            or hasattr(mod, "DiffSettings")
-            or hasattr(mod, "cvxpylayers")
-        )
+        and (hasattr(mod, "differentiate") or hasattr(mod, "DiffSettings") or hasattr(mod, "cvxpylayers"))
     )
 
     return PackageProbeResult(

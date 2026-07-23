@@ -202,9 +202,9 @@ def run_verified_release_pipeline(
                 kind=kind,
                 raw_status=None if attempt.raw_status is None else str(attempt.raw_status),
                 canonical_status=None if report is None else str(report.canonical_status),
-                decision="error" if attempt.error is not None else (
-                    str(report.classification.decision) if report is not None else "no_candidate"
-                ),
+                decision="error"
+                if attempt.error is not None
+                else (str(report.classification.decision) if report is not None else "no_candidate"),
                 elapsed_sec=elapsed,
                 reason=None if attempt.error is None else f"{type(attempt.error).__name__}: {attempt.error}",
             )
@@ -293,12 +293,7 @@ def run_verified_release_pipeline(
         return outcome
 
     # 2) Optional cold retry when warm-start primary failed policy
-    if (
-        config.enable_cold_retry
-        and primary.warm_started
-        and attempts < max_attempts
-        and not _budget_exhausted()
-    ):
+    if config.enable_cold_retry and primary.warm_started and attempts < max_attempts and not _budget_exhausted():
         if clear_warm_start is not None:
             clear_warm_start()
         cold = primary_solve(warm_start=False)
@@ -308,11 +303,7 @@ def run_verified_release_pipeline(
             return outcome
 
     # 3) Configured public fallback
-    if (
-        config.public_fallback is not None
-        and attempts < max_attempts
-        and not _budget_exhausted()
-    ):
+    if config.public_fallback is not None and attempts < max_attempts and not _budget_exhausted():
         try:
             fx, fstatus, fobj = config.public_fallback(
                 proposed_action=proposed_action,
@@ -350,9 +341,7 @@ def run_verified_release_pipeline(
         and not _budget_exhausted()
     ):
         try:
-            fs_x = build_fail_safe_action(
-                data, policy=fs_policy, proposed_action=proposed_action
-            )
+            fs_x = build_fail_safe_action(data, policy=fs_policy, proposed_action=proposed_action)
             # Fail-safe actions are treated as OPTIMAL only after residual gate;
             # use a synthetic status that is acceptable only if residuals pass and
             # we mark attempt_kind=fail_safe. Status must still be acceptable —

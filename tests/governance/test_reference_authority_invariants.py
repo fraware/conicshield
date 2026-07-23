@@ -15,13 +15,9 @@ def _root() -> Path:
 
 def test_current_gates_match_flagship_governance_status() -> None:
     root = _root()
-    current = json.loads(
-        (root / "benchmarks" / "releases" / _FAMILY / "CURRENT.json").read_text(encoding="utf-8")
-    )
+    current = json.loads((root / "benchmarks" / "releases" / _FAMILY / "CURRENT.json").read_text(encoding="utf-8"))
     gov = json.loads(
-        (root / "benchmarks" / "published_runs" / _FLAGSHIP / "governance_status.json").read_text(
-            encoding="utf-8"
-        )
+        (root / "benchmarks" / "published_runs" / _FLAGSHIP / "governance_status.json").read_text(encoding="utf-8")
     )
     for gate in ("artifact_gate", "parity_gate", "promotion_gate"):
         assert current[gate] == gov[gate] == "green"
@@ -62,9 +58,7 @@ def test_committed_batch_solve_report_example_shape() -> None:
     assert payload.get("example_only") is True
     assert isinstance(payload.get("comparisons"), list) and payload["comparisons"]
     row = payload["comparisons"][0]
-    assert row["speedup_ratio"] == pytest.approx(
-        row["mean_sec_sequential"] / row["mean_sec_batched"]
-    )
+    assert row["speedup_ratio"] == pytest.approx(row["mean_sec_sequential"] / row["mean_sec_batched"])
     assert payload.get("batch_story") in ("viability_only", "throughput_win", "below_viability")
 
 

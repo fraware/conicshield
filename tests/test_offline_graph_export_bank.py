@@ -14,10 +14,7 @@ from conicshield.bench.offline_graph_export import (
 
 def test_upstream_host_realistic_export_builds_bank() -> None:
     path = (
-        Path(__file__).resolve().parents[1]
-        / "benchmarks"
-        / "external_evidence"
-        / "offline_graph_export_upstream.json"
+        Path(__file__).resolve().parents[1] / "benchmarks" / "external_evidence" / "offline_graph_export_upstream.json"
     )
     payload = load_offline_graph_export(path)
     validate_offline_graph_export(payload)

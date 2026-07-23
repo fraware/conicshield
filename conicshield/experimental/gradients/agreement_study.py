@@ -246,9 +246,7 @@ def _stratify(
                 kkt_available_rate=float(sum(1 for r in group if r.kkt_available) / max(len(group), 1)),
                 kkt_mean_rel_fro=_mean_or_none(kkt_rels),
                 kkt_median_rel_fro=_median_or_none(kkt_rels),
-                smoothed_available_rate=float(
-                    sum(1 for r in group if r.smoothed_available) / max(len(group), 1)
-                ),
+                smoothed_available_rate=float(sum(1 for r in group if r.smoothed_available) / max(len(group), 1)),
                 smoothed_mean_rel_fro=_mean_or_none(sm_rels),
                 failure_mode_counts=dict(fail_counts),
             )
@@ -480,9 +478,7 @@ def run_agreement_study(
     if kkt_ok == 0:
         negative.append("exact_research_kkt unavailable on all selected scenarios")
     if active_set_fail > 0:
-        negative.append(
-            f"{active_set_fail}/{len(rows)} scenarios flagged active-set-change under FD neighborhood"
-        )
+        negative.append(f"{active_set_fail}/{len(rows)} scenarios flagged active-set-change under FD neighborhood")
     if singular_fail > 0:
         negative.append(f"{singular_fail}/{len(rows)} scenarios failed closed on singular/ill-conditioned KKT")
     as_rows = [r for r in rows if r.family == "active_set_transition_neighborhoods"]
@@ -495,10 +491,8 @@ def run_agreement_study(
             )
 
     conclusions = [
-        "exact_research_kkt is a fixed-active-set public-QP KKT adapter — not native Moreau "
-        "exact_backend_gradient.",
-        "smoothed_research_projection is an epsilon-smoothed research adapter — not "
-        "smoothed_backend_gradient.",
+        "exact_research_kkt is a fixed-active-set public-QP KKT adapter — not native Moreau exact_backend_gradient.",
+        "smoothed_research_projection is an epsilon-smoothed research adapter — not smoothed_backend_gradient.",
         "Agreement metrics are numerical evidence only; they do not prove correctness of "
         "implicit differentiation under active-set changes.",
         "Experimental exact_backend_gradient uses CompiledSolver.backward; "
@@ -513,14 +507,11 @@ def run_agreement_study(
 
     _caps = _probe_vendor_compiled_backward()
     _exact_status = (
-        CapabilityStatus.AVAILABLE
-        if _caps.get("vendor_compiled_backward_api")
-        else CapabilityStatus.UNAVAILABLE
+        CapabilityStatus.AVAILABLE if _caps.get("vendor_compiled_backward_api") else CapabilityStatus.UNAVAILABLE
     )
     _sm_status = (
         CapabilityStatus.AVAILABLE
-        if _caps.get("vendor_compiled_backward_api")
-        and not _caps.get("windows_native_unsupported")
+        if _caps.get("vendor_compiled_backward_api") and not _caps.get("windows_native_unsupported")
         else CapabilityStatus.UNAVAILABLE
     )
 
@@ -533,14 +524,10 @@ def run_agreement_study(
         "smoothed_available_count": sm_ok,
         "smoothed_available_rate": float(sm_ok / max(len(rows), 1)),
         "smoothed_mean_rel_fro": _mean_or_none(sm_rels),
-        "failure_mode_counts": {
-            mode: sum(1 for r in rows if r.kkt_failure_mode == mode) for mode in FAILURE_MODES
-        },
+        "failure_mode_counts": {mode: sum(1 for r in rows if r.kkt_failure_mode == mode) for mode in FAILURE_MODES},
         "native_exact_backend_gradient": str(_exact_status),
         "native_smoothed_backend_gradient": str(_sm_status),
-        "research_differentiation_surface": bool(
-            _caps.get("research_differentiation_surface")
-        ),
+        "research_differentiation_surface": bool(_caps.get("research_differentiation_surface")),
     }
 
     report = AgreementStudyReport(
@@ -625,8 +612,7 @@ def render_agreement_report_markdown(report: AgreementStudyReport | dict[str, An
             "## Mode separation",
             "",
             "- `exact_research_kkt` ≠ `exact_backend_gradient` (Moreau CompiledSolver.backward)",
-            "- `smoothed_research_projection` ≠ `smoothed_backend_gradient` "
-            "(softplus Moreau QP)",
+            "- `smoothed_research_projection` ≠ `smoothed_backend_gradient` (softplus Moreau QP)",
             "- Primary baseline: `central_finite_difference`",
             "",
         ]

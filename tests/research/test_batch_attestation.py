@@ -24,7 +24,7 @@ def test_batch_attestation_defaults_to_sequential() -> None:
         assert "NOT_PUBLICATION_GRADE" in att.attestation_note
         assert isinstance(att.attestation_record, dict)
         # Live-sample bar: capability discovery alone must not clear watermark
-        live = (att.attestation_record.get("live_sample") or {})
+        live = att.attestation_record.get("live_sample") or {}
         assert live.get("succeeded") is not True
 
 

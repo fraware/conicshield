@@ -249,9 +249,7 @@ def apply_cbf_filter(
         )
 
     a, b = cbf_affine_constraint(agent.position, obstacle, alpha=alpha)
-    u_safe, status, active, elapsed = _solve_nominal_cbf_qp(
-        u_des=u_des, a=a, b=b, u_max=u_max, solver=solver
-    )
+    u_safe, status, active, elapsed = _solve_nominal_cbf_qp(u_des=u_des, a=a, b=b, u_max=u_max, solver=solver)
     # Post-filter barrier rate margin: ḣ + α h
     p = np.asarray(agent.position, dtype=np.float64).reshape(2)
     c = np.asarray(obstacle.center, dtype=np.float64).reshape(2)
@@ -295,21 +293,22 @@ def apply_cbf_filter_batched(
         raise ValueError("agents and obstacles must be paired 1:1 for stage-2 scaffold")
     results: list[CBFFilterResult] = []
     for agent, obs in zip(agents, obstacles, strict=True):
-        primary = apply_cbf_filter(
-            agent, obs, alpha=alpha, u_max=u_max, baseline=baseline, solver=solver
-        )
+        primary = apply_cbf_filter(agent, obs, alpha=alpha, u_max=u_max, baseline=baseline, solver=solver)
         primary.stage = CBFStage.STAGE2_BATCHED.value
         primary.metadata["batch_emulation"] = "sequential_adapter"
         if shadow and baseline == CBFBaseline.PUBLIC_SOLVER_FILTER:
             other = "SCS" if solver == "CLARABEL" else "CLARABEL"
             shadow_res = apply_cbf_filter(
-                agent, obs, alpha=alpha, u_max=u_max, baseline=baseline, solver=other  # type: ignore[arg-type]
+                agent,
+                obs,
+                alpha=alpha,
+                u_max=u_max,
+                baseline=baseline,
+                solver=other,  # type: ignore[arg-type]
             )
             primary.metadata["shadow"] = shadow_res.as_dict()
             if np.all(np.isfinite(primary.u_safe)) and np.all(np.isfinite(shadow_res.u_safe)):
-                primary.metadata["shadow_disagreement_l2"] = float(
-                    np.linalg.norm(primary.u_safe - shadow_res.u_safe)
-                )
+                primary.metadata["shadow_disagreement_l2"] = float(np.linalg.norm(primary.u_safe - shadow_res.u_safe))
             primary.baseline = CBFBaseline.PRIMARY_PLUS_SHADOW.value
         results.append(primary)
     return results
@@ -416,9 +415,7 @@ def apply_cbf_filter_soc_robust(
             metadata={"epsilon": epsilon, "uncertainty_model_id": UNCERTAINTY_MODEL_ID},
         )
 
-    a, b_rob, two_eps = robust_cbf_soc_constants(
-        agent.position, obstacle, alpha=alpha, epsilon=epsilon
-    )
+    a, b_rob, two_eps = robust_cbf_soc_constants(agent.position, obstacle, alpha=alpha, epsilon=epsilon)
     u_safe, status, active, elapsed = _solve_soc_robust_cbf_qp(
         u_des=u_des, a=a, b_rob=b_rob, two_eps=two_eps, u_max=u_max, solver=solver
     )
@@ -474,9 +471,7 @@ def stage3_disagreement_under_perturbation(
     """Compare nominal vs SOC-robust filters, and robust filter on a perturbed observation."""
 
     nominal = apply_cbf_filter(agent, obstacle, alpha=alpha, u_max=u_max, solver=solver)
-    robust = apply_cbf_filter_soc_robust(
-        agent, obstacle, alpha=alpha, u_max=u_max, epsilon=epsilon, solver=solver
-    )
+    robust = apply_cbf_filter_soc_robust(agent, obstacle, alpha=alpha, u_max=u_max, epsilon=epsilon, solver=solver)
     if delta is None:
         # Worst-case direction toward obstacle, scaled to epsilon
         p = np.asarray(agent.position, dtype=np.float64).reshape(2)

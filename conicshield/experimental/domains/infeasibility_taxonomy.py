@@ -185,11 +185,7 @@ def classify_filter_result(
     # Declared infeasible
     if "infeas" in status or canon == CanonicalSolverStatus.INFEASIBLE.value:
         near = np.isfinite(barrier) and barrier < near_infeasible_barrier_threshold
-        cls = (
-            InfeasibilityClass.NEAR_INFEASIBLE_GEOMETRY
-            if near
-            else InfeasibilityClass.DECLARED_INFEASIBLE
-        )
+        cls = InfeasibilityClass.NEAR_INFEASIBLE_GEOMETRY if near else InfeasibilityClass.DECLARED_INFEASIBLE
         return InfeasibilityClassification(
             cid,
             cls,
@@ -200,11 +196,7 @@ def classify_filter_result(
         )
 
     # Numerical failure
-    if (
-        "error" in status
-        or "numeric" in status
-        or canon == CanonicalSolverStatus.NUMERICAL_FAILURE.value
-    ):
+    if "error" in status or "numeric" in status or canon == CanonicalSolverStatus.NUMERICAL_FAILURE.value:
         return InfeasibilityClassification(
             cid,
             InfeasibilityClass.NUMERICAL_FAILURE,
