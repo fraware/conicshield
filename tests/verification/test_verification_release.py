@@ -10,7 +10,7 @@ import pytest
 from conicshield.backends.status import CanonicalSolverStatus, normalize_solver_status
 from conicshield.core.result import ProjectionResult, sanitize_metadata
 from conicshield.specs.schema import BoxConstraint, FailSafePolicy, SafetySpec, SimplexConstraint
-from conicshield.specs.shield_qp import parse_safety_spec_for_shield
+from conicshield.specs.shield_qp import ShieldQPData, parse_safety_spec_for_shield
 from conicshield.verification.fallback import (
     FallbackConfig,
     SolveAttemptResult,
@@ -25,7 +25,7 @@ from conicshield.verification.release_policy import ReleaseDecision, ReleasePoli
 from conicshield.verification.residuals import ResidualTolerances, evaluate_residuals
 
 
-def _data() -> tuple[SafetySpec, object]:
+def _data() -> tuple[SafetySpec, ShieldQPData]:
     spec = SafetySpec(
         spec_id="verification/unit",
         action_dim=3,

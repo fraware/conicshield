@@ -147,8 +147,25 @@ module = "moreau"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
+module = "torch"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "scipy"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "scipy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.stabilization.test_p0_packaging_provenance"
+disable_error_code = ["attr-defined"]
+
+[[tool.mypy.overrides]]
 module = "conicshield.experimental.*"
 disallow_untyped_defs = true
+ignore_missing_imports = true
 
 [tool.coverage.run]
 source = ["conicshield"]
