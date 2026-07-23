@@ -1,0 +1,93 @@
+name: research-public
+
+on:
+  pull_request:
+    paths:
+      - "conicshield/experimental/**"
+      - "research/solver-assurance-and-gradients/**"
+      - "experiments/research_wave1/**"
+      - "experiments/research_wave2/**"
+      - "experiments/research_wave3/**"
+      - "experiments/research_wave4/**"
+      - "experiments/research_wave5/**"
+      - "experiments/research_wave6/**"
+      - "experiments/research_wave8/**"
+      - "tests/research/**"
+      - ".github/workflows/research-public.yml"
+  push:
+    branches: [main]
+    paths:
+      - "conicshield/experimental/**"
+      - "research/solver-assurance-and-gradients/**"
+      - "experiments/research_wave1/**"
+      - "experiments/research_wave2/**"
+      - "experiments/research_wave3/**"
+      - "experiments/research_wave4/**"
+      - "experiments/research_wave5/**"
+      - "experiments/research_wave6/**"
+      - "experiments/research_wave8/**"
+      - "tests/research/**"
+      - ".github/workflows/research-public.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: research-public-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  research-public:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Corpus validation
+        run: python -m conicshield.experimental.corpus.validate
+      - name: Research public tests
+        run: |
+          python -m pytest tests/research -q --tb=short \
+            -k "not vendor"
+      - name: Public-solver shadow harness (deterministic)
+        run: python experiments/research_wave1/run_shadow_harness.py
+      - name: FD probe
+        run: python experiments/research_wave1/run_fd_probe.py
+      - name: Wave2 sampling study (CI-small)
+        run: python experiments/research_wave2/run_sampling_study.py
+      - name: Wave3 frontier CI-small
+        run: python experiments/research_wave3/run_frontiers.py
+      - name: Wave4 assurance + CBF stage1-2
+        run: python experiments/research_wave4/run_assurance_and_cbf.py
+      - name: Wave5 hypothesis eval (CI-small)
+        run: python -m conicshield.experimental.solver_assurance.hypotheses_eval
+      - name: Wave5 research grads + CBF stage3 (CI-small)
+        run: python experiments/research_wave5/run_gradients_and_cbf.py
+      - name: Wave5 clean-env soak
+        run: python experiments/research_wave5/run_clean_env_soak.py
+      - name: Wave6 CI-small agreement study
+        run: python experiments/research_wave6/run_agreement_study.py --ci-small
+      - name: Wave6 stage-4 gate evaluator
+        run: python -m conicshield.experimental.domains.stage4_gate
+      - name: Wave7 CBF corpus validate (held-out)
+        run: |
+          python -c "from conicshield.experimental.domains.cbf_corpus import load_cbf_manifest, CBF_CORPUS_VERSION; m=load_cbf_manifest(); assert m['corpus_version']==CBF_CORPUS_VERSION"
+      - name: Wave7 multi-host soak simulation (match)
+        run: |
+          python -m conicshield.experimental.assurance.multi_host_soak_sim \
+            --output-dir output/research/wave7/multi_host_soak_sim \
+            --digest-mode match
+      - name: Wave8 CBF RH CI-small + Track1 probe
+        run: python experiments/research_wave8/run_cbf_rh_ci_small.py
+      - name: Upload research public artifacts
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-public-output
+          path: output/research/
+          if-no-files-found: warn
+          retention-days: 14

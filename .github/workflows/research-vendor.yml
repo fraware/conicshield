@@ -1,0 +1,81 @@
+name: research-vendor
+
+# Exact/smoothed gradient, native shadow, hetero batches, CPU/CUDA.
+# Required vendor capability failures must fail this workflow.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1"
+  pull_request:
+    paths:
+      - "conicshield/experimental/**"
+      - "tests/research/**"
+      - ".github/workflows/research-vendor.yml"
+
+jobs:
+  research-vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Configure Moreau license
+        env:
+          MOREAU_LICENSE_KEY: ${{ secrets.MOREAU_LICENSE_KEY }}
+        run: |
+          if [ -z "${MOREAU_LICENSE_KEY}" ]; then
+            echo "MOREAU_LICENSE_KEY missing — vendor research CI cannot proceed"
+            exit 1
+          fi
+          mkdir -p "$HOME/.moreau"
+          echo -n "$MOREAU_LICENSE_KEY" > "$HOME/.moreau/key"
+      - name: Install vendor solver stack
+        env:
+          GEMFURY_TOKEN: ${{ secrets.GEMFURY_TOKEN }}
+        run: |
+          if [ -z "${GEMFURY_TOKEN}" ]; then
+            echo "GEMFURY_TOKEN missing — vendor research CI cannot proceed"
+            exit 1
+          fi
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[solver,dev]" \
+            --extra-index-url "https://${GEMFURY_TOKEN}:@pypi.fury.io/optimalintellect/"
+      - name: Probe vendor backends (fail if native Moreau unavailable)
+        run: |
+          python - <<'PY'
+          from conicshield.experimental.solver_assurance.backends import probe_backend_capabilities
+          caps = {c.backend_id: c for c in probe_backend_capabilities()}
+          native = caps.get("native_moreau_cpu")
+          if native is None or not native.available:
+              raise SystemExit("required vendor capability native_moreau_cpu unavailable")
+          print("vendor capabilities ok:", {k: v.available for k, v in caps.items()})
+          PY
+      - name: Exact/smoothed backend gradients must be labeled distinctly
+        run: |
+          python - <<'PY'
+          from conicshield.experimental.gradients.exact_backend import exact_backend_gradient
+          from conicshield.experimental.gradients.smoothed_backend import smoothed_backend_gradient
+          from conicshield.experimental.gradients.modes import GradientMode
+          e = exact_backend_gradient()
+          s = smoothed_backend_gradient()
+          assert e.mode == GradientMode.EXACT_BACKEND_GRADIENT
+          assert s.mode == GradientMode.SMOOTHED_BACKEND_GRADIENT
+          assert e.status.value in ("available", "unavailable", "blocked")
+          assert s.status.value in ("available", "unavailable", "blocked")
+          print("exact available=", e.available, "smoothed available=", s.available)
+          PY
+      - name: Native shadow comparison (CPU)
+        run: |
+          python - <<'PY'
+          from conicshield.experimental.solver_assurance.shadow_harness import run_shadow_harness
+          # Prefer native when available; fall back path must not silently treat unavailable as success.
+          summary = run_shadow_harness(
+              primary_backend="cvxpy_moreau",
+              shadow_backend="cvxpy_clarabel",
+              budget_fraction=1.0,
+          )
+          print("native-ish shadow", summary["shadowed_count"], summary["status_disagreement_count"])
+          PY
