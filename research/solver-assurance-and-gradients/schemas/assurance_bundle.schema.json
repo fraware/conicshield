@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research/solver-assurance-and-gradients/schemas/assurance_bundle.schema.json",
+  "title": "Track2AssuranceBundle",
+  "type": "object",
+  "required": [
+    "schema_id",
+    "corrected_action",
+    "specification_digest",
+    "structural_fingerprint",
+    "verification",
+    "canonical_status",
+    "release_decision",
+    "primal_evidence",
+    "active_set_evidence",
+    "solver_provenance",
+    "platform_provenance",
+    "fallback_history",
+    "assumptions",
+    "limitations",
+    "evidence_level"
+  ],
+  "properties": {
+    "schema_id": { "type": "string" },
+    "corrected_action": {
+      "type": "array",
+      "items": { "type": "number" }
+    },
+    "corrected_action_digest": { "type": "string" },
+    "specification_digest": { "type": "string" },
+    "structural_fingerprint": { "type": "string" },
+    "verification": { "type": "object" },
+    "canonical_status": { "type": "string" },
+    "release_decision": { "type": "string" },
+    "primal_evidence": { "type": "object" },
+    "dual_evidence": { "type": ["object", "null"] },
+    "active_set_evidence": { "type": "object" },
+    "sensitivity_evidence": { "type": ["object", "null"] },
+    "shadow_evidence": { "type": ["object", "null"] },
+    "solver_provenance": { "type": "object" },
+    "platform_provenance": { "type": "object" },
+    "fallback_history": { "type": "array" },
+    "assumptions": { "type": "array" },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence_level": {
+      "type": "string",
+      "enum": [
+        "L0_RECORDED",
+        "L1_FEASIBILITY_VERIFIED",
+        "L2_SHADOW_COMPARED",
+        "L3_SENSITIVITY_VALIDATED",
+        "L4_REPLAYED_AND_GOVERNED"
+      ]
+    },
+    "naming_note": { "type": "string" },
+    "extras": { "type": "object" }
+  },
+  "additionalProperties": true
+}

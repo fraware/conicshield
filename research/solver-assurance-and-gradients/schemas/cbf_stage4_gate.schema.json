@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research/solver-assurance-and-gradients/schemas/cbf_stage4_gate.schema.json",
+  "title": "Track2CBFStage4GateEvaluation",
+  "type": "object",
+  "required": [
+    "schema_id",
+    "stage",
+    "criteria",
+    "all_required_passed",
+    "stage4_status",
+    "unblock_allowed",
+    "rh_mpc_implemented",
+    "experimental_rh_implemented"
+  ],
+  "properties": {
+    "schema_id": {
+      "type": "string",
+      "const": "research.cbf_stage4_gate_evaluation.v0"
+    },
+    "stage": { "type": "string" },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "criterion_id",
+          "status",
+          "required",
+          "evidence_pointers"
+        ],
+        "properties": {
+          "criterion_id": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "pending"]
+          },
+          "required": { "type": "boolean" },
+          "evidence_pointers": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "detail": { "type": "string" },
+          "numeric": { "type": "object" }
+        }
+      }
+    },
+    "required_count": { "type": "integer" },
+    "passed_count": { "type": "integer" },
+    "failed_count": { "type": "integer" },
+    "pending_count": { "type": "integer" },
+    "all_required_passed": { "type": "boolean" },
+    "stage4_status": {
+      "type": "string",
+      "enum": [
+        "blocked",
+        "checklist_green_rh_not_implemented",
+        "experimental_rh_available"
+      ]
+    },
+    "unblock_allowed": { "type": "boolean" },
+    "rh_mpc_implemented": { "type": "boolean", "const": false },
+    "experimental_rh_implemented": { "type": "boolean" },
+    "experimental_rh": { "type": "object" },
+    "checklist_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research/solver-assurance-and-gradients/schemas/cbf_receding_horizon.schema.json",
+  "title": "Track2CBFRecedingHorizonResult",
+  "type": "object",
+  "required": [
+    "schema_id",
+    "experiment_version",
+    "capability_status",
+    "experimental",
+    "production_claim",
+    "ran",
+    "horizon",
+    "dt",
+    "constraint_mode",
+    "steps",
+    "negatives",
+    "limitations",
+    "rh_mpc_full",
+    "multi_robot"
+  ],
+  "properties": {
+    "schema_id": { "type": "string", "const": "research.cbf_receding_horizon.v0" },
+    "experiment_version": { "type": "string" },
+    "capability_status": {
+      "type": "string",
+      "enum": ["available", "unavailable", "stubbed", "blocked"]
+    },
+    "experimental": { "type": "boolean", "const": true },
+    "production_claim": { "type": "boolean", "const": false },
+    "ran": { "type": "boolean" },
+    "fail_closed_reason": { "type": ["string", "null"] },
+    "stage4_gate_status": { "type": "string" },
+    "stage4_unblock_allowed": { "type": "boolean" },
+    "horizon": { "type": "integer", "minimum": 1, "maximum": 8 },
+    "dt": { "type": "number", "exclusiveMinimum": 0 },
+    "constraint_mode": {
+      "type": "string",
+      "enum": ["nominal_stage1_cbf", "soc_robust_stage3_cbf"]
+    },
+    "baseline": { "type": "string" },
+    "agent_id": { "type": "string" },
+    "obstacle_id": { "type": "string" },
+    "steps": { "type": "array" },
+    "metrics": { "type": ["object", "null"] },
+    "negatives": {
+      "type": "object",
+      "required": [
+        "infeasible_steps",
+        "active_set_chatter_steps",
+        "barrier_violations"
+      ]
+    },
+    "baseline_comparison": { "type": "object" },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "reproducibility": { "type": "object" },
+    "rh_mpc_full": { "type": "boolean", "const": false },
+    "multi_robot": { "type": "boolean", "const": false },
+    "stage": { "type": "string" }
+  },
+  "additionalProperties": true
+}

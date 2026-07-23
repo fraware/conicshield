@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research/solver-assurance-and-gradients/schemas/cbf_infeasibility_audit.schema.json",
+  "title": "Track2CBFInfeasibilityAudit",
+  "type": "object",
+  "required": [
+    "schema_id",
+    "taxonomy_schema_id",
+    "n_probes",
+    "n_failures",
+    "n_unexplained",
+    "unexplained_rate",
+    "class_counts",
+    "classifications"
+  ],
+  "properties": {
+    "schema_id": { "type": "string" },
+    "taxonomy_schema_id": { "type": "string" },
+    "n_probes": { "type": "integer" },
+    "n_failures": { "type": "integer" },
+    "n_unexplained": { "type": "integer" },
+    "unexplained_rate": { "type": "number" },
+    "failure_rate": { "type": "number" },
+    "class_counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer" }
+    },
+    "classifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["case_id", "taxonomy_class", "is_failure", "explained", "evidence"],
+        "properties": {
+          "case_id": { "type": "string" },
+          "taxonomy_class": { "type": "string" },
+          "is_failure": { "type": "boolean" },
+          "explained": { "type": "boolean" },
+          "evidence": { "type": "object" },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "promotion_claim": { "type": "boolean" }
+  },
+  "additionalProperties": true
+}

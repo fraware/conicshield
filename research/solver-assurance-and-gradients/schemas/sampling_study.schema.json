@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research.sampling_study.v0",
+  "title": "Risk-based shadow sampling study",
+  "type": "object",
+  "required": [
+    "schema_id",
+    "corpus_version",
+    "primary_backend",
+    "shadow_backend",
+    "results",
+    "promotion_gate"
+  ],
+  "properties": {
+    "schema_id": { "const": "research.sampling_study.v0" },
+    "corpus_version": { "type": "string" },
+    "primary_backend": { "type": "string" },
+    "shadow_backend": { "type": "string" },
+    "baseline_policy": { "type": "string" },
+    "baseline_budget_fraction": { "type": "number" },
+    "consequential_l2_threshold": { "type": "number" },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "policy",
+          "budget_fraction",
+          "shadowed_count",
+          "scenario_count",
+          "shadow_cost_relative",
+          "detection_rate",
+          "false_skip_rate"
+        ],
+        "properties": {
+          "policy": { "type": "string" },
+          "budget_fraction": { "type": "number" },
+          "shadowed_count": { "type": "integer" },
+          "scenario_count": { "type": "integer" },
+          "shadow_cost_relative": { "type": "number" },
+          "consequential_detected": { "type": "integer" },
+          "consequential_baseline": { "type": "integer" },
+          "detection_rate": { "type": "number" },
+          "false_skip_rate": { "type": "number" },
+          "mean_l2_when_shadowed": { "type": "number" },
+          "status_disagreement_count": { "type": "integer" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "family_summaries_baseline": { "type": "array" },
+    "negative_results": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "promotion_gate": { "type": "string" },
+    "provenance": { "type": "object" }
+  },
+  "additionalProperties": true
+}

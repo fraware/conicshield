@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research/solver-assurance-and-gradients/schemas/disagreement.schema.json",
+  "title": "Track2SolverDisagreement",
+  "type": "object",
+  "required": [
+    "status_disagreement",
+    "release_disagreement",
+    "corrected_action_l2",
+    "corrected_action_linf",
+    "objective_gap_abs",
+    "objective_gap_rel",
+    "equality_residual_gap",
+    "inequality_residual_gap",
+    "active_set_symmetric_difference",
+    "iteration_ratio",
+    "timeout_asymmetry",
+    "warm_cold_disagreement"
+  ],
+  "properties": {
+    "status_disagreement": { "type": "boolean" },
+    "release_disagreement": { "type": "boolean" },
+    "corrected_action_l2": { "type": "number" },
+    "corrected_action_linf": { "type": "number" },
+    "objective_gap_abs": { "type": ["number", "null"] },
+    "objective_gap_rel": { "type": ["number", "null"] },
+    "equality_residual_gap": { "type": "number" },
+    "inequality_residual_gap": { "type": "number" },
+    "active_set_symmetric_difference": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "iteration_ratio": { "type": ["number", "null"] },
+    "timeout_asymmetry": { "type": "boolean" },
+    "warm_cold_disagreement": { "type": ["number", "null"] },
+    "taxonomy_labels": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "residual_dominance_side": { "type": ["string", "null"] },
+    "consequential": { "type": "boolean" },
+    "negative_result_note": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}
