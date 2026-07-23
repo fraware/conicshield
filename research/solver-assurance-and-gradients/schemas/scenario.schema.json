@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research/solver-assurance-and-gradients/schemas/scenario.schema.json",
+  "title": "Track2R0Scenario",
+  "type": "object",
+  "required": [
+    "scenario_id",
+    "family",
+    "seed",
+    "spec",
+    "proposed_action",
+    "previous_action",
+    "reference_action",
+    "weights",
+    "expected_regime",
+    "generation_commit",
+    "notes"
+  ],
+  "properties": {
+    "scenario_id": { "type": "string", "minLength": 1 },
+    "family": { "type": "string", "minLength": 1 },
+    "seed": { "type": "integer" },
+    "spec": { "type": "object" },
+    "proposed_action": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 1
+    },
+    "previous_action": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 1
+    },
+    "reference_action": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 1
+    },
+    "weights": {
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    },
+    "expected_regime": { "type": "string" },
+    "generation_commit": { "type": "string", "minLength": 1 },
+    "notes": { "type": "string" },
+    "corpus_version": { "type": "string" },
+    "corpus_family_id": { "type": "string" },
+    "extras": { "type": "object" }
+  },
+  "additionalProperties": true
+}

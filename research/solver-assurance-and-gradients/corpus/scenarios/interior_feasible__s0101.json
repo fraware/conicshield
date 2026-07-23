@@ -1,0 +1,77 @@
+{
+  "corpus_family_id": "research.solver_assurance.r0",
+  "corpus_version": "r0-v0.3.0",
+  "expected_regime": "interior_feasible",
+  "family": "interior_feasible",
+  "generation_commit": "bbd3dcffd9af8bfa",
+  "notes": "Proposal already near-feasible interior of simplex+box.",
+  "previous_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "proposed_action": [
+    0.6143515501566394,
+    0.08684728893378123,
+    0.14366148008019475,
+    0.15513968082938465
+  ],
+  "reference_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "scenario_id": "interior_feasible/s0101",
+  "seed": 101,
+  "spec": {
+    "action_dim": 4,
+    "constraints": [
+      {
+        "kind": "simplex",
+        "total": 1.0
+      },
+      {
+        "allowed_actions": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "kind": "turn_feasibility"
+      },
+      {
+        "kind": "box",
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "upper": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "kind": "rate",
+        "max_delta": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "slack_weight": 10.0,
+    "spec_id": "research/interior_feasible",
+    "version": "0.1.0"
+  },
+  "weights": {
+    "policy_weight": 1.0,
+    "reference_weight": 0.0
+  }
+}

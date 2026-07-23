@@ -1,0 +1,77 @@
+{
+  "corpus_family_id": "research.solver_assurance.r0",
+  "corpus_version": "r0-v0.3.0",
+  "expected_regime": "poorly_conditioned",
+  "family": "poorly_conditioned_objectives",
+  "generation_commit": "bbd3dcffd9af8bfa",
+  "notes": "Extreme weight scale and proposal magnitude.",
+  "previous_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "proposed_action": [
+    1000000.0,
+    1e-08,
+    1e-08,
+    1e-08
+  ],
+  "reference_action": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "scenario_id": "poorly_conditioned_objectives/s0901",
+  "seed": 901,
+  "spec": {
+    "action_dim": 4,
+    "constraints": [
+      {
+        "kind": "simplex",
+        "total": 1.0
+      },
+      {
+        "allowed_actions": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "kind": "turn_feasibility"
+      },
+      {
+        "kind": "box",
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "upper": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "kind": "rate",
+        "max_delta": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "slack_weight": 10.0,
+    "spec_id": "research/poorly_conditioned_objectives",
+    "version": "0.1.0"
+  },
+  "weights": {
+    "policy_weight": 100000000.0,
+    "reference_weight": 1e-08
+  }
+}

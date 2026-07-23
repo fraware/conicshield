@@ -1,0 +1,166 @@
+{
+  "benchmark_id": "research.active_set_transition_benchmark",
+  "benchmark_version": "asb-v0.1.0",
+  "cases": [
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.45.",
+      "scenario_id": "active_set_transition_neighborhoods/s1001",
+      "seed": 1001
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.47.",
+      "scenario_id": "active_set_transition_neighborhoods/s1002",
+      "seed": 1002
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.48.",
+      "scenario_id": "active_set_transition_neighborhoods/s1003",
+      "seed": 1003
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.49.",
+      "scenario_id": "active_set_transition_neighborhoods/s1004",
+      "seed": 1004
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.495.",
+      "scenario_id": "active_set_transition_neighborhoods/s1005",
+      "seed": 1005
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.5.",
+      "scenario_id": "active_set_transition_neighborhoods/s1006",
+      "seed": 1006
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.505.",
+      "scenario_id": "active_set_transition_neighborhoods/s1007",
+      "seed": 1007
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.51.",
+      "scenario_id": "active_set_transition_neighborhoods/s1008",
+      "seed": 1008
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.52.",
+      "scenario_id": "active_set_transition_neighborhoods/s1009",
+      "seed": 1009
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Box-bound trajectory; upper0=0.55.",
+      "scenario_id": "active_set_transition_neighborhoods/s1010",
+      "seed": 1010
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.2.",
+      "scenario_id": "active_set_transition_neighborhoods/s1100",
+      "seed": 1100
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.24.",
+      "scenario_id": "active_set_transition_neighborhoods/s1101",
+      "seed": 1101
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.26.",
+      "scenario_id": "active_set_transition_neighborhoods/s1102",
+      "seed": 1102
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.28.",
+      "scenario_id": "active_set_transition_neighborhoods/s1103",
+      "seed": 1103
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.29.",
+      "scenario_id": "active_set_transition_neighborhoods/s1104",
+      "seed": 1104
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.3.",
+      "scenario_id": "active_set_transition_neighborhoods/s1105",
+      "seed": 1105
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.31.",
+      "scenario_id": "active_set_transition_neighborhoods/s1106",
+      "seed": 1106
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.32.",
+      "scenario_id": "active_set_transition_neighborhoods/s1107",
+      "seed": 1107
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.35.",
+      "scenario_id": "active_set_transition_neighborhoods/s1108",
+      "seed": 1108
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Rate-limit trajectory; max_delta=0.4.",
+      "scenario_id": "active_set_transition_neighborhoods/s1109",
+      "seed": 1109
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Admissibility trajectory; mask=full.",
+      "scenario_id": "active_set_transition_neighborhoods/s1200",
+      "seed": 1200
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Admissibility trajectory; mask=drop3.",
+      "scenario_id": "active_set_transition_neighborhoods/s1201",
+      "seed": 1201
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Admissibility trajectory; mask=drop23.",
+      "scenario_id": "active_set_transition_neighborhoods/s1202",
+      "seed": 1202
+    },
+    {
+      "expected_regime": "active_set_transition_neighborhood",
+      "notes": "Admissibility trajectory; mask=corner.",
+      "scenario_id": "active_set_transition_neighborhoods/s1203",
+      "seed": 1203
+    }
+  ],
+  "corpus_version": "r0-v0.3.0",
+  "expected_regimes": [
+    "active_set_transition_neighborhood"
+  ],
+  "family": "active_set_transition_neighborhoods",
+  "n_cases": 24,
+  "notes": [
+    "Benchmark packages existing corpus scenarios; corpus version unchanged.",
+    "Not a governed production benchmark; research-only.",
+    "Use with observatory / agreement_study for active-set neighborhood coverage."
+  ],
+  "promotion_status": "experimental",
+  "regime_counts": {
+    "active_set_transition_neighborhood": 24
+  },
+  "schema_id": "research.active_set_transition_benchmark.v0"
+}

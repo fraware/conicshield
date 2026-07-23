@@ -1,0 +1,38 @@
+name: research-corpus-integrity
+
+on:
+  pull_request:
+    paths:
+      - "research/solver-assurance-and-gradients/corpus/**"
+      - "conicshield/experimental/corpus/**"
+      - "research/solver-assurance-and-gradients/schemas/scenario.schema.json"
+      - ".github/workflows/research-corpus-integrity.yml"
+  push:
+    branches: [main]
+    paths:
+      - "research/solver-assurance-and-gradients/corpus/**"
+      - "conicshield/experimental/corpus/**"
+      - "research/solver-assurance-and-gradients/schemas/scenario.schema.json"
+      - ".github/workflows/research-corpus-integrity.yml"
+  workflow_dispatch:
+
+jobs:
+  corpus-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Regenerate and verify bit-stable corpus
+        run: |
+          python -m conicshield.experimental.corpus.generate
+          python -m conicshield.experimental.corpus.validate
+          git diff --exit-code -- research/solver-assurance-and-gradients/corpus
+      - name: Pytest corpus suite
+        run: python -m pytest tests/research/test_corpus_integrity.py tests/research/test_schemas.py -q --tb=short

@@ -1,0 +1,419 @@
+{
+  "backend_id": "cvxpy_clarabel",
+  "by_family": [
+    {
+      "failure_mode_counts": {
+        "ok": 4
+      },
+      "key": "family",
+      "kkt_available_rate": 1.0,
+      "kkt_mean_rel_fro": 8.339283269345224e-08,
+      "kkt_median_rel_fro": 3.543225014367415e-08,
+      "n": 4,
+      "smoothed_available_rate": 1.0,
+      "smoothed_mean_rel_fro": 0.009303559556420593,
+      "stratum": "active_set_transition_neighborhoods"
+    },
+    {
+      "failure_mode_counts": {
+        "ok": 1
+      },
+      "key": "family",
+      "kkt_available_rate": 1.0,
+      "kkt_mean_rel_fro": 5.605221022064815e-09,
+      "kkt_median_rel_fro": 5.605221022064815e-09,
+      "n": 1,
+      "smoothed_available_rate": 1.0,
+      "smoothed_mean_rel_fro": 2.4295765349623374e-09,
+      "stratum": "interior_feasible"
+    },
+    {
+      "failure_mode_counts": {
+        "ok": 1
+      },
+      "key": "family",
+      "kkt_available_rate": 1.0,
+      "kkt_mean_rel_fro": 5.415487019077233e-07,
+      "kkt_median_rel_fro": 5.415487019077233e-07,
+      "n": 1,
+      "smoothed_available_rate": 1.0,
+      "smoothed_mean_rel_fro": 0.009303635348894454,
+      "stratum": "rate_limited_transitions"
+    },
+    {
+      "failure_mode_counts": {
+        "ok": 1
+      },
+      "key": "family",
+      "kkt_available_rate": 1.0,
+      "kkt_mean_rel_fro": 7.058032203547318e-09,
+      "kkt_median_rel_fro": 7.058032203547318e-09,
+      "n": 1,
+      "smoothed_available_rate": 1.0,
+      "smoothed_mean_rel_fro": 0.00930363838298585,
+      "stratum": "single_active_bound"
+    }
+  ],
+  "by_regime": [
+    {
+      "failure_mode_counts": {
+        "ok": 4
+      },
+      "key": "expected_regime",
+      "kkt_available_rate": 1.0,
+      "kkt_mean_rel_fro": 8.339283269345224e-08,
+      "kkt_median_rel_fro": 3.543225014367415e-08,
+      "n": 4,
+      "smoothed_available_rate": 1.0,
+      "smoothed_mean_rel_fro": 0.009303559556420593,
+      "stratum": "active_set_transition_neighborhood"
+    },
+    {
+      "failure_mode_counts": {
+        "ok": 1
+      },
+      "key": "expected_regime",
+      "kkt_available_rate": 1.0,
+      "kkt_mean_rel_fro": 5.605221022064815e-09,
+      "kkt_median_rel_fro": 5.605221022064815e-09,
+      "n": 1,
+      "smoothed_available_rate": 1.0,
+      "smoothed_mean_rel_fro": 2.4295765349623374e-09,
+      "stratum": "interior_feasible"
+    },
+    {
+      "failure_mode_counts": {
+        "ok": 1
+      },
+      "key": "expected_regime",
+      "kkt_available_rate": 1.0,
+      "kkt_mean_rel_fro": 5.415487019077233e-07,
+      "kkt_median_rel_fro": 5.415487019077233e-07,
+      "n": 1,
+      "smoothed_available_rate": 1.0,
+      "smoothed_mean_rel_fro": 0.009303635348894454,
+      "stratum": "rate_limited"
+    },
+    {
+      "failure_mode_counts": {
+        "ok": 1
+      },
+      "key": "expected_regime",
+      "kkt_available_rate": 1.0,
+      "kkt_mean_rel_fro": 7.058032203547318e-09,
+      "kkt_median_rel_fro": 7.058032203547318e-09,
+      "n": 1,
+      "smoothed_available_rate": 1.0,
+      "smoothed_mean_rel_fro": 0.00930363838298585,
+      "stratum": "single_active_bound"
+    }
+  ],
+  "ci_small": true,
+  "conclusions": [
+    "exact_research_kkt is a fixed-active-set public-QP KKT adapter \u2014 not native Moreau exact_backend_gradient.",
+    "smoothed_research_projection is an epsilon-smoothed research adapter \u2014 not smoothed_backend_gradient.",
+    "Agreement metrics are numerical evidence only; they do not prove correctness of implicit differentiation under active-set changes.",
+    "R2 native exact-vs-FD promotion gate remains unsatisfied while backend gradient stubs stay fail-closed."
+  ],
+  "corpus_version": "r0-v0.3.0",
+  "evidence_kind": "numerical_agreement_only",
+  "fd_h": 1e-05,
+  "mode_labels": {
+    "central_finite_difference": "numerical_baseline",
+    "exact_backend_gradient": "stubbed_fail_closed",
+    "exact_research_kkt": "research_adapter_not_native",
+    "smoothed_backend_gradient": "stubbed_fail_closed",
+    "smoothed_research_projection": "research_adapter_not_native"
+  },
+  "negative_results": [],
+  "not_a_proof": true,
+  "overall": {
+    "failure_mode_counts": {
+      "active_set_change": 0,
+      "kkt_unavailable": 0,
+      "non_finite": 0,
+      "ok": 7,
+      "shape_mismatch": 0,
+      "singular_kkt": 0,
+      "smoothed_unavailable": 0,
+      "undefined_fd": 0
+    },
+    "kkt_available_count": 7,
+    "kkt_available_rate": 1.0,
+    "kkt_mean_rel_fro": 1.2682618370102062e-07,
+    "kkt_median_rel_fro": 2.0410933580437935e-08,
+    "n_scenarios": 7,
+    "native_exact_backend_gradient": "stubbed",
+    "native_smoothed_backend_gradient": "stubbed",
+    "smoothed_available_count": 7,
+    "smoothed_available_rate": 1.0,
+    "smoothed_mean_rel_fro": 0.0079745020553056
+  },
+  "provenance": {
+    "algorithm": null,
+    "backend": "cvxpy_clarabel",
+    "batch_size": 1,
+    "completion_time_utc": "2026-07-23T08:41:43.093309+00:00",
+    "cpu_info": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "cuda_driver": null,
+    "cuda_runtime": null,
+    "dirty_worktree": true,
+    "exact_command": "python -m conicshield.experimental.gradients.agreement_study",
+    "extra": {},
+    "fallback_policy": "record_only",
+    "gpu_info": null,
+    "operating_system": "Windows 11",
+    "output_artifact_hashes": {
+      "output\\research\\wave6\\agreement_study\\kkt_fd_agreement_ci_small.json": "4e271838a236b8148d282d3dd3ee216c9595b77d74bf5a27b2abc1717ebe4e0d",
+      "output\\research\\wave6\\agreement_study\\kkt_fd_agreement_ci_small.md": "23b356f8c5850bcce8c3ada76586ece28e4d164091256b8070bb987afba7a7f4"
+    },
+    "package_hash": null,
+    "package_source": null,
+    "python_version": "3.13.11",
+    "random_seeds": {
+      "agreement_study": 0
+    },
+    "repository_commit": "6974fcf0426facbef12fedde15efbcba13acdeb3",
+    "scenario_corpus_version": "r0-v0.3.0",
+    "solver_distribution": "cvxpy",
+    "solver_settings": {
+      "ci_small": true,
+      "fd_h": 1e-05,
+      "n_scenarios": 7,
+      "smoothing_epsilon": 0.01
+    },
+    "solver_version": "1.8.2",
+    "start_time_utc": "2026-07-23T08:41:31.167573+00:00",
+    "tolerances": {
+      "fd_h": 1e-05
+    },
+    "warm_start_policy": "cold"
+  },
+  "rows": [
+    {
+      "active_set": [
+        "box_upper[0]",
+        "simplex"
+      ],
+      "expected_regime": "active_set_transition_neighborhood",
+      "family": "active_set_transition_neighborhoods",
+      "fd_active_set_changed": false,
+      "kkt_abs_fro": 3.5817404563772295e-07,
+      "kkt_available": true,
+      "kkt_condition_number": 5.5651310348052725,
+      "kkt_failure_mode": "ok",
+      "kkt_rel_fro": 2.5326729651545383e-07,
+      "kkt_singular_value_rel": 2.532672964495445e-07,
+      "kkt_status": "available",
+      "modes": {
+        "native_exact": "exact_backend_gradient",
+        "native_smoothed": "smoothed_backend_gradient",
+        "reference": "central_finite_difference",
+        "research_kkt": "exact_research_kkt",
+        "research_smoothed": "smoothed_research_projection"
+      },
+      "not_native_moreau": true,
+      "notes": "KKT sensitivity under fixed active set (research adapter; not native Moreau).",
+      "scenario_id": "active_set_transition_neighborhoods/s1001",
+      "smoothed_abs_fro": 0.013157553814300376,
+      "smoothed_available": true,
+      "smoothed_failure_mode": "ok",
+      "smoothed_rel_fro": 0.009303392874506326,
+      "smoothed_singular_value_rel": 0.009303392874506246,
+      "smoothed_status": "available"
+    },
+    {
+      "active_set": [
+        "box_upper[0]",
+        "simplex"
+      ],
+      "expected_regime": "active_set_transition_neighborhood",
+      "family": "active_set_transition_neighborhoods",
+      "fd_active_set_changed": false,
+      "kkt_abs_fro": 1.3349516964279383e-08,
+      "kkt_available": true,
+      "kkt_condition_number": 5.5651310348052725,
+      "kkt_failure_mode": "ok",
+      "kkt_rel_fro": 9.439533971006806e-09,
+      "kkt_singular_value_rel": 9.439530883922441e-09,
+      "kkt_status": "available",
+      "modes": {
+        "native_exact": "exact_backend_gradient",
+        "native_smoothed": "smoothed_backend_gradient",
+        "reference": "central_finite_difference",
+        "research_kkt": "exact_research_kkt",
+        "research_smoothed": "smoothed_research_projection"
+      },
+      "not_native_moreau": true,
+      "notes": "KKT sensitivity under fixed active set (research adapter; not native Moreau).",
+      "scenario_id": "active_set_transition_neighborhoods/s1002",
+      "smoothed_abs_fro": 0.013157892931696004,
+      "smoothed_available": true,
+      "smoothed_failure_mode": "ok",
+      "smoothed_rel_fro": 0.009303632657862052,
+      "smoothed_singular_value_rel": 0.009303632657861603,
+      "smoothed_status": "available"
+    },
+    {
+      "active_set": [
+        "box_upper[0]",
+        "simplex"
+      ],
+      "expected_regime": "active_set_transition_neighborhood",
+      "family": "active_set_transition_neighborhoods",
+      "fd_active_set_changed": false,
+      "kkt_abs_fro": 2.8865419090151763e-08,
+      "kkt_available": true,
+      "kkt_condition_number": 5.5651310348052725,
+      "kkt_failure_mode": "ok",
+      "kkt_rel_fro": 2.0410933580437935e-08,
+      "kkt_singular_value_rel": 2.041093263909828e-08,
+      "kkt_status": "available",
+      "modes": {
+        "native_exact": "exact_backend_gradient",
+        "native_smoothed": "smoothed_backend_gradient",
+        "reference": "central_finite_difference",
+        "research_kkt": "exact_research_kkt",
+        "research_smoothed": "smoothed_research_projection"
+      },
+      "not_native_moreau": true,
+      "notes": "KKT sensitivity under fixed active set (research adapter; not native Moreau).",
+      "scenario_id": "active_set_transition_neighborhoods/s1003",
+      "smoothed_abs_fro": 0.013157876777488359,
+      "smoothed_available": true,
+      "smoothed_failure_mode": "ok",
+      "smoothed_rel_fro": 0.009303621236037452,
+      "smoothed_singular_value_rel": 0.009303621236037223,
+      "smoothed_status": "available"
+    },
+    {
+      "active_set": [
+        "box_upper[0]",
+        "simplex"
+      ],
+      "expected_regime": "active_set_transition_neighborhood",
+      "family": "active_set_transition_neighborhoods",
+      "fd_active_set_changed": false,
+      "kkt_abs_fro": 7.135211830700829e-08,
+      "kkt_available": true,
+      "kkt_condition_number": 5.5651310348052725,
+      "kkt_failure_mode": "ok",
+      "kkt_rel_fro": 5.045356670691036e-08,
+      "kkt_singular_value_rel": 5.045356646207544e-08,
+      "kkt_status": "available",
+      "modes": {
+        "native_exact": "exact_backend_gradient",
+        "native_smoothed": "smoothed_backend_gradient",
+        "reference": "central_finite_difference",
+        "research_kkt": "exact_research_kkt",
+        "research_smoothed": "smoothed_research_projection"
+      },
+      "not_native_moreau": true,
+      "notes": "KKT sensitivity under fixed active set (research adapter; not native Moreau).",
+      "scenario_id": "active_set_transition_neighborhoods/s1004",
+      "smoothed_abs_fro": 0.01315783466164048,
+      "smoothed_available": true,
+      "smoothed_failure_mode": "ok",
+      "smoothed_rel_fro": 0.009303591457276546,
+      "smoothed_singular_value_rel": 0.009303591457276154,
+      "smoothed_status": "available"
+    },
+    {
+      "active_set": [
+        "simplex"
+      ],
+      "expected_regime": "interior_feasible",
+      "family": "interior_feasible",
+      "fd_active_set_changed": false,
+      "kkt_abs_fro": 9.70852759786941e-09,
+      "kkt_available": true,
+      "kkt_condition_number": 2.5615528128088303,
+      "kkt_failure_mode": "ok",
+      "kkt_rel_fro": 5.605221022064815e-09,
+      "kkt_singular_value_rel": 5.559171677725711e-09,
+      "kkt_status": "available",
+      "modes": {
+        "native_exact": "exact_backend_gradient",
+        "native_smoothed": "smoothed_backend_gradient",
+        "reference": "central_finite_difference",
+        "research_kkt": "exact_research_kkt",
+        "research_smoothed": "smoothed_research_projection"
+      },
+      "not_native_moreau": true,
+      "notes": "KKT sensitivity under fixed active set (research adapter; not native Moreau).",
+      "scenario_id": "interior_feasible/s0101",
+      "smoothed_abs_fro": 4.2081499776011585e-09,
+      "smoothed_available": true,
+      "smoothed_failure_mode": "ok",
+      "smoothed_rel_fro": 2.4295765349623374e-09,
+      "smoothed_singular_value_rel": 1.6141522326227724e-09,
+      "smoothed_status": "available"
+    },
+    {
+      "active_set": [
+        "box_upper[0]",
+        "simplex"
+      ],
+      "expected_regime": "single_active_bound",
+      "family": "single_active_bound",
+      "fd_active_set_changed": false,
+      "kkt_abs_fro": 9.98156486592268e-09,
+      "kkt_available": true,
+      "kkt_condition_number": 5.5651310348052725,
+      "kkt_failure_mode": "ok",
+      "kkt_rel_fro": 7.058032203547318e-09,
+      "kkt_singular_value_rel": 7.058031571180425e-09,
+      "kkt_status": "available",
+      "modes": {
+        "native_exact": "exact_backend_gradient",
+        "native_smoothed": "smoothed_backend_gradient",
+        "reference": "central_finite_difference",
+        "research_kkt": "exact_research_kkt",
+        "research_smoothed": "smoothed_research_projection"
+      },
+      "not_native_moreau": true,
+      "notes": "KKT sensitivity under fixed active set (research adapter; not native Moreau).",
+      "scenario_id": "single_active_bound/s0201",
+      "smoothed_abs_fro": 0.01315790107854189,
+      "smoothed_available": true,
+      "smoothed_failure_mode": "ok",
+      "smoothed_rel_fro": 0.00930363838298585,
+      "smoothed_singular_value_rel": 0.009303638382983936,
+      "smoothed_status": "available"
+    },
+    {
+      "active_set": [
+        "rate_upper[0]",
+        "simplex"
+      ],
+      "expected_regime": "rate_limited",
+      "family": "rate_limited_transitions",
+      "fd_active_set_changed": false,
+      "kkt_abs_fro": 7.658655189234467e-07,
+      "kkt_available": true,
+      "kkt_condition_number": 5.5651310348052725,
+      "kkt_failure_mode": "ok",
+      "kkt_rel_fro": 5.415487019077233e-07,
+      "kkt_singular_value_rel": 5.415487018537058e-07,
+      "kkt_status": "available",
+      "modes": {
+        "native_exact": "exact_backend_gradient",
+        "native_smoothed": "smoothed_backend_gradient",
+        "reference": "central_finite_difference",
+        "research_kkt": "exact_research_kkt",
+        "research_smoothed": "smoothed_research_projection"
+      },
+      "not_native_moreau": true,
+      "notes": "KKT sensitivity under fixed active set (research adapter; not native Moreau).",
+      "scenario_id": "rate_limited_transitions/s0501",
+      "smoothed_abs_fro": 0.013157891142690944,
+      "smoothed_available": true,
+      "smoothed_failure_mode": "ok",
+      "smoothed_rel_fro": 0.009303635348894454,
+      "smoothed_singular_value_rel": 0.00930363501124277,
+      "smoothed_status": "available"
+    }
+  ],
+  "schema_id": "research.kkt_fd_agreement_study.v0",
+  "smoothing_epsilon": 0.01
+}

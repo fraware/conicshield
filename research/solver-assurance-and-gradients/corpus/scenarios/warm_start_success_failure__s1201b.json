@@ -1,0 +1,78 @@
+{
+  "corpus_family_id": "research.solver_assurance.r0",
+  "corpus_version": "r0-v0.3.0",
+  "expected_regime": "warm_start_candidate_failure",
+  "extras": {
+    "warm_start_hint": "stale_mask"
+  },
+  "family": "warm_start_success_failure",
+  "generation_commit": "bbd3dcffd9af8bfa",
+  "notes": "Mask flip vs previous \u2014 warm start likely harmful.",
+  "previous_action": [
+    0.6,
+    0.4,
+    0.0,
+    0.0
+  ],
+  "proposed_action": [
+    0.0,
+    0.0,
+    0.6,
+    0.4
+  ],
+  "reference_action": [
+    0.0,
+    0.0,
+    0.5,
+    0.5
+  ],
+  "scenario_id": "warm_start_success_failure/s1201b",
+  "seed": 1202,
+  "spec": {
+    "action_dim": 4,
+    "constraints": [
+      {
+        "kind": "simplex",
+        "total": 1.0
+      },
+      {
+        "allowed_actions": [
+          2,
+          3
+        ],
+        "kind": "turn_feasibility"
+      },
+      {
+        "kind": "box",
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "upper": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "kind": "rate",
+        "max_delta": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "slack_weight": 10.0,
+    "spec_id": "research/warm_start_success_failure",
+    "version": "0.1.0"
+  },
+  "weights": {
+    "policy_weight": 1.0,
+    "reference_weight": 0.0
+  }
+}

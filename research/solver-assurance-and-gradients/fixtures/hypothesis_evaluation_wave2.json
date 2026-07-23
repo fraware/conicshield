@@ -1,0 +1,130 @@
+{
+  "evaluations": [
+    {
+      "evidence_pointers": [],
+      "hypothesis_id": "R1.H1",
+      "negative_result": false,
+      "rationale": "Requires paired feature analysis on shadowed corpus cases.",
+      "statement": "Active-set changes predict solver disagreement better than raw proposal distance.",
+      "track": "R1",
+      "verdict": "not_evaluated"
+    },
+    {
+      "evidence_pointers": [
+        "research.sampling_study.v0",
+        "corpus:r0-v0.2.0"
+      ],
+      "hypothesis_id": "R1.H2",
+      "negative_result": true,
+      "rationale": "residual det=0.000 worse than random det=0.500",
+      "statement": "Residual-based sampling detects most consequential disagreements at substantially lower shadow cost than uniform sampling.",
+      "track": "R1",
+      "verdict": "fail"
+    },
+    {
+      "evidence_pointers": [],
+      "hypothesis_id": "R1.H3",
+      "negative_result": false,
+      "rationale": "",
+      "statement": "Warm-start anomalies are early signals of solver instability.",
+      "track": "R1",
+      "verdict": "not_evaluated"
+    },
+    {
+      "evidence_pointers": [
+        "research.candidate_stack_promotion.v0"
+      ],
+      "hypothesis_id": "R1.H4",
+      "negative_result": false,
+      "rationale": "",
+      "statement": "Cross-platform disagreement is dominated by a small number of conditioning regimes.",
+      "track": "R1",
+      "verdict": "not_evaluated"
+    },
+    {
+      "evidence_pointers": [
+        "GRADIENT_OBSERVATORY_REPORT"
+      ],
+      "hypothesis_id": "R2.H1",
+      "negative_result": false,
+      "rationale": "Exact/smoothed remain stubs; FD-only agreement is measurable.",
+      "statement": "Exact, smoothed, and finite-difference modes disagree most near active-set transitions.",
+      "track": "R2",
+      "verdict": "inconclusive"
+    },
+    {
+      "evidence_pointers": [
+        "dual_pressure_correlations"
+      ],
+      "hypothesis_id": "R2.H2",
+      "negative_result": false,
+      "rationale": "",
+      "statement": "Dual magnitude alone is a weak predictor of causal sensitivity without normalization and validation.",
+      "track": "R2",
+      "verdict": "not_evaluated"
+    },
+    {
+      "evidence_pointers": [],
+      "hypothesis_id": "R2.H3",
+      "negative_result": false,
+      "rationale": "",
+      "statement": "Local Jacobian norms rise before discrete active-set changes in bound-neighborhood corpora.",
+      "track": "R2",
+      "verdict": "not_evaluated"
+    },
+    {
+      "evidence_pointers": [],
+      "hypothesis_id": "R3.H1",
+      "negative_result": false,
+      "rationale": "",
+      "statement": "Local gradient predictions of nearby frontier movement fail precisely where active sets change.",
+      "track": "R3",
+      "verdict": "not_evaluated"
+    },
+    {
+      "evidence_pointers": [],
+      "hypothesis_id": "R3.H2",
+      "negative_result": false,
+      "rationale": "",
+      "statement": "Pareto-efficient safety-parameter choices are concentrated in a small number of conditioning regimes.",
+      "track": "R3",
+      "verdict": "not_evaluated"
+    },
+    {
+      "evidence_pointers": [
+        "ASSURANCE_SEMANTICS.md",
+        "assurance_bundle.schema.json"
+      ],
+      "hypothesis_id": "R4.H1",
+      "negative_result": false,
+      "rationale": "",
+      "statement": "Evidence levels L0\u2013L4 communicate assurance strength without implying universal safety guarantees.",
+      "track": "R4",
+      "verdict": "not_evaluated"
+    },
+    {
+      "evidence_pointers": [
+        "tests/research/test_evidence_corruption.py"
+      ],
+      "hypothesis_id": "R4.H2",
+      "negative_result": false,
+      "rationale": "",
+      "statement": "Corruption and missing-evidence tests catch overstated proof-carrying claims.",
+      "track": "R4",
+      "verdict": "not_evaluated"
+    },
+    {
+      "evidence_pointers": [
+        "R6_TRAINING_BLOCKED.md"
+      ],
+      "hypothesis_id": "R6.H1",
+      "negative_result": false,
+      "rationale": "R6 blocked until R2 and R4 promotion gates pass.",
+      "statement": "Reducing intervention rate on the training distribution does not imply improved held-out safety margin.",
+      "track": "R6",
+      "verdict": "blocked"
+    }
+  ],
+  "notes": "Verdicts are research-local and falsifiable. INCONCLUSIVE is preferred over overclaim when evidence is thin.",
+  "schema_id": "research.hypothesis_evaluation.v0"
+}
