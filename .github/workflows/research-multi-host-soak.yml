@@ -1,0 +1,112 @@
+name: research-multi-host-soak
+
+# Optional multi-OS soak matrix for R4 evidence collection.
+# Separate from research-public.yml — does not alter that required path.
+# Never claims R4 / production promotion. Synthetic fixtures are not used here.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 7 * * 1"
+
+concurrency:
+  group: research-multi-host-soak-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  soak:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Platform soak (real CI runner)
+        shell: bash
+        run: |
+          HOST_ID="gha-${{ matrix.os }}|${{ runner.os }}|3.12"
+          python -m conicshield.experimental.assurance.platform_soak \
+            --output-dir "output/research/multi_host_ci/${{ matrix.os }}" \
+            --host-id "${HOST_ID}" \
+            --host-kind real
+      - name: Upload soak shard
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-soak-${{ matrix.os }}
+          path: output/research/multi_host_ci/${{ matrix.os }}/platform_soak.json
+          if-no-files-found: error
+          retention-days: 30
+
+  aggregate:
+    needs: soak
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Download soak shards
+        uses: actions/download-artifact@v4
+        with:
+          path: output/research/multi_host_ci/shards
+          pattern: platform-soak-*
+          merge-multiple: false
+      - name: Aggregate digests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/research/multi_host_ci/aggregate
+          mapfile -t SHARDS < <(find output/research/multi_host_ci/shards -name 'platform_soak.json' | sort)
+          echo "Found shards:" "${SHARDS[@]}"
+          test "${#SHARDS[@]}" -ge 2
+          python -m conicshield.experimental.assurance.platform_soak \
+            --output-dir output/research/multi_host_ci/aggregate \
+            --aggregate "${SHARDS[@]}"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("output/research/multi_host_ci/aggregate/platform_soak_aggregate.json")
+          d = json.loads(p.read_text(encoding="utf-8"))
+          assert d.get("promotion_claim") is False
+          assert int(d.get("n_real_hosts") or 0) >= 2
+          assert int(d.get("n_synthetic_hosts") or 0) == 0
+          # Evidence readiness only — do NOT treat as production R4 pass.
+          summary = {
+              "n_real_hosts": d["n_real_hosts"],
+              "n_synthetic_hosts": d["n_synthetic_hosts"],
+              "r4_multi_host_gate_ready": d.get("r4_multi_host_gate_ready"),
+              "promotion_claim": d["promotion_claim"],
+              "digest_mismatches": d.get("digest_mismatches"),
+              "r4_blockers": d.get("r4_blockers"),
+              "note": (
+                  "CI multi-OS soak is real-host evidence toward R4, "
+                  "not a production promotion claim. Governed hash still unwired."
+              ),
+          }
+          Path("output/research/multi_host_ci/aggregate/summary.json").write_text(
+              json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          print(json.dumps(summary, indent=2, sort_keys=True))
+          PY
+      - name: Upload aggregate
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-soak-aggregate
+          path: output/research/multi_host_ci/aggregate/
+          if-no-files-found: warn
+          retention-days: 30

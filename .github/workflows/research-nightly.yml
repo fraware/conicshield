@@ -1,0 +1,161 @@
+name: research-nightly
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  research-nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Corpus integrity
+        run: python -m conicshield.experimental.corpus.validate
+      - name: Full sampling study (all policies)
+        run: |
+          python -m conicshield.experimental.solver_assurance.sampling_study \
+            --output-dir output/research/nightly/sampling_study
+      - name: Candidate stack promotion
+        run: python experiments/research_wave2/run_candidate_stack_promotion.py
+      - name: Observatory over active-set trajectories
+        run: python experiments/research_wave2/run_observatory.py
+      - name: Full KKT ↔ FD agreement study
+        run: |
+          python experiments/research_wave6/run_agreement_study.py --full
+          mkdir -p output/research/nightly/agreement_study
+          cp -r output/research/wave6/agreement_study/. output/research/nightly/agreement_study/ || true
+      - name: Frontier + local-global
+        run: python experiments/research_wave3/run_frontiers.py
+      - name: Assurance + CBF
+        run: python experiments/research_wave4/run_assurance_and_cbf.py
+      - name: Hypothesis evaluation (corpus-backed)
+        run: python experiments/research_wave5/run_hypothesis_eval.py
+      - name: Research gradients + CBF stage3
+        run: python experiments/research_wave5/run_gradients_and_cbf.py
+      - name: Clean-env assurance soak
+        run: python experiments/research_wave5/run_clean_env_soak.py
+      - name: Platform-matrix soak (retain artifacts)
+        run: |
+          python experiments/research_wave6/run_platform_soak.py
+          mkdir -p output/research/nightly/platform_soak
+          cp -r output/research/wave6/platform_soak/. output/research/nightly/platform_soak/ || true
+      - name: Multi-host soak simulation + mismatch fixture
+        run: |
+          python -m conicshield.experimental.assurance.multi_host_soak_sim \
+            --output-dir output/research/nightly/multi_host_soak_sim_match \
+            --digest-mode match
+          python -m conicshield.experimental.assurance.multi_host_soak_sim \
+            --output-dir output/research/nightly/multi_host_soak_sim_mismatch \
+            --digest-mode mismatch
+      - name: Disagreement corpus packaging
+        run: |
+          python -m conicshield.experimental.solver_assurance.disagreement_corpus \
+            --output-dir output/research/nightly/disagreement_corpus
+      - name: Infeasibility taxonomy audit
+        run: |
+          python -m conicshield.experimental.domains.infeasibility_taxonomy
+          mkdir -p output/research/nightly
+          cp output/research/cbf_infeasibility_audit.json output/research/nightly/ || true
+      - name: Stage-4 gate evaluator
+        run: |
+          python -m conicshield.experimental.domains.stage4_gate \
+            --output-dir output/research/nightly/stage4_gate
+      - name: Wave8 CBF RH larger sweep + negatives
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import numpy as np
+          from conicshield.experimental.domains.cbf_2d import AgentState2D, CircularObstacle
+          from conicshield.experimental.domains.cbf_rh import (
+              RHConstraintMode,
+              run_receding_horizon_filter,
+          )
+          from conicshield.experimental.domains.stage4_gate import evaluate_stage4_gate
+          from conicshield.experimental.adapters.track1_probe import write_track1_probe_attestation
+
+          out = Path("output/research/nightly/cbf_rh")
+          out.mkdir(parents=True, exist_ok=True)
+          gate = evaluate_stage4_gate(evidence_dir=out / "gate")
+          cases = []
+          for horizon in (3, 5, 8):
+              for mode in (RHConstraintMode.NOMINAL_STAGE1, RHConstraintMode.SOC_ROBUST_STAGE3):
+                  for u_max in (1.0, 0.2, 0.05):
+                      agent = AgentState2D(np.array([0.0, 0.0]), np.array([1.0, 0.0]), f"h{horizon}")
+                      obs = CircularObstacle(np.array([1.2, 0.0]), 0.5, "o0")
+                      r = run_receding_horizon_filter(
+                          agent,
+                          obs,
+                          horizon=horizon,
+                          u_max=u_max,
+                          constraint_mode=mode,
+                          require_stage4_checklist_green=True,
+                          gate_evaluation=gate,
+                          compare_baselines=(horizon == 3 and u_max == 1.0),
+                      )
+                      cases.append(
+                          {
+                              "horizon": horizon,
+                              "mode": mode.value,
+                              "u_max": u_max,
+                              "ran": r.ran,
+                              "metrics": None if r.metrics is None else r.metrics.as_dict(),
+                              "negatives": r.negatives.as_dict(),
+                              "fail_closed_reason": r.fail_closed_reason,
+                          }
+                      )
+          path = out / "rh_sweep.json"
+          path.write_text(json.dumps({"cases": cases}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          write_track1_probe_attestation(path=out / "track1_probe_attestation.json")
+          print("wrote", path, "n=", len(cases))
+          PY
+      - name: Wave6 deliverable closure packaging
+        run: python experiments/research_wave6/run_wave6_closure.py
+      - name: Larger shadow sampling comparison
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from conicshield.experimental.solver_assurance.shadow_harness import run_shadow_harness
+          from conicshield.experimental.solver_assurance.sampling import SamplingPolicyId
+          out = Path("output/research/nightly")
+          out.mkdir(parents=True, exist_ok=True)
+          summaries = {}
+          for policy in SamplingPolicyId:
+              for frac in (0.25, 0.5, 1.0):
+                  key = f"{policy.value}@{frac}"
+                  summaries[key] = run_shadow_harness(
+                      sampling_policy=policy,
+                      budget_fraction=frac,
+                      exact_command=f"nightly:{key}",
+                  )
+                  summaries[key] = {
+                      k: v for k, v in summaries[key].items() if k != "cases"
+                  }
+          path = out / "sampling_sweep.json"
+          path.write_text(json.dumps(summaries, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print("wrote", path)
+          PY
+      - name: Upload nightly artifacts
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-nightly-output
+          path: |
+            output/research/nightly/
+            output/research/wave6/
+            output/research/wave7/
+            output/research/wave8/
+            output/research/wave5/clean_env_soak/
+            output/research/cbf_infeasibility_audit.json
+          if-no-files-found: warn
+          retention-days: 30
