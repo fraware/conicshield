@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from conicshield.backends.base import (
     AUTO_PRODUCTION_ENV,
     PUBLIC_BACKENDS,
@@ -90,6 +92,7 @@ def create_batch_projector(
     backend: Backend | str = Backend.NATIVE_MOREAU_BATCH,
     native_options: NativeMoreauCompiledOptions | None = None,
     production_backend: Backend | str | None = None,
+    metrics: Any | None = None,
 ) -> NativeMoreauCompiledBatchProjector:
     """Return the batched native projector (one ``CompiledSolver.solve(qs, bs)`` per call).
 
@@ -105,4 +108,7 @@ def create_batch_projector(
             f"(from requested {backend!s}). AUTO/public backends are not batch-native; "
             "select NATIVE_MOREAU_BATCH explicitly when the vendor stack is installed."
         )
-    return NativeMoreauCompiledBatchProjector(spec=spec, options=native_options)
+    kwargs: dict[str, Any] = {"spec": spec, "options": native_options}
+    if metrics is not None:
+        kwargs["metrics"] = metrics
+    return NativeMoreauCompiledBatchProjector(**kwargs)
