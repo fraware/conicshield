@@ -144,12 +144,30 @@ py -3 scripts/performance_benchmark.py --decision-grade --out-dir benchmarks/rep
 
 ## 14. Remaining limitations
 
-1. Licensed vendor Moreau CI attestation requires Gemfury / license secrets; local Windows cannot import Moreau.
-2. Flagship full-refresh cadence (~35–55d policy) may keep `make verify-v1-lock` cadence checks red until a licensed refresh.
+1. Canonical GitHub Actions `vendor-ci-moreau` still needs a visible green run on the integration branch after these commits are pushed (local WSL attestation is recorded under `docs/stabilization/vendor_attestation_local/`).
+2. Flagship full-refresh cadence was cleared locally on 2026-07-23 (refresh history #5); keep monthly licensed refresh discipline.
 3. WSL sidecar is **not** production-ready; no live Moreau worker attestation on this host.
 4. Public latency numbers are host-specific; do not generalize to vendor or CUDA.
 5. `progress` / `clearance` remain unimplemented as product constraints.
 6. Batch public narrative remains **viability_only** unless governed reports show throughput tier.
+
+### Gate clearance evidence (2026-07-23, WSL Moreau CPU 0.3.3)
+
+| Former blocker | Local outcome | Artifact |
+|----------------|---------------|----------|
+| `verify-v1-lock` cadence (~55d) | PASS after licensed refresh | `benchmarks/external_evidence/EXPORT_PROVENANCE.json` refresh #5 |
+| Heterogeneous batch parity | PASS (`max_abs_error=0`) | `docs/stabilization/heterogeneous_batch_parity.json` |
+| Vendor real-solve attestation | PASS (37 executed, 0 skipped, mandatory solves OK) | `docs/stabilization/vendor_attestation_local/` |
+
+Reproduce on WSL:
+
+```bash
+source .venv-wsl-moreau/bin/activate   # or bootstrap solver-moreau-cpu
+make host-realistic-refresh-cycle-licensed
+python scripts/run_heterogeneous_batch_parity.py
+CONICSHIELD_VENDOR_REQUIRED=1 python scripts/run_local_vendor_attestation.py --write-moreau-key
+python scripts/verify_v1_lock.py
+```
 
 ## 15. Exact public claims now justified
 
