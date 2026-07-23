@@ -1,18 +1,25 @@
 {
   "track": "Track 1 — Production Stabilization",
   "integration_branch": "engineering/stabilization-moreau",
+  "integration_tip_at_eval": "6e7f7d87db7754a4e7bda588c794babf3fadaa66",
   "s7_merge_sha": "d7f1da49b893557dd72e5d55fbc6018d79eb255e",
   "p0_status": "all_fixed",
   "p1_status": "all_fixed",
-  "s8_status": "artifacts_ready_pr_to_integration",
-  "main_merge_gate": "fail",
+  "s8_status": "merged_to_integration",
+  "main_merge_gate": "fail_pending_ci_confirmation",
   "main_merge_blockers": [
-    "vendor_ci_real_solve_attestation",
-    "heterogeneous_batch_parity_vendor_host",
-    "verify_v1_lock_cadence_risk"
+    "commit_and_ci_confirmation_no_push_this_session",
+    "github_actions_vendor_ci_moreau_visible_green"
+  ],
+  "cleared_locally_2026_07_23": [
+    "verify_v1_lock_cadence",
+    "heterogeneous_batch_parity_wsl",
+    "local_vendor_attestation_wsl"
   ],
   "completion_report": "docs/stabilization/TRACK1_COMPLETION_REPORT.md",
   "qualification_report": "docs/stabilization/PRODUCTION_QUALIFICATION_REPORT.md",
   "gate_evaluation": "docs/stabilization/RELEASE_GATE_EVALUATION.md",
-  "benchmark_reports": "benchmarks/reports/s8_qualification/"
+  "benchmark_reports": "benchmarks/reports/s8_qualification/",
+  "vendor_attestation": "docs/stabilization/vendor_attestation_local/",
+  "heterogeneous_batch_parity": "docs/stabilization/heterogeneous_batch_parity.json"
 }
