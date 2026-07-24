@@ -2,31 +2,105 @@
   "baseline_budget_fraction": 1.0,
   "baseline_policy": "random",
   "consequential_l2_threshold": 0.01,
-  "corpus_version": "r0-v0.2.0",
+  "corpus_version": "r0-v0.4.0",
+  "cost_detection_curve": [
+    {
+      "budget_fraction": 0.5,
+      "consequential_baseline": 5,
+      "consequential_detected": 1,
+      "detection_ci_high": 0.6244717358814613,
+      "detection_ci_low": 0.03622316096978745,
+      "detection_estimable": true,
+      "detection_rate": 0.2,
+      "false_skip_rate": 0.8,
+      "policy": "residual",
+      "shadow_cost_relative": 0.5116279069767442
+    },
+    {
+      "budget_fraction": 1.0,
+      "consequential_baseline": 5,
+      "consequential_detected": 5,
+      "detection_ci_high": 1.0,
+      "detection_ci_low": 0.5655085052479191,
+      "detection_estimable": true,
+      "detection_rate": 1.0,
+      "false_skip_rate": 0.0,
+      "policy": "residual",
+      "shadow_cost_relative": 1.0
+    },
+    {
+      "budget_fraction": 0.5,
+      "consequential_baseline": 5,
+      "consequential_detected": 5,
+      "detection_ci_high": 0.769280067791163,
+      "detection_ci_low": 0.1176182311592533,
+      "detection_estimable": true,
+      "detection_rate": 0.5,
+      "false_skip_rate": 0.5,
+      "policy": "random",
+      "shadow_cost_relative": 0.5116279069767442
+    },
+    {
+      "budget_fraction": 1.0,
+      "consequential_baseline": 5,
+      "consequential_detected": 5,
+      "detection_ci_high": 1.0,
+      "detection_ci_low": 0.5655085052479191,
+      "detection_estimable": true,
+      "detection_rate": 1.0,
+      "false_skip_rate": 0.0,
+      "policy": "random",
+      "shadow_cost_relative": 1.0
+    },
+    {
+      "budget_fraction": 0.5,
+      "consequential_baseline": 5,
+      "consequential_detected": 3,
+      "detection_ci_high": 0.769280067791163,
+      "detection_ci_low": 0.1176182311592533,
+      "detection_estimable": true,
+      "detection_rate": 0.4,
+      "false_skip_rate": 0.6000000000000001,
+      "policy": "active_set_change",
+      "shadow_cost_relative": 0.5116279069767442
+    },
+    {
+      "budget_fraction": 1.0,
+      "consequential_baseline": 5,
+      "consequential_detected": 5,
+      "detection_ci_high": 1.0,
+      "detection_ci_low": 0.5655085052479191,
+      "detection_estimable": true,
+      "detection_rate": 1.0,
+      "false_skip_rate": 0.0,
+      "policy": "active_set_change",
+      "shadow_cost_relative": 1.0
+    }
+  ],
   "family_summaries_baseline": [
     {
       "distribution": {
         "consequential_rate": 0.0,
-        "count": 18,
-        "mean_l2": 2.9796506900067298e-06,
-        "mean_linf": 2.57732654163094e-06,
-        "median_l2": 2.4507106779162258e-08,
+        "count": 24,
+        "mean_l2": 2.236733551953172e-06,
+        "mean_linf": 1.9343047557974958e-06,
+        "median_l2": 1.3277488114577904e-08,
         "negative_result_count": 0,
-        "p95_l2": 2.0624442220532922e-05,
+        "p95_l2": 1.534193168130334e-05,
         "residual_dominance_counts": {
-          "tie": 18
+          "tie": 24
         },
         "status_disagreement_rate": 0.0,
         "taxonomy_counts": {
           "action_diff_small": 2,
-          "active_set_mismatch": 9,
-          "none": 7,
-          "objective_gap": 6
+          "active_set_mismatch": 10,
+          "none": 12,
+          "objective_gap": 7
         }
       },
       "family": "active_set_transition_neighborhoods",
-      "n_cases": 18,
-      "n_shadowed": 18,
+      "n_cases": 24,
+      "n_shadowed": 24,
       "notes": "negative_result: no consequential disagreement in this family under recorded settings"
     },
     {
@@ -73,6 +147,30 @@
       "n_cases": 1,
       "n_shadowed": 1,
       "notes": "negative_result: no consequential disagreement in this family under recorded settings"
+    },
+    {
+      "distribution": {
+        "consequential_rate": 0.75,
+        "count": 4,
+        "mean_l2": 4.2359379717306616e-08,
+        "mean_linf": 2.9073038175327416e-08,
+        "median_l2": 4.2359379717306616e-08,
+        "negative_result_count": 3,
+        "p95_l2": 4.2359379717306616e-08,
+        "residual_dominance_counts": {
+          "tie": 3
+        },
+        "status_disagreement_rate": 0.75,
+        "taxonomy_counts": {
+          "active_set_mismatch": 3,
+          "objective_gap": 1,
+          "status_only": 3
+        }
+      },
+      "family": "consequential_disagreement_regimes",
+      "n_cases": 4,
+      "n_shadowed": 4,
+      "notes": ""
     },
     {
       "distribution": {
@@ -342,37 +440,46 @@
       "notes": "negative_result: no consequential disagreement in this family under recorded settings"
     }
   ],
+  "master_seeds": [
+    0,
+    1
+  ],
   "negative_results": [
-    "policy=active_set_change budget=0.5: detection_rate=0.000 (below 0.5 vs 100% shadow consequential set)",
-    "policy=residual budget=0.5: detection_rate=0.000 (below 0.5 vs 100% shadow consequential set)"
+    "policy=active_set_change budget=0.5: detection_rate=0.400 (below 0.5 vs 100% shadow consequential set)",
+    "policy=residual budget=0.5: detection_rate=0.200 (below 0.5 vs 100% shadow consequential set)"
   ],
   "primary_backend": "cvxpy_clarabel",
-  "promotion_gate": "Advanced sampling may enter production only when mandatory verification remains complete and sampling affects only the optional secondary solve.",
+  "production_recommendation": null,
+  "production_recommendation_blocked": true,
+  "promotion_gate": "Advanced sampling may enter production only when mandatory verification remains complete and sampling affects only the optional secondary solve. R1 production recommendation stays blocked until real deployment distributions.",
   "provenance": {
     "algorithm": null,
     "backend": "cvxpy_clarabel|cvxpy_scs",
     "batch_size": 1,
-    "completion_time_utc": "2026-07-23T06:22:34.480954+00:00",
+    "completion_time_utc": "2026-07-23T23:03:51.860644+00:00",
     "cpu_info": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
     "cuda_driver": null,
     "cuda_runtime": null,
     "dirty_worktree": true,
-    "exact_command": "python experiments/research_wave2/run_sampling_study.py",
+    "exact_command": "python -m conicshield.experimental.solver_assurance.sampling_study",
     "extra": {},
     "fallback_policy": "record_only",
     "gpu_info": null,
     "operating_system": "Windows 11",
     "output_artifact_hashes": {
-      "C:\\Users\\mateo\\conicshield\\output\\research\\wave2\\sampling_study\\sampling_study_ci_small.json": "0d86b78f4e6abe6d434275f9f4f558197d34dba0b5221474439bd60b7532dca0"
+      "research\\solver-assurance-and-gradients\\fixtures\\sampling_study_ci_small.json": "7f570b530e03777c5db984d3c8166601218cdbbb766fd160eb30b82ef4507cac"
     },
     "package_hash": null,
     "package_source": null,
     "python_version": "3.13.11",
     "random_seeds": {
-      "sampling_study": 0
+      "sampling_study_master_seeds": [
+        0,
+        1
+      ]
     },
-    "repository_commit": "6e7f7d87db7754a4e7bda588c794babf3fadaa66",
-    "scenario_corpus_version": "r0-v0.2.0",
+    "repository_commit": "bdf03efe868552e7ef73644816d0d1ea453d3d2c",
+    "scenario_corpus_version": "r0-v0.4.0",
     "solver_distribution": "cvxpy",
     "solver_settings": {
       "budget_fractions": [
@@ -380,6 +487,10 @@
         1.0
       ],
       "ci_small": true,
+      "master_seeds": [
+        0,
+        1
+      ],
       "policies": [
         "residual",
         "random",
@@ -387,98 +498,212 @@
       ]
     },
     "solver_version": "1.8.2",
-    "start_time_utc": "2026-07-23T06:22:17.262776+00:00",
+    "start_time_utc": "2026-07-23T23:03:27.167700+00:00",
     "tolerances": {
       "action_l2_consequential": 0.01
     },
     "warm_start_policy": "cold"
   },
+  "publication_ready_machine_readable": true,
   "results": [
     {
       "budget_fraction": 0.5,
-      "consequential_baseline": 2,
-      "consequential_detected": 0,
-      "detection_rate": 0.0,
-      "false_skip_rate": 1.0,
-      "mean_l2_when_shadowed": 7.430035617572281e-08,
-      "notes": "",
-      "policy": "residual",
-      "scenario_count": 33,
-      "shadow_cost_relative": 0.48484848484848486,
-      "shadowed_count": 16,
-      "status_disagreement_count": 0
-    },
-    {
-      "budget_fraction": 1.0,
-      "consequential_baseline": 2,
-      "consequential_detected": 2,
-      "detection_rate": 1.0,
-      "false_skip_rate": 0.0,
-      "mean_l2_when_shadowed": 2.7110941397421036e-06,
-      "notes": "",
-      "policy": "residual",
-      "scenario_count": 33,
-      "shadow_cost_relative": 1.0,
-      "shadowed_count": 33,
-      "status_disagreement_count": 2
-    },
-    {
-      "budget_fraction": 0.5,
-      "consequential_baseline": 2,
+      "consequential_baseline": 5,
       "consequential_detected": 1,
-      "detection_rate": 0.5,
-      "false_skip_rate": 0.5,
-      "mean_l2_when_shadowed": 4.1412458518256825e-06,
+      "detection_estimable": true,
+      "detection_rate": 0.2,
+      "false_skip_rate": 0.8,
+      "family_stratified_detection": {
+        "consequential_disagreement_regimes": 0.3333333333333333,
+        "poorly_conditioned_objectives": 0.0,
+        "solver_timeout_iteration_limit": 0.0
+      },
+      "mean_detection_across_seeds": 0.2,
+      "mean_l2_when_shadowed": 6.080546178470363e-08,
+      "missed_baseline_ids": [
+        "consequential_disagreement_regimes/s1602",
+        "consequential_disagreement_regimes/s1604",
+        "poorly_conditioned_objectives/s0901",
+        "solver_timeout_iteration_limit/s1101"
+      ],
       "notes": "",
-      "policy": "random",
-      "scenario_count": 33,
-      "shadow_cost_relative": 0.48484848484848486,
-      "shadowed_count": 16,
+      "policy": "residual",
+      "scenario_count": 43,
+      "seed_detection_rates": [
+        0.2,
+        0.2
+      ],
+      "shadow_cost_relative": 0.5116279069767442,
+      "shadowed_count": 22,
       "status_disagreement_count": 1
     },
     {
       "budget_fraction": 1.0,
-      "consequential_baseline": 2,
-      "consequential_detected": 2,
+      "consequential_baseline": 5,
+      "consequential_detected": 5,
+      "detection_estimable": true,
       "detection_rate": 1.0,
       "false_skip_rate": 0.0,
-      "mean_l2_when_shadowed": 2.7110941397421036e-06,
+      "family_stratified_detection": {
+        "consequential_disagreement_regimes": 1.0,
+        "poorly_conditioned_objectives": 1.0,
+        "solver_timeout_iteration_limit": 1.0
+      },
+      "mean_detection_across_seeds": 1.0,
+      "mean_l2_when_shadowed": 2.2006236864523083e-06,
+      "missed_baseline_ids": [],
       "notes": "",
-      "policy": "random",
-      "scenario_count": 33,
+      "policy": "residual",
+      "scenario_count": 43,
+      "seed_detection_rates": [
+        1.0,
+        1.0
+      ],
       "shadow_cost_relative": 1.0,
-      "shadowed_count": 33,
-      "status_disagreement_count": 2
+      "shadowed_count": 43,
+      "status_disagreement_count": 5
     },
     {
       "budget_fraction": 0.5,
-      "consequential_baseline": 2,
-      "consequential_detected": 0,
-      "detection_rate": 0.0,
-      "false_skip_rate": 1.0,
-      "mean_l2_when_shadowed": 3.347845434031887e-06,
+      "consequential_baseline": 5,
+      "consequential_detected": 5,
+      "detection_estimable": true,
+      "detection_rate": 0.5,
+      "false_skip_rate": 0.5,
+      "family_stratified_detection": {
+        "consequential_disagreement_regimes": 1.0,
+        "poorly_conditioned_objectives": 1.0,
+        "solver_timeout_iteration_limit": 1.0
+      },
+      "mean_detection_across_seeds": 0.5,
+      "mean_l2_when_shadowed": 1.8486869801054547e-06,
+      "missed_baseline_ids": [],
       "notes": "",
-      "policy": "active_set_change",
-      "scenario_count": 33,
-      "shadow_cost_relative": 0.48484848484848486,
-      "shadowed_count": 16,
-      "status_disagreement_count": 0
+      "policy": "random",
+      "scenario_count": 43,
+      "seed_detection_rates": [
+        0.8,
+        0.2
+      ],
+      "shadow_cost_relative": 0.5116279069767442,
+      "shadowed_count": 22,
+      "status_disagreement_count": 2
     },
     {
       "budget_fraction": 1.0,
-      "consequential_baseline": 2,
-      "consequential_detected": 2,
+      "consequential_baseline": 5,
+      "consequential_detected": 5,
+      "detection_estimable": true,
       "detection_rate": 1.0,
       "false_skip_rate": 0.0,
-      "mean_l2_when_shadowed": 2.7110941397421036e-06,
+      "family_stratified_detection": {
+        "consequential_disagreement_regimes": 1.0,
+        "poorly_conditioned_objectives": 1.0,
+        "solver_timeout_iteration_limit": 1.0
+      },
+      "mean_detection_across_seeds": 1.0,
+      "mean_l2_when_shadowed": 2.2006236864523083e-06,
+      "missed_baseline_ids": [],
+      "notes": "",
+      "policy": "random",
+      "scenario_count": 43,
+      "seed_detection_rates": [
+        1.0,
+        1.0
+      ],
+      "shadow_cost_relative": 1.0,
+      "shadowed_count": 43,
+      "status_disagreement_count": 5
+    },
+    {
+      "budget_fraction": 0.5,
+      "consequential_baseline": 5,
+      "consequential_detected": 3,
+      "detection_estimable": true,
+      "detection_rate": 0.4,
+      "false_skip_rate": 0.6000000000000001,
+      "family_stratified_detection": {
+        "consequential_disagreement_regimes": 0.6666666666666666,
+        "poorly_conditioned_objectives": 1.0,
+        "solver_timeout_iteration_limit": 0.0
+      },
+      "mean_detection_across_seeds": 0.4,
+      "mean_l2_when_shadowed": 2.4636821165310987e-06,
+      "missed_baseline_ids": [
+        "consequential_disagreement_regimes/s1601",
+        "solver_timeout_iteration_limit/s1101"
+      ],
       "notes": "",
       "policy": "active_set_change",
-      "scenario_count": 33,
-      "shadow_cost_relative": 1.0,
-      "shadowed_count": 33,
+      "scenario_count": 43,
+      "seed_detection_rates": [
+        0.6,
+        0.2
+      ],
+      "shadow_cost_relative": 0.5116279069767442,
+      "shadowed_count": 22,
       "status_disagreement_count": 2
+    },
+    {
+      "budget_fraction": 1.0,
+      "consequential_baseline": 5,
+      "consequential_detected": 5,
+      "detection_estimable": true,
+      "detection_rate": 1.0,
+      "false_skip_rate": 0.0,
+      "family_stratified_detection": {
+        "consequential_disagreement_regimes": 1.0,
+        "poorly_conditioned_objectives": 1.0,
+        "solver_timeout_iteration_limit": 1.0
+      },
+      "mean_detection_across_seeds": 1.0,
+      "mean_l2_when_shadowed": 2.2006236864523083e-06,
+      "missed_baseline_ids": [],
+      "notes": "",
+      "policy": "active_set_change",
+      "scenario_count": 43,
+      "seed_detection_rates": [
+        1.0,
+        1.0
+      ],
+      "shadow_cost_relative": 1.0,
+      "shadowed_count": 43,
+      "status_disagreement_count": 5
     }
   ],
-  "schema_id": "research.sampling_study.v0",
-  "shadow_backend": "cvxpy_scs"
+  "schema_id": "research.sampling_study.v1",
+  "shadow_backend": "cvxpy_scs",
+  "statistical_summary": {
+    "baseline_consequential_count": 5,
+    "ci_small": true,
+    "confidence_method": "wilson_score_interval_95",
+    "cost_distribution": {
+      "max": 1.0,
+      "mean": 0.7558139534883721,
+      "median": 0.7558139534883721,
+      "min": 0.5116279069767442,
+      "n": 6,
+      "p95": 1.0
+    },
+    "detection_not_estimable_when_zero_baseline": true,
+    "highlight_policy_budget": {
+      "budget_fraction": 0.5,
+      "detection_ci_95": [
+        0.03622316096978745,
+        0.6244717358814613
+      ],
+      "detection_estimable": true,
+      "detection_rate": 0.2,
+      "policy": "residual",
+      "shadow_cost_relative": 0.5116279069767442
+    },
+    "master_seeds": [
+      0,
+      1
+    ],
+    "n_scenarios": 43,
+    "pareto_note": "cost_detection_curve lists all policy/budget cells; select operating points by inspection \u2014 no automatic production recommendation.",
+    "prevalence": 0.11627906976744186,
+    "production_recommendation_blocked": true
+  }
 }

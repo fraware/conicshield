@@ -1,0 +1,52 @@
+{
+  "algorithm": null,
+  "backend": "cvxpy_clarabel|cvxpy_scs",
+  "batch_size": 1,
+  "completion_time_utc": "2026-07-23T23:03:51.860644+00:00",
+  "cpu_info": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+  "cuda_driver": null,
+  "cuda_runtime": null,
+  "dirty_worktree": true,
+  "exact_command": "python -m conicshield.experimental.solver_assurance.sampling_study",
+  "extra": {},
+  "fallback_policy": "record_only",
+  "gpu_info": null,
+  "operating_system": "Windows 11",
+  "output_artifact_hashes": {
+    "research\\solver-assurance-and-gradients\\fixtures\\sampling_study_ci_small.json": "7f570b530e03777c5db984d3c8166601218cdbbb766fd160eb30b82ef4507cac"
+  },
+  "package_hash": null,
+  "package_source": null,
+  "python_version": "3.13.11",
+  "random_seeds": {
+    "sampling_study_master_seeds": [
+      0,
+      1
+    ]
+  },
+  "repository_commit": "bdf03efe868552e7ef73644816d0d1ea453d3d2c",
+  "scenario_corpus_version": "r0-v0.4.0",
+  "solver_distribution": "cvxpy",
+  "solver_settings": {
+    "budget_fractions": [
+      0.5,
+      1.0
+    ],
+    "ci_small": true,
+    "master_seeds": [
+      0,
+      1
+    ],
+    "policies": [
+      "residual",
+      "random",
+      "active_set_change"
+    ]
+  },
+  "solver_version": "1.8.2",
+  "start_time_utc": "2026-07-23T23:03:27.167700+00:00",
+  "tolerances": {
+    "action_l2_consequential": 0.01
+  },
+  "warm_start_policy": "cold"
+}

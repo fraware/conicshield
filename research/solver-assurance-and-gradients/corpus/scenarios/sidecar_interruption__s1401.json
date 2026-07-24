@@ -1,13 +1,13 @@
 {
   "corpus_family_id": "research.solver_assurance.r0",
-  "corpus_version": "r0-v0.3.0",
+  "corpus_version": "r0-v0.4.0",
   "expected_regime": "sidecar_interruption",
   "extras": {
     "backend_stub": "windows_sidecar",
     "interrupt_policy": "hard_timeout"
   },
   "family": "sidecar_interruption",
-  "generation_commit": "bbd3dcffd9af8bfa",
+  "generation_commit": "55324d02a0a4e888",
   "notes": "Stub regime for Windows-sidecar interruption studies (backend may be unavailable).",
   "previous_action": [
     0.25,

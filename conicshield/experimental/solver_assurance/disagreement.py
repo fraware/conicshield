@@ -307,12 +307,15 @@ def summarize_by_family(
 ) -> list[FamilyDisagreementSummary]:
     """Family-level summaries from shadow-harness case dicts or equivalent."""
 
-    by_family: dict[str, list[tuple[bool, SolverDisagreement]]] = {}
+    by_family: dict[str, list[tuple[bool, SolverDisagreement | None]]] = {}
     for case in cases:
         fam = str(case[family_key])
         shadowed = bool(case.get(shadowed_key, True))
-        raw = case[disagreement_key]
-        if isinstance(raw, SolverDisagreement):
+        raw = case.get(disagreement_key)
+        d: SolverDisagreement | None
+        if raw is None:
+            d = None
+        elif isinstance(raw, SolverDisagreement):
             d = raw
         else:
             d = SolverDisagreement(
@@ -341,7 +344,7 @@ def summarize_by_family(
     out: list[FamilyDisagreementSummary] = []
     for fam in sorted(by_family):
         rows = by_family[fam]
-        shadowed_ds = [d for shadowed, d in rows if shadowed]
+        shadowed_ds = [d for shadowed, d in rows if shadowed and d is not None]
         note = ""
         if shadowed_ds and all(not d.consequential for d in shadowed_ds):
             note = "negative_result: no consequential disagreement in this family under recorded settings"
@@ -349,7 +352,7 @@ def summarize_by_family(
             FamilyDisagreementSummary(
                 family=fam,
                 n_cases=len(rows),
-                n_shadowed=len(shadowed_ds),
+                n_shadowed=sum(1 for shadowed, _ in rows if shadowed),
                 distribution=summarize_disagreements(shadowed_ds),
                 notes=note,
             )

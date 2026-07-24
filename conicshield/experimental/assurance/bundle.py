@@ -1,4 +1,4 @@
-"""AssuranceBundle dataclass (Track 2 R4) using research Track 1 adapters."""
+"""AssuranceBundle dataclass (Track 2 R9) — research.assurance_bundle.v1."""
 
 from __future__ import annotations
 
@@ -24,7 +24,8 @@ from conicshield.experimental.assurance.evidence import (
     ShadowEvidence,
     array_digest,
 )
-from conicshield.experimental.assurance.levels import EvidenceLevel
+from conicshield.experimental.assurance.levels import EvidenceLevel, VerificationStatus
+from conicshield.experimental.assurance.migration import CURRENT_SCHEMA_ID
 
 
 @dataclass(frozen=True)
@@ -54,15 +55,25 @@ class AssuranceBundle:
     limitations: tuple[str, ...]
 
     evidence_level: EvidenceLevel = EvidenceLevel.L0_RECORDED
-    schema_id: str = "research.assurance_bundle.v0"
+    verification_status: VerificationStatus = VerificationStatus.UNVERIFIED
+    topology_digest: str = ""
+    problem_digest: str = ""
+    forward_solution_digest: str = ""
+    evidence_bundle_digest: str = ""
+    schema_id: str = CURRENT_SCHEMA_ID
+    promotion_eligible: bool = False
+    invalidation_reason: str | None = None
+    deprecated_source_schema: str | None = None
     naming_note: str = (
         "Use 'proof-carrying' only with an explicit evidence taxonomy. "
-        "Evidence levels are not universal safety guarantees."
+        "Evidence levels are numerical assurance tiers, not universal safety guarantees "
+        "or system-level safety proofs. L4 is numerical assurance, not a safety proof."
     )
     extras: dict[str, Any] = field(default_factory=dict)
 
     def corrected_action_digest(self) -> str:
-        return array_digest(self.corrected_action)
+        digest = array_digest(self.corrected_action)
+        return digest or ""
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -71,6 +82,11 @@ class AssuranceBundle:
             "corrected_action_digest": self.corrected_action_digest(),
             "specification_digest": self.specification_digest,
             "structural_fingerprint": self.structural_fingerprint,
+            "topology_digest": self.topology_digest,
+            "problem_digest": self.problem_digest,
+            "forward_solution_digest": self.forward_solution_digest,
+            "evidence_bundle_digest": self.evidence_bundle_digest,
+            "verification_status": str(self.verification_status),
             "verification": {
                 "equality_residual": self.verification.equality_residual,
                 "inequality_residual": self.verification.inequality_residual,
@@ -86,6 +102,7 @@ class AssuranceBundle:
                 "equality_residual": self.primal_evidence.equality_residual,
                 "inequality_residual": self.primal_evidence.inequality_residual,
                 "feasible": self.primal_evidence.feasible,
+                "residuals_present": self.primal_evidence.residuals_present,
                 "kind": str(self.primal_evidence.kind),
             },
             "dual_evidence": None
@@ -107,6 +124,12 @@ class AssuranceBundle:
                 "agreement_metric": self.sensitivity_evidence.agreement_metric,
                 "forward_solution_digest": self.sensitivity_evidence.forward_solution_digest,
                 "kind": str(self.sensitivity_evidence.kind),
+                "finite_jacobian": self.sensitivity_evidence.finite_jacobian,
+                "fd_comparison_passed": self.sensitivity_evidence.fd_comparison_passed,
+                "active_set_stable": self.sensitivity_evidence.active_set_stable,
+                "synthetic": self.sensitivity_evidence.synthetic,
+                "backend_id": self.sensitivity_evidence.backend_id,
+                "backend_version": self.sensitivity_evidence.backend_version,
             },
             "shadow_evidence": None
             if self.shadow_evidence is None
@@ -117,6 +140,9 @@ class AssuranceBundle:
                 "status_disagreement": self.shadow_evidence.status_disagreement,
                 "problem_digest": self.shadow_evidence.problem_digest,
                 "kind": str(self.shadow_evidence.kind),
+                "independently_verified": self.shadow_evidence.independently_verified,
+                "copied_from_primary": self.shadow_evidence.copied_from_primary,
+                "shadow_verification_status": self.shadow_evidence.shadow_verification_status,
             },
             "solver_provenance": {
                 "backend_id": self.solver_provenance.backend_id,
@@ -145,6 +171,9 @@ class AssuranceBundle:
             ],
             "limitations": list(self.limitations),
             "evidence_level": str(self.evidence_level),
+            "promotion_eligible": self.promotion_eligible,
+            "invalidation_reason": self.invalidation_reason,
+            "deprecated_source_schema": self.deprecated_source_schema,
             "naming_note": self.naming_note,
             "extras": dict(self.extras),
         }

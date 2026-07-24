@@ -1,4 +1,4 @@
-"""AssuranceBundle replay tools (R4)."""
+"""AssuranceBundle replay tools (R9 / v1)."""
 
 from __future__ import annotations
 
@@ -26,7 +26,8 @@ from conicshield.experimental.assurance.evidence import (
     SensitivityEvidence,
     ShadowEvidence,
 )
-from conicshield.experimental.assurance.levels import EvidenceKind, EvidenceLevel
+from conicshield.experimental.assurance.levels import EvidenceKind, EvidenceLevel, VerificationStatus
+from conicshield.experimental.assurance.migration import CURRENT_SCHEMA_ID, normalize_bundle_dict
 
 
 def bundle_to_json(bundle: AssuranceBundle, path: Path) -> None:
@@ -34,16 +35,20 @@ def bundle_to_json(bundle: AssuranceBundle, path: Path) -> None:
     path.write_text(json.dumps(bundle.as_dict(), indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def bundle_from_dict(data: dict[str, Any]) -> AssuranceBundle:
-    """Reconstruct AssuranceBundle from serialized dict (replay)."""
+def bundle_from_dict(data: dict[str, Any], *, archival: bool = False) -> AssuranceBundle:
+    """Reconstruct AssuranceBundle from serialized dict (replay).
 
-    ver = data["verification"]
-    prim = data["primal_evidence"]
-    dual_raw = data.get("dual_evidence")
-    sens_raw = data.get("sensitivity_evidence")
-    shadow_raw = data.get("shadow_evidence")
-    solv = data["solver_provenance"]
-    plat = data["platform_provenance"]
+    Non-archival loads migrate deprecated schemas to v1 with invalidation watermarks.
+    """
+
+    normalized = normalize_bundle_dict(data, archival=archival)
+    ver = normalized["verification"]
+    prim = normalized["primal_evidence"]
+    dual_raw = normalized.get("dual_evidence")
+    sens_raw = normalized.get("sensitivity_evidence")
+    shadow_raw = normalized.get("shadow_evidence")
+    solv = normalized["solver_provenance"]
+    plat = normalized["platform_provenance"]
 
     dual: DualEvidence | None = None
     if dual_raw is not None:
@@ -60,6 +65,12 @@ def bundle_from_dict(data: dict[str, Any]) -> AssuranceBundle:
             agreement_metric=sens_raw.get("agreement_metric"),
             forward_solution_digest=str(sens_raw["forward_solution_digest"]),
             kind=EvidenceKind(sens_raw.get("kind", EvidenceKind.EMPIRICAL_GRADIENT_VALIDATION)),
+            finite_jacobian=bool(sens_raw.get("finite_jacobian", True)),
+            fd_comparison_passed=sens_raw.get("fd_comparison_passed"),
+            active_set_stable=sens_raw.get("active_set_stable"),
+            synthetic=bool(sens_raw.get("synthetic", False)),
+            backend_id=sens_raw.get("backend_id"),
+            backend_version=sens_raw.get("backend_version"),
         )
     shadow: ShadowEvidence | None = None
     if shadow_raw is not None:
@@ -70,12 +81,27 @@ def bundle_from_dict(data: dict[str, Any]) -> AssuranceBundle:
             status_disagreement=bool(shadow_raw["status_disagreement"]),
             problem_digest=str(shadow_raw["problem_digest"]),
             kind=EvidenceKind(shadow_raw.get("kind", EvidenceKind.CROSS_SOLVER_AGREEMENT)),
+            independently_verified=bool(shadow_raw.get("independently_verified", True)),
+            copied_from_primary=bool(shadow_raw.get("copied_from_primary", False)),
+            shadow_verification_status=shadow_raw.get("shadow_verification_status"),
         )
 
+    status_raw = normalized.get("verification_status")
+    if status_raw:
+        verification_status = VerificationStatus(str(status_raw))
+    elif bool(ver.get("primal_feasible")):
+        verification_status = VerificationStatus.VERIFIED_FEASIBLE
+    else:
+        verification_status = VerificationStatus.UNVERIFIED
+
     return AssuranceBundle(
-        corrected_action=np.asarray(data["corrected_action"], dtype=np.float64),
-        specification_digest=str(data["specification_digest"]),
-        structural_fingerprint=str(data["structural_fingerprint"]),
+        corrected_action=np.asarray(normalized["corrected_action"], dtype=np.float64),
+        specification_digest=str(normalized["specification_digest"]),
+        structural_fingerprint=str(normalized["structural_fingerprint"]),
+        topology_digest=str(normalized.get("topology_digest") or ""),
+        problem_digest=str(normalized.get("problem_digest") or ""),
+        forward_solution_digest=str(normalized.get("forward_solution_digest") or ""),
+        evidence_bundle_digest=str(normalized.get("evidence_bundle_digest") or ""),
         verification=ResearchVerificationReport(
             equality_residual=float(ver["equality_residual"]),
             inequality_residual=float(ver["inequality_residual"]),
@@ -85,18 +111,24 @@ def bundle_from_dict(data: dict[str, Any]) -> AssuranceBundle:
             checks=dict(ver.get("checks") or {}),
             notes=tuple(ver.get("notes") or ()),
         ),
-        canonical_status=CanonicalSolverStatus(str(data["canonical_status"])),
-        release_decision=ReleaseDecision(str(data["release_decision"])),
+        verification_status=verification_status,
+        canonical_status=CanonicalSolverStatus(str(normalized["canonical_status"])),
+        release_decision=ReleaseDecision(str(normalized["release_decision"])),
         primal_evidence=PrimalEvidence(
-            equality_residual=float(prim["equality_residual"]),
-            inequality_residual=float(prim["inequality_residual"]),
+            equality_residual=None
+            if prim.get("equality_residual") is None
+            else float(prim["equality_residual"]),
+            inequality_residual=None
+            if prim.get("inequality_residual") is None
+            else float(prim["inequality_residual"]),
             feasible=bool(prim["feasible"]),
+            residuals_present=bool(prim.get("residuals_present", True)),
             kind=EvidenceKind(prim.get("kind", EvidenceKind.NUMERICAL_RESIDUALS)),
         ),
         dual_evidence=dual,
         active_set_evidence=ActiveSetEvidence(
-            active_constraints=tuple(data["active_set_evidence"]["active_constraints"]),
-            kind=EvidenceKind(data["active_set_evidence"].get("kind", EvidenceKind.SOLVER_CLAIMS)),
+            active_constraints=tuple(normalized["active_set_evidence"]["active_constraints"]),
+            kind=EvidenceKind(normalized["active_set_evidence"].get("kind", EvidenceKind.SOLVER_CLAIMS)),
         ),
         sensitivity_evidence=sens,
         shadow_evidence=shadow,
@@ -115,7 +147,7 @@ def bundle_from_dict(data: dict[str, Any]) -> AssuranceBundle:
         ),
         fallback_history=tuple(
             FallbackAttempt(backend_id=str(f["backend_id"]), status=str(f["status"]), reason=str(f["reason"]))
-            for f in data.get("fallback_history") or []
+            for f in normalized.get("fallback_history") or []
         ),
         assumptions=tuple(
             DeclaredAssumption(
@@ -124,41 +156,48 @@ def bundle_from_dict(data: dict[str, Any]) -> AssuranceBundle:
                 verified=bool(a.get("verified", False)),
                 kind=EvidenceKind(a.get("kind", EvidenceKind.UNVERIFIED_ASSUMPTIONS)),
             )
-            for a in data.get("assumptions") or []
+            for a in normalized.get("assumptions") or []
         ),
-        limitations=tuple(data.get("limitations") or ()),
-        evidence_level=EvidenceLevel(str(data.get("evidence_level", EvidenceLevel.L0_RECORDED))),
-        schema_id=str(data.get("schema_id", "research.assurance_bundle.v0")),
+        limitations=tuple(normalized.get("limitations") or ()),
+        evidence_level=EvidenceLevel(str(normalized.get("evidence_level", EvidenceLevel.L0_RECORDED))),
+        schema_id=str(normalized.get("schema_id", CURRENT_SCHEMA_ID)),
+        promotion_eligible=bool(normalized.get("promotion_eligible", False)),
+        invalidation_reason=normalized.get("invalidation_reason"),
+        deprecated_source_schema=normalized.get("deprecated_source_schema"),
         naming_note=str(
-            data.get(
+            normalized.get(
                 "naming_note",
                 "Use 'proof-carrying' only with an explicit evidence taxonomy.",
             )
         ),
-        extras=dict(data.get("extras") or {}),
+        extras=dict(normalized.get("extras") or {}),
     )
 
 
-def load_bundle(path: Path) -> AssuranceBundle:
+def load_bundle(path: Path, *, archival: bool = False) -> AssuranceBundle:
     raw = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise TypeError(f"assurance bundle must be an object: {path}")
-    return bundle_from_dict(cast(dict[str, Any], raw))
+    return bundle_from_dict(cast(dict[str, Any], raw), archival=archival)
 
 
 def replay_bundle(
     path: Path,
     *,
     expected_spec_digest: str | None = None,
+    archival: bool = False,
 ) -> dict[str, Any]:
     """Load a bundle and re-run machine checks (replay)."""
 
-    bundle = load_bundle(path)
+    bundle = load_bundle(path, archival=archival)
     checks = run_machine_checks(bundle, expected_spec_digest=expected_spec_digest)
     return {
         "path": str(path),
         "schema_id": bundle.schema_id,
         "evidence_level": str(bundle.evidence_level),
+        "verification_status": str(bundle.verification_status),
+        "promotion_eligible": bundle.promotion_eligible,
+        "invalidation_reason": bundle.invalidation_reason,
         "checks": checks,
         "all_passed": all(checks.values()),
         "naming_note": bundle.naming_note,

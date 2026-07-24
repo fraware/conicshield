@@ -168,7 +168,7 @@ def default_hypothesis_catalog() -> list[HypothesisEvaluation]:
             ),
             track="R1",
             verdict=HypothesisVerdict.NOT_EVALUATED,
-            evidence_pointers=["research.sampling_study.v0"],
+            evidence_pointers=["research.sampling_study.v1"],
             protocol=_protocol_r1_h2(),
         ),
         HypothesisEvaluation(
@@ -376,15 +376,37 @@ def evaluate_r1_h2_from_sampling_study(study: dict[str, Any]) -> HypothesisEvalu
             statement=statement,
             track="R1",
             verdict=HypothesisVerdict.INCONCLUSIVE,
-            evidence_pointers=["research.sampling_study.v0"],
+            evidence_pointers=["research.sampling_study.v1"],
             rationale="Missing residual/random budget cells.",
             protocol=proto,
         )
-    res_det = _mean([float(r["detection_rate"]) for r in residual])
-    rand_det = _mean([float(r["detection_rate"]) for r in random])
+    res_vals = []
+    rand_vals = []
+    for r in residual:
+        det = r.get("detection_rate")
+        if det is None or r.get("detection_estimable") is False:
+            continue
+        res_vals.append(float(det))
+    for r in random:
+        det = r.get("detection_rate")
+        if det is None or r.get("detection_estimable") is False:
+            continue
+        rand_vals.append(float(det))
+    if not res_vals or not rand_vals:
+        return HypothesisEvaluation(
+            hypothesis_id="R1.H2",
+            statement=statement,
+            track="R1",
+            verdict=HypothesisVerdict.INCONCLUSIVE,
+            evidence_pointers=["research.sampling_study.v1"],
+            rationale="Detection not estimable (zero baseline consequential or missing rates).",
+            protocol=proto,
+        )
+    res_det = _mean(res_vals)
+    rand_det = _mean(rand_vals)
     res_cost = _mean([float(r["shadow_cost_relative"]) for r in residual])
     rand_cost = _mean([float(r["shadow_cost_relative"]) for r in random])
-    pointers = ["research.sampling_study.v0", f"corpus:{study.get('corpus_version')}"]
+    pointers = ["research.sampling_study.v1", f"corpus:{study.get('corpus_version')}"]
     stats = {
         "residual_detection_rate": res_det,
         "random_detection_rate": rand_det,

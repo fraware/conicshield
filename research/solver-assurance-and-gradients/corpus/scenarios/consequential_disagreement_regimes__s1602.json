@@ -1,0 +1,82 @@
+{
+  "corpus_family_id": "research.solver_assurance.r0",
+  "corpus_version": "r0-v0.4.0",
+  "expected_regime": "conditioning_cross_solver",
+  "extras": {
+    "constraint_family": "box_rate",
+    "disagreement_regime": "conditioning_tolerance",
+    "fault_injection": false
+  },
+  "family": "consequential_disagreement_regimes",
+  "generation_commit": "55324d02a0a4e888",
+  "notes": "Ill-conditioned weights + tight rate/box neighborhood \u2014 Clarabel vs SCS residual/action disagreement regime (not fault injection).",
+  "previous_action": [
+    0.3,
+    0.3,
+    0.2,
+    0.2
+  ],
+  "proposed_action": [
+    100000.0,
+    1e-06,
+    1e-06,
+    1e-06
+  ],
+  "reference_action": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "scenario_id": "consequential_disagreement_regimes/s1602",
+  "seed": 1602,
+  "spec": {
+    "action_dim": 4,
+    "constraints": [
+      {
+        "kind": "simplex",
+        "total": 1.0
+      },
+      {
+        "allowed_actions": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "kind": "turn_feasibility"
+      },
+      {
+        "kind": "box",
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "upper": [
+          0.35,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "kind": "rate",
+        "max_delta": [
+          0.05,
+          0.05,
+          0.05,
+          0.05
+        ]
+      }
+    ],
+    "slack_weight": 10.0,
+    "spec_id": "research/consequential_disagreement_regimes/conditioning",
+    "version": "0.1.0"
+  },
+  "weights": {
+    "policy_weight": 10000000000.0,
+    "reference_weight": 1e-10
+  }
+}

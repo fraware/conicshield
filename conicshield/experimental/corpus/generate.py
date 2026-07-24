@@ -24,7 +24,7 @@ from conicshield.experimental.corpus.paths import (
 def _generation_commit_token() -> str:
     """Stable token derived from generator identity + corpus version (not git HEAD)."""
 
-    payload = f"{CORPUS_VERSION}|{CORPUS_FAMILY_ID}|{','.join(SCENARIO_FAMILIES)}|families.py:v3"
+    payload = f"{CORPUS_VERSION}|{CORPUS_FAMILY_ID}|{','.join(SCENARIO_FAMILIES)}|families.py:v4"
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 

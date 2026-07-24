@@ -12,7 +12,7 @@ See also `RESEARCH_STATUS.md` for the §9–§10 closure audit with evidence pat
 6. A formally specified Assurance Bundle. — **yes** (research schema)
 7. Replay and corruption-testing tools. — **yes**
 8. One robust conic safety-filter demonstration. — **yes (experimental)** (CBF 1–3 + `cbf-v0.1.0` + short-horizon RH `rh-v0.1.0`; not full MPC / multi-robot / production)
-9. A decision report on whether intervention-aware training is scientifically justified. — **blocked scientific evidence matrix** (`r6-decision-v0.2.0`; no results)
+9. A decision report on whether intervention-aware training is scientifically justified. — **blocked scientific evidence matrix** (`r6-decision-v0.3.0`; flagship-gate wired; harness structure; no results)
 10. A promotion matrix distinguishing experimental / internally validated / governed research artifact / production-qualified capability. — **this document**
 
 ## Evidence path index (§9)
@@ -54,7 +54,7 @@ See also `RESEARCH_STATUS.md` for the §9–§10 closure audit with evidence pat
 | CBF stage 4 experimental short-horizon RH (`rh-v0.1.0`) | yes (gate-gated; not full MPC) | pending | no | no |
 | Research Windows-sidecar protocol stub + labeled mock | yes (fail closed / mock-labeled) | no | no | no |
 | Track 1 readiness probe (`t1-probe-v0.2.1`) | yes (live-sample bar; env-aware WSL Python for S5) | n/a | no | no |
-| Intervention-aware training / R6 decision | blocked evidence matrix only | no | no | no |
+| Intervention-aware training / R6 decision | blocked evidence matrix + harness (`r6-decision-v0.3.0`; flagship-gated) | no | no | no |
 
 Honest reading: **most capabilities remain experimental**. Nothing here is production-qualified.
 Internally validated / governed columns stay empty until real multi-host soak, Track 1 S4

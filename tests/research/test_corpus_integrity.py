@@ -38,4 +38,4 @@ def test_manifest_version() -> None:
     manifest = load_manifest()
     assert manifest["corpus_version"] == CORPUS_VERSION
     assert manifest["scenario_count"] == len(load_all_scenarios())
-    assert CORPUS_VERSION.startswith("r0-v0.3")
+    assert CORPUS_VERSION.startswith("r0-v0.4")

@@ -1,9 +1,11 @@
 {
   "blocked_until": [
+    "flagship_promotion_gate",
     "R2_promotion_gate",
     "R4_promotion_gate"
   ],
   "blocking_evidence_incomplete": [
+    "flagship_promotion_gate",
     "r2_native_or_validated_gradients",
     "r4_assurance_reproduction",
     "track1_s4_hetero_batch_attestation",
@@ -15,42 +17,238 @@
     "negative_retention_protocol"
   ],
   "charter_question_id": "Q8",
-  "corpus_version_context": "r0-v0.3.0",
+  "comparison_harness": {
+    "comparison_arm_ids": [
+      "unshielded_policy",
+      "shield_only_at_inference",
+      "exact_gradient_training",
+      "smoothed_gradient_training",
+      "intervention_penalty_without_solver_gradient",
+      "dual_pressure_regularization"
+    ],
+    "comparison_arms": [
+      {
+        "arm_id": "unshielded_policy",
+        "metrics": null,
+        "notes": [
+          "Arm execution blocked until flagship promotion gate passes.",
+          "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions."
+        ],
+        "status": "blocked"
+      },
+      {
+        "arm_id": "shield_only_at_inference",
+        "metrics": null,
+        "notes": [
+          "Arm execution blocked until flagship promotion gate passes.",
+          "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions."
+        ],
+        "status": "blocked"
+      },
+      {
+        "arm_id": "exact_gradient_training",
+        "metrics": null,
+        "notes": [
+          "Arm execution blocked until flagship promotion gate passes.",
+          "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions."
+        ],
+        "status": "blocked"
+      },
+      {
+        "arm_id": "smoothed_gradient_training",
+        "metrics": null,
+        "notes": [
+          "Arm execution blocked until flagship promotion gate passes.",
+          "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions."
+        ],
+        "status": "blocked"
+      },
+      {
+        "arm_id": "intervention_penalty_without_solver_gradient",
+        "metrics": null,
+        "notes": [
+          "Arm execution blocked until flagship promotion gate passes.",
+          "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions."
+        ],
+        "status": "blocked"
+      },
+      {
+        "arm_id": "dual_pressure_regularization",
+        "metrics": null,
+        "notes": [
+          "Arm execution blocked until flagship promotion gate passes.",
+          "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions."
+        ],
+        "status": "blocked"
+      }
+    ],
+    "critical_rule": "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions.",
+    "execution_authorized": false,
+    "flagship_gate": {
+      "blockers": [
+        "missing_proof_carrying_projection",
+        "sidecar_protocol_v2_incomplete:got=1;need>=2",
+        "moreau_compatibility_unqualified:moreau_import_failed:ModuleNotFoundError",
+        "multi_host_missing_native_moreau",
+        "gradients_missing_or_unlinked",
+        "cbf_not_independently_verified",
+        "corrupted_artifact_rejection_not_demonstrated",
+        "incomplete_bundle_rejection_not_demonstrated"
+      ],
+      "notes": [
+        "ConicShield emits independently checkable numerical evidence for a declared projection problem, with optional cross-solver and sensitivity evidence under explicit qualification levels.",
+        "This is not a system-level safety proof and does not claim universal safety. Evidence levels L0\u2013L4 are numerical assurance tiers only.",
+        "Flagship promotion_eligible remains false for production; research gate only."
+      ],
+      "passed": false,
+      "predicates": {
+        "all_level_predicates": false,
+        "cbf_independently_verified": false,
+        "corrupted_bundles_fail": false,
+        "docs_state_limitations": true,
+        "gradients_real_and_linked": false,
+        "incomplete_bundles_fail": false,
+        "moreau_compatibility_qualified": false,
+        "multi_host_includes_native_moreau": false,
+        "sidecar_protocol_v2_complete": false
+      },
+      "production_claim": false,
+      "public_claim": "ConicShield emits independently checkable numerical evidence for a declared projection problem, with optional cross-solver and sensitivity evidence under explicit qualification levels.",
+      "public_claim_nonclaim": "This is not a system-level safety proof and does not claim universal safety. Evidence levels L0\u2013L4 are numerical assurance tiers only.",
+      "r6_execution_authorized": false,
+      "schema_id": "research.flagship_promotion_gate.v1"
+    },
+    "harness_version": "r15-harness-v1.0.0",
+    "held_out_eval": {
+      "critical_rule": "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions.",
+      "fields": {
+        "active_set_transition_behavior": null,
+        "altered_constraints": null,
+        "distribution_shift": null,
+        "intervention_frequency": null,
+        "safety_margin": null,
+        "shield_removal": null,
+        "shielded_safety": null,
+        "smoothing_sensitivity": null,
+        "solver_version_change": null,
+        "task_performance": null,
+        "unshielded_safety": null
+      },
+      "note": "Intervention frequency alone must not be used as a safety promotion signal. Independently measured safety/robustness under held-out conditions is required.",
+      "required_field_ids": [
+        "unshielded_safety",
+        "shielded_safety",
+        "safety_margin",
+        "task_performance",
+        "intervention_frequency",
+        "distribution_shift",
+        "altered_constraints",
+        "shield_removal",
+        "smoothing_sensitivity",
+        "active_set_transition_behavior",
+        "solver_version_change"
+      ],
+      "status": "blocked"
+    },
+    "public_claim_binding": "Numerical assurance evidence (flagship L0\u2013L4 / ProofCarryingProjection) is not system-level safety proof and does not by itself authorize a safer-policy claim.",
+    "results": null,
+    "schema_id": "research.r6_controlled_comparison_harness.v1",
+    "status": "BLOCKED"
+  },
+  "corpus_version_context": "r0-v0.4.0",
+  "critical_rule": "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions.",
   "decision_logic": [
-    "IF R2 and R4 promotion gates are not passed THEN decision_status remains BLOCKED and no training execution is authorized.",
+    "IF evaluate_flagship_promotion_gate does not pass THEN decision_status remains BLOCKED and no training execution is authorized (fail-closed).",
+    "IF R2 and R4 promotion gates are not passed THEN treat as supporting blockers under the flagship gate; do not authorize R6 execution.",
     "IF independent held-out safety metrics do not improve under shift THEN do not claim scientifically justified intervention-aware training.",
-    "IF only intervention rate decreases without safety-metric gains THEN treat as negative / inconclusive result.",
-    "IF native exact/smoothed gradients remain stubbed THEN do not claim native differentiable training success (research adapters are distinct evidence).",
-    "Stage-4 CBF experimental RH availability does not satisfy R2 or R4 and does not unblock R6."
+    "IF only intervention frequency decreases without safety-metric gains THEN treat as negative / inconclusive result \u2014 never as promotion evidence.",
+    "IF native exact/smoothed gradients are unavailable on the training host THEN do not claim native differentiable training success (research adapters are distinct evidence).",
+    "Flagship / L0\u2013L4 numerical assurance is not system-level safety proof and does not alone justify a safer-policy claim.",
+    "Stage-4 CBF experimental RH availability does not satisfy flagship / R2 / R4 and does not unblock R6."
   ],
   "decision_status": "BLOCKED",
   "document_type": "scientific_decision_evidence_matrix",
-  "document_version": "r6-decision-v0.2.0",
+  "document_version": "r6-decision-v0.3.0",
+  "execution_authorized": false,
+  "flagship_gate": {
+    "blockers": [
+      "missing_proof_carrying_projection",
+      "sidecar_protocol_v2_incomplete:got=1;need>=2",
+      "moreau_compatibility_unqualified:moreau_import_failed:ModuleNotFoundError",
+      "multi_host_missing_native_moreau",
+      "gradients_missing_or_unlinked",
+      "cbf_not_independently_verified",
+      "corrupted_artifact_rejection_not_demonstrated",
+      "incomplete_bundle_rejection_not_demonstrated"
+    ],
+    "notes": [
+      "ConicShield emits independently checkable numerical evidence for a declared projection problem, with optional cross-solver and sensitivity evidence under explicit qualification levels.",
+      "This is not a system-level safety proof and does not claim universal safety. Evidence levels L0\u2013L4 are numerical assurance tiers only.",
+      "Flagship promotion_eligible remains false for production; research gate only."
+    ],
+    "passed": false,
+    "predicates": {
+      "all_level_predicates": false,
+      "cbf_independently_verified": false,
+      "corrupted_bundles_fail": false,
+      "docs_state_limitations": true,
+      "gradients_real_and_linked": false,
+      "incomplete_bundles_fail": false,
+      "moreau_compatibility_qualified": false,
+      "multi_host_includes_native_moreau": false,
+      "sidecar_protocol_v2_complete": false
+    },
+    "production_claim": false,
+    "public_claim": "ConicShield emits independently checkable numerical evidence for a declared projection problem, with optional cross-solver and sensitivity evidence under explicit qualification levels.",
+    "public_claim_nonclaim": "This is not a system-level safety proof and does not claim universal safety. Evidence levels L0\u2013L4 are numerical assurance tiers only.",
+    "r6_execution_authorized": false,
+    "schema_id": "research.flagship_promotion_gate.v1"
+  },
   "non_claims": [
     "No claim of learning safer policies.",
     "No training results are present in this scaffold.",
     "Research KKT / smoothed adapters are not native Moreau gradients.",
-    "Intervention-rate reduction alone is insufficient evidence of safety.",
+    "Intervention-frequency reduction alone is insufficient evidence of safety.",
     "Checklist completeness here does not unblock R6 training execution.",
-    "Stage-4 CBF checklist green / experimental RH does not imply R2/R4 promotion gates passed.",
+    "Numerical evidence (ProofCarryingProjection / L0\u2013L4) is not system-level safety proof.",
+    "Stage-4 CBF checklist green / experimental RH does not imply flagship or R2/R4 gates passed.",
     "Track 1 S4/S5 scaffolding without vendor attestation does not clear publication-grade frontiers."
   ],
-  "note": "Scientific decision document / evidence matrix only. No training loops executed. No claim that safer policies were learned. Fill results only after R2+R4 gates pass and independent safety metrics improve under distribution shift. Checklist completeness here does not unblock R6.",
+  "note": "Scientific decision document / evidence matrix only. No training loops executed. No claim that safer policies were learned. Fill results only after the R14 flagship promotion gate passes and independent safety metrics improve under held-out conditions. Checklist completeness here does not unblock R6. Numerical evidence \u2260 system safety proof.",
+  "public_claim_binding": "Numerical assurance evidence (flagship L0\u2013L4 / ProofCarryingProjection) is not system-level safety proof and does not by itself authorize a safer-policy claim.",
   "question": "Is intervention-aware training scientifically justified for ConicShield?",
   "required_evidence": [
     {
-      "acceptance_criterion": "Claimed differentiation path has documented exact-vs-FD agreement on active-set coverage corpus; native stubs must not be silently aliased.",
+      "acceptance_criterion": "evaluate_flagship_promotion_gate(...).passed is True with retained blockers empty; production_claim remains False. Numerical evidence is not a system safety proof.",
       "blocking_for_execution": true,
       "depends_on_gates": [
-        "R2"
+        "R14",
+        "flagship_promotion_gate"
       ],
-      "description": "R2 gate: corpus-validated gradients with active-set coverage and exact-vs-FD agreement for the claimed differentiation path (native stubs currently fail-closed). Research KKT/smoothed adapters are distinct evidence kinds and do not satisfy the native exact-vs-FD promotion gate.",
+      "description": "R14 flagship promotion gate (`evaluate_flagship_promotion_gate`) must pass before any R6 training execution. Includes level predicates, sidecar protocol \u2265 v2, native Moreau multi-host participation, real linked gradients, verified CBF, corrupted/incomplete rejection, and docs limitations. Passing is numerical assurance readiness \u2014 not system-level safety proof.",
+      "evidence_id": "flagship_promotion_gate",
+      "evidence_pointers": [
+        "conicshield.experimental.assurance.proof_carrying.evaluate_flagship_promotion_gate",
+        "research/solver-assurance-and-gradients/PROMOTION_GATES.md#r4",
+        "research/solver-assurance-and-gradients/ASSURANCE_SEMANTICS.md"
+      ],
+      "scientific_role": "required",
+      "status": "blocked_dependency"
+    },
+    {
+      "acceptance_criterion": "Claimed differentiation path has documented exact-vs-FD agreement on active-set coverage corpus; research adapters must not be silently aliased as native Moreau backends.",
+      "blocking_for_execution": true,
+      "depends_on_gates": [
+        "R2",
+        "R14"
+      ],
+      "description": "R2 gate: corpus-validated gradients with active-set coverage and exact-vs-FD agreement for the claimed differentiation path (native backends implemented; live Moreau required for AVAILABLE). Research KKT/smoothed adapters are distinct evidence kinds and do not satisfy the native exact-vs-FD promotion gate.",
       "evidence_id": "r2_native_or_validated_gradients",
       "evidence_pointers": [
         "research/solver-assurance-and-gradients/PROMOTION_GATES.md#r2",
         "conicshield.experimental.gradients.agreement_study",
-        "conicshield.experimental.gradients.exact_stub",
-        "conicshield.experimental.gradients.smoothed_stub"
+        "conicshield.experimental.gradients.exact_backend",
+        "conicshield.experimental.gradients.smoothed_backend"
       ],
       "scientific_role": "required",
       "status": "partial"
@@ -59,9 +257,10 @@
       "acceptance_criterion": ">=2 distinct real hosts reproduce assurance artifacts; synthetic second-host fixtures do not count; production governed-hash wiring present.",
       "blocking_for_execution": true,
       "depends_on_gates": [
-        "R4"
+        "R4",
+        "R14"
       ],
-      "description": "R4 gate: multi-host clean-env soak on >=2 real hosts, schema/replay/corruption tests, and governed hash policy integrated with production release tooling (research adapter exists; production wiring absent).",
+      "description": "R4 gate: multi-host clean-env soak on >=2 real hosts, schema/replay/corruption tests, and governed hash policy integrated with production release tooling (research adapter exists; production wiring absent). Supporting prerequisite for flagship multi-host predicates.",
       "evidence_id": "r4_assurance_reproduction",
       "evidence_pointers": [
         "research/solver-assurance-and-gradients/PROMOTION_GATES.md#r4",
@@ -89,17 +288,17 @@
       "status": "missing"
     },
     {
-      "acceptance_criterion": "Pre-registered held-out safety metrics improve under shift vs baselines; intervention-rate reduction alone is insufficient.",
+      "acceptance_criterion": "Pre-registered held-out safety metrics improve under shift vs baselines; intervention-frequency reduction alone is insufficient for promotion.",
       "blocking_for_execution": true,
       "depends_on_gates": [
-        "R2",
-        "R4",
+        "flagship_promotion_gate",
         "R6"
       ],
-      "description": "Held-out safety margin / robustness improvements under distribution shift (not intervention-rate alone). Must include failure cases.",
+      "description": "Held-out safety margin / robustness improvements under distribution shift (not intervention-rate alone). Must include failure cases. Required fields: unshielded_safety, shielded_safety, safety_margin, task_performance, intervention_frequency, distribution_shift, altered_constraints, shield_removal, smoothing_sensitivity, active_set_transition_behavior, solver_version_change.",
       "evidence_id": "independent_safety_metrics_under_shift",
       "evidence_pointers": [
         "research/solver-assurance-and-gradients/CHARTER.md",
+        "conicshield.experimental.training.comparison_harness",
         "conicshield.experimental.domains.cbf_corpus"
       ],
       "scientific_role": "required",
@@ -113,7 +312,9 @@
       ],
       "description": "Results stable across solver backends and smoothing choices; failure cases included.",
       "evidence_id": "robustness_to_solver_and_smoothing",
-      "evidence_pointers": [],
+      "evidence_pointers": [
+        "conicshield.experimental.training.comparison_harness"
+      ],
       "scientific_role": "required",
       "status": "missing"
     },
@@ -133,18 +334,20 @@
       "status": "missing"
     },
     {
-      "acceptance_criterion": "All listed baselines present with identical metrics and seed control; exact/smoothed entries remain fail-closed stubs until native grads exist.",
+      "acceptance_criterion": "All listed baselines present with identical metrics and seed control; exact/smoothed baseline entries require live native backend availability and must not be silently substituted by research adapters.",
       "blocking_for_execution": true,
       "depends_on_gates": [
+        "flagship_promotion_gate",
         "R6"
       ],
-      "description": "Documented comparisons vs unshielded / inference-only shield / exact / smoothed / penalty-only / dual-pressure baselines with pre-registered metrics.",
+      "description": "Documented controlled comparisons for arms: unshielded_policy, shield_only_at_inference, exact_gradient_training, smoothed_gradient_training, intervention_penalty_without_solver_gradient, dual_pressure_regularization with pre-registered held-out metrics. Harness structure exists; execution blocked until flagship gate passes.",
       "evidence_id": "comparison_battery",
       "evidence_pointers": [
+        "conicshield.experimental.training.comparison_harness",
         "conicshield.experimental.training.intervention_aware_stub"
       ],
       "scientific_role": "required",
-      "status": "missing"
+      "status": "partial"
     },
     {
       "acceptance_criterion": "Final report includes negatives and an explicit go/no-go under the acceptance criteria above; this scaffold alone is insufficient.",
@@ -180,17 +383,65 @@
   "results": null,
   "schema_id": "research.r6_decision_report_scaffold.v1",
   "training_plan": {
-    "blocked_until": "R2 and R4 promotion gates pass",
+    "blocked_until": "R14 flagship promotion gate passes (evaluate_flagship_promotion_gate); R2/R4 remain supporting prerequisites",
     "comparisons": [
       "unshielded_policy",
-      "trained_without_shield_shielded_at_inference",
-      "trained_through_exact_differentiation",
-      "trained_through_smoothed_differentiation",
-      "trained_with_intervention_penalties_no_shield_gradient",
-      "trained_with_dual_pressure_regularization_if_justified"
+      "shield_only_at_inference",
+      "exact_gradient_training",
+      "smoothed_gradient_training",
+      "intervention_penalty_without_solver_gradient",
+      "dual_pressure_regularization"
     ],
-    "critical_rule": "A decrease in intervention rate is not sufficient evidence of improved safety. The policy must improve independently measured safety margin or robustness under held-out conditions.",
-    "implementation": "stub_only_wave1",
+    "critical_rule": "A reduction in intervention frequency alone is NOT evidence of a safer policy. Promotion requires improved independently measured safety/robustness under held-out conditions.",
+    "execution_authorized": false,
+    "flagship_gate": {
+      "blockers": [
+        "missing_proof_carrying_projection",
+        "sidecar_protocol_v2_incomplete:got=1;need>=2",
+        "moreau_compatibility_unqualified:moreau_import_failed:ModuleNotFoundError",
+        "multi_host_missing_native_moreau",
+        "gradients_missing_or_unlinked",
+        "cbf_not_independently_verified",
+        "corrupted_artifact_rejection_not_demonstrated",
+        "incomplete_bundle_rejection_not_demonstrated"
+      ],
+      "notes": [
+        "ConicShield emits independently checkable numerical evidence for a declared projection problem, with optional cross-solver and sensitivity evidence under explicit qualification levels.",
+        "This is not a system-level safety proof and does not claim universal safety. Evidence levels L0\u2013L4 are numerical assurance tiers only.",
+        "Flagship promotion_eligible remains false for production; research gate only."
+      ],
+      "passed": false,
+      "predicates": {
+        "all_level_predicates": false,
+        "cbf_independently_verified": false,
+        "corrupted_bundles_fail": false,
+        "docs_state_limitations": true,
+        "gradients_real_and_linked": false,
+        "incomplete_bundles_fail": false,
+        "moreau_compatibility_qualified": false,
+        "multi_host_includes_native_moreau": false,
+        "sidecar_protocol_v2_complete": false
+      },
+      "production_claim": false,
+      "public_claim": "ConicShield emits independently checkable numerical evidence for a declared projection problem, with optional cross-solver and sensitivity evidence under explicit qualification levels.",
+      "public_claim_nonclaim": "This is not a system-level safety proof and does not claim universal safety. Evidence levels L0\u2013L4 are numerical assurance tiers only.",
+      "r6_execution_authorized": false,
+      "schema_id": "research.flagship_promotion_gate.v1"
+    },
+    "held_out_eval_fields": [
+      "unshielded_safety",
+      "shielded_safety",
+      "safety_margin",
+      "task_performance",
+      "intervention_frequency",
+      "distribution_shift",
+      "altered_constraints",
+      "shield_removal",
+      "smoothing_sensitivity",
+      "active_set_transition_behavior",
+      "solver_version_change"
+    ],
+    "implementation": "r15_harness_structure_fail_closed",
     "objective_components": [
       "task_loss",
       "intervention_distance_penalty",
@@ -199,7 +450,8 @@
       "sensitivity_penalty",
       "active_set_instability_penalty"
     ],
-    "promotion_gate": "No claim of learning safer policies unless: the unshielded policy improves on independent safety metrics; results hold under distribution shift; results are robust to solver and smoothing choices; failure cases are included; training does not exploit known verifier or gradient weaknesses.",
+    "promotion_gate": "No claim of learning safer policies unless: independently measured safety/robustness improves under held-out conditions; results hold under distribution shift, altered constraints, shield removal, smoothing sensitivity, active-set transitions, and solver-version change; failure cases are retained; training does not exploit known verifier or gradient weaknesses. Intervention-frequency reduction alone is insufficient. Flagship numerical evidence is not system safety proof.",
+    "public_claim_binding": "Numerical assurance evidence (flagship L0\u2013L4 / ProofCarryingProjection) is not system-level safety proof and does not by itself authorize a safer-policy claim.",
     "status": "BLOCKED"
   }
 }

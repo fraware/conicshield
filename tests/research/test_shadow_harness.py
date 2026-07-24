@@ -27,5 +27,10 @@ def test_shadow_harness_smoke() -> None:
     assert summary["shadowed_count"] == summary["scenario_count"]
     assert "provenance" in summary
     assert "promotion_note" in summary
+    assert summary["production_recommendation_blocked"] is True
     # Sampling-only secondary solve note present
     assert "optional secondary" in summary["promotion_note"]
+    for case in summary["cases"]:
+        assert case["shadow"] is not None
+        assert case.get("boundary_features") is not None
+        assert "min_normalized_inequality_slack" in case["boundary_features"]

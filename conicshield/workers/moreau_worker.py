@@ -37,6 +37,7 @@ from conicshield.platform.sidecar_protocol import (
     encode_message,
     error_message,
     hello_ack_message,
+    worker_provenance_snapshot,
 )
 from conicshield.specs.schema import SafetySpec
 
@@ -68,6 +69,7 @@ def _spec_from_payload(raw: Mapping[str, Any]) -> SafetySpec:
 
 def _handle_solve(request: SolveRequest) -> SolveResultMessage:
     t0 = time.perf_counter()
+    binding = request.request_binding_digest or request.binding_digest()
     if not _moreau_available():
         return SolveResultMessage(
             trace_id=request.trace_id,
@@ -76,6 +78,7 @@ def _handle_solve(request: SolveRequest) -> SolveResultMessage:
             error_code="moreau_unavailable",
             verification_complete=False,
             row_ids=request.row_ids,
+            request_binding_digest=binding,
             overhead_ms=(time.perf_counter() - t0) * 1000.0,
         )
 
@@ -89,6 +92,7 @@ def _handle_solve(request: SolveRequest) -> SolveResultMessage:
             error_code="invalid_backend",
             verification_complete=False,
             row_ids=request.row_ids,
+            request_binding_digest=binding,
             overhead_ms=(time.perf_counter() - t0) * 1000.0,
         )
 
@@ -104,10 +108,11 @@ def _handle_solve(request: SolveRequest) -> SolveResultMessage:
             error_code="backend_not_vendor",
             verification_complete=False,
             row_ids=request.row_ids,
+            request_binding_digest=binding,
             overhead_ms=(time.perf_counter() - t0) * 1000.0,
         )
 
-    # Batch backend is not exposed over single-row sidecar v1.
+    # Batch backend is not exposed over single-row sidecar transport.
     if backend is Backend.NATIVE_MOREAU_BATCH:
         backend = Backend.NATIVE_MOREAU
 
@@ -125,15 +130,28 @@ def _handle_solve(request: SolveRequest) -> SolveResultMessage:
                 error_code="fingerprint_mismatch",
                 verification_complete=False,
                 row_ids=request.row_ids,
+                request_binding_digest=binding,
                 overhead_ms=(time.perf_counter() - t0) * 1000.0,
             )
 
-        # Spec numerical signature is advisory in v1 (logged in metadata).
+        # v2: numerical signature mismatch is fail-closed (was advisory in v1).
         num_sig = numerical_signature(spec)
         meta = dict(request.metadata)
         client_num = request.numerical_parameters.get("digest")
         if client_num and client_num != num_sig.digest:
-            meta["numerical_signature_mismatch"] = True
+            return SolveResultMessage(
+                trace_id=request.trace_id,
+                ok=False,
+                error=(
+                    "numerical_parameters digest mismatch: "
+                    f"client={client_num} worker={num_sig.digest}"
+                ),
+                error_code="numerical_digest_mismatch",
+                verification_complete=False,
+                row_ids=request.row_ids,
+                request_binding_digest=binding,
+                overhead_ms=(time.perf_counter() - t0) * 1000.0,
+            )
 
         projector = create_projector(spec=spec, backend=backend)
         solve_t0 = time.perf_counter()
@@ -152,6 +170,7 @@ def _handle_solve(request: SolveRequest) -> SolveResultMessage:
                 "structural_fingerprint": expected_fp.digest,
                 "numerical_signature": num_sig.digest,
                 "client_numerical_parameters": dict(request.numerical_parameters),
+                "request_binding_digest": binding,
             },
         )
         solve_ms = (time.perf_counter() - solve_t0) * 1000.0
@@ -160,6 +179,12 @@ def _handle_solve(request: SolveRequest) -> SolveResultMessage:
         verification_complete = (
             result.verification is not None and result.release_decision is not None and bool(result.verification.passed)
         )
+        prov: dict[str, Any] = {
+            **worker_provenance_snapshot(moreau_available=_moreau_available()),
+            "backend": str(backend),
+        }
+        if result.solver_provenance is not None and hasattr(result.solver_provenance, "as_dict"):
+            prov["solver"] = result.solver_provenance.as_dict()
         if not verification_complete:
             return SolveResultMessage(
                 trace_id=request.trace_id,
@@ -169,6 +194,8 @@ def _handle_solve(request: SolveRequest) -> SolveResultMessage:
                 result=payload,
                 verification_complete=False,
                 row_ids=request.row_ids,
+                request_binding_digest=binding,
+                solver_provenance=prov,
                 worker_solve_ms=solve_ms,
                 overhead_ms=(time.perf_counter() - t0) * 1000.0,
             )
@@ -178,6 +205,8 @@ def _handle_solve(request: SolveRequest) -> SolveResultMessage:
             result=payload,
             verification_complete=True,
             row_ids=request.row_ids,
+            request_binding_digest=binding,
+            solver_provenance=prov,
             worker_solve_ms=solve_ms,
             overhead_ms=(time.perf_counter() - t0) * 1000.0,
         )
@@ -189,6 +218,7 @@ def _handle_solve(request: SolveRequest) -> SolveResultMessage:
             error_code="worker_exception",
             verification_complete=False,
             row_ids=request.row_ids,
+            request_binding_digest=binding,
             overhead_ms=(time.perf_counter() - t0) * 1000.0,
             result={"traceback": traceback.format_exc()[-2000:]},
         )
@@ -222,18 +252,26 @@ def run_worker_loop(
         msg_type = payload.get("type")
         if msg_type == MessageType.HELLO.value:
             hello_seen = True
-            _write_message(
-                stdout,
-                hello_ack_message(
+            client_supported = payload.get("supported_protocol_versions")
+            try:
+                ack = hello_ack_message(
                     worker_id=worker_id,
                     moreau_available=moreau_ok,
                     capabilities={
                         "protocol_version": PROTOCOL_VERSION,
                         "backends": ["native_moreau", "cvxpy_moreau"],
                         "transport": "persistent_subprocess_stdio",
+                        "request_binding": True,
                     },
-                ),
-            )
+                    client_supported_versions=client_supported,
+                )
+            except SidecarProtocolError as exc:
+                _write_message(
+                    stdout,
+                    error_message(code="protocol_negotiation_failed", message=str(exc)),
+                )
+                continue
+            _write_message(stdout, ack)
             continue
 
         if not hello_seen:
@@ -258,7 +296,7 @@ def run_worker_loop(
             return 0
 
         if msg_type == MessageType.CANCEL.value:
-            # v1: cooperative cancel is advisory; in-flight solve still completes
+            # Cancel is advisory; in-flight solve still completes
             # or fails closed — we never release a partial unverified action.
             _write_message(
                 stdout,
@@ -267,7 +305,7 @@ def run_worker_loop(
                     "protocol_version": PROTOCOL_VERSION,
                     "trace_id": payload.get("trace_id"),
                     "accepted": True,
-                    "note": "v1_cancel_is_advisory_no_partial_release",
+                    "note": "cancel_is_advisory_no_partial_release",
                 },
             )
             continue

@@ -1,0 +1,88 @@
+{
+  "corpus_family_id": "research.solver_assurance.r0",
+  "corpus_version": "r0-v0.4.0",
+  "expected_regime": "fault_injection_shadow_iteration_limit",
+  "extras": {
+    "disagreement_regime": "iteration_limit_asymmetry",
+    "fault_injection": true,
+    "fault_injection_kind": "shadow_iteration_limit",
+    "fault_injection_label": "shadow_iteration_limit",
+    "fault_injection_notes": "shadow_overrides.max_iter/time_limit only",
+    "shadow_overrides": {
+      "suggested_max_iter": 1,
+      "suggested_time_limit": 1e-09
+    }
+  },
+  "family": "consequential_disagreement_regimes",
+  "generation_commit": "55324d02a0a4e888",
+  "notes": "Fault injection: starve shadow solver iterations/time while primary uses defaults \u2014 induces status/timeout asymmetry.",
+  "previous_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "proposed_action": [
+    0.55,
+    0.25,
+    0.15,
+    0.05
+  ],
+  "reference_action": [
+    0.25,
+    0.25,
+    0.25,
+    0.25
+  ],
+  "scenario_id": "consequential_disagreement_regimes/s1601",
+  "seed": 1601,
+  "spec": {
+    "action_dim": 4,
+    "constraints": [
+      {
+        "kind": "simplex",
+        "total": 1.0
+      },
+      {
+        "allowed_actions": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "kind": "turn_feasibility"
+      },
+      {
+        "kind": "box",
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "upper": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "kind": "rate",
+        "max_delta": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "slack_weight": 10.0,
+    "spec_id": "research/consequential_disagreement_regimes/shadow_iter_starve",
+    "version": "0.1.0"
+  },
+  "weights": {
+    "policy_weight": 1.0,
+    "reference_weight": 0.0
+  }
+}

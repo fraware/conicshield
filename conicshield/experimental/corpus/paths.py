@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-CORPUS_VERSION = "r0-v0.3.0"
+CORPUS_VERSION = "r0-v0.4.0"
 CORPUS_FAMILY_ID = "research.solver_assurance.r0"
 
 # research/solver-assurance-and-gradients/
@@ -33,4 +33,5 @@ SCENARIO_FAMILIES: tuple[str, ...] = (
     "heterogeneous_batches",
     "sidecar_interruption",
     "backend_version_changes",
+    "consequential_disagreement_regimes",
 )

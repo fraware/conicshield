@@ -42,8 +42,11 @@ Vendor Moreau installs belong here (or in the sidecar worker), never on native W
 Architecture:
 
 - Persistent subprocess: Windows client ↔ WSL `python -m conicshield.workers.moreau_worker`
-- Transport: versioned NDJSON on stdin/stdout (`PROTOCOL_VERSION = 1`)
-- **No** localhost networking in v1
+- Transport: versioned NDJSON on stdin/stdout (`PROTOCOL_VERSION = 2`)
+- Hello negotiates via `supported_protocol_versions`; empty intersection fails closed
+- Solve requests carry cryptographic `request_binding_digest`; workers recompute and reject mismatches
+- hello_ack / solve_result carry worker and solver provenance
+- **No** localhost networking
 - **No** per-solve `wsl.exe` relaunch once the worker is up
 - Requests carry structural fingerprint, numerical parameters, row IDs, deadline, trace ID
 - Responses carry full solve + S2 verification evidence, or fail closed
