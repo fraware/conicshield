@@ -99,10 +99,11 @@ def test_cbf_rh_and_stage4_gate_schemas() -> None:
 def test_sampling_study_schema_shape() -> None:
     validator = _validator("sampling_study.schema.json")
     sample = {
-        "schema_id": "research.sampling_study.v0",
-        "corpus_version": "r0-v0.2.0",
+        "schema_id": "research.sampling_study.v1",
+        "corpus_version": "r0-v0.4.0",
         "primary_backend": "cvxpy_clarabel",
         "shadow_backend": "cvxpy_scs",
+        "production_recommendation_blocked": True,
         "results": [
             {
                 "policy": "residual",
@@ -110,8 +111,9 @@ def test_sampling_study_schema_shape() -> None:
                 "shadowed_count": 9,
                 "scenario_count": 18,
                 "shadow_cost_relative": 0.5,
-                "detection_rate": 1.0,
-                "false_skip_rate": 0.0,
+                "detection_rate": None,
+                "detection_estimable": False,
+                "false_skip_rate": None,
             }
         ],
         "promotion_gate": "test",

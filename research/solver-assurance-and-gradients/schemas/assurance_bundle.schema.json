@@ -8,7 +8,12 @@
     "corrected_action",
     "specification_digest",
     "structural_fingerprint",
+    "topology_digest",
+    "problem_digest",
+    "forward_solution_digest",
+    "evidence_bundle_digest",
     "verification",
+    "verification_status",
     "canonical_status",
     "release_decision",
     "primal_evidence",
@@ -21,14 +26,35 @@
     "evidence_level"
   ],
   "properties": {
-    "schema_id": { "type": "string" },
+    "schema_id": {
+      "type": "string",
+      "description": "Current: research.assurance_bundle.v1. Deprecated: v0 / v0_legacy (archival/invalidated)."
+    },
     "corrected_action": {
       "type": "array",
       "items": { "type": "number" }
     },
-    "corrected_action_digest": { "type": "string" },
-    "specification_digest": { "type": "string" },
-    "structural_fingerprint": { "type": "string" },
+    "corrected_action_digest": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "description": "Full SHA-256 hex digest of corrected_action float64 bytes"
+    },
+    "specification_digest": { "type": "string", "minLength": 64, "maxLength": 64 },
+    "structural_fingerprint": { "type": "string", "minLength": 64, "maxLength": 64 },
+    "topology_digest": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "description": "Topology only — must never include active-set membership"
+    },
+    "problem_digest": { "type": "string", "minLength": 64, "maxLength": 64 },
+    "forward_solution_digest": { "type": "string", "minLength": 64, "maxLength": 64 },
+    "evidence_bundle_digest": { "type": "string", "minLength": 64, "maxLength": 64 },
+    "verification_status": {
+      "type": "string",
+      "enum": ["VERIFIED_FEASIBLE", "VERIFIED_INFEASIBLE", "UNVERIFIED"]
+    },
     "verification": { "type": "object" },
     "canonical_status": { "type": "string" },
     "release_decision": { "type": "string" },
@@ -55,6 +81,9 @@
         "L4_REPLAYED_AND_GOVERNED"
       ]
     },
+    "promotion_eligible": { "type": "boolean" },
+    "invalidation_reason": { "type": ["string", "null"] },
+    "deprecated_source_schema": { "type": ["string", "null"] },
     "naming_note": { "type": "string" },
     "extras": { "type": "object" }
   },
