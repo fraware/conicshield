@@ -3,6 +3,10 @@
 States BLOCKED and lists required evidence. Does **not** contain training results
 or claim that safer policies were learned. This is a scientific decision document
 (evidence matrix), not an experiment results report.
+
+R15: authorization is wired through ``evaluate_flagship_promotion_gate`` (lazy via
+the comparison harness). Fail-closed while the flagship gate fails. Numerical
+assurance evidence is not system-level safety proof.
 """
 
 from __future__ import annotations
@@ -13,10 +17,17 @@ from pathlib import Path
 from typing import Any
 
 from conicshield.experimental.corpus.paths import CORPUS_VERSION, RESEARCH_ROOT
+from conicshield.experimental.training.comparison_harness import (
+    COMPARISON_ARMS,
+    CRITICAL_PROMOTION_RULE,
+    HELD_OUT_EVAL_FIELDS,
+    PUBLIC_CLAIM_BINDING,
+    build_controlled_comparison_harness,
+)
 from conicshield.experimental.training.intervention_aware_stub import InterventionAwareTrainingPlan
 
 R6_DECISION_SCHEMA_ID = "research.r6_decision_report_scaffold.v1"
-R6_DECISION_DOC_VERSION = "r6-decision-v0.2.0"
+R6_DECISION_DOC_VERSION = "r6-decision-v0.3.0"
 
 
 @dataclass(slots=True)
@@ -52,11 +63,17 @@ class R6DecisionReportScaffold:
     question: str = "Is intervention-aware training scientifically justified for ConicShield?"
     charter_question_id: str = "Q8"
     corpus_version_context: str = CORPUS_VERSION
-    blocked_until: tuple[str, ...] = ("R2_promotion_gate", "R4_promotion_gate")
+    blocked_until: tuple[str, ...] = (
+        "flagship_promotion_gate",
+        "R2_promotion_gate",
+        "R4_promotion_gate",
+    )
     required_evidence: list[RequiredEvidenceItem] = field(default_factory=list)
     non_claims: list[str] = field(default_factory=list)
     decision_logic: list[str] = field(default_factory=list)
     training_plan: dict[str, Any] = field(default_factory=dict)
+    comparison_harness: dict[str, Any] = field(default_factory=dict)
+    flagship_gate: dict[str, Any] = field(default_factory=dict)
     results: None = None  # explicit: no results in scaffold
 
     def as_dict(self) -> dict[str, Any]:
@@ -65,10 +82,11 @@ class R6DecisionReportScaffold:
             for e in self.required_evidence
             if e.blocking_for_execution and e.status in {"missing", "blocked_dependency", "partial"}
         ]
+        authorized = bool(self.flagship_gate.get("r6_execution_authorized"))
         return {
             "schema_id": self.schema_id,
             "document_version": self.document_version,
-            "decision_status": self.decision_status,
+            "decision_status": self.decision_status if not authorized else "STRUCTURE_READY_NO_RESULTS",
             "document_type": self.document_type,
             "question": self.question,
             "charter_question_id": self.charter_question_id,
@@ -79,19 +97,51 @@ class R6DecisionReportScaffold:
             "non_claims": list(self.non_claims),
             "decision_logic": list(self.decision_logic),
             "training_plan": dict(self.training_plan),
+            "comparison_harness": dict(self.comparison_harness),
+            "flagship_gate": dict(self.flagship_gate),
+            "execution_authorized": authorized,
             "results": self.results,
+            "critical_rule": CRITICAL_PROMOTION_RULE,
+            "public_claim_binding": PUBLIC_CLAIM_BINDING,
             "note": (
                 "Scientific decision document / evidence matrix only. No training loops "
                 "executed. No claim that safer policies were learned. Fill results only "
-                "after R2+R4 gates pass and independent safety metrics improve under "
-                "distribution shift. Checklist completeness here does not unblock R6."
+                "after the R14 flagship promotion gate passes and independent safety "
+                "metrics improve under held-out conditions. Checklist completeness here "
+                "does not unblock R6. Numerical evidence ≠ system safety proof."
             ),
         }
 
 
 def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
     plan = InterventionAwareTrainingPlan()
+    harness = build_controlled_comparison_harness()
+    gate = dict(harness.flagship_gate)
+    gate_passed = bool(gate.get("r6_execution_authorized"))
+    flagship_status = "present" if gate_passed else "blocked_dependency"
+
     evidence = [
+        RequiredEvidenceItem(
+            "flagship_promotion_gate",
+            "R14 flagship promotion gate (`evaluate_flagship_promotion_gate`) must pass "
+            "before any R6 training execution. Includes level predicates, sidecar protocol "
+            "≥ v2, native Moreau multi-host participation, real linked gradients, verified "
+            "CBF, corrupted/incomplete rejection, and docs limitations. Passing is numerical "
+            "assurance readiness — not system-level safety proof.",
+            status=flagship_status,
+            scientific_role="required",
+            depends_on_gates=("R14", "flagship_promotion_gate"),
+            evidence_pointers=(
+                "conicshield.experimental.assurance.proof_carrying.evaluate_flagship_promotion_gate",
+                "research/solver-assurance-and-gradients/PROMOTION_GATES.md#r4",
+                "research/solver-assurance-and-gradients/ASSURANCE_SEMANTICS.md",
+            ),
+            acceptance_criterion=(
+                "evaluate_flagship_promotion_gate(...).passed is True with retained blockers "
+                "empty; production_claim remains False. Numerical evidence is not a system "
+                "safety proof."
+            ),
+        ),
         RequiredEvidenceItem(
             "r2_native_or_validated_gradients",
             "R2 gate: corpus-validated gradients with active-set coverage and exact-vs-FD "
@@ -101,7 +151,7 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
             "the native exact-vs-FD promotion gate.",
             status="partial",
             scientific_role="required",
-            depends_on_gates=("R2",),
+            depends_on_gates=("R2", "R14"),
             evidence_pointers=(
                 "research/solver-assurance-and-gradients/PROMOTION_GATES.md#r2",
                 "conicshield.experimental.gradients.agreement_study",
@@ -118,10 +168,11 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
             "r4_assurance_reproduction",
             "R4 gate: multi-host clean-env soak on >=2 real hosts, schema/replay/corruption "
             "tests, and governed hash policy integrated with production release tooling "
-            "(research adapter exists; production wiring absent).",
+            "(research adapter exists; production wiring absent). Supporting prerequisite "
+            "for flagship multi-host predicates.",
             status="partial",
             scientific_role="required",
-            depends_on_gates=("R4",),
+            depends_on_gates=("R4", "R14"),
             evidence_pointers=(
                 "research/solver-assurance-and-gradients/PROMOTION_GATES.md#r4",
                 "conicshield.experimental.assurance.platform_soak",
@@ -152,17 +203,20 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
         RequiredEvidenceItem(
             "independent_safety_metrics_under_shift",
             "Held-out safety margin / robustness improvements under distribution shift "
-            "(not intervention-rate alone). Must include failure cases.",
+            "(not intervention-rate alone). Must include failure cases. Required fields: "
+            + ", ".join(HELD_OUT_EVAL_FIELDS)
+            + ".",
             status="missing",
             scientific_role="required",
-            depends_on_gates=("R2", "R4", "R6"),
+            depends_on_gates=("flagship_promotion_gate", "R6"),
             evidence_pointers=(
                 "research/solver-assurance-and-gradients/CHARTER.md",
+                "conicshield.experimental.training.comparison_harness",
                 "conicshield.experimental.domains.cbf_corpus",
             ),
             acceptance_criterion=(
                 "Pre-registered held-out safety metrics improve under shift vs baselines; "
-                "intervention-rate reduction alone is insufficient."
+                "intervention-frequency reduction alone is insufficient for promotion."
             ),
         ),
         RequiredEvidenceItem(
@@ -171,7 +225,7 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
             status="missing",
             scientific_role="required",
             depends_on_gates=("R6",),
-            evidence_pointers=(),
+            evidence_pointers=("conicshield.experimental.training.comparison_harness",),
             acceptance_criterion=(
                 "Sign of safety conclusions unchanged across declared solver/smoothing "
                 "sensitivity grid; negatives retained."
@@ -194,12 +248,17 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
         ),
         RequiredEvidenceItem(
             "comparison_battery",
-            "Documented comparisons vs unshielded / inference-only shield / exact / smoothed / "
-            "penalty-only / dual-pressure baselines with pre-registered metrics.",
-            status="missing",
+            "Documented controlled comparisons for arms: "
+            + ", ".join(COMPARISON_ARMS)
+            + " with pre-registered held-out metrics. Harness structure exists; execution "
+            "blocked until flagship gate passes.",
+            status="partial",
             scientific_role="required",
-            depends_on_gates=("R6",),
-            evidence_pointers=("conicshield.experimental.training.intervention_aware_stub",),
+            depends_on_gates=("flagship_promotion_gate", "R6"),
+            evidence_pointers=(
+                "conicshield.experimental.training.comparison_harness",
+                "conicshield.experimental.training.intervention_aware_stub",
+            ),
             acceptance_criterion=(
                 "All listed baselines present with identical metrics and seed control; "
                 "exact/smoothed baseline entries require live native backend availability "
@@ -239,27 +298,36 @@ def build_r6_decision_report_scaffold() -> R6DecisionReportScaffold:
         ),
     ]
     return R6DecisionReportScaffold(
+        decision_status="BLOCKED" if not gate_passed else "STRUCTURE_READY_NO_RESULTS",
         training_plan=plan.as_dict(),
+        comparison_harness=harness.as_dict(),
+        flagship_gate=gate,
         required_evidence=evidence,
         decision_logic=[
-            "IF R2 and R4 promotion gates are not passed THEN decision_status remains BLOCKED "
-            "and no training execution is authorized.",
+            "IF evaluate_flagship_promotion_gate does not pass THEN decision_status remains "
+            "BLOCKED and no training execution is authorized (fail-closed).",
+            "IF R2 and R4 promotion gates are not passed THEN treat as supporting blockers "
+            "under the flagship gate; do not authorize R6 execution.",
             "IF independent held-out safety metrics do not improve under shift THEN do not "
             "claim scientifically justified intervention-aware training.",
-            "IF only intervention rate decreases without safety-metric gains THEN treat as "
-            "negative / inconclusive result.",
+            "IF only intervention frequency decreases without safety-metric gains THEN treat "
+            "as negative / inconclusive result — never as promotion evidence.",
             "IF native exact/smoothed gradients are unavailable on the training host "
             "THEN do not claim native differentiable training success "
             "(research adapters are distinct evidence).",
-            "Stage-4 CBF experimental RH availability does not satisfy R2 or R4 and does not unblock R6.",
+            "Flagship / L0–L4 numerical assurance is not system-level safety proof and does "
+            "not alone justify a safer-policy claim.",
+            "Stage-4 CBF experimental RH availability does not satisfy flagship / R2 / R4 "
+            "and does not unblock R6.",
         ],
         non_claims=[
             "No claim of learning safer policies.",
             "No training results are present in this scaffold.",
             "Research KKT / smoothed adapters are not native Moreau gradients.",
-            "Intervention-rate reduction alone is insufficient evidence of safety.",
+            "Intervention-frequency reduction alone is insufficient evidence of safety.",
             "Checklist completeness here does not unblock R6 training execution.",
-            "Stage-4 CBF checklist green / experimental RH does not imply R2/R4 promotion gates passed.",
+            "Numerical evidence (ProofCarryingProjection / L0–L4) is not system-level safety proof.",
+            "Stage-4 CBF checklist green / experimental RH does not imply flagship or R2/R4 gates passed.",
             "Track 1 S4/S5 scaffolding without vendor attestation does not clear publication-grade frontiers.",
         ],
     )
@@ -276,6 +344,7 @@ def write_r6_decision_scaffold(*, path: Path | None = None) -> Path:
 
 
 def _render_markdown(report: R6DecisionReportScaffold) -> str:
+    gate = report.flagship_gate
     lines = [
         "# R6 decision report scaffold",
         "",
@@ -286,6 +355,16 @@ def _render_markdown(report: R6DecisionReportScaffold) -> str:
         f"CHARTER question: `{report.charter_question_id}`",
         "",
         report.question,
+        "",
+        "## Flagship gate dependency (R14 → R15)",
+        "",
+        f"- `r6_execution_authorized`: `{bool(gate.get('r6_execution_authorized'))}`",
+        f"- `flagship_gate.passed`: `{bool(gate.get('passed'))}`",
+        f"- blockers: `{list(gate.get('blockers') or [])}`",
+        "",
+        CRITICAL_PROMOTION_RULE,
+        "",
+        PUBLIC_CLAIM_BINDING,
         "",
         "## Blocked until",
         "",
@@ -301,12 +380,32 @@ def _render_markdown(report: R6DecisionReportScaffold) -> str:
     )
     for rule in report.decision_logic:
         lines.append(f"- {rule}")
+    lines.extend(
+        [
+            "",
+            "## Controlled comparison arms",
+            "",
+        ]
+    )
+    for arm in COMPARISON_ARMS:
+        lines.append(f"- `{arm}`")
+    lines.extend(
+        [
+            "",
+            "## Held-out evaluation matrix fields",
+            "",
+        ]
+    )
+    for fid in HELD_OUT_EVAL_FIELDS:
+        lines.append(f"- `{fid}`")
     lines.extend(["", "## Required evidence matrix", ""])
     lines.append("| ID | Status | Role | Blocking | Acceptance criterion |")
     lines.append("| -- | ------ | ---- | -------- | -------------------- |")
     for e in report.required_evidence:
         acc = e.acceptance_criterion.replace("|", "\\|")
-        lines.append(f"| `{e.evidence_id}` | {e.status} | {e.scientific_role} | {e.blocking_for_execution} | {acc} |")
+        lines.append(
+            f"| `{e.evidence_id}` | {e.status} | {e.scientific_role} | {e.blocking_for_execution} | {acc} |"
+        )
     lines.extend(["", "### Evidence details", ""])
     for e in report.required_evidence:
         ptr = f" pointers={list(e.evidence_pointers)}" if e.evidence_pointers else ""
@@ -324,8 +423,10 @@ def _render_markdown(report: R6DecisionReportScaffold) -> str:
             "## Explicit non-authorization",
             "",
             "Completing rows in this matrix as documentation does **not** authorize R6 "
-            "training execution. Execution remains blocked until R2 and R4 promotion gates "
-            "pass and the acceptance criteria above are met with retained negatives.",
+            "training execution. Execution remains blocked until "
+            "`evaluate_flagship_promotion_gate` passes and the acceptance criteria above "
+            "are met with retained negatives. Intervention-frequency reduction alone is "
+            "not promotion evidence. Numerical assurance ≠ system safety proof.",
             "",
         ]
     )
@@ -334,7 +435,11 @@ def _render_markdown(report: R6DecisionReportScaffold) -> str:
 
 def main() -> None:
     path = write_r6_decision_scaffold()
-    print(f"wrote {path} status=BLOCKED version={R6_DECISION_DOC_VERSION}")
+    report = build_r6_decision_report_scaffold()
+    print(
+        f"wrote {path} status={report.decision_status} version={R6_DECISION_DOC_VERSION} "
+        f"flagship_passed={bool(report.flagship_gate.get('passed'))}"
+    )
 
 
 if __name__ == "__main__":

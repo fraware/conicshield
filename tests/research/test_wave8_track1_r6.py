@@ -94,9 +94,12 @@ def test_r6_decision_matrix_blocked_scientific_doc() -> None:
     assert d["document_version"] == R6_DECISION_DOC_VERSION
     assert d["blocking_evidence_incomplete"]
     assert d["decision_logic"]
+    assert d["execution_authorized"] is False
+    assert "flagship_promotion_gate" in d["blocked_until"]
     ids = {e["evidence_id"] for e in d["required_evidence"]}
     assert "negative_retention_protocol" in ids
     assert "track1_s4_hetero_batch_attestation" in ids
+    assert "flagship_promotion_gate" in ids
     for e in d["required_evidence"]:
         assert e["acceptance_criterion"]
         assert "evidence_pointers" in e
