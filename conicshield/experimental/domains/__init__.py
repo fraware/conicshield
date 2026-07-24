@@ -6,6 +6,7 @@ from conicshield.experimental.domains.cbf_2d import (
     CBF2DDomain,
     CBF2DDomainScaffold,
     apply_cbf_filter,
+    apply_cbf_filter_batch,
     apply_cbf_filter_batched,
     apply_cbf_filter_soc_robust,
     compute_cbf_metrics,
@@ -14,6 +15,9 @@ from conicshield.experimental.domains.cbf_2d import (
     demo_stage3_soc_robust,
     nominal_cbf_qp_placeholder,
     stage4_gate_status,
+    validate_cbf_inputs,
+    validate_robust_cbf_control,
+    verify_cbf_candidate,
 )
 from conicshield.experimental.domains.cbf_corpus import (
     CBF_CORPUS_VERSION,
@@ -38,6 +42,7 @@ __all__ = [
     "CBF_CORPUS_VERSION",
     "RH_EXPERIMENT_VERSION",
     "apply_cbf_filter",
+    "apply_cbf_filter_batch",
     "apply_cbf_filter_batched",
     "apply_cbf_filter_soc_robust",
     "audit_infeasibility",
@@ -54,4 +59,7 @@ __all__ = [
     "nominal_cbf_qp_placeholder",
     "run_receding_horizon_filter",
     "stage4_gate_status",
+    "validate_cbf_inputs",
+    "validate_robust_cbf_control",
+    "verify_cbf_candidate",
 ]

@@ -44,8 +44,10 @@ RH_LIMITATIONS: tuple[str, ...] = (
     "Short-horizon open-loop prediction inside the RH window; not full MPC "
     "with terminal ingredients or recursive feasibility certificates.",
     "No autonomous-driving / general AD stack.",
-    "Native Moreau filter baseline remains unavailable on the public research path.",
+    "Native Moreau filter baseline remains explicitly unavailable on the public research path "
+    "(not counted as a comparison baseline until a live Moreau CBF encoder exists).",
     "Stage-3 robust mode uses the declared SOC sufficient condition, not a tight robust MPC tube.",
+    "No recursive feasibility certificates and no multi-robot coupling claims.",
 )
 
 
