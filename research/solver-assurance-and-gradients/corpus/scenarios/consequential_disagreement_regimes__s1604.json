@@ -1,18 +1,23 @@
 {
   "corpus_family_id": "research.solver_assurance.r0",
   "corpus_version": "r0-v0.4.0",
-  "expected_regime": "active_set_transition_neighborhood",
+  "expected_regime": "active_set_neighborhood_perturbation",
   "extras": {
-    "bound_param": 0.49,
     "constraint_family": "box",
-    "disagreement_regime": "bound_neighborhood",
+    "disagreement_regime": "active_set_neighborhood",
+    "fault_injection": true,
+    "fault_injection_kind": "shadow_iteration_limit_at_boundary",
+    "fault_injection_label": "shadow_iteration_limit_at_boundary",
+    "fault_injection_notes": "boundary neighborhood + shadow iter starve",
     "pre_transition": true,
-    "side": "below",
-    "trajectory_id": "box_upper0"
+    "shadow_overrides": {
+      "suggested_max_iter": 2,
+      "suggested_time_limit": 1e-08
+    }
   },
-  "family": "active_set_transition_neighborhoods",
+  "family": "consequential_disagreement_regimes",
   "generation_commit": "55324d02a0a4e888",
-  "notes": "Box-bound trajectory; upper0=0.49.",
+  "notes": "Active-set neighborhood just below box activation; paired with shadow iteration starve for compound disagreement.",
   "previous_action": [
     0.25,
     0.25,
@@ -31,8 +36,8 @@
     0.25,
     0.25
   ],
-  "scenario_id": "active_set_transition_neighborhoods/s1004",
-  "seed": 1004,
+  "scenario_id": "consequential_disagreement_regimes/s1604",
+  "seed": 1604,
   "spec": {
     "action_dim": 4,
     "constraints": [
@@ -58,7 +63,7 @@
           0.0
         ],
         "upper": [
-          0.49,
+          0.495,
           1.0,
           1.0,
           1.0
@@ -75,7 +80,7 @@
       }
     ],
     "slack_weight": 10.0,
-    "spec_id": "research/active_set_transition_neighborhoods/box",
+    "spec_id": "research/consequential_disagreement_regimes/active_set_nbhd",
     "version": "0.1.0"
   },
   "weights": {

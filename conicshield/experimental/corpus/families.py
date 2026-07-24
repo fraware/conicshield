@@ -444,4 +444,117 @@ def generate_family_scenarios(*, family: str, generation_commit: str, rng: np.ra
             )
         ]
 
+    if family == "consequential_disagreement_regimes":
+        # Explicit fault-injection and conditioning regimes that enrich the 100% shadow
+        # baseline with consequential primary/shadow disagreements for sampling science.
+        return [
+            _scenario(
+                scenario_id=f"{family}/s1601",
+                family=family,
+                seed=1601,
+                spec=_base_spec(spec_id=f"research/{family}/shadow_iter_starve"),
+                proposed=[0.55, 0.25, 0.15, 0.05],
+                previous=[0.25] * 4,
+                reference=[0.25] * 4,
+                expected_regime="fault_injection_shadow_iteration_limit",
+                notes=(
+                    "Fault injection: starve shadow solver iterations/time while primary "
+                    "uses defaults — induces status/timeout asymmetry."
+                ),
+                generation_commit=generation_commit,
+                extras={
+                    "fault_injection": True,
+                    "fault_injection_kind": "shadow_iteration_limit",
+                    "fault_injection_label": "shadow_iteration_limit",
+                    "fault_injection_notes": "shadow_overrides.max_iter/time_limit only",
+                    "shadow_overrides": {
+                        "suggested_max_iter": 1,
+                        "suggested_time_limit": 1e-9,
+                    },
+                    "disagreement_regime": "iteration_limit_asymmetry",
+                },
+            ),
+            _scenario(
+                scenario_id=f"{family}/s1602",
+                family=family,
+                seed=1602,
+                spec=_base_spec(
+                    spec_id=f"research/{family}/conditioning",
+                    upper=[0.35, 1.0, 1.0, 1.0],
+                    max_delta=[0.05] * 4,
+                ),
+                proposed=[1e5, 1e-6, 1e-6, 1e-6],
+                previous=[0.30, 0.30, 0.20, 0.20],
+                reference=[0.0, 0.0, 0.0, 1.0],
+                weights={"policy_weight": 1e10, "reference_weight": 1e-10},
+                expected_regime="conditioning_cross_solver",
+                notes=(
+                    "Ill-conditioned weights + tight rate/box neighborhood — "
+                    "Clarabel vs SCS residual/action disagreement regime (not fault injection)."
+                ),
+                generation_commit=generation_commit,
+                extras={
+                    "fault_injection": False,
+                    "disagreement_regime": "conditioning_tolerance",
+                    "constraint_family": "box_rate",
+                },
+            ),
+            _scenario(
+                scenario_id=f"{family}/s1603",
+                family=family,
+                seed=1603,
+                spec=_base_spec(
+                    spec_id=f"research/{family}/warm_cold",
+                    allowed=[0, 1],
+                ),
+                proposed=[0.7, 0.3, 0.0, 0.0],
+                previous=[0.0, 0.0, 0.6, 0.4],
+                reference=[0.5, 0.5, 0.0, 0.0],
+                expected_regime="fault_injection_warm_vs_cold",
+                notes=(
+                    "Fault injection: shadow warm-starts from stale previous under a mask "
+                    "flip; primary stays cold."
+                ),
+                generation_commit=generation_commit,
+                extras={
+                    "fault_injection": True,
+                    "fault_injection_kind": "shadow_warm_start_stale",
+                    "fault_injection_label": "shadow_warm_start_stale",
+                    "fault_injection_notes": "shadow warm_start=True with stale previous under new mask",
+                    "primary_overrides": {"warm_start": False},
+                    "shadow_overrides": {"warm_start": True},
+                    "warm_start_rejected": True,
+                    "disagreement_regime": "warm_cold_asymmetry",
+                },
+            ),
+            _scenario(
+                scenario_id=f"{family}/s1604",
+                family=family,
+                seed=1604,
+                spec=_base_spec(
+                    spec_id=f"research/{family}/active_set_nbhd",
+                    upper=[0.495, 1.0, 1.0, 1.0],
+                ),
+                proposed=[0.55, 0.15, 0.15, 0.15],
+                previous=[0.25] * 4,
+                reference=[0.25] * 4,
+                expected_regime="active_set_neighborhood_perturbation",
+                notes=(
+                    "Active-set neighborhood just below box activation; "
+                    "paired with shadow iteration starve for compound disagreement."
+                ),
+                generation_commit=generation_commit,
+                extras={
+                    "fault_injection": True,
+                    "fault_injection_kind": "shadow_iteration_limit_at_boundary",
+                    "fault_injection_label": "shadow_iteration_limit_at_boundary",
+                    "fault_injection_notes": "boundary neighborhood + shadow iter starve",
+                    "shadow_overrides": {"suggested_max_iter": 2, "suggested_time_limit": 1e-8},
+                    "constraint_family": "box",
+                    "disagreement_regime": "active_set_neighborhood",
+                    "pre_transition": True,
+                },
+            ),
+        ]
+
     raise ValueError(f"unknown scenario family: {family}")

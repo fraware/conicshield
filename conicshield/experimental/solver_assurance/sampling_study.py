@@ -1,15 +1,20 @@
-"""Risk-based shadow sampling: detection-rate vs cost study (R1).
+"""Risk-based shadow sampling: detection-rate vs cost study (R10).
 
 Compares sampling policies against a 100% shadow baseline on the versioned corpus.
-Emits machine-readable results suitable for ``output/research/`` and CI fixtures.
+Multi-seed protocol reports mean detection, CI, cost distribution, family-stratified
+detection, false-skip rate, and prevalence. Zero consequential events ⇒ detection
+not estimable (never 1.0). Production recommendation stays blocked.
 """
 
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
+
+import numpy as np
 
 from conicshield.experimental.corpus.paths import CORPUS_VERSION
 from conicshield.experimental.provenance import begin_experiment_provenance, finalize_experiment_provenance
@@ -21,9 +26,10 @@ from conicshield.experimental.solver_assurance.disagreement import (
 from conicshield.experimental.solver_assurance.sampling import SamplingPolicyId
 from conicshield.experimental.solver_assurance.shadow_harness import run_shadow_harness
 
-# Schema id for committed CI-small fixtures and full study outputs
-SAMPLING_STUDY_SCHEMA_ID = "research.sampling_study.v0"
+# Schema id for committed CI-small fixtures and full study outputs (R10 semantics).
+SAMPLING_STUDY_SCHEMA_ID = "research.sampling_study.v1"
 DEFAULT_BUDGET_FRACTIONS: tuple[float, ...] = (0.25, 0.5, 0.75, 1.0)
+DEFAULT_MASTER_SEEDS: tuple[int, ...] = (0, 1, 2)
 
 
 @dataclass(slots=True)
@@ -35,11 +41,16 @@ class PolicyBudgetResult:
     shadow_cost_relative: float
     consequential_detected: int
     consequential_baseline: int
-    detection_rate: float
-    false_skip_rate: float
+    detection_rate: float | None
+    detection_estimable: bool
+    false_skip_rate: float | None
     mean_l2_when_shadowed: float
     status_disagreement_count: int
     notes: str = ""
+    seed_detection_rates: list[float | None] = field(default_factory=list)
+    mean_detection_across_seeds: float | None = None
+    family_stratified_detection: dict[str, float | None] = field(default_factory=dict)
+    missed_baseline_ids: list[str] = field(default_factory=list)
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -63,10 +74,11 @@ class CostDetectionPoint:
     policy: str
     budget_fraction: float
     shadow_cost_relative: float
-    detection_rate: float
-    detection_ci_low: float
-    detection_ci_high: float
-    false_skip_rate: float
+    detection_rate: float | None
+    detection_estimable: bool
+    detection_ci_low: float | None
+    detection_ci_high: float | None
+    false_skip_rate: float | None
     consequential_detected: int
     consequential_baseline: int
 
@@ -83,14 +95,18 @@ class SamplingStudyReport:
     baseline_policy: str = SamplingPolicyId.RANDOM.value
     baseline_budget_fraction: float = 1.0
     consequential_l2_threshold: float = ACTION_L2_LARGE
+    master_seeds: list[int] = field(default_factory=lambda: list(DEFAULT_MASTER_SEEDS))
     results: list[PolicyBudgetResult] = field(default_factory=list)
     family_summaries_baseline: list[dict[str, Any]] = field(default_factory=list)
     negative_results: list[str] = field(default_factory=list)
     cost_detection_curve: list[CostDetectionPoint] = field(default_factory=list)
     statistical_summary: dict[str, Any] = field(default_factory=dict)
+    production_recommendation_blocked: bool = True
+    production_recommendation: Any | None = None
     promotion_gate: str = (
         "Advanced sampling may enter production only when mandatory verification remains "
-        "complete and sampling affects only the optional secondary solve."
+        "complete and sampling affects only the optional secondary solve. "
+        "R1 production recommendation stays blocked until real deployment distributions."
     )
     provenance: dict[str, Any] = field(default_factory=dict)
 
@@ -103,11 +119,14 @@ class SamplingStudyReport:
             "baseline_policy": self.baseline_policy,
             "baseline_budget_fraction": self.baseline_budget_fraction,
             "consequential_l2_threshold": self.consequential_l2_threshold,
+            "master_seeds": list(self.master_seeds),
             "results": [r.as_dict() for r in self.results],
             "family_summaries_baseline": list(self.family_summaries_baseline),
             "negative_results": list(self.negative_results),
             "cost_detection_curve": [p.as_dict() for p in self.cost_detection_curve],
             "statistical_summary": dict(self.statistical_summary),
+            "production_recommendation_blocked": True,
+            "production_recommendation": None,
             "promotion_gate": self.promotion_gate,
             "provenance": dict(self.provenance),
             "publication_ready_machine_readable": True,
@@ -119,7 +138,9 @@ def _consequential_ids(summary: dict[str, Any]) -> set[str]:
     for case in summary.get("cases") or []:
         if not case.get("shadowed"):
             continue
-        d = case.get("disagreement") or {}
+        d = case.get("disagreement")
+        if not isinstance(d, dict):
+            continue
         consequential = bool(d.get("consequential"))
         if not consequential:
             # Fallback for older records without the flag
@@ -131,10 +152,47 @@ def _consequential_ids(summary: dict[str, Any]) -> set[str]:
     return ids
 
 
+def _family_of(summary: dict[str, Any], scenario_id: str) -> str:
+    for case in summary.get("cases") or []:
+        if str(case.get("scenario_id")) == scenario_id:
+            return str(case.get("family") or "unknown")
+    return "unknown"
+
+
+def _family_stratified_detection(
+    *,
+    baseline_ids: set[str],
+    detected: set[str],
+    baseline_summary: dict[str, Any],
+) -> dict[str, float | None]:
+    if not baseline_ids:
+        return {}
+    by_family: dict[str, list[str]] = {}
+    for sid in baseline_ids:
+        fam = _family_of(baseline_summary, sid)
+        by_family.setdefault(fam, []).append(sid)
+    out: dict[str, float | None] = {}
+    for fam, ids in sorted(by_family.items()):
+        n = len(ids)
+        if n == 0:
+            out[fam] = None
+        else:
+            out[fam] = float(len(set(ids) & detected) / n)
+    return out
+
+
+def _mean_optional(values: list[float | None]) -> float | None:
+    nums = [float(v) for v in values if v is not None and not (isinstance(v, float) and math.isnan(v))]
+    if not nums:
+        return None
+    return float(sum(nums) / len(nums))
+
+
 def run_sampling_study(
     *,
     policies: list[SamplingPolicyId | str] | None = None,
     budget_fractions: tuple[float, ...] = DEFAULT_BUDGET_FRACTIONS,
+    master_seeds: tuple[int, ...] = DEFAULT_MASTER_SEEDS,
     primary_backend: str = "cvxpy_clarabel",
     shadow_backend: str = "cvxpy_scs",
     output_dir: Path | None = None,
@@ -150,6 +208,7 @@ def run_sampling_study(
             SamplingPolicyId.ACTIVE_SET_CHANGE,
         ]
         budget_fractions = (0.5, 1.0)
+        master_seeds = (0, 1)
     else:
         policies = policies or list(SamplingPolicyId)
 
@@ -157,10 +216,11 @@ def run_sampling_study(
         scenario_corpus_version=CORPUS_VERSION,
         backend=f"{primary_backend}|{shadow_backend}",
         exact_command=exact_command,
-        random_seeds={"sampling_study": 0},
+        random_seeds={"sampling_study_master_seeds": list(master_seeds)},
         solver_settings={
             "policies": [str(p) for p in policies],
             "budget_fractions": list(budget_fractions),
+            "master_seeds": list(master_seeds),
             "ci_small": ci_small,
         },
         tolerances={"action_l2_consequential": ACTION_L2_LARGE},
@@ -175,21 +235,24 @@ def run_sampling_study(
         shadow_backend=shadow_backend,
         sampling_policy=SamplingPolicyId.RANDOM,
         budget_fraction=1.0,
+        master_seed=int(master_seeds[0]),
         exact_command=f"{exact_command}::baseline_100pct",
     )
     baseline_ids = _consequential_ids(baseline)
     n_base = len(baseline_ids)
     n_scenarios = int(baseline["scenario_count"])
+    prevalence = float(n_base / max(n_scenarios, 1))
 
     family_summaries = [s.as_dict() for s in summarize_by_family(list(baseline.get("cases") or []))]
-    # Attach overall distribution for baseline
     shadowed_disagreements = []
     from conicshield.experimental.solver_assurance.disagreement import SolverDisagreement
 
     for case in baseline.get("cases") or []:
         if not case.get("shadowed"):
             continue
-        raw = case["disagreement"]
+        raw = case.get("disagreement")
+        if not isinstance(raw, dict):
+            continue
         shadowed_disagreements.append(
             SolverDisagreement(
                 status_disagreement=bool(raw["status_disagreement"]),
@@ -217,64 +280,121 @@ def run_sampling_study(
     if n_base == 0:
         negative.append(
             "baseline_100pct_shadow found zero consequential disagreements; "
-            "detection_rate is undefined and reported as 1.0 with note"
+            "detection_rate is not estimable (reported as null, never 1.0)"
         )
+
+    cost_samples: list[float] = []
 
     for policy in policies:
         for frac in budget_fractions:
-            summary = run_shadow_harness(
-                primary_backend=primary_backend,
-                shadow_backend=shadow_backend,
-                sampling_policy=policy,
-                budget_fraction=float(frac),
-                exact_command=f"{exact_command}::{policy}@{frac}",
-            )
-            detected = _consequential_ids(summary)
-            shadowed_count = int(summary["shadowed_count"])
+            seed_detected: list[set[str]] = []
+            seed_rates: list[float | None] = []
+            shadowed_counts: list[int] = []
+            mean_l2s: list[float] = []
+            status_counts: list[int] = []
+            last_summary: dict[str, Any] = {}
+            for seed in master_seeds:
+                summary = run_shadow_harness(
+                    primary_backend=primary_backend,
+                    shadow_backend=shadow_backend,
+                    sampling_policy=policy,
+                    budget_fraction=float(frac),
+                    master_seed=int(seed),
+                    exact_command=f"{exact_command}::{policy}@{frac}@seed{seed}",
+                )
+                last_summary = summary
+                detected = _consequential_ids(summary)
+                seed_detected.append(detected)
+                shadowed_counts.append(int(summary["shadowed_count"]))
+                mean_l2s.append(float(summary.get("mean_l2_when_shadowed") or 0.0))
+                status_counts.append(int(summary.get("status_disagreement_count") or 0))
+                if n_base == 0:
+                    seed_rates.append(None)
+                else:
+                    seed_rates.append(float(len(detected & baseline_ids) / n_base))
+
+            # Aggregate across seeds: union of detections for reported detected count;
+            # mean detection across seeds for the primary detection_rate.
+            union_detected: set[str] = set().union(*seed_detected) if seed_detected else set()
+            shadowed_count = int(round(float(np.mean(shadowed_counts)))) if shadowed_counts else 0
+            cost_rel = float(shadowed_count / max(n_scenarios, 1))
+            cost_samples.append(cost_rel)
+
             if n_base == 0:
-                detection_rate = 1.0
-                false_skip = 0.0
-                note = "no_baseline_consequential; detection_rate set to 1.0 by convention"
+                detection_rate: float | None = None
+                false_skip: float | None = None
+                estimable = False
+                note = "no_baseline_consequential; detection_rate not estimable"
+                missed: list[str] = []
+                fam_det: dict[str, float | None] = {}
             else:
-                detection_rate = float(len(detected & baseline_ids) / n_base)
-                missed = baseline_ids - detected
-                false_skip = float(len(missed) / n_base)
+                estimable = True
+                detection_rate = _mean_optional(seed_rates)
+                # False-skip: baseline positives never selected in the seed-union coverage,
+                # reported as mean miss rate across seeds.
+                miss_rates = [
+                    float(len(baseline_ids - det) / n_base) for det in seed_detected
+                ]
+                false_skip = float(sum(miss_rates) / len(miss_rates)) if miss_rates else 0.0
+                missed = sorted(baseline_ids - union_detected)
+                fam_det = _family_stratified_detection(
+                    baseline_ids=baseline_ids,
+                    detected=union_detected,
+                    baseline_summary=baseline,
+                )
                 note = ""
-                if float(frac) < 1.0 and detection_rate < 0.5:
+                if float(frac) < 1.0 and detection_rate is not None and detection_rate < 0.5:
                     negative.append(
                         f"policy={policy} budget={frac}: detection_rate={detection_rate:.3f} "
                         f"(below 0.5 vs 100% shadow consequential set)"
                     )
+                # Every missed event must trace to a real baseline disagreement id.
+                for mid in missed:
+                    if mid not in baseline_ids:
+                        raise RuntimeError(f"missed id {mid} not in baseline consequential set")
+
             results.append(
                 PolicyBudgetResult(
                     policy=str(policy),
                     budget_fraction=float(frac),
                     shadowed_count=shadowed_count,
                     scenario_count=n_scenarios,
-                    shadow_cost_relative=float(shadowed_count / max(n_scenarios, 1)),
-                    consequential_detected=len(detected & baseline_ids) if n_base else len(detected),
+                    shadow_cost_relative=cost_rel,
+                    consequential_detected=len(union_detected & baseline_ids) if n_base else 0,
                     consequential_baseline=n_base,
                     detection_rate=detection_rate,
-                    false_skip_rate=false_skip if n_base else 0.0,
-                    mean_l2_when_shadowed=float(summary.get("mean_l2_when_shadowed") or 0.0),
-                    status_disagreement_count=int(summary.get("status_disagreement_count") or 0),
+                    detection_estimable=estimable,
+                    false_skip_rate=false_skip,
+                    mean_l2_when_shadowed=float(np.mean(mean_l2s)) if mean_l2s else 0.0,
+                    status_disagreement_count=int(round(float(np.mean(status_counts)))) if status_counts else 0,
                     notes=note,
+                    seed_detection_rates=list(seed_rates),
+                    mean_detection_across_seeds=detection_rate,
+                    family_stratified_detection=fam_det,
+                    missed_baseline_ids=missed,
                 )
             )
+            _ = last_summary
 
     provenance = finalize_experiment_provenance(provenance)
     curve: list[CostDetectionPoint] = []
     for r in results:
-        # Binomial CI over baseline consequential set size (detection among known positives).
-        lo, hi = _wilson_interval(r.consequential_detected, max(r.consequential_baseline, 1))
-        if r.consequential_baseline == 0:
-            lo, hi = float("nan"), float("nan")
+        if not r.detection_estimable or r.consequential_baseline == 0:
+            lo: float | None = None
+            hi: float | None = None
+        else:
+            # Wilson CI on mean seed detection rounded via detected/baseline for primary seed.
+            # Use rounded successes from mean rate for interval presentation.
+            successes = int(round((r.detection_rate or 0.0) * r.consequential_baseline))
+            wlo, whi = _wilson_interval(successes, r.consequential_baseline)
+            lo, hi = wlo, whi
         curve.append(
             CostDetectionPoint(
                 policy=r.policy,
                 budget_fraction=r.budget_fraction,
                 shadow_cost_relative=r.shadow_cost_relative,
                 detection_rate=r.detection_rate,
+                detection_estimable=r.detection_estimable,
                 detection_ci_low=lo,
                 detection_ci_high=hi,
                 false_skip_rate=r.false_skip_rate,
@@ -282,22 +402,35 @@ def run_sampling_study(
                 consequential_baseline=r.consequential_baseline,
             )
         )
-    # Prefer residual@mid-budget when present for a compact summary cell.
+
     residual_mid = next(
         (p for p in curve if p.policy == SamplingPolicyId.RESIDUAL.value and abs(p.budget_fraction - 0.5) < 1e-12),
         curve[0] if curve else None,
     )
+    cost_arr = np.asarray(cost_samples, dtype=np.float64) if cost_samples else np.asarray([0.0])
     statistical_summary = {
         "confidence_method": "wilson_score_interval_95",
         "baseline_consequential_count": n_base,
         "n_scenarios": n_scenarios,
+        "prevalence": prevalence,
+        "master_seeds": list(master_seeds),
         "ci_small": ci_small,
+        "cost_distribution": {
+            "n": int(cost_arr.size),
+            "mean": float(np.mean(cost_arr)),
+            "median": float(np.median(cost_arr)),
+            "p95": float(np.percentile(cost_arr, 95)),
+            "min": float(np.min(cost_arr)),
+            "max": float(np.max(cost_arr)),
+        },
+        "detection_not_estimable_when_zero_baseline": True,
         "highlight_policy_budget": None
         if residual_mid is None
         else {
             "policy": residual_mid.policy,
             "budget_fraction": residual_mid.budget_fraction,
             "detection_rate": residual_mid.detection_rate,
+            "detection_estimable": residual_mid.detection_estimable,
             "detection_ci_95": [residual_mid.detection_ci_low, residual_mid.detection_ci_high],
             "shadow_cost_relative": residual_mid.shadow_cost_relative,
         },
@@ -305,11 +438,13 @@ def run_sampling_study(
             "cost_detection_curve lists all policy/budget cells; select operating points "
             "by inspection — no automatic production recommendation."
         ),
+        "production_recommendation_blocked": True,
     }
     report = SamplingStudyReport(
         corpus_version=str(baseline.get("corpus_version") or CORPUS_VERSION),
         primary_backend=primary_backend,
         shadow_backend=shadow_backend,
+        master_seeds=list(master_seeds),
         results=results,
         family_summaries_baseline=family_summaries,
         negative_results=sorted(set(negative)),
@@ -349,14 +484,22 @@ def main() -> None:
     )
     args = parser.parse_args()
     report = run_sampling_study(output_dir=args.output_dir, ci_small=args.ci_small)
-    best = max(report.results, key=lambda r: (r.detection_rate, -r.shadow_cost_relative))
-    print(
-        f"sampling study: {len(report.results)} cells; "
-        f"best detection/cost={best.policy}@{best.budget_fraction} "
-        f"det={best.detection_rate:.3f} cost={best.shadow_cost_relative:.3f}"
-    )
+    estimable = [r for r in report.results if r.detection_estimable and r.detection_rate is not None]
+    if estimable:
+        best = max(estimable, key=lambda r: (r.detection_rate or 0.0, -r.shadow_cost_relative))
+        print(
+            f"sampling study: {len(report.results)} cells; "
+            f"best detection/cost={best.policy}@{best.budget_fraction} "
+            f"det={best.detection_rate:.3f} cost={best.shadow_cost_relative:.3f}"
+        )
+    else:
+        print(
+            f"sampling study: {len(report.results)} cells; "
+            "detection not estimable (zero baseline consequential events)"
+        )
     if report.negative_results:
         print(f"negative_results={len(report.negative_results)}")
+    print(f"production_recommendation_blocked={report.production_recommendation_blocked}")
     print(f"wrote {args.output_dir}")
 
 

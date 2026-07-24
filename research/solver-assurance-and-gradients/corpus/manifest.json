@@ -1,6 +1,6 @@
 {
   "corpus_family_id": "research.solver_assurance.r0",
-  "corpus_version": "r0-v0.3.0",
+  "corpus_version": "r0-v0.4.0",
   "families": {
     "active_set_transition_neighborhoods": [
       "active_set_transition_neighborhoods/s1001",
@@ -33,6 +33,12 @@
     ],
     "changing_admissibility_masks": [
       "changing_admissibility_masks/s0601"
+    ],
+    "consequential_disagreement_regimes": [
+      "consequential_disagreement_regimes/s1601",
+      "consequential_disagreement_regimes/s1602",
+      "consequential_disagreement_regimes/s1603",
+      "consequential_disagreement_regimes/s1604"
     ],
     "heterogeneous_batches": [
       "heterogeneous_batches/s1301"
@@ -72,8 +78,8 @@
       "warm_start_success_failure/s1201b"
     ]
   },
-  "generation_commit": "bbd3dcffd9af8bfa",
+  "generation_commit": "55324d02a0a4e888",
   "notes": "Versioned R0 research corpus. Seeds and generation code reproduce every case. Includes failure and disagreement regimes.",
-  "scenario_count": 39,
+  "scenario_count": 43,
   "schema": "research/solver-assurance-and-gradients/schemas/scenario.schema.json"
 }

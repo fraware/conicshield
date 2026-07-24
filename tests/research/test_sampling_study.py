@@ -83,6 +83,7 @@ def test_sampling_study_ci_small(tmp_path: Path) -> None:
     assert report.results
     assert report.cost_detection_curve
     assert report.statistical_summary.get("confidence_method") == "wilson_score_interval_95"
+    assert report.production_recommendation_blocked is True
     assert report.as_dict()["publication_ready_machine_readable"] is True
     policies = {r.policy for r in report.results}
     assert SamplingPolicyId.RESIDUAL.value in policies
