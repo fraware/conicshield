@@ -1,11 +1,22 @@
 name: research-multi-host-soak
 
-# Optional multi-OS soak matrix for R4 evidence collection.
+# R12 multi-OS / multi-solver soak matrix for genuine multi-host evidence.
 # Separate from research-public.yml — does not alter that required path.
-# Never claims R4 / production promotion. Synthetic fixtures are not used here.
+# Never claims production promotion. Synthetic fixtures are not used here.
+#
+# Required matrix roles (see MULTI_HOST_SOAK_RUNBOOK.md):
+#   linux_public, windows_public, linux_wsl_moreau_cpu,
+#   linux_moreau_cuda (when available), windows_wsl_sidecar
+# Public CI covers linux_public + windows_public. Moreau/sidecar jobs are
+# optional (self-hosted / secrets) and must not fake availability.
 
 on:
   workflow_dispatch:
+    inputs:
+      require_moreau_matrix:
+        description: "Fail aggregate unless ≥1 native Moreau matrix role is present"
+        type: boolean
+        default: false
   schedule:
     - cron: "30 7 * * 1"
 
@@ -14,11 +25,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  soak:
+  soak-public:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            matrix_role: linux_public
+          - os: windows-latest
+            matrix_role: windows_public
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -33,21 +48,116 @@ jobs:
       - name: Platform soak (real CI runner)
         shell: bash
         run: |
-          HOST_ID="gha-${{ matrix.os }}|${{ runner.os }}|3.12"
+          HOST_ID="gha-${{ matrix.os }}|${{ runner.os }}|3.12|${{ matrix.matrix_role }}"
           python -m conicshield.experimental.assurance.platform_soak \
-            --output-dir "output/research/multi_host_ci/${{ matrix.os }}" \
+            --output-dir "output/research/multi_host_ci/${{ matrix.matrix_role }}" \
             --host-id "${HOST_ID}" \
-            --host-kind real
+            --host-kind real \
+            --matrix-role "${{ matrix.matrix_role }}"
       - name: Upload soak shard
         uses: actions/upload-artifact@v4
         with:
-          name: platform-soak-${{ matrix.os }}
-          path: output/research/multi_host_ci/${{ matrix.os }}/platform_soak.json
+          name: platform-soak-${{ matrix.matrix_role }}
+          path: output/research/multi_host_ci/${{ matrix.matrix_role }}/platform_soak.json
+          if-no-files-found: error
+          retention-days: 30
+
+  # Optional self-hosted Moreau CPU (Linux/WSL). Skips when label absent.
+  soak-moreau-cpu:
+    if: ${{ false }}  # enable when self-hosted runner with `moreau-cpu` label exists
+    runs-on: [self-hosted, moreau-cpu, linux]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Platform soak (Moreau CPU)
+        shell: bash
+        run: |
+          HOST_ID="moreau-cpu|$(uname -s)|3.12|linux_wsl_moreau_cpu"
+          python -m conicshield.experimental.assurance.platform_soak \
+            --output-dir output/research/multi_host_ci/linux_wsl_moreau_cpu \
+            --host-id "${HOST_ID}" \
+            --host-kind real \
+            --matrix-role linux_wsl_moreau_cpu
+      - name: Upload soak shard
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-soak-linux_wsl_moreau_cpu
+          path: output/research/multi_host_ci/linux_wsl_moreau_cpu/platform_soak.json
+          if-no-files-found: error
+          retention-days: 30
+
+  # Optional CUDA Moreau when GPU runner available.
+  soak-moreau-cuda:
+    if: ${{ false }}  # enable when self-hosted runner with `moreau-cuda` label exists
+    runs-on: [self-hosted, moreau-cuda, linux]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Platform soak (Moreau CUDA)
+        shell: bash
+        run: |
+          HOST_ID="moreau-cuda|$(uname -s)|3.12|linux_moreau_cuda"
+          python -m conicshield.experimental.assurance.platform_soak \
+            --output-dir output/research/multi_host_ci/linux_moreau_cuda \
+            --host-id "${HOST_ID}" \
+            --host-kind real \
+            --matrix-role linux_moreau_cuda
+      - name: Upload soak shard
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-soak-linux_moreau_cuda
+          path: output/research/multi_host_ci/linux_moreau_cuda/platform_soak.json
+          if-no-files-found: error
+          retention-days: 30
+
+  # Optional Windows→WSL sidecar soak (operator / self-hosted Windows+WSL).
+  soak-windows-wsl-sidecar:
+    if: ${{ false }}  # enable when self-hosted Windows+WSL runner labeled `wsl-sidecar` exists
+    runs-on: [self-hosted, windows, wsl-sidecar]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install project
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e ".[dev]"
+      - name: Platform soak (Windows→WSL sidecar)
+        shell: bash
+        run: |
+          HOST_ID="gha-wsl-sidecar|Windows|3.12|windows_wsl_sidecar"
+          python -m conicshield.experimental.assurance.platform_soak \
+            --output-dir output/research/multi_host_ci/windows_wsl_sidecar \
+            --host-id "${HOST_ID}" \
+            --host-kind real \
+            --matrix-role windows_wsl_sidecar
+      - name: Upload soak shard
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-soak-windows_wsl_sidecar
+          path: output/research/multi_host_ci/windows_wsl_sidecar/platform_soak.json
           if-no-files-found: error
           retention-days: 30
 
   aggregate:
-    needs: soak
+    needs: [soak-public]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,42 +175,68 @@ jobs:
           path: output/research/multi_host_ci/shards
           pattern: platform-soak-*
           merge-multiple: false
-      - name: Aggregate digests
+      - name: Aggregate digests (R12)
         shell: bash
+        env:
+          REQUIRE_MOREAU: ${{ inputs.require_moreau_matrix || false }}
         run: |
           set -euo pipefail
           mkdir -p output/research/multi_host_ci/aggregate
           mapfile -t SHARDS < <(find output/research/multi_host_ci/shards -name 'platform_soak.json' | sort)
           echo "Found shards:" "${SHARDS[@]}"
           test "${#SHARDS[@]}" -ge 2
+          EXTRA_ARGS=()
+          EXTRA_ARGS+=(--require-public-matrix)
+          EXTRA_ARGS+=(--expected-commit "${GITHUB_SHA}")
+          if [[ "${REQUIRE_MOREAU}" == "true" ]]; then
+            EXTRA_ARGS+=(--require-moreau-matrix)
+          fi
           python -m conicshield.experimental.assurance.platform_soak \
             --output-dir output/research/multi_host_ci/aggregate \
-            --aggregate "${SHARDS[@]}"
+            --aggregate "${SHARDS[@]}" \
+            "${EXTRA_ARGS[@]}"
           python - <<'PY'
           import json
           from pathlib import Path
+          from conicshield.experimental.assurance.governed_hash_policy import (
+              default_governed_hash_policy,
+          )
           p = Path("output/research/multi_host_ci/aggregate/platform_soak_aggregate.json")
           d = json.loads(p.read_text(encoding="utf-8"))
           assert d.get("promotion_claim") is False
+          assert d.get("promotion_eligible") is False
           assert int(d.get("n_real_hosts") or 0) >= 2
           assert int(d.get("n_synthetic_hosts") or 0) == 0
-          # Evidence readiness only — do NOT treat as production R4 pass.
+          assert "linux_public" in (d.get("matrix_roles_present") or [])
+          assert "windows_public" in (d.get("matrix_roles_present") or [])
+          assert d.get("digest_comparison_policy") == "byte_identity"
+          # Public CI matrix alone may not clear full R12 gate (dirty CI checkout,
+          # optional Moreau roles). Evidence readiness fields must remain honest.
           summary = {
               "n_real_hosts": d["n_real_hosts"],
               "n_synthetic_hosts": d["n_synthetic_hosts"],
+              "matrix_roles_present": d.get("matrix_roles_present"),
               "r4_multi_host_gate_ready": d.get("r4_multi_host_gate_ready"),
+              "rejection_reasons": d.get("rejection_reasons"),
               "promotion_claim": d["promotion_claim"],
+              "problem_digest_mismatches": d.get("problem_digest_mismatches"),
               "digest_mismatches": d.get("digest_mismatches"),
               "r4_blockers": d.get("r4_blockers"),
               "note": (
-                  "CI multi-OS soak is real-host evidence toward R4, "
-                  "not a production promotion claim. Governed hash still unwired."
+                  "CI multi-OS soak is real-host public-matrix evidence toward R12. "
+                  "Moreau/CUDA/sidecar roles require self-hosted runners. "
+                  "Never a production promotion claim."
               ),
           }
           Path("output/research/multi_host_ci/aggregate/summary.json").write_text(
               json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
           )
           print(json.dumps(summary, indent=2, sort_keys=True))
+          # Governed-hash adapter: require on-disk paths when shards present locally
+          # (aggregate job may only have report JSON — record policy presence).
+          pol = default_governed_hash_policy()
+          assert pol.require_on_disk_recompute is True
+          assert pol.require_attestation is True
           PY
       - name: Upload aggregate
         if: success() || failure()
