@@ -115,4 +115,7 @@ def test_r6_scaffold_expanded_checklist() -> None:
     ids = {e["evidence_id"] for e in d["required_evidence"]}
     assert "track1_s4_hetero_batch_attestation" in ids
     assert "decision_report_with_negative_results" in ids
+    assert "flagship_promotion_gate" in ids
     assert any(e.get("evidence_pointers") for e in d["required_evidence"])
+    assert d["flagship_gate"]["passed"] is False
+    assert d["execution_authorized"] is False

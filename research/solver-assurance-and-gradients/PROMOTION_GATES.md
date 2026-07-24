@@ -40,6 +40,8 @@ A public flagship claim requires:
 
 **Still blocking R4 production gate (honest):** (1) governed hash policy integration with **production** release tooling (research adapter only today); (2) optional stronger independence via pushed CI multi-OS matrix or physically separate machines; (3) no overclaim of universal safety from L0–L4 tiers. Synthetic fixtures still **do not count**. Local Windows+WSL multi-host evidence does **not** alone clear production.
 
+**R14 flagship candidate:** `ProofCarryingProjection` + `run_flagship_demo` / `evaluate_flagship_promotion_gate` exist under `conicshield.experimental.assurance.proof_carrying`. Fixed public claim: independently checkable numerical evidence under explicit qualification levels — **not** a system-level safety proof. Sidecar wire protocol is **v2** (request binding, provenance, version negotiation). Promotion remains fail-closed until native Moreau multi-host participation, real linked gradients, verified CBF, corrupted/incomplete rejection, and docs limitations all pass. Digests are recomputed in the gate. Even then `production_claim` / `promotion_eligible` stay false.
+
 ## R5 — CBF domain
 
 Promote only after single-step nominal CBF QP is validated; receding horizon remains optional and later.
@@ -48,6 +50,6 @@ Promote only after single-step nominal CBF QP is validated; receding horizon rem
 
 ## R6 — Intervention-aware training
 
-Blocked until R2 and R4 promotion gates pass. No claim of "learning safer policies" unless independent safety metrics improve under distribution shift, with failure cases and robustness to solver/smoothing choices.
+Blocked until the R14 **flagship promotion gate** passes (`evaluate_flagship_promotion_gate`). R2 and R4 remain supporting prerequisites. No claim of "learning safer policies" unless independently measured safety/robustness improves under held-out conditions (distribution shift, altered constraints, shield removal, smoothing sensitivity, active-set transitions, solver-version change). **Intervention-frequency reduction alone is not promotion evidence.** Numerical assurance (L0–L4 / ProofCarryingProjection) is **not** system-level safety proof.
 
-**Wave 8 status:** Decision document strengthened to a scientific **evidence matrix** (`r6-decision-v0.2.0`) with acceptance criteria, decision logic, and negative-retention protocol — still **BLOCKED**; no training results. R4 multi-host *evidence* advanced (Windows+WSL) and experimental exact native grads exist on WSL, but R2/R4 **production** gates remain unpassed, so R6 stays blocked.
+**R15 status:** Controlled comparison harness structure (`comparison_harness.py`) documents arms — unshielded; shield@inference; exact-grad; smoothed-grad; intervention penalty without solver grad; dual-pressure reg — plus the held-out eval matrix fields. Decision scaffold `r6-decision-v0.3.0` wires authorization through the flagship gate and remains **BLOCKED** while live Moreau / multi-host / linked-gradient predicates fail (sidecar protocol v2 wire is present). No training results.
