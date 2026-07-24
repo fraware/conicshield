@@ -120,7 +120,7 @@ def build_disagreement_corpus(
 
     disagreements = []
     for case in cases:
-        raw = case.get("disagreement") or {}
+        raw = case.get("disagreement")
         primary = case.get("primary") or {}
         shadow = case.get("shadow") or {}
         records.append(
@@ -129,12 +129,16 @@ def build_disagreement_corpus(
                 family=str(case.get("family") or ""),
                 expected_regime=str(case.get("expected_regime") or ""),
                 shadowed=bool(case.get("shadowed")),
-                disagreement=dict(raw),
+                disagreement=dict(raw) if isinstance(raw, dict) else {},
                 primary_status=str(primary.get("solver_status") or ""),
-                shadow_status=str(shadow.get("solver_status") or ""),
+                shadow_status=(
+                    "skipped_by_sampling"
+                    if not case.get("shadowed")
+                    else str(shadow.get("solver_status") or "")
+                ),
             )
         )
-        if case.get("shadowed") and raw:
+        if case.get("shadowed") and isinstance(raw, dict) and raw:
             disagreements.append(
                 SolverDisagreement(
                     status_disagreement=bool(raw["status_disagreement"]),

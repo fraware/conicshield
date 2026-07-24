@@ -174,6 +174,18 @@ class PublicCvxpyProjector:
                 metadata={"error": str(exc), **dict(metadata or {})},
             )
 
+        iterations: int | None = None
+        try:
+            stats = getattr(problem, "solver_stats", None)
+            if stats is not None:
+                raw_iters = getattr(stats, "num_iters", None)
+                if raw_iters is None:
+                    raw_iters = getattr(stats, "iters", None)
+                if raw_iters is not None:
+                    iterations = int(raw_iters)
+        except (TypeError, ValueError):
+            iterations = None
+
         if x.value is None:
             xv = np.full(n, np.nan)
             eq: float = float("nan")
@@ -200,6 +212,7 @@ class PublicCvxpyProjector:
             objective_value=obj,
             active_constraints=active,
             warm_started=bool(self.warm_start),
+            iterations=iterations,
             equality_residual=eq if eq == eq else None,  # NaN check
             inequality_residual=ineq if ineq == ineq else None,
             provenance=SolverProvenance(
