@@ -1,10 +1,13 @@
 """Native Windows client for the WSL Moreau sidecar worker.
 
-Architecture (v1)
+Architecture (v2)
 -----------------
 * App runs in native Windows Python.
 * A **persistent** worker subprocess runs Moreau inside WSL2.
 * Transport is stdin/stdout NDJSON (no localhost networking).
+* Hello negotiates ``PROTOCOL_VERSION`` via supported-version lists.
+* Solve requests carry a cryptographic ``request_binding_digest``; workers
+  recompute and reject mismatches (fail closed).
 * Multiple solves reuse one worker process.
 * Worker death / incomplete responses trigger the declared
   :class:`~conicshield.platform.sidecar_protocol.FallbackPolicy` — public
@@ -45,6 +48,7 @@ from conicshield.platform.paths import (
 )
 from conicshield.platform.sidecar_protocol import (
     PROTOCOL_VERSION,
+    SUPPORTED_PROTOCOL_VERSIONS,
     FallbackPolicy,
     MessageType,
     SidecarProtocolError,
@@ -53,6 +57,7 @@ from conicshield.platform.sidecar_protocol import (
     decode_message,
     encode_message,
     hello_message,
+    negotiate_protocol_version,
 )
 from conicshield.specs.schema import SafetySpec
 from conicshield.verification.fallback import FallbackAttempt
@@ -118,6 +123,8 @@ class WindowsSidecarClient:
     _lock: threading.RLock = field(default_factory=threading.RLock, init=False, repr=False)
     _client_id: str = field(default_factory=lambda: f"win-client-{uuid.uuid4().hex[:10]}")
     _worker_id: str | None = field(default=None, init=False)
+    _negotiated_protocol_version: int | None = field(default=None, init=False)
+    _worker_provenance: dict[str, Any] = field(default_factory=dict, init=False)
     _restarts: int = field(default=0, init=False)
     _started: bool = field(default=False, init=False)
     overhead_samples: list[SidecarOverheadSample] = field(default_factory=list)
@@ -205,6 +212,8 @@ class WindowsSidecarClient:
         self._proc = None
         self._started = False
         self._worker_id = None
+        self._negotiated_protocol_version = None
+        self._worker_provenance = {}
         if proc is None:
             return
         try:
@@ -231,12 +240,33 @@ class WindowsSidecarClient:
                 f"expected hello_ack, got {payload.get('type')!r}",
                 evidence={"payload": payload},
             )
+        worker_supported = payload.get("supported_protocol_versions") or [payload.get("protocol_version")]
+        try:
+            negotiated = negotiate_protocol_version(SUPPORTED_PROTOCOL_VERSIONS, worker_supported)
+        except SidecarProtocolError as exc:
+            raise SidecarWorkerError(
+                f"protocol negotiation failed: {exc}",
+                evidence={"payload": payload},
+            ) from exc
+        ack_negotiated = payload.get("negotiated_protocol_version")
+        if ack_negotiated is not None and int(ack_negotiated) != int(negotiated):
+            raise SidecarWorkerError(
+                "negotiated_protocol_version mismatch between client and worker",
+                evidence={"payload": payload, "client_negotiated": negotiated},
+            )
+        if int(negotiated) != PROTOCOL_VERSION:
+            raise SidecarWorkerError(
+                f"negotiated protocol_version={negotiated} != client PROTOCOL_VERSION={PROTOCOL_VERSION}",
+                evidence={"payload": payload},
+            )
         if self.config.require_moreau_on_hello and not payload.get("moreau_available"):
             raise SidecarWorkerError(
                 "worker hello_ack reports moreau_available=false",
                 evidence={"payload": payload},
             )
         self._worker_id = str(payload.get("worker_id") or "")
+        self._negotiated_protocol_version = int(negotiated)
+        self._worker_provenance = dict(payload.get("worker_provenance") or {})
         return payload
 
     def _write(self, payload: dict[str, Any]) -> None:
@@ -361,7 +391,7 @@ class WindowsSidecarClient:
                     deadline_ms=deadline_ms,
                     backend=str(backend),
                     metadata=dict(metadata or {}),
-                )
+                ).with_binding()
                 self._write(request.to_message())
                 timeout = self.config.solve_timeout_sec
                 if deadline_ms is not None:
@@ -374,6 +404,18 @@ class WindowsSidecarClient:
                     )
                 result_msg = SolveResultMessage.from_message(payload)
                 wait_ms = (time.perf_counter() - t0) * 1000.0
+                if (
+                    result_msg.request_binding_digest is not None
+                    and result_msg.request_binding_digest != request.request_binding_digest
+                ):
+                    raise SidecarWorkerError(
+                        "worker request_binding_digest echo mismatch",
+                        evidence={
+                            "reason": "binding_echo_mismatch",
+                            "client": request.request_binding_digest,
+                            "worker": result_msg.request_binding_digest,
+                        },
+                    )
                 if not result_msg.ok or not result_msg.verification_complete:
                     # Fail closed on this attempt — may still public-fallback below.
                     raise SidecarWorkerError(
@@ -402,7 +444,11 @@ class WindowsSidecarClient:
                         "worker_overhead_ms": result_msg.overhead_ms,
                         "worker_solve_ms": result_msg.worker_solve_ms,
                         "protocol_version": PROTOCOL_VERSION,
+                        "negotiated_protocol_version": self._negotiated_protocol_version,
                         "worker_id": self._worker_id,
+                        "request_binding_digest": result_msg.request_binding_digest,
+                        "worker_provenance": dict(self._worker_provenance),
+                        "solver_provenance": result_msg.solver_provenance,
                     },
                 }
                 return projection
