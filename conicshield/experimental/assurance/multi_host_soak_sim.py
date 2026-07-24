@@ -134,6 +134,7 @@ def run_multi_host_soak_simulation(
         output_dir=primary_dir,
         host_id=host_id or "sim-host-a|local",
         exact_command=exact_command,
+        matrix_role="linux_public",
     )
     primary = report.as_dict()
     syn_host = "synthetic-host-b|ci-fixture"
