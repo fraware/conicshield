@@ -37,6 +37,7 @@ class ReleaseDecision(StrEnum):
     FALLBACK = "fallback"
     REVIEW = "review"
     EXPERIMENTAL_ONLY = "experimental_only"
+    EXPERIMENTAL_INVALIDATED = "experimental_invalidated"
 
 
 @dataclass(frozen=True, slots=True)
